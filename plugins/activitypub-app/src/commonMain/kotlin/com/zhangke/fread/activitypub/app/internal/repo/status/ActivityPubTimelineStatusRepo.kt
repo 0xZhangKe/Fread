@@ -5,7 +5,7 @@ import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusTab
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
 import com.zhangke.fread.common.status.StatusConfigurationDefault
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
 
@@ -21,13 +21,13 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
      * 获取最新的帖子列表
      */
     suspend fun getFresherStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String? = null,
         limit: Int = statusConfig.loadFromServerLimit,
     ): Result<List<Status>> {
         return getTimeline(
-            role = role,
+            locator = locator,
             type = type,
             limit = limit,
             listId = listId,
@@ -35,7 +35,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             minId = null,
         ).onSuccess {
             saveFresherStatus(
-                role = role,
+                locator = locator,
                 type = type,
                 listId = listId,
                 statusList = it,
@@ -44,7 +44,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     }
 
     private suspend fun saveFresherStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String?,
         statusList: List<Status>,
@@ -52,45 +52,45 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         if (statusList.isEmpty()) return
         val earlierStatus = statusList.minBy { it.createAt.epochMillis }
         val localEarlierStatus = queryLocalStatus(
-            role = role,
+            locator = locator,
             type = type,
             listId = listId,
             statusId = earlierStatus.id,
         )
         if (localEarlierStatus == null) {
             // local data are expired
-            deleteStatus(role, type, listId)
+            deleteStatus(locator, type, listId)
         }
-        statusList.insertToLocal(role, type, listId)
+        statusList.insertToLocal(locator, type, listId)
     }
 
     suspend fun loadPreviousPageStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         minId: String,
         listId: String? = null,
         limit: Int = statusConfig.loadFromServerLimit,
     ): Result<List<Status>> {
         return getTimeline(
-            role = role,
+            locator = locator,
             type = type,
             limit = limit,
             maxId = null,
             minId = minId,
             listId = listId,
         ).onSuccess {
-            it.insertToLocal(role, type, listId)
+            it.insertToLocal(locator, type, listId)
         }
     }
 
     suspend fun getStatusFromLocal(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         limit: Int = statusConfig.loadFromLocalLimit,
         listId: String? = null,
     ): List<Status> {
         return queryLocalStatusList(
-            role = role,
+            locator = locator,
             type = type,
             limit = limit,
             listId = listId,
@@ -98,41 +98,41 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     }
 
     suspend fun loadMore(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         maxId: String,
         listId: String? = null,
         limit: Int = statusConfig.loadFromLocalLimit,
     ): Result<List<Status>> {
         return getTimeline(
-            role = role,
+            locator = locator,
             type = type,
             limit = limit,
             maxId = maxId,
             minId = null,
             listId = listId,
         ).onSuccess {
-            it.insertToLocal(role, type, listId)
+            it.insertToLocal(locator, type, listId)
         }
     }
 
     suspend fun updateStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         status: Status,
         listId: String? = null,
     ) {
-        statusDao.insert(status.toDBEntity(role, type, listId))
+        statusDao.insert(status.toDBEntity(locator, type, listId))
         val leftTypes = ActivityPubStatusSourceType.entries.filter { it != type }
         leftTypes.mapNotNull {
             queryLocalStatus(
-                role = role,
+                locator = locator,
                 type = it,
                 listId = listId,
                 statusId = status.id,
             )
         }.forEach {
-            statusDao.insert(status.toDBEntity(role, it.type, it.listId))
+            statusDao.insert(status.toDBEntity(locator, it.type, it.listId))
         }
     }
 
@@ -141,69 +141,69 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     }
 
     private suspend fun List<Status>.insertToLocal(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String?,
     ) {
-        statusDao.insert(this.toDBEntities(role, type, listId))
+        statusDao.insert(this.toDBEntities(locator, type, listId))
     }
 
     private suspend fun queryLocalStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String?,
         statusId: String,
     ): ActivityPubStatusTableEntity? {
         return if (type == ActivityPubStatusSourceType.LIST && listId != null) {
             statusDao.queryStatusInList(
-                role = role,
+                locator = locator,
                 type = type,
                 listId = listId,
                 id = statusId,
             )
         } else {
-            statusDao.query(role, type, statusId)
+            statusDao.query(locator, type, statusId)
         }
     }
 
     private suspend fun queryLocalStatusList(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         limit: Int,
         listId: String?,
     ): List<ActivityPubStatusTableEntity> {
         return if (type == ActivityPubStatusSourceType.LIST) {
             statusDao.queryListStatus(
-                role = role,
+                locator = locator,
                 type = type,
                 limit = limit,
                 listId = listId!!,
             )
         } else {
-            statusDao.queryTimelineStatus(role, type, limit)
+            statusDao.queryTimelineStatus(locator, type, limit)
         }
     }
 
     private suspend fun deleteStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String?,
     ) {
         if (listId.isNullOrEmpty()) {
-            statusDao.delete(role, type)
+            statusDao.delete(locator, type)
         } else {
-            statusDao.deleteListStatus(role, type, listId)
+            statusDao.deleteListStatus(locator, type, listId)
         }
     }
 
     private fun List<Status>.toDBEntities(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String?,
     ): List<ActivityPubStatusTableEntity> {
         return this.map {
             it.toDBEntity(
-                role = role,
+                locator = locator,
                 type = type,
                 listId = listId,
             )
@@ -211,13 +211,13 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     }
 
     private fun Status.toDBEntity(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String?,
     ): ActivityPubStatusTableEntity {
         return ActivityPubStatusTableEntity(
             id = this.id,
-            role = role,
+            locator = locator,
             type = type,
             createTimestamp = this.createAt.epochMillis,
             listId = listId.orEmpty(),

@@ -6,6 +6,7 @@ import com.zhangke.activitypub.entities.UpdateFieldRequestEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
@@ -13,7 +14,7 @@ import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.edit_profile_name_empty
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +27,9 @@ import me.tatarka.inject.annotations.Inject
 
 class EditAccountInfoViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    @Assisted private val accountUri: FormalUri,
     private val platformUriHelper: PlatformUriHelper,
+    @Assisted private val baseUrl: FormalBaseUrl,
+    @Assisted private val accountUri: FormalUri,
 ) : ViewModel() {
 
     companion object {
@@ -36,7 +38,7 @@ class EditAccountInfoViewModel @Inject constructor(
     }
 
     fun interface Factory : ViewModelFactory {
-        fun create(uri: FormalUri): EditAccountInfoViewModel
+        fun create(baseUrl: FormalBaseUrl, uri: FormalUri): EditAccountInfoViewModel
     }
 
     private val _uiState = MutableStateFlow(
@@ -60,11 +62,11 @@ class EditAccountInfoViewModel @Inject constructor(
 
     private var originalAccountInfo: ActivityPubAccountEntity? = null
 
-    private val role = IdentityRole(accountUri = accountUri, baseUrl = null)
+    private val locator = PlatformLocator(accountUri = accountUri, baseUrl = baseUrl)
 
     init {
         launchInViewModel {
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .accountRepo
                 .getCredentialAccount()
                 .onSuccess {
@@ -163,7 +165,7 @@ class EditAccountInfoViewModel @Inject constructor(
             return@launchInViewModel
         }
         _uiState.update { it.copy(requesting = true) }
-        clientManager.getClient(role)
+        clientManager.getClient(locator)
             .accountRepo
             .updateCredentials(
                 name = newName,

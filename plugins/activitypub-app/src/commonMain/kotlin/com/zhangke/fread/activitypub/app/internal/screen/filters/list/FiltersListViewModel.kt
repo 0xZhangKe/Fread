@@ -13,7 +13,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_filters_expired
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -24,12 +24,12 @@ import me.tatarka.inject.annotations.Inject
 
 class FiltersListViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
-        fun create(role: IdentityRole): FiltersListViewModel
+        fun create(locator: PlatformLocator): FiltersListViewModel
     }
 
     private val _uiState = MutableStateFlow(FiltersListUiState.default())
@@ -63,7 +63,7 @@ class FiltersListViewModel @Inject constructor(
     }
 
     private suspend fun fetchFilters(): Result<List<FilterItemUiState>> {
-        return clientManager.getClient(role)
+        return clientManager.getClient(locator)
             .accountRepo
             .getFilters()
             .map { list -> list.map { it.toUiState() } }

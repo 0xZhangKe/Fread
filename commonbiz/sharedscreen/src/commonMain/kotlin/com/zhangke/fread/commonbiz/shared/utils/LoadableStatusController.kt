@@ -3,7 +3,7 @@ package com.zhangke.fread.commonbiz.shared.utils
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.richtext.preParse
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +34,7 @@ open class LoadableStatusController(
     val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
 
     open fun onRefresh(
-        role: IdentityRole,
+        locator: PlatformLocator,
         refreshFunction: suspend () -> Result<List<StatusUiState>>,
     ) {
         loadableController.onRefresh {
@@ -46,7 +46,7 @@ open class LoadableStatusController(
     }
 
     open fun onLoadMore(
-        role: IdentityRole,
+        locator: PlatformLocator,
         loadMoreFunction: suspend (maxId: String) -> Result<List<StatusUiState>>,
     ) {
         val latestId = loadableController.uiState.value.dataList.lastOrNull()?.status?.id ?: return

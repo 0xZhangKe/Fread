@@ -59,9 +59,9 @@ class ExplorerHomeViewModel @Inject constructor(
     }
 
     private fun getPagerTab(uiState: ExplorerHomeUiState): PagerTab? {
-        return if (uiState.role != null && uiState.platform != null) {
+        return if (uiState.locator != null && uiState.platform != null) {
             statusProvider.screenProvider.getExplorerTab(
-                role = uiState.role!!,
+                locator = uiState.locator!!,
                 platform = uiState.platform!!,
             )
         } else {

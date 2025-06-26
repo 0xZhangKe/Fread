@@ -5,7 +5,7 @@ import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
@@ -19,16 +19,10 @@ class BlueskyStatusSourceResolver @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
 ) : IStatusSourceResolver {
 
-    override suspend fun resolveSourceByUri(
-        role: IdentityRole?,
-        uri: FormalUri
-    ): Result<StatusSource?> {
+    override suspend fun resolveSourceByUri(uri: FormalUri): Result<StatusSource?> {
         val uriInsight = userUriTransformer.parse(uri) ?: return Result.success(null)
-        val client = role?.let { clientManager.getClient(it) }
-            ?: platformRepo.getAllPlatform().firstOrNull()?.let {
-                clientManager.getClient(IdentityRole(baseUrl = it.baseUrl))
-            }
-        client ?: return Result.success(null)
+        val locator = PlatformLocator(baseUrl = platformRepo.getAllPlatform().first().baseUrl)
+        val client = clientManager.getClient(locator)
         return client.getProfileCatching(GetProfileQueryParams(Did(uriInsight.did)))
             .map { profile -> accountAdapter.createSource(profile) }
     }

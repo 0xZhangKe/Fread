@@ -17,10 +17,10 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 
-internal class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab() {
+internal class TrendingStatusTab(private val locator: PlatformLocator) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -31,7 +31,7 @@ internal class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab(
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)
         val snackbarHostState = LocalSnackbarHostState.current
-        val viewModel = screen.getViewModel<TrendingStatusViewModel>().getSubViewModel(role)
+        val viewModel = screen.getViewModel<TrendingStatusViewModel>().getSubViewModel(locator)
         val uiState by viewModel.uiState.collectAsState()
         val mainTabConnection = LocalNestedTabConnection.current
         val coroutineScope = rememberCoroutineScope()

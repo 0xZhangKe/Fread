@@ -42,7 +42,7 @@ import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_likes
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_mutes
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_reblog
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.user.CommonUserPlaceHolder
 import com.zhangke.fread.status.ui.user.CommonUserUi
 import com.zhangke.fread.status.uri.FormalUri
@@ -51,7 +51,7 @@ import org.jetbrains.compose.resources.stringResource
 import com.zhangke.fread.commonbiz.shared.screen.Res as SharedRes
 
 class UserListScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val type: UserListType,
     private val statusId: String? = null,
     private val userUri: FormalUri? = null,
@@ -64,7 +64,7 @@ class UserListScreen(
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<UserListViewModel, UserListViewModel.Factory> {
             it.create(
-                role = role,
+                locator = locator,
                 type = type,
                 statusId = statusId,
                 userUri = userUri,
@@ -131,7 +131,7 @@ class UserListScreen(
                                 modifier = Modifier.clickable {
                                     navigator.push(
                                         UserDetailScreen(
-                                            role = uiState.role,
+                                            locator = uiState.locator,
                                             webFinger = item.author.webFinger,
                                         )
                                     )

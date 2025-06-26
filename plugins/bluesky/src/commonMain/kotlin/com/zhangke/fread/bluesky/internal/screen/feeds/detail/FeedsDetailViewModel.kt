@@ -18,7 +18,7 @@ import com.zhangke.fread.bluesky.internal.usecase.PinFeedsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UnpinFeedsUseCase
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,14 +38,14 @@ class FeedsDetailViewModel @Inject constructor(
     private val deleteRecord: DeleteRecordUseCase,
     private val followFeeds: PinFeedsUseCase,
     private val unfollowFeeds: UnpinFeedsUseCase,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted feeds: BlueskyFeeds,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            role: IdentityRole,
+            locator: PlatformLocator,
             feeds: BlueskyFeeds,
         ): FeedsDetailViewModel
     }
@@ -74,13 +74,13 @@ class FeedsDetailViewModel @Inject constructor(
         likeJob = launchInViewModel {
             if (feeds.liked) {
                 deleteRecord(
-                    role = role,
+                    locator = locator,
                     collection = BskyCollections.feedLike,
                     rkey = feeds.likedRecord!!.adjustToRkey(),
                 )
             } else {
                 createRecord(
-                    role = role,
+                    locator = locator,
                     collection = BskyCollections.feedLike,
                     record = Like(
                         subject = StrongRef(
@@ -105,9 +105,9 @@ class FeedsDetailViewModel @Inject constructor(
         pinJob?.cancel()
         pinJob = launchInViewModel {
             if (feeds.pinned) {
-                unfollowFeeds(role = role, feeds = feeds)
+                unfollowFeeds(locator = locator, feeds = feeds)
             } else {
-                followFeeds(role = role, feeds = feeds)
+                followFeeds(locator = locator, feeds = feeds)
             }.onSuccess {
                 val newFeeds = feeds.copy(pinned = !feeds.pinned)
                 _uiState.update { state -> state.copy(feeds = newFeeds) }
@@ -122,7 +122,7 @@ class FeedsDetailViewModel @Inject constructor(
         launchInViewModel {
             val feeds = _uiState.value.feeds
             if (feeds !is BlueskyFeeds.Feeds) return@launchInViewModel
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .getFeedGeneratorsCatching(GetFeedGeneratorsQueryParams(listOf(AtUri(feeds.uri))))
                 .onSuccess { response ->
                     response.feeds.firstOrNull { it.uri.atUri == feeds.uri }

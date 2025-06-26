@@ -17,10 +17,9 @@ import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.utils.getCurrentInstant
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,7 +40,7 @@ class HashtagTimelineViewModel(
     private val loggedAccountProvider: LoggedAccountProvider,
     statusUiStateAdapter: StatusUiStateAdapter,
     refactorToNewStatus: RefactorToNewStatusUseCase,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val hashtag: String,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
@@ -52,7 +51,7 @@ class HashtagTimelineViewModel(
 
     private val _hashtagTimelineUiState = MutableStateFlow(
         HashtagTimelineUiState(
-            role = role,
+            locator = locator,
             hashTag = hashtag,
             following = false,
             description = "",
@@ -63,7 +62,7 @@ class HashtagTimelineViewModel(
     init {
         initController(
             coroutineScope = viewModelScope,
-            roleResolver = { role },
+            locatorResolver = { locator },
             loadFirstPageLocalFeeds = { Result.success(emptyList()) },
             loadNewFromServerFunction = ::loadNewFromServer,
             loadMoreFunction = ::loadMore,
@@ -71,7 +70,7 @@ class HashtagTimelineViewModel(
         )
         initFeeds(false)
         launchInViewModel {
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .accountRepo
                 .getTagInformation(hashtag)
                 .onSuccess {
@@ -126,7 +125,7 @@ class HashtagTimelineViewModel(
 
     fun onFollowClick() {
         launchInViewModel {
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .accountRepo
                 .followTag(hashtag)
                 .handle()
@@ -135,7 +134,7 @@ class HashtagTimelineViewModel(
 
     fun onUnfollowClick() {
         launchInViewModel {
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .accountRepo
                 .unfollowTag(hashtag)
                 .handle()
@@ -158,13 +157,13 @@ class HashtagTimelineViewModel(
     }
 
     private suspend fun loadHashtagTimeline(maxId: String? = null): Result<List<StatusUiState>> {
-        val platformResult = platformRepo.getPlatform(role)
+        val platformResult = platformRepo.getPlatform(locator)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        val account = loggedAccountProvider.getAccount(role)
-        return clientManager.getClient(role)
+        val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
+        return clientManager.getClient(locator)
             .timelinesRepo
             .getTagTimeline(
                 hashtag = hashtag,
@@ -175,7 +174,7 @@ class HashtagTimelineViewModel(
                     statusAdapter.toStatusUiState(
                         entity = it,
                         platform = platform,
-                        role = role,
+                        locator = locator,
                         loggedAccount = account,
                     )
                 }

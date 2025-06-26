@@ -11,7 +11,7 @@ data class StatusUiState(
     val logged: Boolean,
     val isOwner: Boolean,
     val blogTranslationState: BlogTranslationUiState,
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val following: Boolean? = null,
 ) : PlatformSerializable
 

@@ -2,11 +2,11 @@ package com.zhangke.fread.bluesky.internal.screen.home
 
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 data class BlueskyHomeUiState(
     val initializing: Boolean,
-    val role: IdentityRole,
+    val locator: PlatformLocator?,
     val content: BlueskyContent?,
     val account: BlueskyLoggedAccount?,
     val errorMessage: String? = null,
@@ -16,14 +16,14 @@ data class BlueskyHomeUiState(
 
         fun default(
             initializing: Boolean,
-            role: IdentityRole = IdentityRole.nonIdentityRole,
+            locator: PlatformLocator? = null,
             config: BlueskyContent? = null,
             account: BlueskyLoggedAccount? = null,
             errorMessage: String? = null
         ): BlueskyHomeUiState {
             return BlueskyHomeUiState(
                 initializing = initializing,
-                role = role,
+                locator = locator,
                 content = config,
                 account = account,
                 errorMessage = errorMessage,

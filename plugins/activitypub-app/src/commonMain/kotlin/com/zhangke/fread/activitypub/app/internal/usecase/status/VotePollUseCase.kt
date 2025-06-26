@@ -4,7 +4,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
 
@@ -14,11 +14,11 @@ class VotePollUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         votedOption: List<BlogPoll.Option>,
     ): Result<Status> {
-        return clientManager.getClient(role)
+        return clientManager.getClient(locator)
             .statusRepo
             .votes(
                 id = blog.poll!!.id,

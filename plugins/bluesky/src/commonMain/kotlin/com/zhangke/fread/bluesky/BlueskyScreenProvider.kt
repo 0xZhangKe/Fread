@@ -19,7 +19,7 @@ import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -32,27 +32,27 @@ class BlueskyScreenProvider @Inject constructor(
 ) : IStatusScreenProvider {
 
     override fun getReplyBlogScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog
     ): Screen? {
         if (blog.platform.protocol.notBluesky) return null
         return PublishPostScreen(
-            role = role,
+            locator = locator,
             replyToJsonString = globalJson.encodeToString(blog),
         )
     }
 
     override fun getEditBlogScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog
     ): Screen? {
         return null
     }
 
-    override fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
         if (blog.platform.protocol.notBluesky) return null
         return PublishPostScreen(
-            role = role,
+            locator = locator,
             quoteJsonString = globalJson.encodeToString(blog),
         )
     }
@@ -66,99 +66,99 @@ class BlueskyScreenProvider @Inject constructor(
 
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         if (content !is BlueskyContent) return null
-        return BskyFollowingFeedsPage(contentId = content.id, role = null)
+        return BskyFollowingFeedsPage(contentId = content.id, locator = null)
     }
 
     override suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
         if (account.platform.protocol.notBluesky) return null
-        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
-        return BskyFollowingFeedsPage(contentId = null, role = role)
+        val locator = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        return BskyFollowingFeedsPage(contentId = null, locator = locator)
     }
 
     override fun getUserDetailScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         uri: FormalUri,
         userId: String?,
     ): Screen? {
         val did = userUriTransformer.parse(uri)?.did ?: return null
-        return BskyUserDetailScreen(role = role, did = did)
+        return BskyUserDetailScreen(locator = locator, did = did)
     }
 
     override fun getUserDetailScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         did: String,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notBluesky) return null
-        return BskyUserDetailScreen(role = role, did = did)
+        return BskyUserDetailScreen(locator = locator, did = did)
     }
 
     override fun getUserDetailScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notBluesky) return null
-        return BskyUserDetailScreen(role, webFinger.did ?: return null)
+        return BskyUserDetailScreen(locator, webFinger.did ?: return null)
     }
 
     override fun getTagTimelineScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         tag: String,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notBluesky) return null
         return HomeFeedsScreen.create(
             feeds = BlueskyFeeds.Hashtags(tag),
-            role = role,
+            locator = locator,
         )
     }
 
     override fun getBlogFavouritedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notBluesky) return null
         return UserListScreen(
-            role = role,
+            locator = locator,
             type = UserListType.LIKE,
             postUri = blog.url,
         )
     }
 
     override fun getBlogBoostedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notBluesky) return null
         return UserListScreen(
-            role = role,
+            locator = locator,
             type = UserListType.REBLOG,
             postUri = blog.url,
         )
     }
 
     override fun getBookmarkedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
     ): Screen? {
         return null
     }
 
     override fun getFavouritedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notBluesky) return null
-        return HomeFeedsScreen.create(BlueskyFeeds.UserLikes(null), role)
+        return HomeFeedsScreen.create(BlueskyFeeds.UserLikes(null), locator)
     }
 
     override fun getFollowedHashtagScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
@@ -169,13 +169,13 @@ class BlueskyScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
+    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
         if (platform.protocol.notBluesky) return null
-        return ExplorerTab(role, platform)
+        return ExplorerTab(locator, platform)
     }
 
     override fun getCreatedListScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform
     ): Screen? {
         return null

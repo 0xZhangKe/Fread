@@ -5,7 +5,7 @@ import app.bsky.actor.SavedFeed
 import app.bsky.actor.SavedFeedsPrefV2
 import app.bsky.actor.Type
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class UpdatePinnedFeedsOrderUseCase @Inject constructor(
@@ -13,10 +13,10 @@ class UpdatePinnedFeedsOrderUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         feeds: List<BlueskyFeeds>,
     ): Result<Unit> {
-        return updatePreferences(role) { preferences ->
+        return updatePreferences(locator) { preferences ->
             preferences.map { preference ->
                 if (preference is PreferencesUnion.SavedFeedsPrefV2) {
                     PreferencesUnion.SavedFeedsPrefV2(

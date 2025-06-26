@@ -2,10 +2,10 @@ package com.zhangke.fread.activitypub.app.internal.screen.user.tags
 
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 data class TagListUiState(
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val refreshing: Boolean,
     val tags: List<Hashtag>,
     val loadState: LoadState,
@@ -13,8 +13,8 @@ data class TagListUiState(
 
     companion object {
 
-        fun default(role: IdentityRole = IdentityRole.nonIdentityRole) = TagListUiState(
-            role = role,
+        fun default(locator: PlatformLocator) = TagListUiState(
+            locator = locator,
             refreshing = false,
             tags = emptyList(),
             loadState = LoadState.Idle,

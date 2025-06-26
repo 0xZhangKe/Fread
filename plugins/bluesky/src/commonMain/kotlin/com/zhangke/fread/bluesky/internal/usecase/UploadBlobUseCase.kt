@@ -7,7 +7,7 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.VideoUtils
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.common.utils.PlatformUriHelper
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.model.Blob
 
@@ -22,7 +22,7 @@ class UploadBlobUseCase @Inject constructor(
     }
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         fileUri: PlatformUri,
     ): Result<Pair<Blob, AspectRatio?>> {
         return runCatching {
@@ -40,7 +40,7 @@ class UploadBlobUseCase @Inject constructor(
                 bytes = result.bytes
                 aspect = result.ratio
             }
-            val blob = clientManager.getClient(role).uploadBlobCatching(bytes).getOrThrow().blob
+            val blob = clientManager.getClient(locator).uploadBlobCatching(bytes).getOrThrow().blob
             blob to aspect
         }
     }

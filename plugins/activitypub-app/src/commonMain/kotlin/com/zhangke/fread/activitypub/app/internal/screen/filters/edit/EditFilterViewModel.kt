@@ -11,7 +11,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,13 +24,13 @@ import me.tatarka.inject.annotations.Inject
 
 class EditFilterViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted private val id: String?,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
-        fun create(role: IdentityRole, id: String?): EditFilterViewModel
+        fun create(locator: PlatformLocator, id: String?): EditFilterViewModel
     }
 
     private val _uiState = MutableStateFlow(EditFilterUiState.default())
@@ -71,7 +71,7 @@ class EditFilterViewModel @Inject constructor(
     fun onDeleteClick() {
         val filterId = id ?: return
         launchInViewModel {
-            clientManager.getClient(role).accountRepo
+            clientManager.getClient(locator).accountRepo
                 .deleteFilter(filterId)
                 .onSuccess {
                     _finishPageFlow.emit(Unit)
@@ -85,7 +85,7 @@ class EditFilterViewModel @Inject constructor(
         if (submitJob?.isActive == true) return
         submitJob = launchInViewModel {
             val request = _uiState.value.toRequest()
-            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountRepo = clientManager.getClient(locator).accountRepo
             if (id.isNullOrEmpty()) {
                 accountRepo.createFilters(request)
             } else {
@@ -127,7 +127,7 @@ class EditFilterViewModel @Inject constructor(
     private fun loadFilter() {
         if (id != null) {
             launchInViewModel {
-                clientManager.getClient(role)
+                clientManager.getClient(locator)
                     .accountRepo
                     .getFilter(id)
                     .onFailure {

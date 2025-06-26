@@ -10,7 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmoji
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.common.utils.formatDefault
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,7 +20,7 @@ class UserAboutViewModel(
     private val clientManager: ActivityPubClientManager,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val webFinger: WebFinger,
     val userId: String?,
 ) : SubViewModel() {
@@ -40,7 +40,7 @@ class UserAboutViewModel(
     init {
         launchInViewModel {
             val userId = if (this@UserAboutViewModel.userId.isNullOrEmpty()) {
-                val accountIdResult = webFingerBaseUrlToUserIdRepo.getUserId(webFinger, role)
+                val accountIdResult = webFingerBaseUrlToUserIdRepo.getUserId(webFinger, locator)
                 if (accountIdResult.isFailure) {
                     accountIdResult.exceptionOrNull()?.message?.let {
                         _messageFlow.emit(textOf(it))
@@ -51,7 +51,7 @@ class UserAboutViewModel(
             } else {
                 this@UserAboutViewModel.userId
             }
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .accountRepo
                 .getAccount(userId)
                 .onFailure { e ->

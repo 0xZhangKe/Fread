@@ -13,54 +13,56 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
-import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
-import com.zhangke.fread.status.status.model.Status
 import kotlinx.serialization.serializer
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubUrlInterceptor @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val clientManager: ActivityPubClientManager,
-    private val resolveBaseUrl: ResolveBaseUrlUseCase,
     private val loggedAccountProvider: LoggedAccountProvider,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : BrowserInterceptor {
 
-    override suspend fun intercept(role: IdentityRole, url: String): Boolean {
+    override suspend fun intercept(locator: PlatformLocator, url: String): Boolean {
         val uri = SimpleUri.parse(url) ?: return false
         if (HttpScheme.validate(uri.scheme.orEmpty())) return false
-        val account = loggedAccountProvider.getAccount(role)
-        val status = parseStatus(role, uri, account)
+        val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
+        val status = parseStatus(locator, uri, account)
         if (status != null) {
             GlobalScreenNavigation.navigate(
                 StatusContextScreen(
-                    role = role,
+                    locator = locator,
                     serializedStatus = globalJson.encodeToString(serializer(), status),
                 )
             )
             return true
         }
-        val webFinger = parseActivityPubUser(role, uri)
+        val webFinger = parseActivityPubUser(locator, uri)
         if (webFinger != null) {
-            GlobalScreenNavigation.navigate(UserDetailScreen(role = role, webFinger = webFinger))
+            GlobalScreenNavigation.navigate(
+                UserDetailScreen(
+                    locator = locator,
+                    webFinger = webFinger
+                )
+            )
             return true
         }
         val platform = parsePlatform(uri)
         if (platform != null) {
-            GlobalScreenNavigation.navigate(InstanceDetailScreen(baseUrl = platform.baseUrl))
+            GlobalScreenNavigation.navigate(InstanceDetailScreen(locator, platform.baseUrl))
             return true
         }
         return false
     }
 
-    private suspend fun parseActivityPubUser(role: IdentityRole, uri: SimpleUri): WebFinger? {
+    private suspend fun parseActivityPubUser(locator: PlatformLocator, uri: SimpleUri): WebFinger? {
         val path = uri.path?.removePrefix("/") ?: return null
         if (path.isEmpty()) return null
         if (uri.queries.isNotEmpty()) return null
@@ -68,13 +70,13 @@ class ActivityPubUrlInterceptor @Inject constructor(
         if (!path.startsWith("@")) return null
         val baseUrl = FormalBaseUrl.parse(uri.toString()) ?: return null
         val acct = "$path@${baseUrl.host}"
-        val accountRepo = clientManager.getClient(role).accountRepo
+        val accountRepo = clientManager.getClient(locator).accountRepo
         val account = accountRepo.lookup(acct).getOrNull() ?: return null
         return accountEntityAdapter.toWebFinger(account)
     }
 
     private suspend fun parseStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         uri: SimpleUri,
         account: ActivityPubLoggedAccount?,
     ): StatusUiState? {
@@ -86,11 +88,10 @@ class ActivityPubUrlInterceptor @Inject constructor(
         val acct = array[0]
         val statusId = array[1]
         if (!acct.startsWith("@")) return null
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val statusRepo = client.statusRepo
         val platform = platformRepo.getPlatform(baseUrl).getOrNull() ?: return null
-        val baseUrlOfGivenRole = resolveBaseUrl(role)
-        if (baseUrlOfGivenRole != baseUrl) {
+        if (locator.baseUrl != baseUrl) {
             // other platform, by search
             val searchRepo = client.searchRepo
             val searchedStatusResult =
@@ -101,7 +102,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
                     activityPubStatusAdapter.toStatusUiState(
                         entity = it,
                         platform = platform,
-                        role = role,
+                        locator = locator,
                         loggedAccount = account,
                     )
                 }
@@ -113,7 +114,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
                     activityPubStatusAdapter.toStatusUiState(
                         entity = it,
                         platform = platform,
-                        role = role,
+                        locator = locator,
                         loggedAccount = account,
                     )
                 }

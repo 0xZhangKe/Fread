@@ -5,7 +5,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class UserAboutContainerViewModel @Inject constructor(
@@ -19,29 +19,29 @@ class UserAboutContainerViewModel @Inject constructor(
             clientManager = clientManager,
             webFingerBaseUrlToUserIdRepo = webFingerBaseUrlToUserIdRepo,
             emojiEntityAdapter = emojiEntityAdapter,
-            role = params.role,
+            locator = params.locator,
             webFinger = params.webFinger,
             userId = params.userId,
         )
     }
 
     fun getViewModel(
-        role: IdentityRole,
+        locator: PlatformLocator,
         webFinger: WebFinger,
         userId: String?,
     ): UserAboutViewModel {
         return obtainSubViewModel(
-            Params(role, webFinger, userId)
+            Params(locator, webFinger, userId)
         )
     }
 
     class Params(
-        val role: IdentityRole,
+        val locator: PlatformLocator,
         val webFinger: WebFinger,
         val userId: String?,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = role.toString() + webFinger + userId
+            get() = locator.toString() + webFinger + userId
     }
 }

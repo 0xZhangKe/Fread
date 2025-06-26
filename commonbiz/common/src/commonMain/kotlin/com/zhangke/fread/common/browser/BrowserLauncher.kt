@@ -4,7 +4,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.config.AppCommonConfig
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 interface ActivityBrowserLauncher {
 
@@ -16,19 +16,19 @@ interface ActivityBrowserLauncher {
 
     fun launchWebTabInApp(
         url: String,
-        role: IdentityRole? = null,
+        locator: PlatformLocator? = null,
         checkAppSupportPage: Boolean = true,
     ) {
         launchWebTabInApp(
             uri = url.toPlatformUri(),
-            role = role,
+            locator = locator,
             checkAppSupportPage = checkAppSupportPage,
         )
     }
 
     fun launchWebTabInApp(
         uri: PlatformUri,
-        role: IdentityRole? = null,
+        locator: PlatformLocator? = null,
         checkAppSupportPage: Boolean = true,
     )
 

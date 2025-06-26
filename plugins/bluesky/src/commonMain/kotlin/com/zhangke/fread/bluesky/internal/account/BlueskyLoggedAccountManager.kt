@@ -4,7 +4,6 @@ import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileViewDetailed
 import com.atproto.server.CreateSessionRequest
 import com.atproto.server.CreateSessionResponse
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClient
@@ -12,7 +11,7 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.repo.BlueskyLoggedAccountRepo
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.status.account.AccountRefreshResult
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -80,28 +79,26 @@ class BlueskyLoggedAccountManager @Inject constructor(
         return accountRepo.queryAllFlow()
     }
 
-    fun getAccountFlow(baseUrl: FormalBaseUrl): Flow<BlueskyLoggedAccount> {
-        return getAllAccountFlow().mapNotNull { it.firstOrNull { it.platform.baseUrl == baseUrl } }
+    fun getAccountFlow(uri: FormalUri): Flow<BlueskyLoggedAccount> {
+        return getAllAccountFlow().mapNotNull { it.firstOrNull { it.uri == uri } }
     }
 
-    suspend fun getAccount(role: IdentityRole): BlueskyLoggedAccount? {
-        if (role.nonRole) return null
+    suspend fun getAccount(locator: PlatformLocator): BlueskyLoggedAccount? {
         val allAccount = getAllAccount()
-        if (role.accountUri != null) {
-            allAccount.firstOrNull { it.uri == role.accountUri }?.let { return it }
+        if (locator.accountUri != null) {
+            allAccount.firstOrNull { it.uri == locator.accountUri }?.let { return it }
         }
-        return if (role.baseUrl != null) {
-            allAccount.firstOrNull { it.platform.baseUrl == role.baseUrl }
-        } else {
-            null
+        if (allAccount.size == 1) {
+            return allAccount.firstOrNull()
         }
+        return null
     }
 
     suspend fun updateAccountProfile(
-        role: IdentityRole,
+        locator: PlatformLocator,
         profile: ProfileViewDetailed,
     ) {
-        val account = getAccount(role) ?: return
+        val account = getAccount(locator) ?: return
         if (account.did != profile.did.did) return
         val newAccount = accountAdapter.updateProfile(account, profile)
         accountRepo.updateAccount(account, newAccount)
@@ -109,8 +106,9 @@ class BlueskyLoggedAccountManager @Inject constructor(
 
     suspend fun refreshAccountProfile(): List<AccountRefreshResult> {
         return accountRepo.queryAll().map { account ->
-            val role = IdentityRole(accountUri = account.uri, baseUrl = account.platform.baseUrl)
-            val result = clientManager.getClient(role).getProfile(account.did)
+            val locator =
+                PlatformLocator(accountUri = account.uri, baseUrl = account.platform.baseUrl)
+            val result = clientManager.getClient(locator = locator).getProfile(account.did)
             if (result.isFailure) {
                 AccountRefreshResult.Failure(account, result.exceptionOrThrow())
             } else {

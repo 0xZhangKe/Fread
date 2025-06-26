@@ -10,7 +10,7 @@ import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject
 
@@ -37,27 +37,27 @@ class ExplorerContainerViewModel @Inject constructor(
             statusUpdater = statusUpdater,
             statusUiStateAdapter = statusUiStateAdapter,
             refactorToNewStatus = refactorToNewStatus,
-            role = params.role,
+            locator = params.locator,
             platform = params.platform,
             type = params.type,
         )
     }
 
     fun getViewModel(
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform,
         type: ExplorerFeedsTabType,
     ): ExplorerViewModel {
-        return obtainSubViewModel(Params(role, platform, type))
+        return obtainSubViewModel(Params(locator, platform, type))
     }
 
     class Params(
-        val role: IdentityRole,
+        val locator: PlatformLocator,
         val platform: BlogPlatform,
         val type: ExplorerFeedsTabType,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = role.toString() + platform + type
+            get() = locator.toString() + platform + type
     }
 }

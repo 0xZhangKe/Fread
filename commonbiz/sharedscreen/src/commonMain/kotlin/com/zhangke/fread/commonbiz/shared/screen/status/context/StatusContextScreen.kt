@@ -32,7 +32,7 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.commonbiz.shared.screen.shared_status_context_screen_title
 import com.zhangke.fread.status.model.BlogTranslationUiState
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -40,14 +40,14 @@ import com.zhangke.fread.status.ui.threads.ThreadsType
 import org.jetbrains.compose.resources.stringResource
 
 data class StatusContextScreen(
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val serializedStatus: String? = null,
     val serializedBlog: String? = null,
     val blogTranslationUiState: BlogTranslationUiState? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey =
-        role.toString() + serializedStatus?.let(Md5::md5) + serializedBlog?.let(Md5::md5)
+        locator.toString() + serializedStatus?.let(Md5::md5) + serializedBlog?.let(Md5::md5)
 
     @Composable
     override fun Content() {
@@ -55,7 +55,7 @@ data class StatusContextScreen(
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
         val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(
-            role = role,
+            locator = locator,
             anchorStatus = serializedStatus?.let(globalJson::decodeFromString),
             blog = serializedBlog?.let { globalJson.decodeFromString(it) },
             blogTranslationUiState = blogTranslationUiState,

@@ -11,7 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.PagedStatusNotification
@@ -36,13 +36,13 @@ class ActivityPubNotificationResolver @Inject constructor(
     ): Result<PagedStatusNotification>? {
         if (account.platform.protocol.notActivityPub) return null
         val isFirstPage = cursor == null
-        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
-        val platform = platformRepo.getPlatform(role).let {
+        val locator = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        val platform = platformRepo.getPlatform(locator).let {
             if (it.isFailure) return Result.failure(it.exceptionOrNull()!!)
             it.getOrThrow()
         }
-        val loggedAccount = loggedAccountProvider.getAccount(role)
-        val notificationsRepo = clientManager.getClient(role).notificationsRepo
+        val loggedAccount = loggedAccountProvider.getAccount(locator)
+        val notificationsRepo = clientManager.getClient(locator).notificationsRepo
         val types = mutableListOf<String>()
         if (type == INotificationResolver.NotificationRequestType.MENTION) {
             types += ActivityPubNotificationsEntity.Type.mention
@@ -77,7 +77,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                         false
                     }
                     convertNotification(
-                        role = role,
+                        locator = locator,
                         entity = entity,
                         unread = unread,
                         loggedAccount = loggedAccount,
@@ -89,7 +89,7 @@ class ActivityPubNotificationResolver @Inject constructor(
     }
 
     private suspend fun convertNotification(
-        role: IdentityRole,
+        locator: PlatformLocator,
         entity: ActivityPubNotificationsEntity,
         loggedAccount: ActivityPubLoggedAccount?,
         platform: BlogPlatform,
@@ -101,7 +101,7 @@ class ActivityPubNotificationResolver @Inject constructor(
             statusAdapter.toStatusUiState(
                 entity = it,
                 platform = platform,
-                role = role,
+                locator = locator,
                 loggedAccount = loggedAccount,
             )
         }
@@ -112,14 +112,14 @@ class ActivityPubNotificationResolver @Inject constructor(
                         id = entity.id,
                         createAt = createAt,
                         unread = unread,
-                        role = role,
+                        locator = locator,
                         message = "Unknown notification type: ${entity.type}",
                     )
                 } else {
                     StatusNotification.Like(
                         id = entity.id,
                         author = author,
-                        role = role,
+                        locator = locator,
                         blog = status!!.status.intrinsicBlog,
                         createAt = createAt,
                         unread = unread,
@@ -140,7 +140,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.Follow(
                     id = entity.id,
                     author = author,
-                    role = role,
+                    locator = locator,
                     createAt = createAt,
                     unread = unread,
                 )
@@ -150,7 +150,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.Repost(
                     id = entity.id,
                     author = author,
-                    role = role,
+                    locator = locator,
                     createAt = createAt,
                     blog = status!!.status.intrinsicBlog,
                     unread = unread,
@@ -163,7 +163,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                         id = entity.id,
                         createAt = createAt,
                         unread = unread,
-                        role = role,
+                        locator = locator,
                         message = "Unknown notification type: ${entity.type}",
                     )
                 } else {
@@ -178,7 +178,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.FollowRequest(
                     id = entity.id,
                     createAt = createAt,
-                    role = role,
+                    locator = locator,
                     author = author,
                     unread = unread,
                 )
@@ -188,7 +188,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.Poll(
                     id = entity.id,
                     createAt = createAt,
-                    role = role,
+                    locator = locator,
                     unread = unread,
                     blog = status!!.status.intrinsicBlog,
                 )
@@ -207,7 +207,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.SeveredRelationships(
                     id = entity.id,
                     createAt = createAt,
-                    role = role,
+                    locator = locator,
                     author = author,
                     unread = unread,
                     reason = entity.relationshipSeveranceEvent?.targetName.ifNullOrEmpty { "Unknown" },
@@ -218,7 +218,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 id = entity.id,
                 createAt = createAt,
                 unread = unread,
-                role = role,
+                locator = locator,
                 message = "Unknown notification type: ${entity.type}",
             )
         }
@@ -230,7 +230,7 @@ class ActivityPubNotificationResolver @Inject constructor(
     ): Result<Unit>? {
         if (account.platform.protocol.notActivityPub) return null
         val activityPubAccount = account as? ActivityPubLoggedAccount ?: return null
-        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         return clientManager.getClient(role)
             .accountRepo
             .rejectFollowRequest(activityPubAccount.userId)
@@ -243,7 +243,7 @@ class ActivityPubNotificationResolver @Inject constructor(
     ): Result<Unit>? {
         if (account.platform.protocol.notActivityPub) return null
         val activityPubAccount = account as? ActivityPubLoggedAccount ?: return null
-        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         return clientManager.getClient(role)
             .accountRepo
             .authorizeFollowRequest(activityPubAccount.userId)
@@ -255,7 +255,7 @@ class ActivityPubNotificationResolver @Inject constructor(
         notificationLastReadId: String
     ): Result<Unit>? {
         if (account.platform.protocol.notActivityPub) return null
-        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         return clientManager.getClient(role)
             .markerRepo
             .saveMarkers(notificationLastReadId = notificationLastReadId)

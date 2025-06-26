@@ -8,7 +8,7 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubApplicationsDao
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubApplication
 import com.zhangke.fread.activitypub.app.internal.platform.FreadApplicationRegisterInfo
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubApplicationRepo @Inject constructor(
@@ -24,8 +24,8 @@ class ActivityPubApplicationRepo @Inject constructor(
         applicationsDao.queryByBaseUrl(baseUrl)
             ?.let(applicationEntityAdapter::toApplication)
             ?.let { return it }
-        val role = IdentityRole(accountUri = null, baseUrl = baseUrl)
-        val application = clientManager.getClient(role)
+        val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
+        val application = clientManager.getClient(locator)
             .appsRepo
             .registerApplication(
                 clientName = FreadApplicationRegisterInfo.CLIENT_NAME,

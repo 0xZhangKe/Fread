@@ -1,11 +1,11 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.following
 
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 data class BskyFeedsExplorerUiState(
     val initializing: Boolean,
-    val role: IdentityRole?,
+    val locator: PlatformLocator?,
     val pageError: Throwable?,
     val refreshing: Boolean,
     val followingFeeds: List<BlueskyFeeds>,
@@ -18,7 +18,7 @@ data class BskyFeedsExplorerUiState(
             return BskyFeedsExplorerUiState(
                 initializing = false,
                 refreshing = false,
-                role = null,
+                locator = null,
                 pageError = null,
                 followingFeeds = emptyList(),
                 reordering = false,

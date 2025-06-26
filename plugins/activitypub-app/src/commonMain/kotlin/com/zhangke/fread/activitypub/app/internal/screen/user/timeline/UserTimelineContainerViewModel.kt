@@ -9,10 +9,9 @@ import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdR
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class UserTimelineContainerViewModel @Inject constructor(
@@ -38,7 +37,7 @@ class UserTimelineContainerViewModel @Inject constructor(
             clientManager = clientManager,
             refactorToNewStatus = refactorToNewStatus,
             tabType = params.tabType,
-            role = params.role,
+            locator = params.locator,
             webFinger = params.webFinger,
             loggedAccountProvider = loggedAccountProvider,
             userId = params.userId,
@@ -47,23 +46,23 @@ class UserTimelineContainerViewModel @Inject constructor(
 
     fun getSubViewModel(
         tabType: UserTimelineTabType,
-        role: IdentityRole,
+        locator: PlatformLocator,
         webFinger: WebFinger,
         userId: String?,
     ): UserTimelineViewModel {
         return obtainSubViewModel(
-            Params(tabType, role, webFinger, userId)
+            Params(tabType, locator, webFinger, userId)
         )
     }
 
     class Params(
         val tabType: UserTimelineTabType,
-        val role: IdentityRole,
+        val locator: PlatformLocator,
         val webFinger: WebFinger,
         val userId: String?,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = tabType.toString() + role.toString() + webFinger + userId
+            get() = tabType.toString() + locator.toString() + webFinger + userId
     }
 }

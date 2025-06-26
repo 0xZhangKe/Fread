@@ -1,12 +1,11 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.source.user
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.activitypub.app.internal.repo.user.UserRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -16,23 +15,21 @@ class SearchUserSourceUseCase @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
 ) {
 
-    suspend operator fun invoke(role: IdentityRole, query: String): Result<StatusSource?> {
-        searchAsUserUri(role, query).getOrNull()?.let { return Result.success(it) }
-        searchAsWebFinger(role, query).getOrNull()?.let { return Result.success(it) }
-        return searchAsUrl(role, query)
+    suspend operator fun invoke(locator: PlatformLocator, query: String): Result<StatusSource?> {
+        searchAsUserUri(locator, query).getOrNull()?.let { return Result.success(it) }
+        searchAsWebFinger(locator, query).getOrNull()?.let { return Result.success(it) }
+        return searchAsUrl(locator, query)
     }
 
-    private suspend fun searchAsUserUri(role: IdentityRole, query: String): Result<StatusSource?> {
+    private suspend fun searchAsUserUri(
+        locator: PlatformLocator,
+        query: String
+    ): Result<StatusSource?> {
         FormalUri.from(query)
             ?.let(userUriTransformer::parse)
             ?.let {
-                val finalRole = if (role.nonRole) {
-                    IdentityRole(it.uri, null)
-                } else {
-                    role
-                }
                 userRepo.getUserSource(
-                    role = finalRole,
+                    locator = locator,
                     userUriInsights = it,
                 ).getOrNull()
             }?.let {
@@ -42,18 +39,12 @@ class SearchUserSourceUseCase @Inject constructor(
     }
 
     private suspend fun searchAsWebFinger(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
     ): Result<StatusSource?> {
         val webFinger = WebFinger.create(query) ?: return Result.success(null)
-        val finalRole = if (role.nonRole) {
-            val baseUrl = FormalBaseUrl.parse(query) ?: return Result.success(null)
-            IdentityRole(null, baseUrl = baseUrl)
-        } else {
-            role
-        }
         return userRepo.lookupUserSource(
-            role = finalRole,
+            locator = locator,
             acct = webFinger.toString(),
         )
     }
@@ -62,7 +53,10 @@ class SearchUserSourceUseCase @Inject constructor(
      * https://m.cmx.im/@webb@androiddev.social
      * https://androiddev.social/@webb
      */
-    private suspend fun searchAsUrl(role: IdentityRole, query: String): Result<StatusSource?> {
+    private suspend fun searchAsUrl(
+        locator: PlatformLocator,
+        query: String
+    ): Result<StatusSource?> {
         WebFinger.create(query) ?: return Result.success(null)
         // FIXME: fix no scheme query
         val uri = query.toPlatformUri()
@@ -74,14 +68,8 @@ class SearchUserSourceUseCase @Inject constructor(
             ?.removePrefix("/")
             ?.removeSuffix("/")
         if (acct.isNullOrEmpty()) return Result.success(null)
-        val finalRole = if (role.nonRole) {
-            val baseUrl = FormalBaseUrl.parse(query)
-            IdentityRole(null, baseUrl)
-        } else {
-            role
-        }
         return userRepo.lookupUserSource(
-            role = finalRole,
+            locator = locator,
             acct = acct,
         )
     }

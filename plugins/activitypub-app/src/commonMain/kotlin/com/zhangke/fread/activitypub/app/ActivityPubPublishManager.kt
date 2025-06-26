@@ -9,7 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusA
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.publish.IPublishBlogManager
@@ -29,7 +29,8 @@ class ActivityPubPublishManager @Inject constructor(
         baseUrlToInstanceInfo[account.platform.baseUrl.toString()]?.let { instance ->
             return Result.success(instance.configuration.toRules())
         }
-        return clientManager.getClient(IdentityRole(account.uri, account.platform.baseUrl))
+        val locator = PlatformLocator(accountUri = account.uri, baseUrl = account.platform.baseUrl)
+        return clientManager.getClient(locator)
             .instanceRepo
             .getInstanceInformation()
             .map {

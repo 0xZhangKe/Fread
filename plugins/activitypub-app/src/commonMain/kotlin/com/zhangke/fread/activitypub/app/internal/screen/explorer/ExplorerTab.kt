@@ -40,7 +40,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_explorer_tab_hashtag_title
 import com.zhangke.fread.activitypub.app.activity_pub_explorer_tab_status_title
 import com.zhangke.fread.activitypub.app.activity_pub_explorer_tab_users_title
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.RecommendAuthorUi
@@ -50,7 +50,7 @@ import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import org.jetbrains.compose.resources.stringResource
 
 class ExplorerTab(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val platform: BlogPlatform,
     private val feedsTabType: ExplorerFeedsTabType,
 ) : PagerTab {
@@ -68,7 +68,7 @@ class ExplorerTab(
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = screen.getViewModel<ExplorerContainerViewModel>()
-            .getViewModel(role, platform, feedsTabType)
+            .getViewModel(locator, platform, feedsTabType)
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
@@ -121,7 +121,7 @@ class ExplorerTab(
                     ExplorerItemUi(
                         modifier = Modifier.fillMaxWidth(),
                         item = item,
-                        role = role,
+                        locator = locator,
                         composedStatusInteraction = composedStatusInteraction,
                         indexInList = index,
                     )
@@ -154,7 +154,7 @@ class ExplorerTab(
     private fun ExplorerItemUi(
         modifier: Modifier,
         item: ExplorerItem,
-        role: IdentityRole,
+        locator: PlatformLocator,
         indexInList: Int,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
@@ -171,7 +171,7 @@ class ExplorerTab(
             is ExplorerItem.ExplorerUser -> {
                 RecommendAuthorUi(
                     modifier = modifier,
-                    role = role,
+                    locator = locator,
                     author = item.user,
                     following = item.following,
                     composedStatusInteraction = composedStatusInteraction,
@@ -183,7 +183,7 @@ class ExplorerTab(
                     modifier = modifier,
                     tag = item.hashtag,
                     onClick = {
-                        composedStatusInteraction.onHashtagClick(role, it)
+                        composedStatusInteraction.onHashtagClick(locator, it)
                     },
                 )
             }

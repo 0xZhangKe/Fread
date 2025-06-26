@@ -27,7 +27,7 @@ class RssAccountManager @Inject constructor() : IAccountManager {
         return emptyList()
     }
 
-    override suspend fun logout(uri: FormalUri): Boolean {
+    override suspend fun logout(account: LoggedAccount): Boolean {
         return false
     }
 

@@ -4,7 +4,6 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
-import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
 
 class LoginToBskyUseCase @Inject constructor(
@@ -18,8 +17,7 @@ class LoginToBskyUseCase @Inject constructor(
         password: String,
         factorToken: String? = null,
     ): Result<BlueskyLoggedAccount> {
-        val role = IdentityRole(baseUrl = baseUrl, accountUri = null)
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClientNoAccount(baseUrl)
         return accountManager.login(client, username, password, factorToken)
     }
 }

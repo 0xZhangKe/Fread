@@ -130,7 +130,7 @@ fun Screen.ExplorerSearchBar(
         onQueryChange = viewModel::onSearchQueryChanged,
         onSearch = {
             active = false
-            navigator.push(SearchScreen(uiState.role, uiState.query))
+            navigator.push(SearchScreen(uiState.locator, uiState.query))
         },
         active = active,
         onActiveChange = { active = it },

@@ -69,7 +69,7 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
@@ -84,12 +84,12 @@ import com.zhangke.fread.statusui.status_ui_user_detail_follows_you
 import org.jetbrains.compose.resources.stringResource
 
 class BskyUserDetailScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val did: String,
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = role.toString() + did
+        get() = locator.toString() + did
 
     @Composable
     override fun Content() {
@@ -99,7 +99,7 @@ class BskyUserDetailScreen(
         val browserLauncher = LocalActivityBrowserLauncher.current
         val activityTextHandler = LocalActivityTextHandler.current
         val viewModel = getViewModel<BskyUserDetailViewModel, BskyUserDetailViewModel.Factory> {
-            it.create(role, did)
+            it.create(locator, did)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarState = rememberSnackbarHostState()
@@ -114,10 +114,10 @@ class BskyUserDetailScreen(
             onUnblockClick = viewModel::onUnblockClick,
             onUnfollowClick = viewModel::onUnfollowClick,
             onFollowerClick = {
-                navigator.push(UserListScreen(role = role, type = UserListType.FOLLOWERS))
+                navigator.push(UserListScreen(locator = locator, type = UserListType.FOLLOWERS))
             },
             onFollowingClick = {
-                navigator.push(UserListScreen(role = role, type = UserListType.FOLLOWING))
+                navigator.push(UserListScreen(locator = locator, type = UserListType.FOLLOWING))
             },
             onOpenInBrowserClick = {
                 uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(it) }
@@ -125,14 +125,14 @@ class BskyUserDetailScreen(
             onCopyLinkClick = {
                 uiState.userHomePageUrl?.let { activityTextHandler.copyText(it) }
             },
-            onEditProfileClick = { navigator.push(EditProfileScreen(role = role)) },
+            onEditProfileClick = { navigator.push(EditProfileScreen(locator = locator)) },
             onMuteClick = { viewModel.onMuteClick(true) },
             onUnmuteClick = { viewModel.onMuteClick(false) },
             onBlockedUserListClick = {
-                navigator.push(UserListScreen(role = role, type = UserListType.BLOCKED))
+                navigator.push(UserListScreen(locator = locator, type = UserListType.BLOCKED))
             },
             onMuteUserListClick = {
-                navigator.push(UserListScreen(role = role, type = UserListType.MUTED))
+                navigator.push(UserListScreen(locator = locator, type = UserListType.MUTED))
             },
         )
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
@@ -211,7 +211,7 @@ class BskyUserDetailScreen(
                     uiState.tabs.map {
                         HomeFeedsTab(
                             contentCanScrollBackward = contentCanScrollBackward,
-                            role = role,
+                            locator = locator,
                             feeds = it,
                         )
                     }

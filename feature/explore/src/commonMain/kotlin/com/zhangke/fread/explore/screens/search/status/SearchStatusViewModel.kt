@@ -12,7 +12,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.updateStatus
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +25,7 @@ class SearchStatusViewModel @Inject constructor(
     statusUpdater: StatusUpdater,
     statusUiStateAdapter: StatusUiStateAdapter,
     refactorToNewStatus: RefactorToNewStatusUseCase,
-    @Assisted val role: IdentityRole,
+    @Assisted val locator: PlatformLocator,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -34,7 +34,7 @@ class SearchStatusViewModel @Inject constructor(
 ) {
 
     fun interface Factory : ViewModelFactory {
-        fun create(role: IdentityRole): SearchStatusViewModel
+        fun create(locator: PlatformLocator): SearchStatusViewModel
     }
 
     private val loadStatusController = LoadableStatusController(viewModelScope)
@@ -76,15 +76,15 @@ class SearchStatusViewModel @Inject constructor(
     }
 
     fun onRefresh(query: String) {
-        loadStatusController.onRefresh(role) {
+        loadStatusController.onRefresh(locator) {
             statusProvider.searchEngine
-                .searchStatus(role, query, null)
+                .searchStatus(locator, query, null)
         }
     }
 
     fun onLoadMore(query: String) {
-        loadStatusController.onLoadMore(role) {
-            statusProvider.searchEngine.searchStatus(role, query, it)
+        loadStatusController.onLoadMore(locator) {
+            statusProvider.searchEngine.searchStatus(locator, query, it)
         }
     }
 }

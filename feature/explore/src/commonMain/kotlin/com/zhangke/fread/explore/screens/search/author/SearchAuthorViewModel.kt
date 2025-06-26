@@ -9,7 +9,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,11 +18,11 @@ import me.tatarka.inject.annotations.Inject
 
 open class SearchAuthorViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    @Assisted val role: IdentityRole,
+    @Assisted val locator: PlatformLocator,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
-        fun create(role: IdentityRole): SearchAuthorViewModel
+        fun create(locator: PlatformLocator): SearchAuthorViewModel
     }
 
     private val _snackMessageFlow = MutableSharedFlow<TextString>()
@@ -47,7 +47,7 @@ open class SearchAuthorViewModel @Inject constructor(
 
     fun onRefresh(query: String) {
         loadableController.onRefresh {
-            statusProvider.searchEngine.searchAuthor(role, query, null)
+            statusProvider.searchEngine.searchAuthor(locator, query, null)
         }
     }
 
@@ -55,14 +55,14 @@ open class SearchAuthorViewModel @Inject constructor(
         val offset = uiState.value.dataList.size
         if (offset == 0) return
         loadableController.onLoadMore {
-            statusProvider.searchEngine.searchAuthor(role, query, offset)
+            statusProvider.searchEngine.searchAuthor(locator, query, offset)
         }
     }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
         launchInViewModel {
             statusProvider.screenProvider
-                .getUserDetailScreen(role, blogAuthor.uri, blogAuthor.userId)
+                .getUserDetailScreen(locator, blogAuthor.uri, blogAuthor.userId)
                 ?.let { _openScreenFlow.emit(it) }
         }
     }

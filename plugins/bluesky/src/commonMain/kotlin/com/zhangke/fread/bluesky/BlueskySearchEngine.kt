@@ -3,6 +3,7 @@ package com.zhangke.fread.bluesky
 import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.SearchActorsQueryParams
 import app.bsky.feed.SearchPostsQueryParams
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
@@ -10,7 +11,7 @@ import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.GetAtIdentifierUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.ISearchEngine
@@ -30,15 +31,16 @@ class BlueskySearchEngine @Inject constructor(
     private val blueskyPlatformRepo: BlueskyPlatformRepo,
     private val statusAdapter: BlueskyStatusAdapter,
     private val platformRepo: BlueskyPlatformRepo,
+    private val accountManager: BlueskyLoggedAccountManager,
 ) : ISearchEngine {
 
     override suspend fun search(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
     ): Result<List<SearchResult>> {
         return supervisorScope {
-            val postsDeferred = async { searchStatus(role, query, null) }
-            val actorsDeferred = async { searchAuthor(role, query, null) }
+            val postsDeferred = async { searchStatus(locator, query, null) }
+            val actorsDeferred = async { searchAuthor(locator, query, null) }
             val postsResult = postsDeferred.await()
             val actorResult = actorsDeferred.await()
             if (postsResult.isFailure && actorResult.isFailure) {
@@ -56,18 +58,18 @@ class BlueskySearchEngine @Inject constructor(
     }
 
     override suspend fun searchStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         maxId: String?,
     ): Result<List<StatusUiState>> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val account = client.loggedAccountProvider()
         val platform = platformRepo.getPlatform(client.baseUrl)
         return client.searchPostsCatching(SearchPostsQueryParams(q = query))
             .map { result ->
                 result.posts.map {
                     statusAdapter.convertToUiState(
-                        role = role,
+                        locator = locator,
                         postView = it,
                         platform = platform,
                         loggedAccount = account,
@@ -77,7 +79,7 @@ class BlueskySearchEngine @Inject constructor(
     }
 
     override suspend fun searchHashtag(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?,
     ): Result<List<Hashtag>> {
@@ -85,22 +87,26 @@ class BlueskySearchEngine @Inject constructor(
     }
 
     override suspend fun searchAuthor(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         return client.searchActorsCatching(SearchActorsQueryParams(q = query))
             .map { result ->
                 result.actors.map { accountAdapter.convertToBlogAuthor(it) }
             }
     }
 
+    override suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
+        return searchSource(getDefaultPlatformLocator(), query)
+    }
+
     override suspend fun searchSource(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
     ): Result<List<StatusSource>> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val identifier = getAtIdentifier(query)
             ?: return client.searchActorsCatching(SearchActorsQueryParams(q = query))
                 .map { result ->
@@ -110,8 +116,19 @@ class BlueskySearchEngine @Inject constructor(
             .map { profile -> listOf(accountAdapter.createSource(profile)) }
     }
 
-    override fun searchContent(
-        role: IdentityRole,
+    override suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>> {
+        val locator = getDefaultPlatformLocator()
+        return searchContent(locator, query)
+    }
+
+    private suspend fun getDefaultPlatformLocator(): PlatformLocator {
+        val baseUrl = accountManager.getAllAccount().firstOrNull()?.platform?.baseUrl
+            ?: blueskyPlatformRepo.getAllPlatform().first().baseUrl
+        return PlatformLocator(baseUrl = baseUrl)
+    }
+
+    override suspend fun searchContent(
+        locator: PlatformLocator,
         query: String,
     ): Flow<List<SearchContentResult>> {
         return flow {
@@ -119,14 +136,11 @@ class BlueskySearchEngine @Inject constructor(
                 .filter { it.compareWithQuery(query) }
                 .map { it.toContentResult() }
                 .let { emit(it) }
-            val finalRole = role.takeUnless { it.nonRole }
-                ?: blueskyPlatformRepo.getAllPlatform().first()
-                    .let { IdentityRole(baseUrl = it.baseUrl) }
-            searchSource(finalRole, query = query)
+            searchSource(locator, query = query)
                 .onSuccess { list ->
                     emit(list.map { SearchContentResult.Source(it) })
                 }
-            clientManager.getClient(finalRole)
+            clientManager.getClient(locator)
                 .searchActorsCatching(SearchActorsQueryParams(q = query))
                 .map { result ->
                     result.actors.map { accountAdapter.createSource(it) }

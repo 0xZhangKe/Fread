@@ -13,7 +13,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusM
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusVisibility
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -39,9 +39,9 @@ class PublishPostUseCase @Inject constructor(
         replyToBlogId: String? = null,
         editingBlogId: String? = null,
     ): Result<Unit> {
-        val role = IdentityRole(account.uri, null)
-        val statusRepo = clientManager.getClient(role).statusRepo
-        val medias = handleMedias(role, attachment).let {
+        val locator = account.locator
+        val statusRepo = clientManager.getClient(locator).statusRepo
+        val medias = handleMedias(locator, attachment).let {
             if (it.isFailure) return Result.failure(it.exceptionOrNull()!!)
             it.getOrThrow()
         }
@@ -72,7 +72,7 @@ class PublishPostUseCase @Inject constructor(
                 statusEntityAdapter.toStatusUiState(
                     entity = it,
                     platform = account.platform,
-                    role = role,
+                    locator = locator,
                     loggedAccount = account,
                 )
             )
@@ -98,7 +98,7 @@ class PublishPostUseCase @Inject constructor(
     }
 
     private suspend fun handleMedias(
-        role: IdentityRole,
+        locator: PlatformLocator,
         attachment: PostStatusAttachment?,
     ): Result<List<String>> {
         if (attachment == null) return Result.success(emptyList())
@@ -119,7 +119,7 @@ class PublishPostUseCase @Inject constructor(
         }
         if (localFiles.isNotEmpty()) {
             val uploadResultList = supervisorScope {
-                localFiles.map { async { uploadMediaWithAlt(role, it) } }.awaitAll()
+                localFiles.map { async { uploadMediaWithAlt(locator, it) } }.awaitAll()
             }
             if (uploadResultList.any { it.isFailure }) {
                 return Result.failure(uploadResultList.first { it.isFailure }.exceptionOrNull()!!)
@@ -155,26 +155,26 @@ class PublishPostUseCase @Inject constructor(
     }
 
     private suspend fun uploadMediaWithAlt(
-        role: IdentityRole,
+        locator: PlatformLocator,
         file: PostStatusMediaAttachmentFile.LocalFile,
     ): Result<String> {
-        return uploadMediaAttachment(role, file.file)
+        return uploadMediaAttachment(locator, file.file)
             .mapCatching { mediaId ->
                 if (file.alt.isNullOrEmpty()) {
                     mediaId
                 } else {
-                    updateAlt(role, mediaId, file.alt).getOrThrow()
+                    updateAlt(locator, mediaId, file.alt).getOrThrow()
                     mediaId
                 }
             }
     }
 
     private suspend fun updateAlt(
-        role: IdentityRole,
+        locator: PlatformLocator,
         fileId: String,
         alt: String?,
     ): Result<Unit> {
-        return clientManager.getClient(role).mediaRepo
+        return clientManager.getClient(locator).mediaRepo
             .updateMedia(id = fileId, description = alt)
             .map { }
     }

@@ -54,24 +54,20 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.richtext.FreadRichText
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteUri
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
-@Destination(PlatformDetailRoute.ROUTE)
 class InstanceDetailScreen(
-    @RouteUri private val route: String = "",
-    private val baseUrl: FormalBaseUrl? = null,
+    private val locator: PlatformLocator,
+    private val baseUrl: FormalBaseUrl,
 ) : BaseScreen() {
 
-    override val key: ScreenKey
-        get() = route + baseUrl
+    override val key: ScreenKey get() = locator.toString() + baseUrl
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
@@ -80,12 +76,7 @@ class InstanceDetailScreen(
         val navigator = LocalNavigator.currentOrThrow
         val navigationResult = navigator.navigationResult
         val viewModel = getViewModel<InstanceDetailViewModel, InstanceDetailViewModel.Factory> {
-            if (baseUrl != null) {
-                it.create(baseUrl)
-            } else {
-                val baseUrl = PlatformDetailRoute.parseParams(route)
-                it.create(baseUrl)
-            }
+            it.create(baseUrl)
         }
         val uiState by viewModel.uiState.collectAsState()
         InstanceDetailContent(
@@ -96,7 +87,7 @@ class InstanceDetailScreen(
                 }
             },
             onUserClick = { role, webFinger ->
-                navigator.push(UserDetailScreen(role = role, webFinger = webFinger))
+                navigator.push(UserDetailScreen(locator = locator, webFinger = webFinger))
             }
         )
     }
@@ -105,7 +96,7 @@ class InstanceDetailScreen(
     private fun InstanceDetailContent(
         uiState: InstanceDetailUiState,
         onBackClick: () -> Unit,
-        onUserClick: (IdentityRole, WebFinger) -> Unit,
+        onUserClick: (PlatformLocator, WebFinger) -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -189,7 +180,7 @@ class InstanceDetailScreen(
     private fun AppBarContent(
         progress: Float,
         uiState: InstanceDetailUiState,
-        onUserClick: (IdentityRole, WebFinger) -> Unit,
+        onUserClick: (PlatformLocator, WebFinger) -> Unit,
     ) {
         val browserLauncher = LocalActivityBrowserLauncher.current
         val loading = uiState.loading
@@ -238,7 +229,8 @@ class InstanceDetailScreen(
                                 .freadPlaceholder(visible = loading)
                                 .noRippleClick {
                                     val account = uiState.modAccount ?: return@noRippleClick
-                                    val role = IdentityRole(accountUri = account.uri, baseUrl)
+                                    val role =
+                                        PlatformLocator(accountUri = account.uri, baseUrl = baseUrl)
                                     onUserClick(role, account.webFinger)
                                 },
                             verticalAlignment = Alignment.CenterVertically,
@@ -281,12 +273,7 @@ class InstanceDetailScreen(
 
             },
             onUrlClick = {
-                val role = if (uiState.baseUrl != null) {
-                    IdentityRole(null, baseUrl = uiState.baseUrl)
-                } else {
-                    null
-                }
-                browserLauncher.launchWebTabInApp(it, role)
+                browserLauncher.launchWebTabInApp(it, locator)
             },
             onMaybeHashtagClick = {},
         )

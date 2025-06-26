@@ -7,7 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.push.IPushManager
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.krouter.KRouter
 import me.tatarka.inject.annotations.Inject
 import kotlin.io.encoding.Base64
@@ -25,8 +25,8 @@ actual class ActivityPubPushManager @Inject constructor(
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    actual suspend fun subscribe(role: IdentityRole, accountId: String) {
-        Log.d("F_TEST", "subscribe for ${role.accountUri}, $accountId")
+    actual suspend fun subscribe(locator: PlatformLocator, accountId: String) {
+        Log.d("F_TEST", "subscribe for ${locator.accountUri}, $accountId")
         val pushManager = pushManager ?: return
         val deviceId = freadConfigManager.getDeviceId()
         val encodedAccountId = Base64.UrlSafe.encode(accountId.encodeToByteArray())
@@ -57,7 +57,7 @@ actual class ActivityPubPushManager @Inject constructor(
         )
         Log.d("F_TEST", "subscribe end point: $endpointUrl")
         Log.d("F_TEST", "subscribe keys : $keys")
-        clientManager.getClient(role)
+        clientManager.getClient(locator)
             .pushRepo
             .subscribePush(subscribeRequest)
             .onSuccess {
@@ -68,10 +68,10 @@ actual class ActivityPubPushManager @Inject constructor(
             }
     }
 
-    actual suspend fun unsubscribe(role: IdentityRole, accountId: String) {
-        Log.d("F_TEST", "unsubscribe for ${role.accountUri}, $accountId")
+    actual suspend fun unsubscribe(locator: PlatformLocator, accountId: String) {
+        Log.d("F_TEST", "unsubscribe for ${locator.accountUri}, $accountId")
         val pushManager = pushManager ?: return
-        clientManager.getClient(role)
+        clientManager.getClient(locator)
             .pushRepo
             .removeSubscription()
             .onSuccess {

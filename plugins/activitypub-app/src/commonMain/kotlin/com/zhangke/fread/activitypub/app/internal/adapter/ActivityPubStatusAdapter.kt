@@ -16,8 +16,8 @@ import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.blog.PostingApplication
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -33,13 +33,13 @@ class ActivityPubStatusAdapter @Inject constructor(
 
     fun toStatusUiState(
         status: Status,
-        role: IdentityRole,
+        locator: PlatformLocator,
         logged: Boolean,
         isOwner: Boolean,
     ): StatusUiState {
         return StatusUiState(
             status = status,
-            role = role,
+            locator = locator,
             logged = logged,
             isOwner = isOwner,
             blogTranslationState = BlogTranslationUiState(
@@ -53,12 +53,12 @@ class ActivityPubStatusAdapter @Inject constructor(
 
     fun toStatusUiState(
         status: Status,
-        role: IdentityRole,
+        locator: PlatformLocator,
         loggedAccount: ActivityPubLoggedAccount?,
     ): StatusUiState {
         return toStatusUiState(
             status = status,
-            role = role,
+            locator = locator,
             logged = loggedAccount != null,
             isOwner = loggedAccount?.webFinger?.equalsDomain(status.intrinsicBlog.author.webFinger) == true,
         )
@@ -67,22 +67,22 @@ class ActivityPubStatusAdapter @Inject constructor(
     suspend fun toStatusUiState(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
-        role: IdentityRole,
+        locator: PlatformLocator,
         loggedAccount: ActivityPubLoggedAccount?,
     ): StatusUiState {
         val status = toStatus(entity, platform)
-        return toStatusUiState(status, role, loggedAccount)
+        return toStatusUiState(status, locator, loggedAccount)
     }
 
     suspend fun toStatusUiState(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
-        role: IdentityRole,
+        locator: PlatformLocator,
         isOwner: Boolean,
         logged: Boolean,
     ): StatusUiState {
         val status = toStatus(entity, platform)
-        return toStatusUiState(status, role, logged = logged, isOwner = isOwner)
+        return toStatusUiState(status, locator, logged = logged, isOwner = isOwner)
     }
 
     suspend fun toStatus(

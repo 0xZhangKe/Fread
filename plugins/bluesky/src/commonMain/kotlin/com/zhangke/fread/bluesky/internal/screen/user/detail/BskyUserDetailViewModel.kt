@@ -18,7 +18,7 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.framework.unknown_error
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.RelationshipUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,14 +36,14 @@ class BskyUserDetailViewModel @Inject constructor(
     private val updateBlock: UpdateBlockUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
     private val refreshSession: RefreshSessionUseCase,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted private val did: String,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            role: IdentityRole,
+            locator: PlatformLocator,
             did: String,
         ): BskyUserDetailViewModel
     }
@@ -70,7 +70,7 @@ class BskyUserDetailViewModel @Inject constructor(
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             _uiState.update { it.copy(loading = showLoading) }
-            val client = clientManager.getClient(role)
+            val client = clientManager.getClient(locator)
             val isOwner = client.loggedAccountProvider()?.did == did
             _uiState.update { it.copy(isOwner = isOwner, tabs = createTabs(isOwner)) }
             client.getProfileCatching(GetProfileQueryParams(Did(did)))
@@ -82,7 +82,7 @@ class BskyUserDetailViewModel @Inject constructor(
                         )
                     }
                     if (isOwner) {
-                        accountManager.updateAccountProfile(role, detailed)
+                        accountManager.updateAccountProfile(locator, detailed)
                         if (!sessionRefreshed) {
                             refreshSession()
                             sessionRefreshed = true
@@ -102,7 +102,7 @@ class BskyUserDetailViewModel @Inject constructor(
     fun onFollowClick() {
         launchInViewModel {
             updateRelationship(
-                role = role,
+                locator = locator,
                 targetDid = did,
                 type = UpdateRelationshipType.FOLLOW,
             ).handleAndRefresh()
@@ -112,7 +112,7 @@ class BskyUserDetailViewModel @Inject constructor(
     fun onUnfollowClick() {
         launchInViewModel {
             updateRelationship(
-                role = role,
+                locator = locator,
                 targetDid = did,
                 type = UpdateRelationshipType.UNFOLLOW,
                 followUri = uiState.value.followUri,
@@ -123,7 +123,7 @@ class BskyUserDetailViewModel @Inject constructor(
     fun onBlockClick() {
         launchInViewModel {
             updateBlock(
-                role = role,
+                locator = locator,
                 did = did,
                 block = true,
                 blockUri = null,
@@ -134,7 +134,7 @@ class BskyUserDetailViewModel @Inject constructor(
     fun onUnblockClick() {
         launchInViewModel {
             updateBlock(
-                role = role,
+                locator = locator,
                 did = did,
                 block = false,
                 blockUri = uiState.value.blockUri,
@@ -144,7 +144,7 @@ class BskyUserDetailViewModel @Inject constructor(
 
     fun onMuteClick(mute: Boolean) {
         launchInViewModel {
-            val client = clientManager.getClient(role)
+            val client = clientManager.getClient(locator)
             val did = Did(did)
             val result = if (mute) {
                 client.muteActorCatching(did)

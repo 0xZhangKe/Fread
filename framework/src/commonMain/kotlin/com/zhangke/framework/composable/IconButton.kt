@@ -48,7 +48,7 @@ fun SimpleIconButton(
             .background(color = if (enabled) colors.containerColor else colors.disabledContainerColor)
             .clickable(
                 enabled = enabled,
-                role = Role.Button,
+                locator = locator.Button,
                 interactionSource = interactionSource,
                 indication =
                     rippleOrFallbackImplementation(

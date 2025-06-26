@@ -5,10 +5,9 @@ import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.GetFeedsStatusUseCase
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class HomeFeedsContainerViewModel @Inject constructor(
@@ -21,10 +20,10 @@ class HomeFeedsContainerViewModel @Inject constructor(
 
     fun getViewModel(
         feeds: BlueskyFeeds,
-        role: IdentityRole,
+        locator: PlatformLocator,
     ): HomeFeedsViewModel {
         return obtainSubViewModel(
-            Params(feeds = feeds, role = role)
+            Params(feeds = feeds, locator = locator)
         )
     }
 
@@ -36,16 +35,16 @@ class HomeFeedsContainerViewModel @Inject constructor(
             statusUpdater = statusUpdater,
             refactorToNewStatus = refactorToNewStatus,
             feeds = params.feeds,
-            role = params.role,
+            locator = params.locator,
         )
     }
 
     class Params(
         val feeds: BlueskyFeeds,
-        val role: IdentityRole,
+        val locator: PlatformLocator,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = feeds.toString() + role
+            get() = feeds.toString() + locator
     }
 }

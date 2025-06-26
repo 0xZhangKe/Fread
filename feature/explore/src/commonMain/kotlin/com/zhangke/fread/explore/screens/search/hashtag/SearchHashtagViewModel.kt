@@ -10,7 +10,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +20,11 @@ import me.tatarka.inject.annotations.Inject
 
 open class SearchHashtagViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
-        fun create(role: IdentityRole): SearchHashtagViewModel
+        fun create(locator: PlatformLocator): SearchHashtagViewModel
     }
 
     private val _snackMessageFlow = MutableSharedFlow<TextString>()
@@ -51,7 +51,7 @@ open class SearchHashtagViewModel @Inject constructor(
 
     fun onRefresh(query: String) {
         loadableController.onRefresh {
-            statusProvider.searchEngine.searchHashtag(role, query, null)
+            statusProvider.searchEngine.searchHashtag(locator, query, null)
         }
     }
 
@@ -59,14 +59,14 @@ open class SearchHashtagViewModel @Inject constructor(
         val offset = uiState.value.dataList.size
         if (offset == 0) return
         loadableController.onLoadMore {
-            statusProvider.searchEngine.searchHashtag(role, query, offset)
+            statusProvider.searchEngine.searchHashtag(locator, query, offset)
         }
     }
 
     fun onHashtagClick(hashtag: Hashtag) {
         launchInViewModel {
             val screen = statusProvider.screenProvider.getTagTimelineScreen(
-                role,
+                locator,
                 hashtag.name,
                 hashtag.protocol
             ) ?: return@launchInViewModel

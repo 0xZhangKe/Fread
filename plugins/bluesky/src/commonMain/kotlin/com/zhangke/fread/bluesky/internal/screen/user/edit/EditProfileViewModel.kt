@@ -19,7 +19,7 @@ import com.zhangke.fread.bluesky.internal.client.selfRkey
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,19 +30,18 @@ import kotlinx.coroutines.supervisorScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
-import sh.christian.ozone.api.RKey
 import sh.christian.ozone.api.model.Blob
 
 class EditProfileViewModel @Inject constructor(
     private val accountManager: BlueskyLoggedAccountManager,
     private val clientManager: BlueskyClientManager,
     private val uploadBlob: UploadBlobUseCase,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
-        fun create(role: IdentityRole): EditProfileViewModel
+        fun create(locator: PlatformLocator): EditProfileViewModel
     }
 
     private val _uiState = MutableStateFlow(EditProfileUiState.default())
@@ -62,7 +61,7 @@ class EditProfileViewModel @Inject constructor(
 
     private fun loadLoggedUser() {
         launchInViewModel {
-            val account = accountManager.getAccount(role)
+            val account = accountManager.getAccount(locator)
             if (account == null) {
                 _snackBarMessage.emit(textOf("Account not found"))
                 return@launchInViewModel
@@ -123,7 +122,7 @@ class EditProfileViewModel @Inject constructor(
                 return@launchInViewModel
             }
             val (avatar, banner) = uploadResult.getOrThrow()
-            val client = clientManager.getClient(role)
+            val client = clientManager.getClient(locator)
             profile = profile.copy(
                 displayName = _uiState.value.userName.text,
                 description = _uiState.value.description.text,
@@ -152,11 +151,11 @@ class EditProfileViewModel @Inject constructor(
         banner: PlatformUri?,
     ): Result<Pair<Blob?, Blob?>> {
         if (avatar == null && banner == null) return Result.success(null to null)
-        if (avatar == null) return uploadBlob(role, banner!!).map { null to it.first }
-        if (banner == null) return uploadBlob(role, avatar).map { it.first to null }
+        if (avatar == null) return uploadBlob(locator, banner!!).map { null to it.first }
+        if (banner == null) return uploadBlob(locator, avatar).map { it.first to null }
         return supervisorScope {
-            val avatarDeferred = async { uploadBlob(role, avatar).map { it.first } }
-            val bannerDeferred = async { uploadBlob(role, banner).map { it.first } }
+            val avatarDeferred = async { uploadBlob(locator, avatar).map { it.first } }
+            val bannerDeferred = async { uploadBlob(locator, banner).map { it.first } }
             val avatarResult = avatarDeferred.await()
             val bannerResult = bannerDeferred.await()
             if (avatarResult.isFailure || bannerResult.isFailure) {
@@ -168,7 +167,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private suspend fun getProfile(didText: String): Result<Profile> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val did = Did(didText)
         return client.getRecordCatching(
             GetRecordQueryParams(

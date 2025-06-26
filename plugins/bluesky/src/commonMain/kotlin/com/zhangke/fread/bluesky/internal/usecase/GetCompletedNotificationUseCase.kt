@@ -15,7 +15,7 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.CompletedBskyNotification
 import com.zhangke.fread.bluesky.internal.model.PagedCompletedBskyNotifications
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
@@ -27,10 +27,10 @@ class GetCompletedNotificationUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         params: ListNotificationsQueryParams,
     ): Result<PagedCompletedBskyNotifications> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val loggedAccount = client.loggedAccountProvider()
         val notificationSerializedCache = mutableMapOf<ListNotificationsNotification, Any>()
         return client.listNotificationsCatching(params)

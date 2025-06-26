@@ -20,8 +20,8 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
@@ -55,8 +55,8 @@ class InteractiveHandler(
             this@InteractiveHandler.onStatusInteractive(status, type)
         }
 
-        override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
-            this@InteractiveHandler.onUserInfoClick(role, blogAuthor)
+        override fun onUserInfoClick(locator: PlatformLocator, blogAuthor: BlogAuthor) {
+            this@InteractiveHandler.onUserInfoClick(locator, blogAuthor)
         }
 
         override fun onVoted(status: StatusUiState, blogPollOptions: List<BlogPoll.Option>) {
@@ -64,66 +64,66 @@ class InteractiveHandler(
         }
 
         override fun onHashtagInStatusClick(
-            role: IdentityRole,
+            locator: PlatformLocator,
             hashtagInStatus: HashtagInStatus
         ) {
-            this@InteractiveHandler.onHashtagClick(role, hashtagInStatus)
+            this@InteractiveHandler.onHashtagClick(locator, hashtagInStatus)
         }
 
         override fun onMaybeHashtagClick(
-            role: IdentityRole,
+            locator: PlatformLocator,
             protocol: StatusProviderProtocol,
             hashtag: String,
         ) {
-            this@InteractiveHandler.onMaybeHashtagClick(role, protocol, hashtag)
+            this@InteractiveHandler.onMaybeHashtagClick(locator, protocol, hashtag)
         }
 
-        override fun onMentionClick(role: IdentityRole, mention: Mention) {
-            this@InteractiveHandler.onMentionClick(role, mention)
+        override fun onMentionClick(locator: PlatformLocator, mention: Mention) {
+            this@InteractiveHandler.onMentionClick(locator, mention)
         }
 
         override fun onMentionClick(
-            role: IdentityRole,
+            locator: PlatformLocator,
             did: String,
             protocol: StatusProviderProtocol
         ) {
-            this@InteractiveHandler.onMentionClick(role, did, protocol)
+            this@InteractiveHandler.onMentionClick(locator, did, protocol)
         }
 
         override fun onStatusClick(status: StatusUiState) {
             this@InteractiveHandler.onStatusClick(status)
         }
 
-        override fun onBlogClick(role: IdentityRole, blog: Blog) {
-            this@InteractiveHandler.onBlogClick(role, blog)
+        override fun onBlogClick(locator: PlatformLocator, blog: Blog) {
+            this@InteractiveHandler.onBlogClick(locator, blog)
         }
 
-        override fun onBlockClick(role: IdentityRole, blog: Blog) {
-            this@InteractiveHandler.onBlogClick(role, blog)
+        override fun onBlockClick(locator: PlatformLocator, blog: Blog) {
+            this@InteractiveHandler.onBlogClick(locator, blog)
         }
 
-        override fun onFollowClick(role: IdentityRole, target: BlogAuthor) {
-            this@InteractiveHandler.onFollowClick(role, target)
+        override fun onFollowClick(locator: PlatformLocator, target: BlogAuthor) {
+            this@InteractiveHandler.onFollowClick(locator, target)
         }
 
-        override fun onUnfollowClick(role: IdentityRole, target: BlogAuthor) {
-            this@InteractiveHandler.onUnfollowClick(role, target)
+        override fun onUnfollowClick(locator: PlatformLocator, target: BlogAuthor) {
+            this@InteractiveHandler.onUnfollowClick(locator, target)
         }
 
-        override fun onHashtagClick(role: IdentityRole, tag: Hashtag) {
-            this@InteractiveHandler.onHashtagClick(role, tag)
+        override fun onHashtagClick(locator: PlatformLocator, tag: Hashtag) {
+            this@InteractiveHandler.onHashtagClick(locator, tag)
         }
 
-        override fun onBoostedClick(role: IdentityRole, status: StatusUiState) {
-            this@InteractiveHandler.onBoostedClick(role, status)
+        override fun onBoostedClick(locator: PlatformLocator, status: StatusUiState) {
+            this@InteractiveHandler.onBoostedClick(locator, status)
         }
 
-        override fun onFavouritedClick(role: IdentityRole, status: StatusUiState) {
-            this@InteractiveHandler.onFavouritedClick(role, status)
+        override fun onFavouritedClick(locator: PlatformLocator, status: StatusUiState) {
+            this@InteractiveHandler.onFavouritedClick(locator, status)
         }
 
-        override fun onTranslateClick(role: IdentityRole, status: StatusUiState) {
-            this@InteractiveHandler.onTranslateClick(role, status)
+        override fun onTranslateClick(locator: PlatformLocator, status: StatusUiState) {
+            this@InteractiveHandler.onTranslateClick(locator, status)
         }
 
         override fun onShowOriginalClick(status: StatusUiState) {
@@ -146,23 +146,23 @@ class InteractiveHandler(
 
     override fun onStatusInteractive(status: StatusUiState, type: StatusActionType) {
         if (type == StatusActionType.REPLY) {
-            screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
+            screenProvider.getReplyBlogScreen(status.locator, status.status.intrinsicBlog)
                 ?.let(::openScreen)
             return
         }
         if (type == StatusActionType.EDIT) {
-            screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
+            screenProvider.getEditBlogScreen(status.locator, status.status.intrinsicBlog)
                 ?.let(::openScreen)
             return
         }
         if (type == StatusActionType.QUOTE) {
-            screenProvider.getQuoteBlogScreen(status.role, status.status.intrinsicBlog)
+            screenProvider.getQuoteBlogScreen(status.locator, status.status.intrinsicBlog)
                 ?.let(::openScreen)
             return
         }
         coroutineScope.launch {
             val result = statusProvider.statusResolver
-                .interactive(status.role, status.status, type)
+                .interactive(status.locator, status.status, type)
                 .map { s -> s?.let { statusUiStateAdapter.toStatusUiState(status, it) } }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
@@ -179,9 +179,9 @@ class InteractiveHandler(
         }
     }
 
-    override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
+    override fun onUserInfoClick(locator: PlatformLocator, blogAuthor: BlogAuthor) {
         coroutineScope.launch {
-            screenProvider.getUserDetailScreen(role, blogAuthor.uri, blogAuthor.userId)
+            screenProvider.getUserDetailScreen(locator, blogAuthor.uri, blogAuthor.userId)
                 ?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
@@ -194,7 +194,7 @@ class InteractiveHandler(
                 )
             } else {
                 StatusContextScreen(
-                    role = status.role,
+                    locator = status.locator,
                     serializedStatus = refactorToNewStatus(status).let {
                         globalJson.encodeToString(serializer(), it)
                     },
@@ -205,7 +205,7 @@ class InteractiveHandler(
         }
     }
 
-    override fun onBlogClick(role: IdentityRole, blog: Blog) {
+    override fun onBlogClick(locator: PlatformLocator, blog: Blog) {
         coroutineScope.launch {
             val screen = if (blog.platform.protocol.isRss) {
                 RssBlogDetailScreen(
@@ -213,7 +213,7 @@ class InteractiveHandler(
                 )
             } else {
                 StatusContextScreen(
-                    role = role,
+                    locator = locator,
                     serializedBlog = globalJson.encodeToString(serializer(), blog),
                     blogTranslationUiState = null,
                 )
@@ -225,7 +225,7 @@ class InteractiveHandler(
     override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {
         coroutineScope.launch {
             val result = statusProvider.statusResolver
-                .votePoll(status.role, status.status.intrinsicBlog, votedOption)
+                .votePoll(status.locator, status.status.intrinsicBlog, votedOption)
                 .map { statusUiStateAdapter.toStatusUiState(status, it) }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
@@ -236,10 +236,10 @@ class InteractiveHandler(
         }
     }
 
-    override fun onFollowClick(role: IdentityRole, target: BlogAuthor) {
+    override fun onFollowClick(locator: PlatformLocator, target: BlogAuthor) {
         coroutineScope.launch {
             statusProvider.statusResolver
-                .follow(role, target)
+                .follow(locator, target)
                 .onSuccess {
                     onInteractiveHandleResult(
                         InteractiveHandleResult.UpdateFollowState(
@@ -253,10 +253,10 @@ class InteractiveHandler(
         }
     }
 
-    override fun onUnfollowClick(role: IdentityRole, target: BlogAuthor) {
+    override fun onUnfollowClick(locator: PlatformLocator, target: BlogAuthor) {
         coroutineScope.launch {
             statusProvider.statusResolver
-                .unfollow(role, target)
+                .unfollow(locator, target)
                 .onSuccess {
                     onInteractiveHandleResult(
                         InteractiveHandleResult.UpdateFollowState(
@@ -270,83 +270,87 @@ class InteractiveHandler(
         }
     }
 
-    override fun onMentionClick(role: IdentityRole, mention: Mention) {
+    override fun onMentionClick(locator: PlatformLocator, mention: Mention) {
         coroutineScope.launch {
             screenProvider.getUserDetailScreen(
-                role = role,
+                locator = locator,
                 webFinger = mention.webFinger,
                 protocol = mention.protocol,
             )?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
 
-    override fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol) {
+    override fun onMentionClick(
+        locator: PlatformLocator,
+        did: String,
+        protocol: StatusProviderProtocol
+    ) {
         coroutineScope.launch {
             screenProvider.getUserDetailScreen(
-                role = role,
+                locator = locator,
                 did = did,
                 protocol = protocol,
             )?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
 
-    override fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus) {
+    override fun onHashtagClick(locator: PlatformLocator, tag: HashtagInStatus) {
         openHashtagTimelineScreen(
-            role = role,
+            locator = locator,
             tag = tag.name,
             protocol = tag.protocol,
         )
     }
 
-    override fun onHashtagClick(role: IdentityRole, tag: Hashtag) {
+    override fun onHashtagClick(locator: PlatformLocator, tag: Hashtag) {
         openHashtagTimelineScreen(
-            role = role,
+            locator = locator,
             tag = tag.name,
             protocol = tag.protocol,
         )
     }
 
     override fun onMaybeHashtagClick(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol,
         tag: String,
     ) {
-        openHashtagTimelineScreen(role = role, tag = tag, protocol = protocol)
+        openHashtagTimelineScreen(locator = locator, tag = tag, protocol = protocol)
     }
 
     private fun openHashtagTimelineScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         tag: String,
         protocol: StatusProviderProtocol,
     ) {
         screenProvider.getTagTimelineScreen(
-            role = role,
+            locator = locator,
             tag = tag,
             protocol = protocol
         )?.let(::openScreen)
     }
 
-    private fun onBoostedClick(role: IdentityRole, status: StatusUiState) {
+    private fun onBoostedClick(locator: PlatformLocator, status: StatusUiState) {
         screenProvider.getBlogBoostedScreen(
-            role = role,
+            locator = locator,
             blog = status.status.intrinsicBlog,
             protocol = status.status.intrinsicBlog.platform.protocol,
         )?.let(::openScreen)
     }
 
-    private fun onFavouritedClick(role: IdentityRole, status: StatusUiState) {
+    private fun onFavouritedClick(locator: PlatformLocator, status: StatusUiState) {
         screenProvider.getBlogFavouritedScreen(
-            role = role,
+            locator = locator,
             blog = status.status.intrinsicBlog,
             protocol = status.status.intrinsicBlog.platform.protocol,
         )?.let(::openScreen)
     }
 
-    private fun onTranslateClick(role: IdentityRole, status: StatusUiState) {
+    private fun onTranslateClick(locator: PlatformLocator, status: StatusUiState) {
         coroutineScope.launch {
             onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(status.translating()))
             statusProvider.statusResolver
-                .translate(role, status.status, getDefaultLocale().languageCode)
+                .translate(locator, status.status, getDefaultLocale().languageCode)
                 .onFailure {
                     mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
                     onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(status.translateFinish()))

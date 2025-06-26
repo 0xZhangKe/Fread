@@ -11,17 +11,20 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.fread.common.db.converts.IdentityRoleConverter
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.common.db.converts.PlatformLocatorConverter
+import com.zhangke.fread.status.model.PlatformLocator
 
-private const val DB_VERSION = 1
+private const val DB_VERSION = 2
 private const val TABLE_NAME = "activity_pub_status_read_state"
 
 @Entity(tableName = TABLE_NAME, primaryKeys = ["role", "type", "listId"])
 data class ActivityPubStatusReadStateEntity(
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val type: ActivityPubStatusSourceType,
     val listId: String,
     val latestReadId: String?,
@@ -30,15 +33,15 @@ data class ActivityPubStatusReadStateEntity(
 @Dao
 interface ActivityPubStatusReadStateDao {
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type")
+    @Query("SELECT * FROM $TABLE_NAME WHERE locator = :locator AND type = :type")
     suspend fun query(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
     ): ActivityPubStatusReadStateEntity?
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId")
+    @Query("SELECT * FROM $TABLE_NAME WHERE locator = :locator AND type = :type AND listId = :listId")
     suspend fun queryList(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String,
     ): ActivityPubStatusReadStateEntity?
@@ -50,10 +53,9 @@ interface ActivityPubStatusReadStateDao {
     suspend fun delete(entity: ActivityPubStatusReadStateEntity)
 }
 
-
 @TypeConverters(
     ActivityPubStatusSourceTypeConverter::class,
-    IdentityRoleConverter::class,
+    PlatformLocatorConverter::class,
 )
 @Database(
     entities = [ActivityPubStatusReadStateEntity::class],
@@ -67,6 +69,12 @@ abstract class ActivityPubStatusReadStateDatabases : RoomDatabase() {
 
     companion object {
         internal const val DB_NAME = "activity_pub_status_read_state.db"
+    }
+
+    internal class StatusReadState1to2Migration : Migration(1, 2) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL("DELETE FROM $TABLE_NAME")
+        }
     }
 }
 

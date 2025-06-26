@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.usecase.status
 
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
@@ -13,7 +13,7 @@ class StatusInteractiveUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         type: StatusActionType,
     ): Result<Status?> {
@@ -22,7 +22,7 @@ class StatusInteractiveUseCase @Inject constructor(
         } else {
             status.id
         }
-        val statusRepo = clientManager.getClient(role).statusRepo
+        val statusRepo = clientManager.getClient(locator).statusRepo
         val blog = status.intrinsicBlog
         val interactionResult = when (type) {
             StatusActionType.LIKE -> {

@@ -27,11 +27,11 @@ import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.explore.Res
 import com.zhangke.fread.explore.explorer_search_tab_title_hashtag
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import org.jetbrains.compose.resources.stringResource
 
-internal class SearchedHashtagTab(private val role: IdentityRole, private val query: String) : BasePagerTab() {
+internal class SearchedHashtagTab(private val locator: PlatformLocator, private val query: String) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -45,7 +45,7 @@ internal class SearchedHashtagTab(private val role: IdentityRole, private val qu
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = with(screen) {
             getViewModel<SearchHashtagViewModel, SearchHashtagViewModel.Factory> {
-                it.create(role)
+                it.create(locator)
             }
         }
         val uiState by viewModel.uiState.collectAsState()

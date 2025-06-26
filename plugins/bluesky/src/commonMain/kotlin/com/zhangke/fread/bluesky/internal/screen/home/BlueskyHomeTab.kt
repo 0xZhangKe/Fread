@@ -51,7 +51,7 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreen
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.NotLoginPageError
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
@@ -79,7 +79,7 @@ class BlueskyHomeTab(
             screen = screen,
             uiState = uiState,
             snackBarHostState = snackBarHostState,
-            onPostBlogClick = { navigator.push(PublishPostScreen(uiState.role)) },
+            onPostBlogClick = { uiState.locator?.let { navigator.push(PublishPostScreen(it)) } },
             onTitleClick = {},
             onLoginClick = {
                 uiState.content?.baseUrl?.let { baseUrl ->
@@ -159,7 +159,7 @@ class BlueskyHomeTab(
                 ) {
                     if (uiState.content != null) {
                         val tabList =
-                            remember(uiState) { createTabList(uiState.content, uiState.role) }
+                            remember(uiState) { createTabList(uiState.content, uiState.locator) }
                         if (!uiState.initializing && tabList.isEmpty() && uiState.account == null) {
                             NotLoginPageError(
                                 modifier = Modifier.padding(top = 64.dp),
@@ -252,8 +252,12 @@ class BlueskyHomeTab(
         }
     }
 
-    private fun createTabList(content: BlueskyContent, role: IdentityRole): List<HomeFeedsTab> {
+    private fun createTabList(
+        content: BlueskyContent,
+        locator: PlatformLocator?,
+    ): List<HomeFeedsTab> {
+        if (locator == null) return emptyList()
         return content.feedsList.filter { it.pinned }
-            .map { HomeFeedsTab(feeds = it, role = role) }
+            .map { HomeFeedsTab(feeds = it, locator = locator) }
     }
 }

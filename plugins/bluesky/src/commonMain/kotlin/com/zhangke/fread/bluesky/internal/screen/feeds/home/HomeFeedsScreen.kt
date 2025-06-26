@@ -19,19 +19,19 @@ import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.feeds
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
 class HomeFeedsScreen(
     private val feedsJson: String,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
 ) : BaseScreen() {
 
     companion object {
 
-        fun create(feeds: BlueskyFeeds, role: IdentityRole): HomeFeedsScreen {
+        fun create(feeds: BlueskyFeeds, locator: PlatformLocator): HomeFeedsScreen {
             return HomeFeedsScreen(
-                role = role,
+                locator = locator,
                 feedsJson = globalJson.encodeToString(
                     serializer = BlueskyFeeds.serializer(),
                     value = feeds,
@@ -49,7 +49,7 @@ class HomeFeedsScreen(
         val tab = remember {
             HomeFeedsTab(
                 feeds = globalJson.decodeFromString(feedsJson),
-                role = role,
+                locator = locator,
             )
         }
         Scaffold(

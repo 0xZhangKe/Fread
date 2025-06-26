@@ -10,7 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,15 +23,15 @@ import me.tatarka.inject.annotations.Inject
 class TagListViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val activityPubTagAdapter: ActivityPubTagAdapter,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
-        fun create(role: IdentityRole): TagListViewModel
+        fun create(locator: PlatformLocator): TagListViewModel
     }
 
-    private val _uiState = MutableStateFlow(TagListUiState.default(role))
+    private val _uiState = MutableStateFlow(TagListUiState.default(locator))
     val uiState: StateFlow<TagListUiState> = _uiState
 
     private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
@@ -92,7 +92,7 @@ class TagListViewModel @Inject constructor(
     }
 
     private suspend fun fetchFollowedTags(maxId: String? = null): Result<List<Hashtag>> {
-        return clientManager.getClient(role)
+        return clientManager.getClient(locator)
             .accountRepo
             .getFollowedTags(maxId = maxId)
             .map { pagingResult ->

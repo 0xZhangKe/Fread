@@ -17,11 +17,11 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 class HomeFeedsTab(
     private val feeds: BlueskyFeeds,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val contentCanScrollBackward: MutableState<Boolean>? = null,
 ) : PagerTab {
 
@@ -34,7 +34,8 @@ class HomeFeedsTab(
         nestedScrollConnection: NestedScrollConnection?
     ) {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = screen.getViewModel<HomeFeedsContainerViewModel>().getViewModel(feeds, role)
+        val viewModel =
+            screen.getViewModel<HomeFeedsContainerViewModel>().getViewModel(feeds, locator)
         val uiState by viewModel.uiState.collectAsState()
 
         FeedsContent(
@@ -50,9 +51,8 @@ class HomeFeedsTab(
             onImmersiveEvent = {},
             onScrollInProgress = {},
             onLoginClick = {
-                role.baseUrl
-                    ?.let { AddBlueskyContentScreen(baseUrl = it, loginMode = true) }
-                    ?.let { navigator.push(it) }
+                AddBlueskyContentScreen(baseUrl = locator.baseUrl, loginMode = true)
+                    .let { navigator.push(it) }
             },
         )
 

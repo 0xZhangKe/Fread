@@ -25,7 +25,6 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.GenerateInitPostStatusUiStateUseCase
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
-import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
 import com.zhangke.fread.activitypub.app.post_status_poll_is_empty
@@ -37,9 +36,8 @@ import com.zhangke.fread.commonbiz.shared.screen.post_status_content_is_empty
 import com.zhangke.fread.commonbiz.shared.screen.post_status_failed
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusVisibility
-import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -62,7 +60,6 @@ class PostStatusViewModel @Inject constructor(
     private val generateInitPostStatusUiState: GenerateInitPostStatusUiStateUseCase,
     private val clientManager: ActivityPubClientManager,
     private val publishPost: PublishPostUseCase,
-    private val platformUriTransformer: PlatformUriTransformer,
     @Assisted private val screenParams: PostStatusScreenParams,
     private val platformUriHelper: PlatformUriHelper,
 ) : ViewModel() {
@@ -97,19 +94,17 @@ class PostStatusViewModel @Inject constructor(
 
     private fun loadPostStatusRules() {
         launchInViewModel {
-            _uiState.mapNotNull { it.successDataOrNull()?.account?.platform }
+            _uiState.mapNotNull { it.successDataOrNull()?.account }
                 .distinctUntilChanged()
-                .mapNotNull { FormalUri.from(it.uri) }
-                .mapNotNull { platformUriTransformer.parse(it) }
-                .collect { platformInsights ->
-                    val platformBaseUrl = platformInsights.serverBaseUrl
-                    getCustomEmoji(platformBaseUrl)
+                .mapNotNull { it.locator }
+                .collect { locator ->
+                    getCustomEmoji(locator)
                         .onSuccess {
                             _uiState.updateOnSuccess { state -> state.copy(emojiList = it) }
                         }.onFailure {
                             _snackMessage.emitTextMessageFromThrowable(it)
                         }
-                    getInstancePostStatusRules(platformBaseUrl)
+                    getInstancePostStatusRules(locator)
                         .onSuccess {
                             _uiState.updateOnSuccess { state -> state.copy(rules = it) }
                         }.onFailure {
@@ -136,7 +131,8 @@ class PostStatusViewModel @Inject constructor(
     private fun maybeSearchAccountForMention(content: TextFieldValue) {
         val account = _uiState.value.successDataOrNull()?.account ?: return
         searchMentionUserJob?.cancel()
-        val role = IdentityRole(accountUri = account.uri, null)
+        val platformLocator =
+            PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         val mentionText = MentionTextUtil.findTypingMentionName(content)?.removePrefix("@")
         if (mentionText == null || mentionText.length < 2) {
             _uiState.updateOnSuccess {
@@ -148,7 +144,7 @@ class PostStatusViewModel @Inject constructor(
             _uiState.updateOnSuccess {
                 it.copy(mentionState = LoadableState.loading())
             }
-            clientManager.getClient(role = role)
+            clientManager.getClient(locator = platformLocator)
                 .accountRepo
                 .search(
                     query = mentionText,

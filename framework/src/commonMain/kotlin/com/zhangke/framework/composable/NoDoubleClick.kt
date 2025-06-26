@@ -17,7 +17,7 @@ fun Modifier.noDoubleClick(
     return clickable(
         enabled = enabled,
         onClickLabel = onClickLabel,
-        role = role,
+        locator = locator,
         onClick = {
             val currentTime = Clock.System.now().toEpochMilliseconds()
             if (currentTime - latestClickTime > intervalThreshold) {

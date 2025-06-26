@@ -28,12 +28,12 @@ import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.explore.Res
 import com.zhangke.fread.explore.explorer_search_tab_title_author
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.BlogAuthorUi
 import org.jetbrains.compose.resources.stringResource
 
 internal class SearchedAuthorTab(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val query: String,
 ) : BasePagerTab() {
 
@@ -47,7 +47,7 @@ internal class SearchedAuthorTab(
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = screen.getViewModel<SearchAuthorViewModel, SearchAuthorViewModel.Factory> {
-            it.create(role)
+            it.create(locator)
         }
         val uiState by viewModel.uiState.collectAsState()
 
@@ -102,7 +102,7 @@ internal class SearchedAuthorTab(
                     author = item,
                     onClick = onUserInfoClick,
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, role)
+                        browserLauncher.launchWebTabInApp(it, locator)
                     },
                 )
             }

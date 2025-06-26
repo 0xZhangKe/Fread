@@ -13,7 +13,7 @@ import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdatePinnedFeedsOrderUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,14 +30,14 @@ class BskyFollowingFeedsViewModel @Inject constructor(
     private val updatePinnedFeedsOrder: UpdatePinnedFeedsOrderUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
     @Assisted private val contentId: String?,
-    @Assisted private val role: IdentityRole?,
+    @Assisted private val locator: PlatformLocator?,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
             contentId: String?,
-            role: IdentityRole?,
+            locator: PlatformLocator?,
         ): BskyFollowingFeedsViewModel
     }
 
@@ -52,7 +52,7 @@ class BskyFollowingFeedsViewModel @Inject constructor(
 
     private var initJob: Job? = null
 
-    private var cachedRole: IdentityRole? = role
+    private var cachedLocator: PlatformLocator? = locator
 
     init {
         loadFeedsList(false)
@@ -102,20 +102,20 @@ class BskyFollowingFeedsViewModel @Inject constructor(
                     pageError = null,
                 )
             }
-            val roleResult = getRole()
-            if (roleResult.isFailure) {
+            val locatorResult = getLocator()
+            if (locatorResult.isFailure) {
                 _uiState.update {
                     it.copy(
                         initializing = false,
                         refreshing = false,
-                        pageError = roleResult.exceptionOrNull(),
+                        pageError = locatorResult.exceptionOrNull(),
                     )
                 }
                 return@launch
             }
-            val role = roleResult.getOrThrow()
-            _uiState.update { it.copy(role = role) }
-            getFollowingFeeds(role)
+            val locator = locatorResult.getOrThrow()
+            _uiState.update { it.copy(locator = locator) }
+            getFollowingFeeds(locator)
                 .onSuccess { list ->
                     _uiState.update {
                         it.copy(
@@ -143,20 +143,20 @@ class BskyFollowingFeedsViewModel @Inject constructor(
         }
         launchInViewModel {
             _uiState.update { it.copy(reordering = true) }
-            val roleResult = getRole()
-            if (roleResult.isFailure) {
+            val locatorResult = getLocator()
+            if (locatorResult.isFailure) {
                 _uiState.update { it.copy(reordering = false) }
-                _snackBarMessage.emitTextMessageFromThrowable(roleResult.exceptionOrThrow())
+                _snackBarMessage.emitTextMessageFromThrowable(locatorResult.exceptionOrThrow())
                 return@launchInViewModel
             }
-            val role = roleResult.getOrThrow()
+            val locator = locatorResult.getOrThrow()
             if (endIndex > followingFeeds.lastIndex) {
                 followingFeeds.add(followingFeeds.removeAt(startIndex))
             } else {
                 followingFeeds.add(endIndex, followingFeeds.removeAt(startIndex))
             }
             updatePinnedFeedsOrder(
-                role = role,
+                locator = locator,
                 feeds = followingFeeds,
             ).onSuccess {
                 _uiState.update { it.copy(reordering = false) }
@@ -174,10 +174,10 @@ class BskyFollowingFeedsViewModel @Inject constructor(
                 contentRepo.delete(contentId)
             } else {
                 contentRepo.getAllContent().filterIsInstance<BlueskyContent>()
-                    .firstOrNull { it.baseUrl == role?.baseUrl }
+                    .firstOrNull { it.baseUrl == locator?.baseUrl }
                     ?.let { contentRepo.delete(it.id) }
             }
-            getRole().onSuccess { role ->
+            getLocator().onSuccess { role ->
                 accountManager.getAllAccount().firstOrNull {
                     it.fromPlatform.baseUrl == role.baseUrl
                 }?.let {
@@ -188,15 +188,15 @@ class BskyFollowingFeedsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getRole(): Result<IdentityRole> {
-        if (cachedRole != null) return Result.success(cachedRole!!)
+    private suspend fun getLocator(): Result<PlatformLocator> {
+        if (cachedLocator != null) return Result.success(cachedLocator!!)
         val content = contentId?.let { contentRepo.getContent(it) }?.let { it as? BlueskyContent }
         if (content == null) return Result.failure(IllegalArgumentException("Content not found $contentId"))
         return Result.success(
-            IdentityRole(
-                accountUri = null,
+            PlatformLocator(
+                accountUri = content.accountUri,
                 baseUrl = content.baseUrl,
             )
-        ).onSuccess { this.cachedRole = it }
+        ).onSuccess { this.cachedLocator = it }
     }
 }

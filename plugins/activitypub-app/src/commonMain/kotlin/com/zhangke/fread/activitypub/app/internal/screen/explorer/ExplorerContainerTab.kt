@@ -7,11 +7,11 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 
 class ExplorerContainerTab(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val platform: BlogPlatform,
 ) : PagerTab {
 
@@ -23,17 +23,17 @@ class ExplorerContainerTab(
         val tabs = remember {
             listOf(
                 ExplorerTab(
-                    role = role,
+                    locator = locator,
                     platform = platform,
                     feedsTabType = ExplorerFeedsTabType.STATUS,
                 ),
                 ExplorerTab(
-                    role = role,
+                    locator = locator,
                     platform = platform,
                     feedsTabType = ExplorerFeedsTabType.HASHTAG,
                 ),
                 ExplorerTab(
-                    role = role,
+                    locator = locator,
                     platform = platform,
                     feedsTabType = ExplorerFeedsTabType.USERS,
                 ),

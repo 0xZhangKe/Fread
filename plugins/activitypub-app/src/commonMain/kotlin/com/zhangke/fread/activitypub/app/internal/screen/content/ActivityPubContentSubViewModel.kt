@@ -2,13 +2,12 @@ package com.zhangke.fread.activitypub.app.internal.screen.content
 
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.usecase.UpdateActivityPubUserListUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
+import com.zhangke.fread.activitypub.app.internal.utils.createPlatformLocator
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,11 +37,11 @@ class ActivityPubContentSubViewModel(
                 .map { it as? ActivityPubContent }
                 .collect { contentConfig ->
                     if (contentConfig != null) {
-                        val role = IdentityRole(accountUri = null, baseUrl = contentConfig.baseUrl)
+                        val locator = createPlatformLocator(contentConfig)
                         _uiState.update {
-                            it.copy(role = role, config = contentConfig)
+                            it.copy(locator = locator, config = contentConfig)
                         }
-                        startObserveAccount(contentConfig.baseUrl)
+                        startObserveAccount(contentConfig)
                         updateUserCreateList()
                     } else {
                         _uiState.update {
@@ -55,10 +54,15 @@ class ActivityPubContentSubViewModel(
         }
     }
 
-    private fun startObserveAccount(baseUrl: FormalBaseUrl) {
+    private fun startObserveAccount(content: ActivityPubContent) {
         observeAccountJob?.cancel()
+        val accountUri = content.accountUri
+        if (accountUri == null) {
+            _uiState.update { it.copy(account = null) }
+            return
+        }
         observeAccountJob = launchInViewModel {
-            accountManager.observeAccount(baseUrl)
+            accountManager.observeAccount(accountUri)
                 .distinctUntilChanged()
                 .collect { account ->
                     _uiState.update { it.copy(account = account) }
@@ -70,12 +74,11 @@ class ActivityPubContentSubViewModel(
 
     private fun updateUserCreateList() {
         if (userCreatedListUpdated) return
-        if (_uiState.value.account == null) return
         userCreatedListUpdated = true
         updateUserListJob?.cancel()
-        val role = _uiState.value.role ?: return
+        val locator = _uiState.value.locator ?: return
         updateUserListJob = launchInViewModel {
-            getUserCreatedList(role)
+            getUserCreatedList(locator)
                 .map { list ->
                     list.map {
                         // 此处的 order 并不会使用，repo 内部会重新计算，因此次数放一个较大的值填充即可。

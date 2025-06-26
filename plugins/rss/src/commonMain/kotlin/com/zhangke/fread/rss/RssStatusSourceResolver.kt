@@ -1,14 +1,12 @@
 package com.zhangke.fread.rss
 
 import com.zhangke.framework.utils.exceptionOrThrow
-import com.zhangke.fread.rss.internal.adapter.RssStatusAdapter
 import com.zhangke.fread.rss.internal.repo.RssRepo
 import com.zhangke.fread.rss.internal.rss.RssFetcher
 import com.zhangke.fread.rss.internal.source.RssSourceTransformer
 import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
@@ -17,15 +15,11 @@ import me.tatarka.inject.annotations.Inject
 class RssStatusSourceResolver @Inject constructor(
     private val rssUriTransformer: RssUriTransformer,
     private val rssSourceTransformer: RssSourceTransformer,
-    private val rssStatusAdapter: RssStatusAdapter,
     private val rssRepo: RssRepo,
     private val rssFetcher: RssFetcher,
 ) : IStatusSourceResolver {
 
-    override suspend fun resolveSourceByUri(
-        role: IdentityRole?,
-        uri: FormalUri
-    ): Result<StatusSource?> {
+    override suspend fun resolveSourceByUri(uri: FormalUri): Result<StatusSource?> {
         if (!uri.isRssUri) return Result.success(null)
         val uriInsight = rssUriTransformer.parse(uri) ?: return Result.failure(
             IllegalArgumentException("Unknown uri: $uri")

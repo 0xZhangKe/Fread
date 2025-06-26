@@ -45,48 +45,48 @@ fun StatusUi(
             showDivider = threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
             onMediaClick = onMediaClick,
             onUserInfoClick = {
-                composedStatusInteraction.onUserInfoClick(status.role, it)
+                composedStatusInteraction.onUserInfoClick(status.locator, it)
             },
             onVoted = { options ->
                 composedStatusInteraction.onVoted(status, options)
             },
             onHashtagInStatusClick = {
-                composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+                composedStatusInteraction.onHashtagInStatusClick(status.locator, it)
             },
             onMentionClick = {
-                composedStatusInteraction.onMentionClick(status.role, it)
+                composedStatusInteraction.onMentionClick(status.locator, it)
             },
             onMentionDidClick = {
                 composedStatusInteraction.onMentionClick(
-                    role = status.role,
+                    locator = status.locator,
                     did = it,
                     protocol = status.status.platform.protocol,
                 )
             },
             onFollowClick = {
-                composedStatusInteraction.onFollowClick(status.role, it)
+                composedStatusInteraction.onFollowClick(status.locator, it)
             },
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, status.role)
+                browserLauncher.launchWebTabInApp(it, status.locator)
             },
             onBoostedClick = {
-                composedStatusInteraction.onBoostedClick(status.role, status)
+                composedStatusInteraction.onBoostedClick(status.locator, status)
             },
             onFavouritedClick = {
-                composedStatusInteraction.onFavouritedClick(status.role, status)
+                composedStatusInteraction.onFavouritedClick(status.locator, status)
             },
             onShowOriginalClick = {
                 composedStatusInteraction.onShowOriginalClick(status)
             },
             onTranslateClick = {
-                composedStatusInteraction.onTranslateClick(status.role, status)
+                composedStatusInteraction.onTranslateClick(status.locator, status)
             },
             onBlogClick = {
-                composedStatusInteraction.onBlockClick(status.role, it)
+                composedStatusInteraction.onBlockClick(status.locator, it)
             },
             onMaybeHashtagClick = {
                 composedStatusInteraction.onMaybeHashtagClick(
-                    role = status.role,
+                    locator = status.locator,
                     protocol = status.status.platform.protocol,
                     hashtag = it,
                 )
@@ -107,7 +107,7 @@ private fun getStatusTopLabel(
                 author = rawStatus.author,
                 style = style,
                 onAuthorClick = {
-                    composedStatusInteraction.onUserInfoClick(statusUiState.role, it)
+                    composedStatusInteraction.onUserInfoClick(statusUiState.locator, it)
                 },
             )
         }

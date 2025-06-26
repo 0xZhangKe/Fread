@@ -25,7 +25,7 @@ import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.model.BlogTranslationUiState
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -76,7 +76,7 @@ class BlueskyStatusAdapter @Inject constructor(
     }
 
     fun convertToUiState(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         logged: Boolean,
         isOwner: Boolean,
@@ -86,12 +86,12 @@ class BlueskyStatusAdapter @Inject constructor(
             logged = logged,
             isOwner = isOwner,
             blogTranslationState = BlogTranslationUiState(support = false),
-            role = role,
+            locator = locator,
         )
     }
 
     fun convertToUiState(
-        role: IdentityRole,
+        locator: PlatformLocator,
         postView: PostView,
         platform: BlogPlatform,
         loggedAccount: BlueskyLoggedAccount?,
@@ -99,7 +99,7 @@ class BlueskyStatusAdapter @Inject constructor(
     ): StatusUiState {
         val status = convert(postView, platform, pinned)
         return convertToUiState(
-            role = role,
+            locator = locator,
             status = status,
             logged = loggedAccount != null,
             isOwner = loggedAccount != null && postView.author.did.did == loggedAccount.did,
@@ -107,7 +107,7 @@ class BlueskyStatusAdapter @Inject constructor(
     }
 
     fun convertToUiState(
-        role: IdentityRole,
+        locator: PlatformLocator,
         feedViewPost: FeedViewPost,
         platform: BlogPlatform,
         loggedAccount: BlueskyLoggedAccount?,
@@ -117,7 +117,7 @@ class BlueskyStatusAdapter @Inject constructor(
             platform = platform,
         )
         return convertToUiState(
-            role = role,
+            locator = locator,
             status = status,
             logged = loggedAccount != null,
             isOwner = loggedAccount != null && feedViewPost.post.author.did.did == loggedAccount.did,

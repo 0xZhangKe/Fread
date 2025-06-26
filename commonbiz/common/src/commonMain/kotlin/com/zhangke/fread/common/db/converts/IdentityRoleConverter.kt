@@ -2,6 +2,7 @@ package com.zhangke.fread.common.db.converts
 
 import androidx.room.TypeConverter
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.serialization.json.Json
 
 class IdentityRoleConverter {
@@ -12,7 +13,7 @@ class IdentityRoleConverter {
     }
 
     @TypeConverter
-    fun toString(role: IdentityRole): String {
+    fun toString(locator: PlatformLocator): String {
         return Json.encodeToString(IdentityRole.serializer(), role)
     }
 }

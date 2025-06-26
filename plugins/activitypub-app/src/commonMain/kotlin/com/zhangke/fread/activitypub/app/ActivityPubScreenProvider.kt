@@ -18,12 +18,12 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScree
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
-import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -36,11 +36,11 @@ class ActivityPubScreenProvider @Inject constructor(
     private val loggedAccountProvider: LoggedAccountProvider,
 ) : IStatusScreenProvider {
 
-    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
-        var accountUri = role.accountUri
-        if (accountUri == null && role.baseUrl != null) {
-            accountUri = loggedAccountProvider.getAccount(role.baseUrl!!)?.uri
+        var accountUri = locator.accountUri
+        if (accountUri == null) {
+            accountUri = loggedAccountProvider.getAccount(locator.baseUrl)?.uri
         }
         accountUri ?: return null
         return PostStatusScreenRoute.buildReplyScreen(
@@ -49,11 +49,11 @@ class ActivityPubScreenProvider @Inject constructor(
         )
     }
 
-    override fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
-        var accountUri = role.accountUri
-        if (accountUri == null && role.baseUrl != null) {
-            accountUri = loggedAccountProvider.getAccount(role.baseUrl!!)?.uri
+        var accountUri = locator.accountUri
+        if (accountUri == null) {
+            accountUri = loggedAccountProvider.getAccount(locator.baseUrl)?.uri
         }
         accountUri ?: return null
         return PostStatusScreenRoute.buildEditBlogRoute(
@@ -62,7 +62,7 @@ class ActivityPubScreenProvider @Inject constructor(
         )
     }
 
-    override fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
         return null
     }
 
@@ -81,25 +81,25 @@ class ActivityPubScreenProvider @Inject constructor(
     }
 
     override fun getUserDetailScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         uri: FormalUri,
         userId: String?,
     ): Screen? {
         userUriTransformer.parse(uri) ?: return null
-        return UserDetailScreen(role = role, userUri = uri, userId = userId)
+        return UserDetailScreen(locator = locator, userUri = uri, userId = userId)
     }
 
     override fun getUserDetailScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
     ): Screen? {
         if (protocol.notActivityPub) return null
-        return UserDetailScreen(role = role, webFinger = webFinger)
+        return UserDetailScreen(locator = locator, webFinger = webFinger)
     }
 
     override fun getUserDetailScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         did: String,
         protocol: StatusProviderProtocol
     ): Screen? {
@@ -107,71 +107,71 @@ class ActivityPubScreenProvider @Inject constructor(
     }
 
     override fun getTagTimelineScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         tag: String,
         protocol: StatusProviderProtocol,
     ): Screen? {
         if (protocol.notActivityPub) return null
         return HashtagTimelineScreen(
-            role = role,
+            locator = locator,
             hashtag = tag.removePrefix("#"),
         )
     }
 
     override fun getBlogFavouritedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notActivityPub) return null
         return UserListScreen(
-            role = role,
+            locator = locator,
             type = UserListType.FAVOURITES,
             statusId = blog.id,
         )
     }
 
     override fun getBlogBoostedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notActivityPub) return null
         return UserListScreen(
-            role = role,
+            locator = locator,
             type = UserListType.REBLOGS,
             statusId = blog.id,
         )
     }
 
     override fun getBookmarkedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notActivityPub) return null
         return StatusListScreen(
-            role = role,
+            locator = locator,
             type = StatusListType.BOOKMARKS,
         )
     }
 
     override fun getFavouritedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notActivityPub) return null
         return StatusListScreen(
-            role = role,
+            locator = locator,
             type = StatusListType.FAVOURITES,
         )
     }
 
     override fun getFollowedHashtagScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return TagListScreenRoute.buildRoute(role)
+        return TagListScreen(locator)
     }
 
     override fun getInstanceDetailScreen(
@@ -182,18 +182,18 @@ class ActivityPubScreenProvider @Inject constructor(
         return PlatformDetailRoute.buildRoute(baseUrl)
     }
 
-    override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
+    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
         if (platform.protocol.notActivityPub) return null
-        return ExplorerContainerTab(role = role, platform = platform)
+        return ExplorerContainerTab(locator = locator, platform = platform)
     }
 
     override fun getCreatedListScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform
     ): Screen? {
         if (platform.protocol.notActivityPub) return null
         return CreatedListsScreen(
-            role = role,
+            locator = locator,
         )
     }
 }

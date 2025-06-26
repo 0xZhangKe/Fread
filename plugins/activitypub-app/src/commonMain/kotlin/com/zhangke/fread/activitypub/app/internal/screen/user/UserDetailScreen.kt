@@ -104,16 +104,15 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScree
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
-import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.framework.cancel
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
@@ -133,14 +132,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 data class UserDetailScreen(
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val userUri: FormalUri? = null,
     val webFinger: WebFinger? = null,
     val userId: String? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = role.toString() + webFinger.toString() + userUri + userId
+        get() = locator.toString() + webFinger.toString() + userUri + userId
 
     @Composable
     override fun Content() {
@@ -150,16 +149,21 @@ data class UserDetailScreen(
         val browserLauncher = LocalActivityBrowserLauncher.current
         val activityTextHandler = LocalActivityTextHandler.current
         val viewModel = getViewModel<UserDetailContainerViewModel>()
-            .getViewModel(role, userUri, webFinger, userId)
+            .getViewModel(locator, userUri, webFinger, userId)
         val uiState by viewModel.uiState.collectAsState()
         UserDetailContent(
             uiState = uiState,
             messageFlow = viewModel.messageFlow,
             onFavouritesClick = {
-                navigator.push(StatusListScreen(role = role, type = StatusListType.FAVOURITES))
+                navigator.push(
+                    StatusListScreen(
+                        locator = locator,
+                        type = StatusListType.FAVOURITES
+                    )
+                )
             },
             onBookmarksClick = {
-                navigator.push(StatusListScreen(role = role, type = StatusListType.BOOKMARKS))
+                navigator.push(StatusListScreen(locator = locator, type = StatusListType.BOOKMARKS))
             },
             onBackClick = navigator::pop,
             onFollowAccountClick = viewModel::onFollowClick,
@@ -209,7 +213,7 @@ data class UserDetailScreen(
                 uiState.accountUiState?.account?.url?.let { FormalBaseUrl.parse(it) }?.let {
                     browserLauncher.launchWebTabInApp(
                         url = it.toString(),
-                        role = role,
+                        locator = locator,
                         checkAppSupportPage = true,
                     )
                 }
@@ -217,14 +221,14 @@ data class UserDetailScreen(
             onEditClick = {
                 uiState.userInsight
                     ?.let {
-                        navigator.push(EditAccountInfoScreen(it.uri))
+                        navigator.push(EditAccountInfoScreen(it.baseUrl, it.uri))
                     }
             },
             onFollowerClick = {
                 if (uiState.userInsight != null) {
                     val screen = UserListScreen(
                         type = UserListType.FOLLOWERS,
-                        role = uiState.role,
+                        locator = uiState.locator,
                         userUri = uiState.userInsight!!.uri,
                         userId = uiState.accountUiState?.account?.id ?: userId,
                     )
@@ -235,7 +239,7 @@ data class UserDetailScreen(
                 if (uiState.userInsight != null) {
                     val screen = UserListScreen(
                         type = UserListType.FOLLOWING,
-                        role = uiState.role,
+                        locator = uiState.locator,
                         userUri = uiState.userInsight!!.uri,
                         userId = uiState.accountUiState?.account?.id ?: userId,
                     )
@@ -246,7 +250,7 @@ data class UserDetailScreen(
             onMaybeHashtagClick = {
                 navigator.push(
                     HashtagTimelineScreen(
-                        role = uiState.role,
+                        locator = uiState.locator,
                         hashtag = it.removePrefix("#"),
                     )
                 )
@@ -256,7 +260,7 @@ data class UserDetailScreen(
             onMuteUserListClick = {
                 navigator.push(
                     UserListScreen(
-                        role = role,
+                        locator = locator,
                         type = UserListType.MUTED,
                         userId = uiState.accountUiState?.account?.id ?: userId,
                     )
@@ -265,17 +269,17 @@ data class UserDetailScreen(
             onBlockedUserListClick = {
                 navigator.push(
                     UserListScreen(
-                        role = role,
+                        locator = locator,
                         type = UserListType.BLOCKED,
                         userId = uiState.accountUiState?.account?.id ?: userId,
                     )
                 )
             },
             onFollowedHashtagsListClick = {
-                navigator.pushDestination(TagListScreenRoute.buildRoute(role))
+                navigator.push(TagListScreen(locator))
             },
             onFilterClick = {
-                navigator.push(FiltersListScreen(uiState.role))
+                navigator.push(FiltersListScreen(uiState.locator))
             },
         )
     }
@@ -433,7 +437,7 @@ data class UserDetailScreen(
                         onFollowAccountClick = onFollowAccountClick,
                         onUnfollowAccountClick = onUnfollowAccountClick,
                         onUrlClick = {
-                            browserLauncher.launchWebTabInApp(it, role)
+                            browserLauncher.launchWebTabInApp(it, locator)
                         },
                         onMaybeHashtagClick = onMaybeHashtagClick,
                     )
@@ -445,28 +449,28 @@ data class UserDetailScreen(
                         listOf(
                             UserTimelineTab(
                                 tabType = UserTimelineTabType.POSTS,
-                                role = uiState.role,
+                                locator = uiState.locator,
                                 userWebFinger = uiState.userInsight.webFinger,
                                 contentCanScrollBackward = contentCanScrollBackward,
                                 userId = userId,
                             ),
                             UserTimelineTab(
                                 tabType = UserTimelineTabType.REPLIES,
-                                role = uiState.role,
+                                locator = uiState.locator,
                                 userWebFinger = uiState.userInsight.webFinger,
                                 contentCanScrollBackward = contentCanScrollBackward,
                                 userId = userId,
                             ),
                             UserTimelineTab(
                                 tabType = UserTimelineTabType.MEDIA,
-                                role = uiState.role,
+                                locator = uiState.locator,
                                 userWebFinger = uiState.userInsight.webFinger,
                                 contentCanScrollBackward = contentCanScrollBackward,
                                 userId = userId,
                             ),
                             UserAboutTab(
                                 contentCanScrollBackward = contentCanScrollBackward,
-                                role = uiState.role,
+                                locator = uiState.locator,
                                 userWebFinger = uiState.userInsight.webFinger,
                                 userId = userId,
                             ),

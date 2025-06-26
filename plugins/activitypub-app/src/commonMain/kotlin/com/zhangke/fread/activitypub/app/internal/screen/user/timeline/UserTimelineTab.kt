@@ -17,13 +17,13 @@ import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_post
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_replies
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
 internal class UserTimelineTab(
     private val tabType: UserTimelineTabType,
     private val contentCanScrollBackward: MutableState<Boolean>,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val userWebFinger: WebFinger,
     private val userId: String?,
 ) : BasePagerTab() {
@@ -43,7 +43,7 @@ internal class UserTimelineTab(
         super.TabContent(screen, nestedScrollConnection)
         val viewModel = screen.getViewModel<UserTimelineContainerViewModel>().getSubViewModel(
             tabType = tabType,
-            role = role,
+            locator = locator,
             webFinger = userWebFinger,
             userId = userId,
         )

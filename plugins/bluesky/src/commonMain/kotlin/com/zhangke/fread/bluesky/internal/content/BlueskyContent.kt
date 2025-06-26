@@ -17,6 +17,7 @@ import com.zhangke.framework.security.Md5
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.commonbiz.bluesky_logo
 import com.zhangke.fread.status.model.FreadContent
+import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.krouter.annotation.Service
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModuleBuilder
@@ -41,14 +42,14 @@ data class BlueskyContent(
     override val order: Int,
     val baseUrl: FormalBaseUrl,
     val feedsList: List<BlueskyFeeds>,
-    val accountDid: String? = null,
+    val accountUri: FormalUri? = null,
 ) : FreadContent {
 
     private val _id: String by lazy {
-        if (accountDid == null) {
+        if (accountUri == null) {
             Md5.md5(baseUrl.toString())
         } else {
-            Md5.md5(baseUrl.toString() + accountDid.toString())
+            Md5.md5(baseUrl.toString() + accountUri.toString())
         }
     }
 

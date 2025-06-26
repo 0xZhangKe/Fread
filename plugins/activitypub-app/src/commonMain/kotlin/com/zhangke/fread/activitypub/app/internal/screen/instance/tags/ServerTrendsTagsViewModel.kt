@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.usecase.GetServerTrendTagsUseCase
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -21,7 +21,7 @@ class ServerTrendsTagsViewModel @Inject constructor(
 
     fun onPageResume() {
         launchInViewModel {
-            getServerTrendsTags(IdentityRole(null, baseUrl))
+            getServerTrendsTags(PlatformLocator(accountUri = null, baseUrl = baseUrl))
                 .onSuccess { list ->
                     _uiState.update { it.copy(list = list) }
                 }.onFailure {

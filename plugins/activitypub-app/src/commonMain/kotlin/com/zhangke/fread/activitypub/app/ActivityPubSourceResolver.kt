@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app
 
 import com.zhangke.fread.activitypub.app.internal.repo.user.UserRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
@@ -13,14 +13,11 @@ class ActivityPubSourceResolver @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
 ) : IStatusSourceResolver {
 
-    override suspend fun resolveSourceByUri(
-        role: IdentityRole?,
-        uri: FormalUri
-    ): Result<StatusSource?> {
+    override suspend fun resolveSourceByUri(uri: FormalUri): Result<StatusSource?> {
         val userUriInsights = userUriTransformer.parse(uri) ?: return Result.success(null)
-        val finalRole = role ?: IdentityRole(userUriInsights.uri, null)
+        val locator = PlatformLocator(baseUrl = userUriInsights.baseUrl)
         return userRepo.getUserSource(
-            role = finalRole,
+            locator = locator,
             userUriInsights = userUriInsights,
         )
     }

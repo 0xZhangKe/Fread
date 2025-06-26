@@ -123,7 +123,7 @@ class AddBlueskyContentViewModel @Inject constructor(
             name = account.platform.name,
             baseUrl = account.platform.baseUrl,
             feedsList = emptyList(),
-            accountDid = account.did,
+            accountUri = account.uri,
         )
         contentRepo.insertContent(content)
     }

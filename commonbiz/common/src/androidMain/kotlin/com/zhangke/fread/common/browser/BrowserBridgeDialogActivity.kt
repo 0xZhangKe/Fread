@@ -25,7 +25,7 @@ import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.common.CommonComponent
 import com.zhangke.fread.common.commonComponent
 import com.zhangke.fread.commonbiz.R
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.launch
 
 class BrowserBridgeDialogActivity : AppCompatActivity() {
@@ -35,10 +35,10 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
         private const val PARAMS_ROLE = "role"
         private const val PARAMS_URL = "url"
 
-        fun open(context: Context, role: IdentityRole, url: String) {
+        fun open(context: Context, locator: PlatformLocator, url: String) {
             val activity = context.extractActivity()
             val intent = Intent(activity ?: context, BrowserBridgeDialogActivity::class.java)
-            intent.putExtra(PARAMS_ROLE, role as Parcelable)
+            intent.putExtra(PARAMS_ROLE, locator as Parcelable)
             intent.putExtra(PARAMS_URL, url)
             if (activity != null) {
                 activity.startActivity(intent)
@@ -56,9 +56,9 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
         @Suppress("DEPRECATION")
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         @Suppress("DEPRECATION")
-        val role = intent.getParcelableExtra<IdentityRole>(PARAMS_ROLE)
+        val locator = intent.getParcelableExtra<PlatformLocator>(PARAMS_ROLE)
         val url = intent.getStringExtra(PARAMS_URL)
-        if (role == null || url.isNullOrEmpty()) {
+        if (locator == null || url.isNullOrEmpty()) {
             toast("url is empty")
             finish()
             return
@@ -90,7 +90,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
             }
         }
         lifecycleScope.launch {
-            if (intercept(role, url)) {
+            if (intercept(locator, url)) {
                 finish()
                 return@launch
             }
@@ -102,9 +102,9 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun intercept(role: IdentityRole, url: String): Boolean {
+    private suspend fun intercept(locator: PlatformLocator, url: String): Boolean {
         commonComponent.browserInterceptorSet.forEach {
-            if (it.intercept(role, url)) {
+            if (it.intercept(locator, url)) {
                 return true
             }
         }

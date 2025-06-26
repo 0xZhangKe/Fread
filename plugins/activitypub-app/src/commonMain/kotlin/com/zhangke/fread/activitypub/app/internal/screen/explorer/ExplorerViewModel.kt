@@ -16,7 +16,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +32,7 @@ class ExplorerViewModel(
     statusUpdater: StatusUpdater,
     private val statusUiStateAdapter: StatusUiStateAdapter,
     refactorToNewStatus: RefactorToNewStatusUseCase,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val platform: BlogPlatform,
     private val type: ExplorerFeedsTabType,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
@@ -126,10 +126,10 @@ class ExplorerViewModel(
     }
 
     private suspend fun getExplorer(maxId: String?, offset: Int): Result<List<ExplorerItem>> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         return when (type) {
             ExplorerFeedsTabType.STATUS -> {
-                val loggedAccount = loggedAccountProvider.getAccount(role)
+                val loggedAccount = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
                 client.timelinesRepo
                     .publicTimelines(limit = LIMIT, maxId = maxId)
                     .map { list ->
@@ -137,7 +137,7 @@ class ExplorerViewModel(
                             activityPubStatusAdapter.toStatusUiState(
                                 entity = it,
                                 platform = platform,
-                                role = role,
+                                locator = locator,
                                 loggedAccount = loggedAccount,
                             )
                         }

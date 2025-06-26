@@ -17,7 +17,7 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.model.BskyPagingFeeds
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
@@ -30,31 +30,31 @@ class GetFeedsStatusUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         feeds: BlueskyFeeds,
         cursor: String? = null,
     ): Result<BskyPagingFeeds> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val platform = blogPlatformRepo.getPlatform(client.baseUrl)
         val loggedAccount = client.loggedAccountProvider()
         return when (feeds) {
             is BlueskyFeeds.Feeds -> {
                 client.getFeedCatching(GetFeedQueryParams(feed = AtUri(feeds.uri), cursor = cursor))
                     .map { it.cursor to it.feed }
-                    .convert(role, platform, loggedAccount)
+                    .convert(locator, platform, loggedAccount)
             }
 
             is BlueskyFeeds.List -> {
                 client.getListFeedCatching(
                     GetListFeedQueryParams(list = AtUri(feeds.uri), cursor = cursor)
                 ).map { it.cursor to it.feed }
-                    .convert(role, platform, loggedAccount)
+                    .convert(locator, platform, loggedAccount)
             }
 
             is BlueskyFeeds.FollowingTimeline -> {
                 client.getTimelineCatching(GetTimelineQueryParams(cursor = cursor))
                     .map { it.cursor to it.feed }
-                    .convert(role, platform, loggedAccount)
+                    .convert(locator, platform, loggedAccount)
             }
 
             is BlueskyFeeds.Hashtags -> {
@@ -64,7 +64,7 @@ class GetFeedsStatusUseCase @Inject constructor(
                         sort = SearchPostsSort.Top,
                         cursor = cursor,
                     )
-                ).map { it.cursor to it.posts }.convertPostView(role, platform, loggedAccount)
+                ).map { it.cursor to it.posts }.convertPostView(locator, platform, loggedAccount)
             }
 
             is BlueskyFeeds.UserPosts -> {
@@ -75,7 +75,7 @@ class GetFeedsStatusUseCase @Inject constructor(
                         includePins = true,
                         filter = GetAuthorFeedFilter.PostsAndAuthorThreads,
                     )
-                ).map { it.cursor to it.feed }.convert(role, platform, loggedAccount)
+                ).map { it.cursor to it.feed }.convert(locator, platform, loggedAccount)
             }
 
             is BlueskyFeeds.UserReplies -> {
@@ -85,7 +85,7 @@ class GetFeedsStatusUseCase @Inject constructor(
                         cursor = cursor,
                         filter = GetAuthorFeedFilter.PostsWithReplies,
                     )
-                ).map { it.cursor to it.feed }.convert(role, platform, loggedAccount)
+                ).map { it.cursor to it.feed }.convert(locator, platform, loggedAccount)
             }
 
             is BlueskyFeeds.UserMedias -> {
@@ -98,7 +98,7 @@ class GetFeedsStatusUseCase @Inject constructor(
                         cursor = cursor,
                         filter = GetAuthorFeedFilter.PostsWithMedia,
                     )
-                ).map { it.cursor to it.feed }.convert(role, platform, loggedAccount)
+                ).map { it.cursor to it.feed }.convert(locator, platform, loggedAccount)
             }
 
             is BlueskyFeeds.UserLikes -> {
@@ -110,13 +110,13 @@ class GetFeedsStatusUseCase @Inject constructor(
                         actor = Did(did),
                         cursor = cursor,
                     )
-                ).map { it.cursor to it.feed }.convert(role, platform, loggedAccount)
+                ).map { it.cursor to it.feed }.convert(locator, platform, loggedAccount)
             }
         }
     }
 
     private fun Result<Pair<String?, List<FeedViewPost>>>.convert(
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform,
         loggedAccount: BlueskyLoggedAccount?,
     ): Result<BskyPagingFeeds> {
@@ -124,7 +124,7 @@ class GetFeedsStatusUseCase @Inject constructor(
         val (cursor, feeds) = this.getOrThrow()
         val status = feeds.map {
             statusAdapter.convertToUiState(
-                role = role,
+                locator = locator,
                 feedViewPost = it,
                 platform = platform,
                 loggedAccount = loggedAccount,
@@ -134,7 +134,7 @@ class GetFeedsStatusUseCase @Inject constructor(
     }
 
     private fun Result<Pair<String?, List<PostView>>>.convertPostView(
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform,
         loggedAccount: BlueskyLoggedAccount?,
     ): Result<BskyPagingFeeds> {
@@ -142,7 +142,7 @@ class GetFeedsStatusUseCase @Inject constructor(
         val (cursor, feeds) = this.getOrThrow()
         val status = feeds.map {
             statusAdapter.convertToUiState(
-                role = role,
+                locator = locator,
                 postView = it,
                 platform = platform,
                 loggedAccount = loggedAccount,

@@ -3,7 +3,7 @@ package com.zhangke.fread.status.notification
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import kotlinx.serialization.Serializable
 
@@ -20,7 +20,7 @@ sealed interface StatusNotification {
 
     val createAt: Instant
 
-    val role: IdentityRole
+    val locator: PlatformLocator
 
     val status: StatusUiState?
 
@@ -28,7 +28,7 @@ sealed interface StatusNotification {
 
     @Serializable
     data class Like(
-        override val role: IdentityRole,
+        override val locator: PlatformLocator,
         override val id: String,
         val author: BlogAuthor,
         val blog: Blog,
@@ -41,7 +41,7 @@ sealed interface StatusNotification {
 
     @Serializable
     data class Follow(
-        override val role: IdentityRole,
+        override val locator: PlatformLocator,
         override val id: String,
         val author: BlogAuthor,
         override val createAt: Instant,
@@ -62,8 +62,8 @@ sealed interface StatusNotification {
         override val createAt: Instant
             get() = status.status.createAt
 
-        override val role: IdentityRole
-            get() = status.role
+        override val locator: PlatformLocator
+            get() = status.locator
     }
 
     @Serializable
@@ -71,7 +71,7 @@ sealed interface StatusNotification {
         override val id: String,
         val author: BlogAuthor,
         val blog: Blog,
-        override val role: IdentityRole,
+        override val locator: PlatformLocator,
         override val createAt: Instant,
         override val unread: Boolean,
     ) : StatusNotification {
@@ -92,8 +92,8 @@ sealed interface StatusNotification {
 
         override val status: StatusUiState get() = quote
 
-        override val role: IdentityRole
-            get() = quote.role
+        override val locator: PlatformLocator
+            get() = quote.locator
     }
 
     @Serializable
@@ -109,8 +109,8 @@ sealed interface StatusNotification {
 
         override val status: StatusUiState get() = reply
 
-        override val role: IdentityRole
-            get() = reply.role
+        override val locator: PlatformLocator
+            get() = reply.locator
     }
 
     @Serializable
@@ -124,14 +124,14 @@ sealed interface StatusNotification {
         override val createAt: Instant
             get() = status.status.createAt
 
-        override val role: IdentityRole
-            get() = status.role
+        override val locator: PlatformLocator
+            get() = status.locator
     }
 
     @Serializable
     data class FollowRequest(
         override val id: String,
-        override val role: IdentityRole,
+        override val locator: PlatformLocator,
         override val createAt: Instant,
         val author: BlogAuthor,
         override val unread: Boolean,
@@ -146,7 +146,7 @@ sealed interface StatusNotification {
         override val id: String,
         override val createAt: Instant,
         val blog: Blog,
-        override val role: IdentityRole,
+        override val locator: PlatformLocator,
         override val unread: Boolean,
     ) : StatusNotification {
 
@@ -161,15 +161,15 @@ sealed interface StatusNotification {
         override val unread: Boolean,
     ) : StatusNotification {
 
-        override val role: IdentityRole
-            get() = status.role
+        override val locator: PlatformLocator
+            get() = status.locator
     }
 
     @Serializable
     data class SeveredRelationships(
         override val id: String,
         override val createAt: Instant,
-        override val role: IdentityRole,
+        override val locator: PlatformLocator,
         val author: BlogAuthor,
         val reason: String,
         override val unread: Boolean,
@@ -180,7 +180,7 @@ sealed interface StatusNotification {
     @Serializable
     data class Unknown(
         override val id: String,
-        override val role: IdentityRole,
+        override val locator: PlatformLocator,
         val message: String,
         override val createAt: Instant,
         override val unread: Boolean,

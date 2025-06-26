@@ -35,9 +35,9 @@ class AccountManager(
         }
     }
 
-    suspend fun logout(uri: FormalUri) {
+    suspend fun logout(account: LoggedAccount) {
         accountManagerList.forEach {
-            if (it.logout(uri)) return@forEach
+            if (it.logout(account)) return@forEach
         }
     }
 
@@ -67,7 +67,7 @@ interface IAccountManager {
 
     suspend fun refreshAllAccountInfo(): List<AccountRefreshResult>
 
-    suspend fun logout(uri: FormalUri): Boolean
+    suspend fun logout(account: LoggedAccount): Boolean
 
     suspend fun selectContentWithAccount(
         contentList: List<FreadContent>,

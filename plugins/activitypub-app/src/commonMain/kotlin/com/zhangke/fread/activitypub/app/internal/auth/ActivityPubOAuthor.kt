@@ -16,7 +16,6 @@ import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
-import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -44,7 +43,7 @@ class ActivityPubOAuthor @Inject constructor(
             toast("Application not registered")
             return@launch
         }
-        val client = clientManager.getClient(IdentityRole(null, baseUrl))
+        val client = clientManager.getClientNoAccount(baseUrl)
         val oauthUrl = client.oauthRepo.buildOAuthUrl(
             baseUrl = baseUrl.toString(),
             clientId = app.clientId,

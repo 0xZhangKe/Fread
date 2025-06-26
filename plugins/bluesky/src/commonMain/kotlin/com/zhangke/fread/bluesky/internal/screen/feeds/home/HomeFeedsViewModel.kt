@@ -10,7 +10,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.richtext.preParseStatusUiState
 
@@ -21,7 +21,7 @@ class HomeFeedsViewModel(
     refactorToNewStatus: RefactorToNewStatusUseCase,
     statusUpdater: StatusUpdater,
     private val feeds: BlueskyFeeds,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -39,7 +39,7 @@ class HomeFeedsViewModel(
     init {
         initController(
             coroutineScope = viewModelScope,
-            roleResolver = { role },
+            locatorResolver = { locator },
             loadFirstPageLocalFeeds = {
                 Result.success(emptyList())
             },
@@ -65,7 +65,7 @@ class HomeFeedsViewModel(
     }
 
     private suspend fun loadFeeds(cursor: String? = this.cursor): Result<List<StatusUiState>> {
-        return getFeedsStatus(role = role, feeds = feeds, cursor = cursor).map {
+        return getFeedsStatus(locator = locator, feeds = feeds, cursor = cursor).map {
             this.cursor = if (it.cursor.isNullOrBlank()) FLAG_CURSOR_ENDING else it.cursor
             it.feeds.onEach { status -> status.preParseStatusUiState() }
         }

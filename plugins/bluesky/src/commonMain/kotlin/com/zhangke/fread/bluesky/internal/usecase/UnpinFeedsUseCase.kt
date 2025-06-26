@@ -2,7 +2,7 @@ package com.zhangke.fread.bluesky.internal.usecase
 
 import app.bsky.actor.PreferencesUnion.SavedFeedsPrefV2
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class UnpinFeedsUseCase @Inject constructor(
@@ -10,11 +10,11 @@ class UnpinFeedsUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         feeds: BlueskyFeeds.Feeds,
     ): Result<Unit> {
         return updatePreferences(
-            role = role,
+            locator = locator,
             updater = { preferences ->
                 preferences.map { preference ->
                     if (preference is SavedFeedsPrefV2) {

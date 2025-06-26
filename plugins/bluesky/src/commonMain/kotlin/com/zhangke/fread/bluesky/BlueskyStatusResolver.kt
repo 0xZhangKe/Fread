@@ -16,8 +16,8 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.PagedData
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.notBluesky
@@ -42,17 +42,17 @@ class BlueskyStatusResolver @Inject constructor(
 ) : IStatusResolver {
 
     override suspend fun getStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         platform: BlogPlatform
     ): Result<StatusUiState>? {
         if (platform.protocol.notBluesky) return null
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val account = client.loggedAccountProvider()
         return client.getPostsCatching(GetPostsQueryParams(listOf(AtUri(blog.url))))
             .map {
                 statusAdapter.convertToUiState(
-                    role = role,
+                    locator = locator,
                     postView = it.posts.first(),
                     platform = platform,
                     loggedAccount = account,
@@ -67,8 +67,8 @@ class BlueskyStatusResolver @Inject constructor(
     ): Result<PagedData<StatusUiState>>? {
         val uriInsight = uriTransformer.parse(uri) ?: return null
         val platform = platformRepo.getAllPlatform().first()
-        val role = IdentityRole(baseUrl = platform.baseUrl)
-        val client = clientManager.getClient(role)
+        val locator = PlatformLocator(baseUrl = platform.baseUrl)
+        val client = clientManager.getClient(locator)
         val account = client.loggedAccountProvider()
         return client.getAuthorFeedCatching(
             GetAuthorFeedQueryParams(
@@ -81,7 +81,7 @@ class BlueskyStatusResolver @Inject constructor(
             PagedData(
                 list = result.feed.map {
                     statusAdapter.convertToUiState(
-                        role = role,
+                        locator = locator,
                         feedViewPost = it,
                         platform = platform,
                         loggedAccount = account,
@@ -93,16 +93,16 @@ class BlueskyStatusResolver @Inject constructor(
     }
 
     override suspend fun interactive(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         type: StatusActionType,
     ): Result<Status?>? {
         if (status.platform.protocol.notBluesky) return null
-        return statusInteractive(role, status, type)
+        return statusInteractive(locator, status, type)
     }
 
     override suspend fun votePoll(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
@@ -110,43 +110,43 @@ class BlueskyStatusResolver @Inject constructor(
     }
 
     override suspend fun getStatusContext(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status
     ): Result<StatusContext>? {
         if (status.platform.protocol.notBluesky) return null
-        return getStatusContextFunction(role, status)
+        return getStatusContextFunction(locator, status)
     }
 
     override suspend fun follow(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor
     ): Result<Unit>? {
         val userUriInsights = userUriTransformer.parse(target.uri) ?: return null
         return updateRelationship(
-            role = role,
+            locator = locator,
             targetDid = userUriInsights.did,
             type = UpdateRelationshipType.FOLLOW,
         ).map { }
     }
 
     override suspend fun unfollow(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor
     ): Result<Unit>? {
         val userUriInsights = userUriTransformer.parse(target.uri) ?: return null
         return updateRelationship(
-            role = role,
+            locator = locator,
             targetDid = userUriInsights.did,
             type = UpdateRelationshipType.UNFOLLOW,
         ).map { }
     }
 
     override suspend fun isFollowing(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor
     ): Result<Boolean>? {
         val did = userUriTransformer.parse(target.uri)?.did ?: return null
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val profileResult = client.getProfileCatching(GetProfileQueryParams(Did(did)))
         if (profileResult.isFailure) return Result.failure(profileResult.exceptionOrNull()!!)
         val profile = profileResult.getOrThrow()
@@ -154,7 +154,7 @@ class BlueskyStatusResolver @Inject constructor(
     }
 
     override suspend fun translate(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         lan: String
     ): Result<BlogTranslation>? {

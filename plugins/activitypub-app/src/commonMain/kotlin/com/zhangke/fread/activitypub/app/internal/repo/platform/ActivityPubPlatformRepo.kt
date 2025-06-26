@@ -6,8 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubInstanceAda
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
-import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import me.tatarka.inject.annotations.Inject
@@ -17,7 +16,6 @@ class ActivityPubPlatformRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val activityPubPlatformEntityAdapter: ActivityPubPlatformEntityAdapter,
     private val activityPubInstanceAdapter: ActivityPubInstanceAdapter,
-    private val resolveBaseUrl: ResolveBaseUrlUseCase,
     private val platformResourceLoader: BlogPlatformResourceLoader,
     private val mastodonInstanceRepo: MastodonInstanceRepo,
 ) {
@@ -26,8 +24,8 @@ class ActivityPubPlatformRepo @Inject constructor(
 
     private val platformDao = databases.getPlatformDao()
 
-    suspend fun getPlatform(role: IdentityRole): Result<BlogPlatform> {
-        return getPlatform(resolveBaseUrl(role))
+    suspend fun getPlatform(locator: PlatformLocator): Result<BlogPlatform> {
+        return getPlatform(locator.baseUrl)
     }
 
     suspend fun getPlatform(baseUrl: FormalBaseUrl): Result<BlogPlatform> {
@@ -67,8 +65,8 @@ class ActivityPubPlatformRepo @Inject constructor(
         if (instanceFromLocal != null) {
             return Result.success(instanceFromLocal.instanceEntity)
         }
-        val role = IdentityRole(accountUri = null, baseUrl = baseUrl)
-        val instanceResult = clientManager.getClient(role).instanceRepo.getInstanceInformation()
+        val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
+        val instanceResult = clientManager.getClient(locator).instanceRepo.getInstanceInformation()
         if (instanceResult.isFailure) {
             return Result.failure(instanceResult.exceptionOrNull()!!)
         }

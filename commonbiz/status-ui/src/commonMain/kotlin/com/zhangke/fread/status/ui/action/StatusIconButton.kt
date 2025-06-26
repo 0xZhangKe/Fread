@@ -33,7 +33,7 @@ fun StatusIconButton(
             .clickable(
                 onClick = onClick,
                 enabled = enabled,
-                role = Role.Button,
+                locator = locator.Button,
                 interactionSource = interactionSource,
                 indication = ripple(
                     bounded = false,

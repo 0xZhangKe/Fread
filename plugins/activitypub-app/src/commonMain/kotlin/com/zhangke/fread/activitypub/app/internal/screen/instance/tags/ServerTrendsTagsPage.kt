@@ -19,7 +19,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 
 @Composable
@@ -38,10 +38,10 @@ internal fun Screen.ServerTrendsTagsPage(
         uiState = uiState,
         contentCanScrollBackward = contentCanScrollBackward,
         onHashtagClick = { tag ->
-            val role = IdentityRole(accountUri = null, baseUrl = baseUrl)
+            val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
             navigator.push(
                 HashtagTimelineScreen(
-                    role = role,
+                    locator = locator,
                     hashtag = tag.name.removePrefix("#"),
                 )
             )

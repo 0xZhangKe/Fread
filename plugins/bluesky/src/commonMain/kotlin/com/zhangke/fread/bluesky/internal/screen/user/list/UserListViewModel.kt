@@ -21,7 +21,7 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -35,7 +35,7 @@ class UserListViewModel @Inject constructor(
     private val accountAdapter: BlueskyAccountAdapter,
     private val updateRelationship: UpdateRelationshipUseCase,
     private val updateBlock: UpdateBlockUseCase,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted private val type: UserListType,
     @Assisted private val postUri: String?,
 ) : ViewModel() {
@@ -43,7 +43,7 @@ class UserListViewModel @Inject constructor(
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            role: IdentityRole,
+            locator: PlatformLocator,
             type: UserListType,
             postUri: String?,
         ): UserListViewModel
@@ -79,7 +79,7 @@ class UserListViewModel @Inject constructor(
     fun onFollowClick(user: UserListItemUiState) {
         launchInViewModel {
             updateRelationship(
-                role = role,
+                locator = locator,
                 targetDid = user.did,
                 type = UpdateRelationshipType.FOLLOW,
                 followUri = user.followingUri,
@@ -95,7 +95,7 @@ class UserListViewModel @Inject constructor(
     fun onUnfollowClick(user: UserListItemUiState) {
         launchInViewModel {
             updateRelationship(
-                role = role,
+                locator = locator,
                 targetDid = user.did,
                 type = UpdateRelationshipType.UNFOLLOW,
                 followUri = user.followingUri,
@@ -110,7 +110,7 @@ class UserListViewModel @Inject constructor(
 
     fun onMuteClick(user: UserListItemUiState) {
         launchInViewModel {
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .muteActorCatching(Did(user.did))
                 .handleError()
                 .onSuccess {
@@ -123,7 +123,7 @@ class UserListViewModel @Inject constructor(
 
     fun onUnmuteClick(user: UserListItemUiState) {
         launchInViewModel {
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .unmuteActorCatching(Did(user.did))
                 .handleError()
                 .onSuccess {
@@ -137,7 +137,7 @@ class UserListViewModel @Inject constructor(
     fun onBlockClick(user: UserListItemUiState) {
         launchInViewModel {
             updateBlock(
-                role = role,
+                locator = locator,
                 did = user.did,
                 block = true,
                 blockUri = user.blockUri,
@@ -153,7 +153,7 @@ class UserListViewModel @Inject constructor(
     fun onUnblockClick(user: UserListItemUiState) {
         launchInViewModel {
             updateBlock(
-                role = role,
+                locator = locator,
                 did = user.did,
                 block = false,
                 blockUri = user.blockUri,
@@ -187,7 +187,7 @@ class UserListViewModel @Inject constructor(
     }
 
     private suspend fun getDataFromServer(cursor: String? = this.cursor): Result<List<UserListItemUiState>> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val pagedDataResult = when (type) {
             UserListType.LIKE -> {
                 if (postUri == null) return Result.failure(IllegalStateException("PostUri is null"))

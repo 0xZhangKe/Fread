@@ -15,7 +15,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmoji
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +30,7 @@ class UserDetailViewModel(
     private val userUriTransformer: UserUriTransformer,
     private val clientManager: ActivityPubClientManager,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val userUri: FormalUri?,
     val webFinger: WebFinger?,
     val userId: String?,
@@ -38,7 +38,7 @@ class UserDetailViewModel(
 
     private val _uiState = MutableStateFlow(
         UserDetailUiState(
-            role = role,
+            locator = locator,
             loading = false,
             userInsight = null,
             accountUiState = null,
@@ -60,7 +60,7 @@ class UserDetailViewModel(
                 return@launchInViewModel
             }
             _uiState.update { it.copy(loading = true) }
-            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountRepo = clientManager.getClient(locator).accountRepo
             val accountResult = loadAccountInfo(accountRepo, webFinger)
             if (accountResult.isFailure) {
                 _uiState.update { it.copy(loading = false) }
@@ -168,7 +168,7 @@ class UserDetailViewModel(
     fun onBlockDomainClick() {
         val userUriInsights = _uiState.value.userInsight ?: return
         launchInViewModel {
-            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountRepo = clientManager.getClient(locator).accountRepo
             accountRepo.blockDomain(userUriInsights.baseUrl.host)
                 .onFailure { e ->
                     e.message?.let {
@@ -185,7 +185,7 @@ class UserDetailViewModel(
     fun onUnblockDomainClick() {
         val userUriInsights = _uiState.value.userInsight ?: return
         launchInViewModel {
-            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountRepo = clientManager.getClient(locator).accountRepo
             accountRepo.unblockDomain(userUriInsights.baseUrl.host)
                 .onFailure { e ->
                     e.message?.let {
@@ -204,7 +204,7 @@ class UserDetailViewModel(
         if (newNote == privateNote) return
         val accountId = uiState.value.accountUiState?.account?.id ?: return
         launchInViewModel {
-            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountRepo = clientManager.getClient(locator).accountRepo
             accountRepo.updateNote(accountId, newNote)
                 .onSuccess { relationship ->
                     _uiState.update { it.copy(relationship = relationship) }
@@ -225,7 +225,7 @@ class UserDetailViewModel(
     private fun muteOrUnmute(mute: Boolean) {
         val accountId = uiState.value.accountUiState?.account?.id ?: return
         launchInViewModel {
-            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountRepo = clientManager.getClient(locator).accountRepo
             if (mute) {
                 accountRepo.mute(accountId)
             } else {
@@ -243,7 +243,7 @@ class UserDetailViewModel(
     ) {
         val accountId = _uiState.value.accountUiState?.account?.id ?: return
         launchInViewModel {
-            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountRepo = clientManager.getClient(locator).accountRepo
             action(accountRepo, accountId)
                 .onFailure { e ->
                     e.message?.let {

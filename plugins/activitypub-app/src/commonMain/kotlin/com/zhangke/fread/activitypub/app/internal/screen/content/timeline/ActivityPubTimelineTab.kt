@@ -28,13 +28,13 @@ import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.commonbiz.shared.composable.InitErrorContent
 import com.zhangke.fread.commonbiz.shared.composable.ObserveForFeedsConnection
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import com.zhangke.fread.status.ui.common.ObserveMinReadItem
 
 internal class ActivityPubTimelineTab(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val type: ActivityPubStatusSourceType,
     private val listId: String? = null,
     private val listTitle: String? = null,
@@ -54,7 +54,7 @@ internal class ActivityPubTimelineTab(
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)
         val viewModel = screen.getViewModel<ActivityPubTimelineContainerViewModel>()
-            .getSubViewModel(role, type, listId)
+            .getSubViewModel(locator, type, listId)
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = LocalSnackbarHostState.current
         ActivityPubTimelineContent(

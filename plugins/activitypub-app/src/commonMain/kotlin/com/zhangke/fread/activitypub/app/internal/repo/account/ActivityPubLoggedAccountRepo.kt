@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.repo.account
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggerAccountDao
@@ -31,8 +30,8 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
         }
     }
 
-    fun observeAccount(baseUrl: FormalBaseUrl): Flow<ActivityPubLoggedAccount?> {
-        return accountDao.observeAccount(baseUrl).map {
+    fun observeAccount(uri: String): Flow<ActivityPubLoggedAccount?> {
+        return accountDao.observeAccount(uri).map {
             it?.let { adapter.adapt(it) }
         }
     }
@@ -47,10 +46,6 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
 
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccount? =
         accountDao.queryByUri(uri)?.let { adapter.adapt(it) }
-
-    suspend fun queryByBaseUrl(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
-        return accountDao.queryByBaseUrl(baseUrl).firstOrNull()?.let { adapter.adapt(it) }
-    }
 
     suspend fun insert(
         entry: ActivityPubLoggedAccount,

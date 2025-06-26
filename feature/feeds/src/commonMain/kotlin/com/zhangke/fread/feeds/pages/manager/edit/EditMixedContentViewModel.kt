@@ -92,7 +92,7 @@ class EditMixedContentViewModel @Inject constructor(
                 return@launchInViewModel
             }
             val sourceList = contentConfig.sourceUriList.mapNotNull {
-                statusProvider.statusSourceResolver.resolveSourceByUri(null, it).getOrNull()
+                statusProvider.statusSourceResolver.resolveSourceByUri(it).getOrNull()
             }.map { source ->
                 StatusSourceUiState(
                     source = source,

@@ -28,13 +28,13 @@ import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_about_join
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.Emoji
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
 
 internal class UserAboutTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val userWebFinger: WebFinger,
     private val userId: String?,
 ) : BasePagerTab() {
@@ -48,7 +48,7 @@ internal class UserAboutTab(
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)
         val viewModel = screen.getViewModel<UserAboutContainerViewModel>()
-            .getViewModel(role, userWebFinger, userId)
+            .getViewModel(locator, userWebFinger, userId)
         val uiState by viewModel.uiState.collectAsState()
         UserAboutContent(
             uiState = uiState,
@@ -115,7 +115,7 @@ internal class UserAboutTab(
             onHashtagClick = {},
             emojis = emojis,
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, role)
+                browserLauncher.launchWebTabInApp(it, locator)
             },
         )
     }

@@ -8,7 +8,7 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.DescendantStatus
@@ -24,10 +24,10 @@ class GetStatusContextUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
     ): Result<StatusContext> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val threadResult = client.getPostThreadCatching(
             GetPostThreadQueryParams(
                 uri = AtUri(status.intrinsicBlog.url),
@@ -47,7 +47,7 @@ class GetStatusContextUseCase @Inject constructor(
             is GetPostThreadResponseThreadUnion.ThreadViewPost -> {
                 val threadViewPost = thread.value
                 val ancestors = buildAncestors(
-                    role = role,
+                    locator = locator,
                     parent = threadViewPost.parent,
                     platform = platform,
                     loggedAccount = loggedAccount,
@@ -55,7 +55,7 @@ class GetStatusContextUseCase @Inject constructor(
                 val descendants = thread.value.replies.mapNotNull { reply ->
                     if (reply is ThreadViewPostReplieUnion.ThreadViewPost) {
                         val statusUiState = statusAdapter.convertToUiState(
-                            role = role,
+                            locator = locator,
                             postView = reply.value.post,
                             platform = platform,
                             loggedAccount = loggedAccount,
@@ -69,7 +69,7 @@ class GetStatusContextUseCase @Inject constructor(
                     StatusContext(
                         ancestors = ancestors,
                         status = statusAdapter.convertToUiState(
-                            role = role,
+                            locator = locator,
                             postView = threadViewPost.post,
                             platform = platform,
                             loggedAccount = loggedAccount,
@@ -82,7 +82,7 @@ class GetStatusContextUseCase @Inject constructor(
     }
 
     private fun buildAncestors(
-        role: IdentityRole,
+        locator: PlatformLocator,
         parent: ThreadViewPostParentUnion?,
         platform: BlogPlatform,
         loggedAccount: BlueskyLoggedAccount?,
@@ -93,7 +93,7 @@ class GetStatusContextUseCase @Inject constructor(
         while (currentParent != null) {
             if (currentParent !is ThreadViewPostParentUnion.ThreadViewPost) break
             val statusUiState = statusAdapter.convertToUiState(
-                role = role,
+                locator = locator,
                 postView = currentParent.value.post,
                 platform = platform,
                 loggedAccount = loggedAccount,

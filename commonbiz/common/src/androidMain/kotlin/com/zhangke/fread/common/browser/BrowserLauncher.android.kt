@@ -6,7 +6,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toAndroidUri
 import com.zhangke.fread.common.di.ActivityScope
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
@@ -25,11 +25,11 @@ class AndroidActivityBrowserLauncher @Inject constructor(
 
     override fun launchWebTabInApp(
         uri: PlatformUri,
-        role: IdentityRole?,
+        locator: PlatformLocator?,
         checkAppSupportPage: Boolean,
     ) {
-        if (role != null && checkAppSupportPage) {
-            BrowserBridgeDialogActivity.open(activity, role, uri.toString())
+        if (locator != null && checkAppSupportPage) {
+            BrowserBridgeDialogActivity.open(activity, locator, uri.toString())
             return
         }
         val customTabsIntent = CustomTabsIntent.Builder()

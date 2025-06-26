@@ -15,8 +15,8 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.PagedData
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.notActivityPub
@@ -41,20 +41,20 @@ class ActivityPubStatusResolver @Inject constructor(
 ) : IStatusResolver {
 
     override suspend fun getStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         platform: BlogPlatform
     ): Result<StatusUiState>? {
         if (platform.protocol.notActivityPub) return null
-        val statusRepo = clientManager.getClient(role).statusRepo
-        val loggedAccount = loggedAccountProvider.getAccount(role)
+        val statusRepo = clientManager.getClient(locator).statusRepo
+        val loggedAccount = loggedAccountProvider.getAccount(locator)
         return statusRepo.getStatuses(blog.id)
             .mapCatching { entity ->
                 if (entity == null) throw RuntimeException("Can't find status(${blog.id})")
                 activityPubStatusAdapter.toStatusUiState(
                     entity = entity,
                     platform = platform,
-                    role = role,
+                    locator = locator,
                     loggedAccount = loggedAccount,
                 )
             }
@@ -66,9 +66,9 @@ class ActivityPubStatusResolver @Inject constructor(
         maxId: String?,
     ): Result<PagedData<StatusUiState>>? {
         val userInsights = userUriTransformer.parse(uri) ?: return null
-        val role = IdentityRole(baseUrl = userInsights.baseUrl)
+        val locator = PlatformLocator(baseUrl = userInsights.baseUrl)
         return getUserStatus(
-            role = role,
+            locator = locator,
             userInsights = userInsights,
             limit = limit,
             maxId = maxId,
@@ -78,38 +78,38 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     override suspend fun interactive(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         type: StatusActionType,
     ): Result<Status?>? {
         if (status.notThisPlatform()) return null
-        return statusInteractive(role, status, type)
+        return statusInteractive(locator, status, type)
     }
 
     override suspend fun votePoll(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
         if (blog.platform.protocol.notActivityPub) return null
-        return votePollUseCase(role, blog, votedOption)
+        return votePollUseCase(locator, blog, votedOption)
     }
 
     override suspend fun getStatusContext(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status
     ): Result<StatusContext>? {
         if (status.notThisPlatform()) return null
-        return getStatusContextUseCase(role, status)
+        return getStatusContextUseCase(locator, status)
     }
 
     private fun Status.notThisPlatform(): Boolean {
         return this.platform.protocol.notActivityPub
     }
 
-    override suspend fun follow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {
+    override suspend fun follow(locator: PlatformLocator, target: BlogAuthor): Result<Unit>? {
         return updateRelationship(
-            role = role,
+            locator = locator,
             target = target,
             updater = {
                 this.follow(it)
@@ -117,9 +117,9 @@ class ActivityPubStatusResolver @Inject constructor(
         )
     }
 
-    override suspend fun unfollow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {
+    override suspend fun unfollow(locator: PlatformLocator, target: BlogAuthor): Result<Unit>? {
         return updateRelationship(
-            role = role,
+            locator = locator,
             target = target,
             updater = {
                 this.unfollow(it)
@@ -128,46 +128,49 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     private suspend fun updateRelationship(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor,
         updater: suspend AccountsRepo.(userId: String) -> Result<*>,
     ): Result<Unit>? {
         userUriTransformer.parse(target.uri) ?: return null
         val userId = if (target.userId.isNullOrEmpty()) {
-            val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, role)
+            val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, locator)
             if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
             userIdResult.getOrThrow()
         } else {
             target.userId!!
         }
-        return clientManager.getClient(role)
+        return clientManager.getClient(locator)
             .accountRepo
             .updater(userId)
             .map {}
     }
 
-    override suspend fun isFollowing(role: IdentityRole, target: BlogAuthor): Result<Boolean>? {
+    override suspend fun isFollowing(
+        locator: PlatformLocator,
+        target: BlogAuthor
+    ): Result<Boolean>? {
         userUriTransformer.parse(target.uri) ?: return null
         val userId = if (target.userId.isNullOrEmpty()) {
-            val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, role)
+            val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, locator)
             if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
             userIdResult.getOrThrow()
         } else {
             target.userId!!
         }
-        return clientManager.getClient(role)
+        return clientManager.getClient(locator)
             .accountRepo
             .getRelationships(listOf(userId))
             .map { it.firstOrNull()?.following ?: false }
     }
 
     override suspend fun translate(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         lan: String,
     ): Result<BlogTranslation>? {
         if (status.notThisPlatform()) return null
-        return clientManager.getClient(role)
+        return clientManager.getClient(locator)
             .statusRepo
             .translate(status.intrinsicBlog.id, lan)
             .map {

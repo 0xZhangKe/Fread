@@ -18,7 +18,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.preParseStatus
@@ -34,7 +34,7 @@ class StatusListViewModel @Inject constructor(
     private val statusUiStateAdapter: StatusUiStateAdapter,
     private val refactorToNewStatus: RefactorToNewStatusUseCase,
     private val loggedAccountProvider: LoggedAccountProvider,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted val type: StatusListType,
 ) : ViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
@@ -45,7 +45,7 @@ class StatusListViewModel @Inject constructor(
 
     fun interface Factory : ViewModelFactory {
 
-        fun create(role: IdentityRole, type: StatusListType): StatusListViewModel
+        fun create(locator: PlatformLocator, type: StatusListType): StatusListViewModel
     }
 
     private var nextMaxId: String? = null
@@ -53,7 +53,7 @@ class StatusListViewModel @Inject constructor(
     init {
         initController(
             coroutineScope = viewModelScope,
-            roleResolver = { role },
+            locatorResolver = { locator },
             loadFirstPageLocalFeeds = {
                 Result.success(emptyList())
             },
@@ -66,13 +66,13 @@ class StatusListViewModel @Inject constructor(
 
     private suspend fun loadNewDataFromServer(): Result<RefreshResult> {
         nextMaxId = null
-        val accountRepo = clientManager.getClient(role).accountRepo
-        val platformResult = platformRepo.getPlatform(role)
+        val accountRepo = clientManager.getClient(locator).accountRepo
+        val platformResult = platformRepo.getPlatform(locator)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        val loggedAccount = loggedAccountProvider.getAccount(role)
+        val loggedAccount = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
         return fetchStatuses(accountRepo)
             .map { pagingResult ->
                 nextMaxId = pagingResult.pagingInfo.nextMaxId
@@ -88,13 +88,13 @@ class StatusListViewModel @Inject constructor(
         if (nextMaxId.isNullOrEmpty()) {
             return Result.success(emptyList())
         }
-        val accountRepo = clientManager.getClient(role).accountRepo
-        val platformResult = platformRepo.getPlatform(role)
+        val accountRepo = clientManager.getClient(locator).accountRepo
+        val platformResult = platformRepo.getPlatform(locator)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        val loggedAccount = loggedAccountProvider.getAccount(role)
+        val loggedAccount = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
         return fetchStatuses(accountRepo, nextMaxId)
             .map { pagingResult ->
                 this@StatusListViewModel.nextMaxId = pagingResult.pagingInfo.nextMaxId
@@ -120,7 +120,7 @@ class StatusListViewModel @Inject constructor(
         val status = statusAdapter.toStatusUiState(
             entity = this,
             platform = platform,
-            role = role,
+            locator = locator,
             loggedAccount = loggedAccount,
         )
         status.status.preParseStatus()

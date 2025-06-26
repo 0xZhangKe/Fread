@@ -55,7 +55,7 @@ fun PollNotification(
             onMentionClick = { composedStatusInteraction.onMentionClick(role, it) },
             onMentionDidClick = {
                 composedStatusInteraction.onMentionClick(
-                    role = role,
+                    locator = locator,
                     did = it,
                     protocol = notification.blog.platform.protocol,
                 )
@@ -64,7 +64,7 @@ fun PollNotification(
             onUrlClick = { browserLauncher.launchWebTabInApp(it, role) },
             onMaybeHashtagClick = {
                 composedStatusInteraction.onMaybeHashtagClick(
-                    role = role,
+                    locator = locator,
                     protocol = notification.blog.platform.protocol,
                     hashtag = it,
                 )

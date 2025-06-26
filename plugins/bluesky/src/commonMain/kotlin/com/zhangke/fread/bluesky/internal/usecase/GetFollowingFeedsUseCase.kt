@@ -12,7 +12,7 @@ import com.zhangke.fread.bluesky.internal.adapter.BlueskyFeedsAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClient
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
@@ -24,8 +24,8 @@ class GetFollowingFeedsUseCase @Inject constructor(
     private val feedsAdapter: BlueskyFeedsAdapter,
 ) {
 
-    suspend operator fun invoke(role: IdentityRole): Result<List<BlueskyFeeds>> {
-        val client = clientManager.getClient(role)
+    suspend operator fun invoke(locator: PlatformLocator): Result<List<BlueskyFeeds>> {
+        val client = clientManager.getClient(locator)
         val preferenceResult = client.getPreferencesCatching()
         if (preferenceResult.isFailure) return Result.failure(preferenceResult.exceptionOrThrow())
         val preference = preferenceResult.getOrThrow()

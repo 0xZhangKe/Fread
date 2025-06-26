@@ -4,7 +4,7 @@ import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
-import com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailViewModel
+import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailViewModel
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingViewModel
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextViewModel
 import me.tatarka.inject.annotations.IntoMap
@@ -22,8 +22,8 @@ interface SharedScreenModelModule : SharedScreenPlatformModule {
 
     @IntoMap
     @Provides
-    fun provideBlogDetailViewModel(creator: () -> BlogDetailViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return BlogDetailViewModel::class to creator
+    fun provideBlogDetailViewModel(creator: () -> RssBlogDetailViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return RssBlogDetailViewModel::class to creator
     }
 
     @IntoMap

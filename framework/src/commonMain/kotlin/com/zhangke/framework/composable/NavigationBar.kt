@@ -115,7 +115,7 @@ fun RowScope.NavigationBarItem(
                 selected = selected,
                 onClick = onClick,
                 enabled = enabled,
-                role = Role.Tab,
+                locator = locator.Tab,
                 interactionSource = interactionSource,
                 indication = null,
             )

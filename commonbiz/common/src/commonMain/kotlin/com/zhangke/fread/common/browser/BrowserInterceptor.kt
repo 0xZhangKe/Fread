@@ -1,8 +1,8 @@
 package com.zhangke.fread.common.browser
 
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 interface BrowserInterceptor {
 
-    suspend fun intercept(role: IdentityRole, url: String): Boolean
+    suspend fun intercept(locator: PlatformLocator, url: String): Boolean
 }

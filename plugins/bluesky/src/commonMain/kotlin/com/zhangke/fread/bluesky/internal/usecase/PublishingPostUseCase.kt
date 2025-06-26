@@ -40,7 +40,7 @@ import com.zhangke.fread.bluesky.internal.utils.Tid
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.utils.HashtagTextUtils
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.status.model.ReplySetting
 import kotlinx.coroutines.async
@@ -69,13 +69,12 @@ class PublishingPostUseCase @Inject constructor(
         attachment: PublishPostMediaAttachment? = null,
         quoteBlog: Blog? = null,
     ): Result<Unit> {
-        val role = IdentityRole(accountUri = account.uri, baseUrl = account.platform.baseUrl)
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(account.locator)
         val rkey = Tid.generateTID()
         val postUri = "at://${account.did}/${BskyCollections.feedPost.nsid}/$rkey"
-        val embedResult = buildPostEmbed(role, attachment, quoteBlog)
+        val embedResult = buildPostEmbed(account.locator, attachment, quoteBlog)
         if (embedResult.isFailure) return Result.failure(embedResult.exceptionOrNull()!!)
-        val replyResult = buildReplyRef(role, replyBlog)
+        val replyResult = buildReplyRef(account.locator, replyBlog)
         if (replyResult.isFailure) return Result.failure(replyResult.exceptionOrNull()!!)
         val post = Post(
             text = content,
@@ -102,9 +101,12 @@ class PublishingPostUseCase @Inject constructor(
         return client.applyWritesCatching(request).map { }
     }
 
-    private suspend fun buildReplyRef(role: IdentityRole, replyBlog: Blog?): Result<PostReplyRef?> {
+    private suspend fun buildReplyRef(
+        locator: PlatformLocator,
+        replyBlog: Blog?
+    ): Result<PostReplyRef?> {
         val reply = replyBlog ?: return Result.success(null)
-        val postView = getPostDetail(role, reply.url).let {
+        val postView = getPostDetail(locator, reply.url).let {
             if (it.isFailure) return Result.failure(it.exceptionOrNull()!!)
             it.getOrThrow()
         }
@@ -116,8 +118,8 @@ class PublishingPostUseCase @Inject constructor(
         )
     }
 
-    private suspend fun getPostDetail(role: IdentityRole, uri: String): Result<PostView> {
-        val client = clientManager.getClient(role)
+    private suspend fun getPostDetail(locator: PlatformLocator, uri: String): Result<PostView> {
+        val client = clientManager.getClient(locator)
         val result = client.getPostThreadCatching(
             GetPostThreadQueryParams(uri = AtUri(uri), depth = 1)
         )
@@ -129,15 +131,15 @@ class PublishingPostUseCase @Inject constructor(
     }
 
     private suspend fun buildPostEmbed(
-        role: IdentityRole,
+        locator: PlatformLocator,
         attachment: PublishPostMediaAttachment?,
         quoteBlog: Blog?,
     ): Result<PostEmbedUnion?> {
         val videoResult =
-            (attachment as? PublishPostMediaAttachment.Video)?.let { uploadVideo(role, it.file) }
+            (attachment as? PublishPostMediaAttachment.Video)?.let { uploadVideo(locator, it.file) }
         if (videoResult?.isFailure == true) return Result.failure(videoResult.exceptionOrNull()!!)
         val imagesResult =
-            (attachment as? PublishPostMediaAttachment.Image)?.let { uploadImages(role, it) }
+            (attachment as? PublishPostMediaAttachment.Image)?.let { uploadImages(locator, it) }
         if (imagesResult?.isFailure == true) return Result.failure(imagesResult.exceptionOrNull()!!)
         val video = videoResult?.getOrNull()
         val images = imagesResult?.getOrNull()
@@ -165,10 +167,10 @@ class PublishingPostUseCase @Inject constructor(
     }
 
     private suspend fun uploadVideo(
-        role: IdentityRole,
+        locator: PlatformLocator,
         file: PublishPostMediaAttachmentFile,
     ): Result<Video> {
-        return uploadBlob(role = role, fileUri = file.file.uri)
+        return uploadBlob(locator = locator, fileUri = file.file.uri)
             .map {
                 Video(
                     video = it.first,
@@ -179,13 +181,13 @@ class PublishingPostUseCase @Inject constructor(
     }
 
     private suspend fun uploadImages(
-        role: IdentityRole,
+        locator: PlatformLocator,
         image: PublishPostMediaAttachment.Image,
     ): Result<Images> {
         val resultList: List<Result<ImagesImage>> = supervisorScope {
             image.files.map { file ->
                 async {
-                    uploadBlob(role = role, fileUri = file.file.uri).map {
+                    uploadBlob(locator = locator, fileUri = file.file.uri).map {
                         ImagesImage(
                             image = it.first,
                             aspectRatio = it.second?.convert(),

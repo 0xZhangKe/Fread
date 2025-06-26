@@ -3,7 +3,7 @@ package com.zhangke.fread.common.browser
 import com.eygraber.uri.toNSURL
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.di.ActivityScope
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 import platform.SafariServices.SFSafariViewController
 import platform.UIKit.UIApplication
@@ -21,13 +21,12 @@ class IosActivityBrowserLauncher @Inject constructor(
 
     override fun launchWebTabInApp(
         uri: PlatformUri,
-        role: IdentityRole?,
+        locator: PlatformLocator?,
         checkAppSupportPage: Boolean,
     ) {
         try {
             val safari = SFSafariViewController(uri.toNSURL()!!)
             // safari.modalPresentationStyle = UIModalPresentationPageSheet
-
             viewController.value.presentViewController(safari, animated = true, completion = null)
         } catch (e: Exception) {
             e.printStackTrace()

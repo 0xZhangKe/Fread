@@ -2,12 +2,12 @@ package com.zhangke.fread.bluesky.internal.screen.home
 
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
+import com.zhangke.fread.bluesky.internal.utils.createPlatformLocator
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,13 +35,14 @@ class BlueskyHomeViewModel(
                 .map { it as? BlueskyContent }
                 .collect { config ->
                     if (config != null) {
+                        val locator = createPlatformLocator(config)
                         _uiState.update { state ->
                             state.copy(
-                                role = IdentityRole(accountUri = null, baseUrl = config.baseUrl),
+                                locator = locator,
                                 content = config,
                             )
                         }
-                        startObserveAccount(config.baseUrl)
+                        startObserveAccount(locator)
                     } else {
                         _uiState.update { state ->
                             state.copy(errorMessage = "Cant find validate config by id: $contentId")
@@ -55,19 +56,20 @@ class BlueskyHomeViewModel(
         }
     }
 
-    private fun startObserveAccount(baseUrl: FormalBaseUrl) {
+    private fun startObserveAccount(locator: PlatformLocator) {
         observeAccountJob?.cancel()
+        if (locator.accountUri == null) {
+            _uiState.update { it.copy(account = null) }
+            return
+        }
         observeAccountJob = launchInViewModel {
-            accountManager.getAccountFlow(baseUrl)
+            accountManager.getAccountFlow(locator.accountUri!!)
                 .distinctUntilChanged()
                 .collect { account ->
                     _uiState.update {
-                        it.copy(
-                            account = account,
-                            role = IdentityRole(accountUri = account.uri, baseUrl = baseUrl),
-                        )
+                        it.copy(account = account)
                     }
-                    updateHomeTab(contentId, _uiState.value.role)
+                    updateHomeTab(contentId, locator)
                 }
         }
     }

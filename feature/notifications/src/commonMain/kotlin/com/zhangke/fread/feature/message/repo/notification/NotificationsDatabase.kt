@@ -11,12 +11,15 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.zhangke.fread.common.db.converts.FormalUriConverter
 import com.zhangke.fread.common.db.converts.StatusNotificationConverter
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.uri.FormalUri
 
-private const val DB_VERSION = 1
+private const val DB_VERSION = 2
 private const val TABLE_NAME = "notifications"
 
 @Entity(tableName = TABLE_NAME)
@@ -58,6 +61,12 @@ abstract class NotificationsDatabase : RoomDatabase() {
     companion object {
 
         internal const val DB_NAME = "all_accounts_notifications.db"
+    }
+
+    internal class Status1to2Migration : Migration(1, 2) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL("DROP TABLE $TABLE_NAME")
+        }
     }
 }
 

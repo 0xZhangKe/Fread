@@ -87,7 +87,7 @@ fun WholeBlogUi(
                 composedStatusInteraction.onStatusInteractive(statusUiState, type)
             },
             onUserInfoClick = {
-                composedStatusInteraction.onUserInfoClick(statusUiState.role, it)
+                composedStatusInteraction.onUserInfoClick(statusUiState.locator, it)
             },
             onMediaClick = { event ->
                 onStatusMediaClick(
@@ -101,33 +101,33 @@ fun WholeBlogUi(
                 composedStatusInteraction.onVoted(statusUiState, it)
             },
             onHashtagInStatusClick = {
-                composedStatusInteraction.onHashtagInStatusClick(statusUiState.role, it)
+                composedStatusInteraction.onHashtagInStatusClick(statusUiState.locator, it)
             },
             onMentionClick = {
-                composedStatusInteraction.onMentionClick(statusUiState.role, it)
+                composedStatusInteraction.onMentionClick(statusUiState.locator, it)
             },
             onMentionDidClick = {
                 composedStatusInteraction.onMentionClick(
-                    role = statusUiState.role,
+                    locator = statusUiState.locator,
                     did = it,
                     protocol = statusUiState.status.platform.protocol,
                 )
             },
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, statusUiState.role)
+                browserLauncher.launchWebTabInApp(it, statusUiState.locator)
             },
             onShowOriginalClick = {
                 composedStatusInteraction.onShowOriginalClick(statusUiState)
             },
             onTranslateClick = {
-                composedStatusInteraction.onTranslateClick(statusUiState.role, statusUiState)
+                composedStatusInteraction.onTranslateClick(statusUiState.locator, statusUiState)
             },
             onBlogClick = {
-                composedStatusInteraction.onBlockClick(statusUiState.role, it)
+                composedStatusInteraction.onBlockClick(statusUiState.locator, it)
             },
             onMaybeHashtagClick = {
                 composedStatusInteraction.onMaybeHashtagClick(
-                    role = statusUiState.role,
+                    locator = statusUiState.locator,
                     protocol = statusUiState.status.platform.protocol,
                     hashtag = it,
                 )

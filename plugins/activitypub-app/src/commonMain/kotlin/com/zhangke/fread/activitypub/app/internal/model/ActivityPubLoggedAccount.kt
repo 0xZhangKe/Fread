@@ -5,6 +5,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.Emoji
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 
@@ -21,6 +22,9 @@ data class ActivityPubLoggedAccount(
     override val avatar: String?,
     override val emojis: List<Emoji>,
 ) : LoggedAccount {
+
+    val locator: PlatformLocator
+        get() = PlatformLocator(baseUrl = platform.baseUrl, accountUri = uri)
 
     override val id: String? get() = userId
 

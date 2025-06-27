@@ -15,8 +15,8 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
@@ -40,7 +40,7 @@ class FeedsViewModelController(
 ) : IFeedsViewModelController {
 
     private lateinit var coroutineScope: CoroutineScope
-    private lateinit var roleResolver: (Status) -> IdentityRole
+    private lateinit var locatorResolver: (Status) -> PlatformLocator
     private lateinit var loadFirstPageLocalFeeds: suspend () -> Result<List<StatusUiState>>
     private lateinit var loadNewFromServerFunction: suspend () -> Result<RefreshResult>
     private lateinit var loadMoreFunction: suspend (maxId: String) -> Result<List<StatusUiState>>
@@ -78,14 +78,14 @@ class FeedsViewModelController(
 
     override fun initController(
         coroutineScope: CoroutineScope,
-        roleResolver: (Status) -> IdentityRole,
+        locatorResolver: (Status) -> PlatformLocator,
         loadFirstPageLocalFeeds: suspend () -> Result<List<StatusUiState>>,
         loadNewFromServerFunction: suspend () -> Result<RefreshResult>,
         loadMoreFunction: suspend (maxId: String) -> Result<List<StatusUiState>>,
         onStatusUpdate: suspend (Status) -> Unit
     ) {
         this.coroutineScope = coroutineScope
-        this.roleResolver = roleResolver
+        this.locatorResolver = locatorResolver
         this.loadFirstPageLocalFeeds = loadFirstPageLocalFeeds
         this.loadNewFromServerFunction = loadNewFromServerFunction
         this.loadMoreFunction = loadMoreFunction
@@ -204,52 +204,56 @@ class FeedsViewModelController(
         interactiveHandler.onStatusInteractive(status, type)
     }
 
-    override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
-        interactiveHandler.onUserInfoClick(role, blogAuthor)
+    override fun onUserInfoClick(locator: PlatformLocator, blogAuthor: BlogAuthor) {
+        interactiveHandler.onUserInfoClick(locator, blogAuthor)
     }
 
     override fun onStatusClick(status: StatusUiState) {
         interactiveHandler.onStatusClick(status)
     }
 
-    override fun onBlogClick(role: IdentityRole, blog: Blog) {
-        interactiveHandler.onBlogClick(role, blog)
+    override fun onBlogClick(locator: PlatformLocator, blog: Blog) {
+        interactiveHandler.onBlogClick(locator, blog)
     }
 
     override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {
         interactiveHandler.onVoted(status, votedOption)
     }
 
-    override fun onFollowClick(role: IdentityRole, target: BlogAuthor) {
-        interactiveHandler.onFollowClick(role, target)
+    override fun onFollowClick(locator: PlatformLocator, target: BlogAuthor) {
+        interactiveHandler.onFollowClick(locator, target)
     }
 
-    override fun onUnfollowClick(role: IdentityRole, target: BlogAuthor) {
-        interactiveHandler.onUnfollowClick(role, target)
+    override fun onUnfollowClick(locator: PlatformLocator, target: BlogAuthor) {
+        interactiveHandler.onUnfollowClick(locator, target)
     }
 
-    override fun onMentionClick(role: IdentityRole, mention: Mention) {
-        interactiveHandler.onMentionClick(role, mention)
+    override fun onMentionClick(locator: PlatformLocator, mention: Mention) {
+        interactiveHandler.onMentionClick(locator, mention)
     }
 
-    override fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol) {
-        interactiveHandler.onMentionClick(role, did, protocol)
+    override fun onMentionClick(
+        locator: PlatformLocator,
+        did: String,
+        protocol: StatusProviderProtocol
+    ) {
+        interactiveHandler.onMentionClick(locator, did, protocol)
     }
 
-    override fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus) {
-        interactiveHandler.onHashtagClick(role, tag)
+    override fun onHashtagClick(locator: PlatformLocator, tag: HashtagInStatus) {
+        interactiveHandler.onHashtagClick(locator, tag)
     }
 
-    override fun onHashtagClick(role: IdentityRole, tag: Hashtag) {
-        interactiveHandler.onHashtagClick(role, tag)
+    override fun onHashtagClick(locator: PlatformLocator, tag: Hashtag) {
+        interactiveHandler.onHashtagClick(locator, tag)
     }
 
     override fun onMaybeHashtagClick(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol,
         tag: String,
     ) {
-        interactiveHandler.onMaybeHashtagClick(role, protocol, tag)
+        interactiveHandler.onMaybeHashtagClick(locator, protocol, tag)
     }
 
     override fun onRefresh() {

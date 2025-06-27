@@ -39,11 +39,11 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_filters_list_page_title
 import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
 class FiltersListScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
 ) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
@@ -52,7 +52,7 @@ class FiltersListScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<FiltersListViewModel, FiltersListViewModel.Factory> {
-            it.create(role)
+            it.create(locator)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
@@ -61,10 +61,10 @@ class FiltersListScreen(
             snackBarHostState = snackBarHostState,
             onBackClick = navigator::pop,
             onItemClick = {
-                navigator.push(EditFilterScreen(role, it.id))
+                navigator.push(EditFilterScreen(locator, it.id))
             },
             onAddClick = {
-                navigator.push(EditFilterScreen(role, null))
+                navigator.push(EditFilterScreen(locator, null))
             },
         )
         LaunchedEffect(Unit) {

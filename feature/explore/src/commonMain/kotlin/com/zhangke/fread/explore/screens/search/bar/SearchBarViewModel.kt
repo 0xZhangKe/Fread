@@ -14,7 +14,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.preParse
 import com.zhangke.fread.status.search.SearchResult
 import kotlinx.coroutines.Job
@@ -39,15 +39,15 @@ class SearchBarViewModel @Inject constructor(
     var selectedAccount: LoggedAccount? = null
         set(value) {
             field = value
-            _uiState.update { it.copy(role = role) }
+            _uiState.update { it.copy(locator = locator) }
         }
 
-    private val role: IdentityRole
+    private val locator: PlatformLocator?
         get() {
-            val accountUri = selectedAccount?.uri
-            return IdentityRole(
-                accountUri = accountUri,
-                baseUrl = selectedAccount?.platform?.baseUrl,
+            val account = selectedAccount ?: return null
+            return PlatformLocator(
+                baseUrl = account.platform.baseUrl,
+                accountUri = account.uri,
             )
         }
 
@@ -55,7 +55,7 @@ class SearchBarViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         SearchBarUiState(
-            role = role,
+            locator = locator,
             query = "",
             resultList = emptyList(),
         )
@@ -70,6 +70,7 @@ class SearchBarViewModel @Inject constructor(
     }
 
     fun onSearchQueryChanged(query: String) {
+        val locator = locator ?: return
         if (query == _uiState.value.query) return
         if (query.isEmpty()) {
             _uiState.update { it.copy(query = "", resultList = emptyList()) }
@@ -81,14 +82,14 @@ class SearchBarViewModel @Inject constructor(
         searchJob?.cancel()
         searchJob = launchInViewModel {
             statusProvider.searchEngine
-                .search(role, query)
+                .search(locator, query)
                 .map { list ->
                     list.filterIsInstance<SearchResult.SearchedStatus>()
                         .map { it.status }
                         .preParse()
                     list
                 }.map { list ->
-                    list.map { buildSearchResultUiState(role, it) }
+                    list.map { buildSearchResultUiState(locator, it) }
                 }.onSuccess { searchResult ->
                     _uiState.update {
                         it.copy(resultList = searchResult)

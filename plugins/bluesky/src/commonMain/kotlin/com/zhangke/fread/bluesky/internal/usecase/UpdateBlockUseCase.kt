@@ -3,7 +3,7 @@ package com.zhangke.fread.bluesky.internal.usecase
 import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.client.adjustToRkey
 import com.zhangke.fread.bluesky.internal.client.blockRecord
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 
@@ -13,14 +13,14 @@ class UpdateBlockUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         did: String,
         block: Boolean,
         blockUri: String?,
     ): Result<AtUri?> {
         return if (block) {
             createRecord(
-                role = role,
+                locator = locator,
                 collection = BskyCollections.block,
                 record = blockRecord(did),
             ).map { it.uri }
@@ -29,7 +29,7 @@ class UpdateBlockUseCase @Inject constructor(
                 Result.success(null)
             } else {
                 deleteRecord(
-                    role = role,
+                    locator = locator,
                     collection = BskyCollections.block,
                     rkey = blockUri.adjustToRkey(),
                 ).map { null }

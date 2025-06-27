@@ -3,11 +3,11 @@ package com.zhangke.fread.activitypub.app.internal.screen.user
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.RichText
 
 data class UserDetailUiState (
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val loading: Boolean,
     val userInsight: UserUriInsights?,
     val accountUiState: UserDetailAccountUiState?,

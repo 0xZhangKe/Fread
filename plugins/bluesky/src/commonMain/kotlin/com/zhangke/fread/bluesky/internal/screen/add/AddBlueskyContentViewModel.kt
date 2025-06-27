@@ -2,17 +2,15 @@ package com.zhangke.fread.bluesky.internal.screen.add
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
-import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
 import com.zhangke.fread.bluesky.internal.utils.AtRequestException
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +25,6 @@ import me.tatarka.inject.annotations.Inject
 class AddBlueskyContentViewModel @Inject constructor(
     private val loginToBluesky: LoginToBskyUseCase,
     private val contentRepo: FreadContentRepo,
-    private val platformRepo: BlueskyPlatformRepo,
     @Assisted private val baseUrl: FormalBaseUrl,
     @Assisted private val loginMode: Boolean,
 ) : ViewModel() {
@@ -71,13 +68,6 @@ class AddBlueskyContentViewModel @Inject constructor(
         _uiState.update { it.copy(factorToken = factorToken) }
     }
 
-    fun onSkipClick() {
-        launchInViewModel {
-            checkAndSaveContent()
-            _finishPageFlow.emit(Unit)
-        }
-    }
-
     fun onLoginClick() {
         if (_uiState.value.logging) return
         if (loggingJob?.isActive == true) return
@@ -86,16 +76,18 @@ class AddBlueskyContentViewModel @Inject constructor(
         val password = uiState.value.password.trim()
         val factorToken = uiState.value.factorToken.trim()
         loggingJob = launchInViewModel {
-            _uiState.update { it.copy(logging = true) }
-            checkAndSaveContent().onFailure { t ->
-                _uiState.update { it.copy(logging = false) }
-                _snackBarMessage.emitTextMessageFromThrowable(t)
+            val baseUrl = FormalBaseUrl.parse(hosting)
+            if (baseUrl == null) {
+                _snackBarMessage.emit(textOf("Invalid host!"))
                 return@launchInViewModel
             }
-            val baseUrl = FormalBaseUrl.parse(hosting)!!
+            _uiState.update { it.copy(logging = true) }
             loginToBluesky(baseUrl, username, password, factorToken)
                 .onSuccess {
                     _uiState.update { it.copy(logging = false) }
+                    if (!loginMode) {
+                        saveBlueskyContent(it)
+                    }
                     _finishPageFlow.emit(Unit)
                 }
                 .onFailure { t ->
@@ -125,28 +117,13 @@ class AddBlueskyContentViewModel @Inject constructor(
         _uiState.update { it.copy(logging = false) }
     }
 
-    private suspend fun checkAndSaveContent(): Result<Unit> {
-        val hosting = uiState.value.hosting.trim()
-        val baseUrl = FormalBaseUrl.parse(hosting)
-            ?: return Result.failure(IllegalArgumentException("Invalid host!"))
-        if (loginMode) return Result.success(Unit)
-        val platform = platformRepo.getPlatform(baseUrl)
-        val id = platform.baseUrl.toString()
-        saveBlueskyContent(platform, id)
-        return Result.success(Unit)
-    }
-
-    private suspend fun saveBlueskyContent(
-        platform: BlogPlatform,
-        id: String,
-    ) {
-        if (loginMode) return
+    private suspend fun saveBlueskyContent(account: BlueskyLoggedAccount) {
         val content = BlueskyContent(
-            id = id,
             order = contentRepo.getMaxOrder() + 1,
-            name = platform.name,
-            baseUrl = platform.baseUrl,
+            name = account.platform.name,
+            baseUrl = account.platform.baseUrl,
             feedsList = emptyList(),
+            accountUri = account.uri,
         )
         contentRepo.insertContent(content)
     }

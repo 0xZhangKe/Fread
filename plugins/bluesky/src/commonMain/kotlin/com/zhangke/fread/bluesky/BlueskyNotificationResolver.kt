@@ -2,12 +2,12 @@ package com.zhangke.fread.bluesky
 
 import app.bsky.notification.ListNotificationsQueryParams
 import app.bsky.notification.UpdateSeenRequest
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyNotificationAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.GetCompletedNotificationUseCase
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.PagedStatusNotification
@@ -25,10 +25,9 @@ class BlueskyNotificationResolver @Inject constructor(
         type: INotificationResolver.NotificationRequestType,
         cursor: String?,
     ): Result<PagedStatusNotification>? {
-        if (account.platform.protocol.notBluesky) return null
-        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        if (account !is BlueskyLoggedAccount) return null
         return getCompletedNotification(
-            role = role,
+            locator = account.locator,
             params = ListNotificationsQueryParams(
                 reasons = if (type == INotificationResolver.NotificationRequestType.MENTION) {
                     listOf("mention", "reply", "quote")
@@ -41,7 +40,7 @@ class BlueskyNotificationResolver @Inject constructor(
             PagedStatusNotification(
                 cursor = paged.cursor,
                 notifications = paged.notifications.map {
-                    notificationAdapter.convert(it, role, account.platform)
+                    notificationAdapter.convert(it, account.locator, account.platform)
                 },
             )
         }
@@ -66,9 +65,9 @@ class BlueskyNotificationResolver @Inject constructor(
         notificationLastReadId: String
     ): Result<Unit>? {
         if (account.platform.protocol.notBluesky) return null
-        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
-        val client = clientManager.getClient(role)
+        if (account !is BlueskyLoggedAccount) return null
+        val client = clientManager.getClient(account.locator)
         return client.updateSeenCatching(UpdateSeenRequest(Clock.System.now()))
-            .map {  }
+            .map { }
     }
 }

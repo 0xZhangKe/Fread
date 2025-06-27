@@ -55,7 +55,7 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScr
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.feeds
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
 import com.zhangke.fread.statusui.status_ui_edit_content_delete_dialog_content
 import org.burnoutcrew.reorderable.ReorderableItem
@@ -66,7 +66,7 @@ import org.jetbrains.compose.resources.stringResource
 
 class BskyFollowingFeedsPage(
     private val contentId: String?,
-    private val role: IdentityRole?,
+    private val locator: PlatformLocator?,
 ) : BaseScreen() {
 
     @Composable
@@ -76,7 +76,7 @@ class BskyFollowingFeedsPage(
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel =
             getViewModel<BskyFollowingFeedsViewModel, BskyFollowingFeedsViewModel.Factory> {
-                it.create(contentId, role)
+                it.create(contentId, locator)
             }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarState = rememberSnackbarHostState()
@@ -87,7 +87,7 @@ class BskyFollowingFeedsPage(
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onFeedsClick = { feed ->
-                uiState.role?.let {
+                uiState.locator?.let {
                     val screen = FeedsDetailScreen.create(feed, it)
                     screen.onFeedsUpdate = { f ->
                         viewModel.onFeedsUpdate(f)
@@ -96,7 +96,7 @@ class BskyFollowingFeedsPage(
                 }
             },
             onExplorerClick = {
-                uiState.role?.let { navigator.push(ExplorerFeedsScreen(it)) }
+                uiState.locator?.let { navigator.push(ExplorerFeedsScreen(it)) }
             },
             onFeedsReorder = viewModel::onFeedsOrderChanged,
             onDeleteClick = viewModel::onDeleteClick,

@@ -3,16 +3,19 @@ package com.zhangke.fread.activitypub.app.internal.auth
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
 import com.zhangke.fread.common.browser.OAuthHandler
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
-import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -29,6 +32,7 @@ class ActivityPubOAuthor @Inject constructor(
     private val activityPubDatabases: ActivityPubDatabases,
     private val applicationScope: ApplicationCoroutineScope,
     private val oAuthHandler: OAuthHandler,
+    private val freadContentRepo: FreadContentRepo,
 ) {
 
     internal fun startOauth(
@@ -39,7 +43,7 @@ class ActivityPubOAuthor @Inject constructor(
             toast("Application not registered")
             return@launch
         }
-        val client = clientManager.getClient(IdentityRole(null, baseUrl))
+        val client = clientManager.getClientNoAccount(baseUrl)
         val oauthUrl = client.oauthRepo.buildOAuthUrl(
             baseUrl = baseUrl.toString(),
             clientId = app.clientId,
@@ -69,6 +73,21 @@ class ActivityPubOAuthor @Inject constructor(
             toast(e.message)
             return@launch
         }
+        insertAccount(account)
+    }
+
+    private suspend fun insertAccount(account: ActivityPubLoggedAccount) {
         repo.insert(account, getCurrentTimeMillis())
+        val contentList = freadContentRepo.getAllContent().filterIsInstance<ActivityPubContent>()
+        val addedContent = contentList.firstOrNull {
+            account.baseUrl == it.baseUrl && it.accountUri == null
+        }
+        Log.d("T_TEST") { "addedContent ${addedContent?.id}" }
+        if (addedContent != null) {
+            freadContentRepo.delete(addedContent.id)
+            freadContentRepo.insertContent(addedContent.copy(accountUri = account.uri).also {
+                Log.d("T_TEST") { "insert ${it.id}" }
+            })
+        }
     }
 }

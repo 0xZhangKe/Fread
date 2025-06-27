@@ -11,7 +11,7 @@ import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubTimelineContainerViewModel @Inject constructor(
@@ -37,20 +37,20 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
             statusReadStateRepo = statusReadStateRepo,
             accountManager = accountManager,
             timelineRepo = timelineRepo,
-            role = params.role,
+            locator = params.locator,
             type = params.type,
             listId = params.listId,
         )
     }
 
     fun getSubViewModel(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String?
     ): ActivityPubTimelineViewModel {
         return obtainSubViewModel(
             Params(
-                role = role,
+                locator = locator,
                 type = type,
                 listId = listId,
             )
@@ -58,12 +58,12 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
     }
 
     class Params(
-        val role: IdentityRole,
+        val locator: PlatformLocator,
         val type: ActivityPubStatusSourceType,
         val listId: String?,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = role.toString() + type + listId
+            get() = locator.toString() + type + listId
     }
 }

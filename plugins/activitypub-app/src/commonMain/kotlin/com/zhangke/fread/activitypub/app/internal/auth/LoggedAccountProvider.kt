@@ -1,9 +1,10 @@
 package com.zhangke.fread.activitypub.app.internal.auth
 
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.throwInDebug
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.uri.FormalUri
 import io.github.charlietap.leftright.LeftRight
 import me.tatarka.inject.annotations.Inject
@@ -32,20 +33,27 @@ class LoggedAccountProvider @Inject constructor() {
     }
 
     fun getAccount(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
-        return accountSet.read { set ->
-            set.find { it.platform.baseUrl.equalsDomain(baseUrl) }
+        val accountList = accountSet.read { set ->
+            set.filter { it.baseUrl.equalsDomain(baseUrl) }
         }
+        if (accountList.size > 1) {
+            throwInDebug("Multiple accounts found for base URL: $baseUrl")
+            return null
+        }
+        return accountList.firstOrNull()
     }
 
-    fun getAccount(role: IdentityRole): ActivityPubLoggedAccount? {
-        var account: ActivityPubLoggedAccount? = null
-        if (role.accountUri != null) {
-            account = getAccount(role.accountUri!!)
+    fun getAccount(locator: PlatformLocator): ActivityPubLoggedAccount? {
+        if (locator.accountUri != null) {
+            return getAccount(locator.accountUri!!)
         }
-        if (account == null && role.baseUrl != null) {
-            account = getAccount(role.baseUrl!!)
+        return getAccount(locator.baseUrl)
+    }
+
+    fun getAllAccounts(): List<ActivityPubLoggedAccount> {
+        return accountSet.read { set ->
+            set.toList()
         }
-        return account
     }
 
     fun removeAccount(uri: FormalUri) {

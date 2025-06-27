@@ -13,7 +13,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 
 class TrendingStatusSubViewModel(
@@ -24,7 +24,7 @@ class TrendingStatusSubViewModel(
     statusUiStateAdapter: StatusUiStateAdapter,
     refactorToNewStatus: RefactorToNewStatusUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val loggedAccountProvider: LoggedAccountProvider,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
@@ -36,7 +36,7 @@ class TrendingStatusSubViewModel(
     init {
         initController(
             coroutineScope = viewModelScope,
-            roleResolver = { role },
+            locatorResolver = { locator },
             loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
             loadNewFromServerFunction = ::loadNewFromServer,
             loadMoreFunction = ::loadMore,
@@ -65,16 +65,14 @@ class TrendingStatusSubViewModel(
         return getServerTrending(offset)
     }
 
-    private suspend fun getServerTrending(
-        offset: Int,
-    ): Result<List<StatusUiState>> {
-        val platformResult = platformRepo.getPlatform(role)
+    private suspend fun getServerTrending(offset: Int): Result<List<StatusUiState>> {
+        val platformResult = platformRepo.getPlatform(locator)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        val loggedAccount = loggedAccountProvider.getAccount(role)
-        return clientManager.getClient(role)
+        val loggedAccount = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
+        return clientManager.getClient(locator)
             .instanceRepo
             .getTrendsStatuses(
                 limit = StatusConfigurationDefault.config.loadFromServerLimit,
@@ -85,7 +83,7 @@ class TrendingStatusSubViewModel(
                         entity = it,
                         platform = platform,
                         loggedAccount = loggedAccount,
-                        role = role,
+                        locator = locator,
                     )
                 }
             }

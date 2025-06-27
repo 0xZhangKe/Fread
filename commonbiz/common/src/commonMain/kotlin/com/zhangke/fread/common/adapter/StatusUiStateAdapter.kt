@@ -1,7 +1,7 @@
 package com.zhangke.fread.common.adapter
 
 import com.zhangke.fread.status.model.BlogTranslationUiState
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
@@ -16,7 +16,7 @@ class StatusUiStateAdapter @Inject constructor() {
     ): StatusUiState {
         return StatusUiState(
             status = status,
-            role = statusUiStatus.role,
+            locator = statusUiStatus.locator,
             logged = statusUiStatus.logged,
             isOwner = statusUiStatus.isOwner,
             blogTranslationState = blogTranslationState ?: BlogTranslationUiState(
@@ -30,13 +30,13 @@ class StatusUiStateAdapter @Inject constructor() {
     }
 
     fun toStatusUiStateSnapshot(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         blogTranslationState: BlogTranslationUiState? = null,
     ): StatusUiState {
         return StatusUiState(
             status = status,
-            role = role,
+            locator = locator,
             logged = false,
             isOwner = false,
             blogTranslationState = blogTranslationState ?: BlogTranslationUiState(

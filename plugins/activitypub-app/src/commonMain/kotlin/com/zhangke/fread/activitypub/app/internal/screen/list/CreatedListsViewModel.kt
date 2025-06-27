@@ -5,7 +5,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,12 +17,12 @@ import me.tatarka.inject.annotations.Inject
 
 class CreatedListsViewModel @Inject constructor(
     private val getUserCreatedList: GetUserCreatedListUseCase,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
-        fun create(role: IdentityRole): CreatedListsViewModel
+        fun create(locator: PlatformLocator): CreatedListsViewModel
     }
 
     private val _uiState = MutableStateFlow(CreatedListsUiState.default())
@@ -49,7 +49,7 @@ class CreatedListsViewModel @Inject constructor(
         if (getListJob?.isActive == true) return
         _uiState.update { it.copy(loading = true) }
         getListJob = launchInViewModel {
-            getUserCreatedList(role)
+            getUserCreatedList(locator)
                 .onSuccess { list ->
                     _uiState.update {
                         it.copy(loading = false, lists = list)

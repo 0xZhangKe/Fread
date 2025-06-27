@@ -8,7 +8,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import me.tatarka.inject.annotations.Inject
 
@@ -27,7 +27,7 @@ class StatusContextViewModel @Inject constructor(
             statusUpdater = statusUpdater,
             statusUiStateAdapter = statusUiStateAdapter,
             refactorToNewStatus = refactorToNewStatus,
-            role = params.role,
+            locator = params.locator,
             anchorStatus = params.anchorStatus,
             blog = params.blog,
             blogTranslationUiState = params.blogTranslationUiState,
@@ -35,21 +35,21 @@ class StatusContextViewModel @Inject constructor(
     }
 
     fun getSubViewModel(
-        role: IdentityRole,
+        locator: PlatformLocator,
         anchorStatus: StatusUiState?,
         blog: Blog?,
         blogTranslationUiState: BlogTranslationUiState?,
     ): StatusContextSubViewModel {
-        return obtainSubViewModel(Params(role, anchorStatus, blog, blogTranslationUiState))
+        return obtainSubViewModel(Params(locator, anchorStatus, blog, blogTranslationUiState))
     }
 
     class Params(
-        val role: IdentityRole,
+        val locator: PlatformLocator,
         val anchorStatus: StatusUiState?,
         val blog: Blog?,
         val blogTranslationUiState: BlogTranslationUiState?,
     ) : SubViewModelParams() {
 
-        override val key: String = anchorStatus?.status?.id + blog?.id + role
+        override val key: String = anchorStatus?.status?.id + blog?.id + locator
     }
 }

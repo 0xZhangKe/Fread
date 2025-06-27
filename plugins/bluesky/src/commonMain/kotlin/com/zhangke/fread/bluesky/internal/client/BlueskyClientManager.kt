@@ -4,12 +4,14 @@ import com.atproto.server.RefreshSessionResponse
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.architect.http.createHttpClientEngine
 import com.zhangke.framework.architect.json.globalJson
+import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.throwInDebug
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.repo.BlueskyLoggedAccountRepo
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -20,8 +22,8 @@ class BlueskyClientManager @Inject constructor(
     private val blueskyPlatformRepo: BlueskyPlatformRepo,
 ) {
 
-    private val cachedClient = mutableMapOf<IdentityRole, BlueskyClient>()
-    private val cachedAccount = mutableMapOf<IdentityRole, BlueskyLoggedAccount>()
+    private val cachedClient = mutableMapOf<PlatformLocator, BlueskyClient>()
+    private val cachedAccount = mutableMapOf<PlatformLocator, BlueskyLoggedAccount>()
 
     private val httpClientEngine by lazy {
         createHttpClientEngine()
@@ -40,51 +42,58 @@ class BlueskyClientManager @Inject constructor(
         cachedAccount.clear()
     }
 
-    fun getClient(role: IdentityRole): BlueskyClient {
-        cachedClient[role]?.let { return it }
-        val finalRole = if (role.baseUrl == null) {
-            IdentityRole(baseUrl = blueskyPlatformRepo.getAllPlatform().first().baseUrl)
-        } else {
-            role
-        }
-        val loggedAccountProvider = suspend { getLoggedAccount(finalRole) }
-        return createClient(finalRole, loggedAccountProvider).also { cachedClient[role] = it }
+    fun getClient(locator: PlatformLocator): BlueskyClient {
+        cachedClient[locator]?.let { return it }
+        val loggedAccountProvider = suspend { getLoggedAccount(locator) }
+        return createClient(locator, loggedAccountProvider).also { cachedClient[locator] = it }
+    }
+
+    fun getClientNoAccount(baseUrl: FormalBaseUrl): BlueskyClient {
+        return BlueskyClient(
+            baseUrl = baseUrl,
+            engine = httpClientEngine,
+            json = globalJson,
+            loggedAccountProvider = { null },
+            newSessionUpdater = { },
+            onLoginRequest = {},
+        )
     }
 
     private fun createClient(
-        role: IdentityRole,
+        locator: PlatformLocator,
         loggedAccountProvider: suspend () -> BlueskyLoggedAccount?,
     ): BlueskyClient {
         return BlueskyClient(
-            baseUrl = role.baseUrl!!,
+            baseUrl = locator.baseUrl,
             engine = httpClientEngine,
             json = globalJson,
             loggedAccountProvider = loggedAccountProvider,
-            newSessionUpdater = { updateNewSession(role, it) },
+            newSessionUpdater = { updateNewSession(locator, it) },
             onLoginRequest = {
 //                GlobalScreenNavigation.navigate(AddBlueskyContentScreen(role.baseUrl!!, true))
             },
         )
     }
 
-    suspend fun updateNewSession(role: IdentityRole, session: RefreshSessionResponse) {
+    suspend fun updateNewSession(locator: PlatformLocator, session: RefreshSessionResponse) {
         cachedAccount.clear()
-        val account = getLoggedAccount(role) ?: return
+        val account = getLoggedAccount(locator) ?: return
         val newAccount = accountAdapter.updateNewSession(account, session)
         loggedAccountRepo.updateAccount(account, newAccount)
     }
 
-    private suspend fun getLoggedAccount(role: IdentityRole): BlueskyLoggedAccount? {
-        cachedAccount[role]?.let { return it }
-        if (role.accountUri != null) {
-            loggedAccountRepo.queryByUri(role.accountUri.toString())?.let {
-                cachedAccount[role] = it
-                return it
-            }
+    private suspend fun getLoggedAccount(locator: PlatformLocator): BlueskyLoggedAccount? {
+        cachedAccount[locator]?.let { return it }
+        if (locator.accountUri != null) {
+            return loggedAccountRepo.queryByUri(locator.accountUri.toString())
+                ?.also { cachedAccount[locator] = it }
         }
-        if (role.baseUrl == null) return null
-        return loggedAccountRepo.queryAll()
-            .firstOrNull { it.platform.baseUrl.equalsDomain(role.baseUrl!!) }
-            ?.also { cachedAccount[role] = it }
+        val thisPlatformAccounts = loggedAccountRepo.queryAll()
+            .filter { it.platform.baseUrl.equalsDomain(locator.baseUrl) }
+        if (thisPlatformAccounts.size > 1) {
+            throwInDebug("Multiple accounts found for base URL: ${locator.baseUrl}")
+            return null
+        }
+        return thisPlatformAccounts.firstOrNull()
     }
 }

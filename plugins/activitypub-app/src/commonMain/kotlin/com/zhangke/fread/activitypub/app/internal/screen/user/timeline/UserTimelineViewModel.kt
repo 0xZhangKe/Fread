@@ -16,7 +16,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.preParseStatus
@@ -32,7 +32,7 @@ class UserTimelineViewModel(
     private val refactorToNewStatus: RefactorToNewStatusUseCase,
     private val loggedAccountProvider: LoggedAccountProvider,
     val tabType: UserTimelineTabType,
-    val role: IdentityRole,
+    val locator: PlatformLocator,
     val webFinger: WebFinger,
     val userId: String?,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
@@ -45,7 +45,7 @@ class UserTimelineViewModel(
     init {
         initController(
             coroutineScope = viewModelScope,
-            roleResolver = { role },
+            locatorResolver = { locator },
             loadFirstPageLocalFeeds = {
                 Result.success(emptyList())
             },
@@ -71,10 +71,10 @@ class UserTimelineViewModel(
     }
 
     private suspend fun loadUserTimeline(maxId: String? = null): Result<List<StatusUiState>> {
-        val loggedAccount = loggedAccountProvider.getAccount(role)
+        val loggedAccount = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
         val accountId = if (userId.isNullOrEmpty()) {
             val accountIdResult =
-                webFingerBaseUrlToUserIdRepo.getUserId(webFinger, role)
+                webFingerBaseUrlToUserIdRepo.getUserId(webFinger, locator)
             if (accountIdResult.isFailure) {
                 return Result.failure(accountIdResult.exceptionOrNull()!!)
             }
@@ -82,7 +82,7 @@ class UserTimelineViewModel(
         } else {
             userId
         }
-        val platformResult = platformRepo.getPlatform(role)
+        val platformResult = platformRepo.getPlatform(locator)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
@@ -103,7 +103,7 @@ class UserTimelineViewModel(
     ): Result<List<ActivityPubStatusEntity>> {
         val showPinned = tabType == UserTimelineTabType.POSTS
         val pinnedStatus = mutableListOf<ActivityPubStatusEntity>()
-        val accountRepo = clientManager.getClient(role).accountRepo
+        val accountRepo = clientManager.getClient(locator).accountRepo
         if (showPinned && maxId == null) {
             // first page
             val pinnedStatusResult = accountRepo.getStatuses(
@@ -134,7 +134,7 @@ class UserTimelineViewModel(
     ): StatusUiState {
         val status = statusEntityAdapter.toStatusUiState(
             entity = this,
-            role = role,
+            locator = locator,
             platform = platform,
             loggedAccount = loggedAccount,
         )

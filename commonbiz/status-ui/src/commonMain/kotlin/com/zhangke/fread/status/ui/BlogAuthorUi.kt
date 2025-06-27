@@ -20,7 +20,7 @@ import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusInfoStyleDefaults
 import com.zhangke.fread.statusui.Res
@@ -85,14 +85,14 @@ fun BlogAuthorUi(
 @Composable
 fun RecommendAuthorUi(
     modifier: Modifier,
-    role: IdentityRole,
+    locator: PlatformLocator,
     author: BlogAuthor,
     following: Boolean,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     BaseBlogAuthor(
         modifier = modifier,
-        role = role,
+        locator = locator,
         author = author,
         following = following,
         composedStatusInteraction = composedStatusInteraction,
@@ -102,7 +102,7 @@ fun RecommendAuthorUi(
 @Composable
 private fun BaseBlogAuthor(
     modifier: Modifier,
-    role: IdentityRole,
+    locator: PlatformLocator,
     author: BlogAuthor,
     following: Boolean,
     composedStatusInteraction: ComposedStatusInteraction,
@@ -110,7 +110,7 @@ private fun BaseBlogAuthor(
     val browserLauncher = LocalActivityBrowserLauncher.current
     Box(
         modifier = modifier.fillMaxWidth()
-            .clickable { composedStatusInteraction.onUserInfoClick(role, author) },
+            .clickable { composedStatusInteraction.onUserInfoClick(locator, author) },
     ) {
         Row(
             modifier = Modifier.padding(bottom = 8.dp)
@@ -135,7 +135,7 @@ private fun BaseBlogAuthor(
                             overflow = TextOverflow.Ellipsis,
                             fontSizeSp = 16F,
                             onUrlClick = {
-                                browserLauncher.launchWebTabInApp(it, role)
+                                browserLauncher.launchWebTabInApp(it, locator)
                             },
                         )
 
@@ -159,9 +159,9 @@ private fun BaseBlogAuthor(
                         style = TextButtonStyle.STANDARD,
                         onClick = {
                             if (following) {
-                                composedStatusInteraction.onUnfollowClick(role, author)
+                                composedStatusInteraction.onUnfollowClick(locator, author)
                             } else {
-                                composedStatusInteraction.onFollowClick(role, author)
+                                composedStatusInteraction.onFollowClick(locator, author)
                             }
                         },
                     )
@@ -175,15 +175,15 @@ private fun BaseBlogAuthor(
                     mentions = emptyList(),
                     tags = emptyList(),
                     onMentionClick = {
-                        composedStatusInteraction.onMentionClick(role, it)
+                        composedStatusInteraction.onMentionClick(locator, it)
                     },
                     onHashtagClick = {
-                        composedStatusInteraction.onHashtagInStatusClick(role, it)
+                        composedStatusInteraction.onHashtagInStatusClick(locator, it)
                     },
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3,
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, role)
+                        browserLauncher.launchWebTabInApp(it, locator)
                     },
                 )
             }

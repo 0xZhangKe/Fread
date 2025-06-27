@@ -3,7 +3,7 @@ package com.zhangke.fread.bluesky.internal.usecase
 import com.atproto.repo.CreateRecordRequest
 import com.atproto.repo.CreateRecordResponse
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Nsid
@@ -14,14 +14,14 @@ class CreateRecordUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         collection: Nsid,
         record: JsonContent,
     ): Result<CreateRecordResponse> {
-        val repo = clientManager.getClient(role).loggedAccountProvider()
+        val repo = clientManager.getClient(locator).loggedAccountProvider()
             ?.did?.let { Did(it) }
             ?: return Result.failure(IllegalStateException("No logged account"))
-        return clientManager.getClient(role)
+        return clientManager.getClient(locator)
             .createRecordCatching(
                 CreateRecordRequest(
                     repo = repo,

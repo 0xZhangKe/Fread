@@ -51,7 +51,7 @@ import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_followin
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_likes
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_mutes
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_reblog
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.user.CommonUserPlaceHolder
 import com.zhangke.fread.status.ui.user.CommonUserUi
 import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow
@@ -61,7 +61,7 @@ import org.jetbrains.compose.resources.stringResource
 import com.zhangke.fread.statusui.Res as StatusRes
 
 class UserListScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val type: UserListType,
     private val postUri: String? = null,
 ) : BaseScreen() {
@@ -72,7 +72,7 @@ class UserListScreen(
         val navigator = LocalNavigator.currentOrThrow
         val snackbarHostState = rememberSnackbarHostState()
         val viewModel = getViewModel<UserListViewModel, UserListViewModel.Factory>() {
-            it.create(role, type, postUri)
+            it.create(locator, type, postUri)
         }
         val uiState by viewModel.uiState.collectAsState()
 
@@ -88,7 +88,7 @@ class UserListScreen(
             onUnmuteClick = viewModel::onUnmuteClick,
             onBlockClick = viewModel::onBlockClick,
             onUnblockClick = viewModel::onUnblockClick,
-            onUserClick = { navigator.push(BskyUserDetailScreen(role, it.did)) },
+            onUserClick = { navigator.push(BskyUserDetailScreen(locator, it.did)) },
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
     }

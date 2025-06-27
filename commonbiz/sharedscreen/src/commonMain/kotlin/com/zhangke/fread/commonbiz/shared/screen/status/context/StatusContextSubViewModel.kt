@@ -13,7 +13,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.DescendantStatus
 import com.zhangke.fread.status.status.model.Status
@@ -28,7 +28,7 @@ class StatusContextSubViewModel(
     private val statusUpdater: StatusUpdater,
     private val refactorToNewStatus: RefactorToNewStatusUseCase,
     private val statusUiStateAdapter: StatusUiStateAdapter,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     anchorStatus: StatusUiState?,
     blog: Blog?,
     private val blogTranslationUiState: BlogTranslationUiState?,
@@ -51,7 +51,7 @@ class StatusContextSubViewModel(
 
     private val anchorStatus: StatusUiState =
         anchorStatus ?: statusUiStateAdapter.toStatusUiStateSnapshot(
-            role = role,
+            locator = locator,
             status = Status.NewBlog(blog!!),
             blogTranslationState = blogTranslationUiState,
         )
@@ -107,7 +107,7 @@ class StatusContextSubViewModel(
     private suspend fun loadStatusContext() {
         _uiState.update { it.copy(loading = true) }
         statusProvider.statusResolver
-            .getStatusContext(role, anchorStatus.status)
+            .getStatusContext(locator, anchorStatus.status)
             .map { statusContext ->
                 val status = statusContext.status?.let {
                     statusUpdater.update(it)
@@ -143,7 +143,7 @@ class StatusContextSubViewModel(
 
     private suspend fun loadStatus(): StatusUiState? {
         return statusProvider.statusResolver
-            .getStatus(role, anchorStatus.status.intrinsicBlog, anchorStatus.status.platform)
+            .getStatus(locator, anchorStatus.status.intrinsicBlog, anchorStatus.status.platform)
             .map {
                 it.copy(
                     following = anchorAuthorFollowing ?: it.following,
@@ -216,7 +216,7 @@ class StatusContextSubViewModel(
         launchInViewModel {
             statusProvider.statusResolver
                 .isFollowing(
-                    role = role,
+                    locator = locator,
                     target = anchorStatus.status.intrinsicBlog.author,
                 )?.onSuccess { following ->
                     anchorAuthorFollowing = following

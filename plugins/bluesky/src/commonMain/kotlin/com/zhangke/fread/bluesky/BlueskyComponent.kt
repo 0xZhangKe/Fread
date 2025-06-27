@@ -18,7 +18,7 @@ import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
 import com.zhangke.fread.status.IStatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -55,7 +55,7 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideBskyFeedsExplorerViewModel(creator: (String?, IdentityRole?) -> BskyFollowingFeedsViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideBskyFeedsExplorerViewModel(creator: (String?, PlatformLocator?) -> BskyFollowingFeedsViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return BskyFollowingFeedsViewModel::class to BskyFollowingFeedsViewModel.Factory { contentId, role ->
             creator(contentId, role)
         }
@@ -63,7 +63,7 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideUserDetailViewModel(creator: (IdentityRole, String) -> BskyUserDetailViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideUserDetailViewModel(creator: (PlatformLocator, String) -> BskyUserDetailViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return BskyUserDetailViewModel::class to BskyUserDetailViewModel.Factory { role, did ->
             creator(role, did)
         }
@@ -71,7 +71,7 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideEditProfileViewModel(creator: (IdentityRole) -> EditProfileViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideEditProfileViewModel(creator: (PlatformLocator) -> EditProfileViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return EditProfileViewModel::class to EditProfileViewModel.Factory { role ->
             creator(role)
         }
@@ -79,7 +79,7 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideUserListViewModel(creator: (IdentityRole, UserListType, String?) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideUserListViewModel(creator: (PlatformLocator, UserListType, String?) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return UserListViewModel::class to UserListViewModel.Factory { role, type, postUri ->
             creator(role, type, postUri)
         }
@@ -87,7 +87,7 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun providePublishPostViewModel(creator: (IdentityRole, String?, String?) -> PublishPostViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun providePublishPostViewModel(creator: (PlatformLocator, String?, String?) -> PublishPostViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return PublishPostViewModel::class to PublishPostViewModel.Factory { role, reply, quote ->
             creator(role, reply, quote)
         }
@@ -101,7 +101,7 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideExplorerFeedsViewModel(creator: (IdentityRole) -> ExplorerFeedsViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideExplorerFeedsViewModel(creator: (PlatformLocator) -> ExplorerFeedsViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return ExplorerFeedsViewModel::class to ExplorerFeedsViewModel.Factory { role ->
             creator(role)
         }
@@ -109,7 +109,7 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideFeedsDetailViewModel(creator: (IdentityRole, BlueskyFeeds) -> FeedsDetailViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideFeedsDetailViewModel(creator: (PlatformLocator, BlueskyFeeds) -> FeedsDetailViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return FeedsDetailViewModel::class to FeedsDetailViewModel.Factory { role, feeds ->
             creator(role, feeds)
         }

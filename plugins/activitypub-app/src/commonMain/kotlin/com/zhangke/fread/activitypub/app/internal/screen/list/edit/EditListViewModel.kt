@@ -16,7 +16,7 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_add_list_name_is_empty
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,14 +30,14 @@ import me.tatarka.inject.annotations.Inject
 
 class EditListViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted private val serializedList: String,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            role: IdentityRole,
+            locator: PlatformLocator,
             serializedList: String,
         ): EditListViewModel
     }
@@ -74,7 +74,7 @@ class EditListViewModel @Inject constructor(
 
     fun onDeleteClick() {
         launchInViewModel {
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .listsRepo
                 .deleteList(entity.id)
                 .onSuccess {
@@ -106,7 +106,7 @@ class EditListViewModel @Inject constructor(
         }
         _uiState.update { it.copy(showLoadingCover = true) }
         launchInViewModel {
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .listsRepo
                 .deleteAccountsInList(
                     listId = entity.id,
@@ -159,7 +159,7 @@ class EditListViewModel @Inject constructor(
 
     private suspend fun updateSettingPart(): Result<Unit> {
         if (!checkSettingHasChanged()) return Result.success(Unit)
-        return clientManager.getClient(role).listsRepo
+        return clientManager.getClient(locator).listsRepo
             .updateList(
                 listId = entity.id,
                 title = uiState.value.name.text,
@@ -172,7 +172,7 @@ class EditListViewModel @Inject constructor(
         if (!checkAccountHasChanged()) return Result.success(Unit)
         val ids = originalAccountList.map { it.id }.toSet()
         val newAccounts = _uiState.value.accountList.filter { !ids.contains(it.id) }
-        return clientManager.getClient(role).listsRepo
+        return clientManager.getClient(locator).listsRepo
             .postAccountInList(
                 listId = entity.id,
                 accountIds = newAccounts.map { it.id },
@@ -212,7 +212,7 @@ class EditListViewModel @Inject constructor(
 
     private suspend fun getAccountList() {
         _uiState.update { it.copy(accountsLoading = true) }
-        clientManager.getClient(role)
+        clientManager.getClient(locator)
             .listsRepo
             .getAccountsInList(entity.id)
             .onSuccess { list ->

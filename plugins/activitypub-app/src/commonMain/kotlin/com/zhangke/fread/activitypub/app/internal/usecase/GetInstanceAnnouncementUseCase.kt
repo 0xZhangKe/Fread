@@ -5,7 +5,7 @@ import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class GetInstanceAnnouncementUseCase @Inject constructor(
@@ -16,7 +16,7 @@ class GetInstanceAnnouncementUseCase @Inject constructor(
         baseUrl: FormalBaseUrl,
         justActive: Boolean = true,
     ): Result<List<ActivityPubAnnouncementEntity>> {
-        val client = clientManager.getClient(IdentityRole(null, baseUrl))
+        val client = clientManager.getClient(PlatformLocator(baseUrl = baseUrl))
         return client.instanceRepo.getAnnouncement()
             .map {
                 if (justActive) {

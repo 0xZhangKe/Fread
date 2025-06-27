@@ -54,6 +54,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.commonbiz.Res as CommonRes
@@ -68,6 +69,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import org.jetbrains.compose.resources.stringResource
 
 class EditAccountInfoScreen(
+    private val baseUrl: FormalBaseUrl,
     private val accountUri: FormalUri,
 ) : BaseScreen() {
 
@@ -76,7 +78,7 @@ class EditAccountInfoScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<EditAccountInfoViewModel, EditAccountInfoViewModel.Factory>() {
-            it.create(accountUri)
+            it.create(baseUrl, accountUri)
         }
         val uiState by viewModel.uiState.collectAsState()
         EditAccountInfoContent(

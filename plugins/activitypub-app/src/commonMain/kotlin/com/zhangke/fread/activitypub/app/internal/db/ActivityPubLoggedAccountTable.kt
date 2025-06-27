@@ -47,8 +47,8 @@ interface ActivityPubLoggerAccountDao {
     @Query("SELECT * FROM $TABLE_NAME ORDER BY addedTimestamp")
     fun queryAllFlow(): Flow<List<ActivityPubLoggedAccountEntity>>
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE baseUrl=:baseUrl")
-    fun observeAccount(baseUrl: FormalBaseUrl): Flow<ActivityPubLoggedAccountEntity?>
+    @Query("SELECT * FROM $TABLE_NAME WHERE uri=:uri")
+    fun observeAccount(uri: String): Flow<ActivityPubLoggedAccountEntity?>
 
     @Query("SELECT * FROM $TABLE_NAME ORDER BY addedTimestamp")
     suspend fun queryAll(): List<ActivityPubLoggedAccountEntity>

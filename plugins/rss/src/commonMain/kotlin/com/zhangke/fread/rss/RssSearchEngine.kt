@@ -11,7 +11,7 @@ import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchContentResult
@@ -29,7 +29,10 @@ class RssSearchEngine @Inject constructor(
     private val rssUriTransformer: RssUriTransformer,
 ) : ISearchEngine {
 
-    override suspend fun search(role: IdentityRole, query: String): Result<List<SearchResult>> {
+    override suspend fun search(
+        locator: PlatformLocator,
+        query: String
+    ): Result<List<SearchResult>> {
         val authorResult = searchAuthorByUrl(query)
         if (authorResult.isFailure) {
             return Result.failure(authorResult.exceptionOrThrow())
@@ -42,7 +45,7 @@ class RssSearchEngine @Inject constructor(
     }
 
     override suspend fun searchStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         maxId: String?,
     ): Result<List<StatusUiState>> {
@@ -50,14 +53,14 @@ class RssSearchEngine @Inject constructor(
     }
 
     override suspend fun searchHashtag(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String, offset: Int?,
     ): Result<List<Hashtag>> {
         return Result.success(emptyList())
     }
 
     override suspend fun searchAuthor(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>> {
@@ -69,10 +72,7 @@ class RssSearchEngine @Inject constructor(
         }
     }
 
-    override suspend fun searchSource(
-        role: IdentityRole,
-        query: String
-    ): Result<List<StatusSource>> {
+    override suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
         return queryWithChannelByUrl(
             query = query,
             defaultResult = emptyList(),
@@ -82,10 +82,14 @@ class RssSearchEngine @Inject constructor(
         )
     }
 
-    override fun searchContent(
-        role: IdentityRole,
-        query: String,
-    ): Flow<List<SearchContentResult>> {
+    override suspend fun searchSource(
+        locator: PlatformLocator,
+        query: String
+    ): Result<List<StatusSource>> {
+        return searchSourceNoToken(query)
+    }
+
+    override suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>> {
         return flow {
             val list = queryWithChannelByUrl(
                 query = query,
@@ -102,6 +106,13 @@ class RssSearchEngine @Inject constructor(
             }
             emit(list)
         }
+    }
+
+    override suspend fun searchContent(
+        locator: PlatformLocator,
+        query: String,
+    ): Flow<List<SearchContentResult>> {
+        return searchContentNoToken(query)
     }
 
     private suspend fun searchAuthorByUrl(query: String): Result<BlogAuthor?> {

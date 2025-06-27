@@ -49,11 +49,10 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.activitypub.app.internal.screen.content.timeline.ActivityPubTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
-import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusTab
 import com.zhangke.fread.common.page.BasePagerTab
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
@@ -75,8 +74,10 @@ internal class ActivityPubContentScreen(
         ActivityPubContentUi(
             screen = screen,
             uiState = uiState,
-            onTitleClick = {
-                navigator.push(InstanceDetailScreen(PlatformDetailRoute.buildRoute(it.baseUrl)))
+            onTitleClick = { content ->
+                uiState.locator?.let {
+                    navigator.push(InstanceDetailScreen(it, content.baseUrl))
+                }
             },
             onPostBlogClick = {
                 navigator.push(PostStatusScreen(accountUri = it.uri))
@@ -92,7 +93,7 @@ internal class ActivityPubContentScreen(
         onTitleClick: (ActivityPubContent) -> Unit,
         onPostBlogClick: (ActivityPubLoggedAccount) -> Unit,
     ) {
-        val (role, config, account, errorMessage) = uiState
+        val (locator, config, account, errorMessage) = uiState
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalNestedTabConnection.current
         val snackBarHostState = rememberSnackbarHostState()
@@ -147,9 +148,9 @@ internal class ActivityPubContentScreen(
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackBarHostState,
                 ) {
-                    if (role != null && config != null) {
+                    if (locator != null && config != null) {
                         val tabList = remember(uiState) {
-                            createTabs(role, config)
+                            createTabs(locator, config)
                         }
                         val pagerState = rememberPagerState(0) {
                             tabList.size
@@ -231,50 +232,48 @@ internal class ActivityPubContentScreen(
     }
 
     private fun createTabs(
-        role: IdentityRole,
+        locator: PlatformLocator,
         config: ActivityPubContent,
     ): List<PagerTab> {
         return config
             .tabList
             .filter { !it.hide }
             .sortedBy { it.order }
-            .map { it.toPagerTab(role) }
+            .map { it.toPagerTab(locator) }
     }
 
     private fun ActivityPubContent.ContentTab.toPagerTab(
-        role: IdentityRole,
+        locator: PlatformLocator,
     ): PagerTab {
         return when (this) {
             is ActivityPubContent.ContentTab.HomeTimeline -> {
                 ActivityPubTimelineTab(
-                    role = role,
+                    locator = locator,
                     type = ActivityPubStatusSourceType.TIMELINE_HOME,
                 )
             }
 
             is ActivityPubContent.ContentTab.LocalTimeline -> {
                 ActivityPubTimelineTab(
-                    role = role,
+                    locator = locator,
                     type = ActivityPubStatusSourceType.TIMELINE_LOCAL,
                 )
             }
 
             is ActivityPubContent.ContentTab.PublicTimeline -> {
                 ActivityPubTimelineTab(
-                    role = role,
+                    locator = locator,
                     type = ActivityPubStatusSourceType.TIMELINE_PUBLIC,
                 )
             }
 
             is ActivityPubContent.ContentTab.Trending -> {
-                TrendingStatusTab(
-                    role = role,
-                )
+                TrendingStatusTab(locator = locator)
             }
 
             is ActivityPubContent.ContentTab.ListTimeline -> {
                 ActivityPubTimelineTab(
-                    role = role,
+                    locator = locator,
                     type = ActivityPubStatusSourceType.LIST,
                     listId = listId,
                     listTitle = name,

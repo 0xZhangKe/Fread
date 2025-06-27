@@ -5,13 +5,12 @@ import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
-class BlogDetailViewModel @Inject constructor(
+class RssBlogDetailViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
@@ -21,7 +20,7 @@ class BlogDetailViewModel @Inject constructor(
     fun onUserInfoClick(author: BlogAuthor) {
         viewModelScope.launch {
             statusProvider.screenProvider
-                .getUserDetailScreen(IdentityRole.nonIdentityRole, author.uri, author.userId)
+                .getUserDetailScreenWithoutAccount(author.uri)
                 ?.let { _openScreenFlow.emit(it) }
         }
     }

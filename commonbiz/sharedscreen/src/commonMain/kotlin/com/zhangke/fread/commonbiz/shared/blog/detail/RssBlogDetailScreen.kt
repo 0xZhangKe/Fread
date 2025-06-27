@@ -51,7 +51,7 @@ class RssBlogDetailScreen(
         val navigator = LocalNavigator.currentOrThrow
         val browserLauncher = LocalActivityBrowserLauncher.current
 
-        val viewModel = getViewModel<BlogDetailViewModel>()
+        val viewModel = getViewModel<RssBlogDetailViewModel>()
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         Scaffold(
             topBar = {

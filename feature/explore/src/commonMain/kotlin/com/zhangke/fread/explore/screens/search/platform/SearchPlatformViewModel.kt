@@ -7,7 +7,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,12 +21,12 @@ import me.tatarka.inject.annotations.Inject
 
 open class SearchPlatformViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted private val query: String,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
-        fun create(role: IdentityRole, query: String): SearchPlatformViewModel
+        fun create(locator: PlatformLocator, query: String): SearchPlatformViewModel
     }
 
     private val _uiState = MutableStateFlow(SearchedPlatformUiState.default())
@@ -40,7 +40,7 @@ open class SearchPlatformViewModel @Inject constructor(
             _uiState.update { it.copy(searching = true) }
             val list = mutableListOf<SearchContentResult>()
             statusProvider.searchEngine
-                .searchContent(role, query)
+                .searchContent(locator, query)
                 .map { it.second }
                 .collect { results ->
                     list += results.filter {

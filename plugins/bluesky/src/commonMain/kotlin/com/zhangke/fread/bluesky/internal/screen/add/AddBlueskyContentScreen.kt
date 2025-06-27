@@ -70,7 +70,6 @@ class AddBlueskyContentScreen(
             onPasswordChange = viewModel::onPasswordChange,
             onFactorTokenChange = viewModel::onFactorTokenChange,
             onBackClick = navigator::pop,
-            onSkipClick = viewModel::onSkipClick,
             onLoginClick = viewModel::onLoginClick,
         )
         LoadingDialog(loading = uiState.logging, onDismissRequest = viewModel::onCancelLogin)
@@ -89,7 +88,6 @@ class AddBlueskyContentScreen(
         onPasswordChange: (String) -> Unit,
         onFactorTokenChange: (String) -> Unit,
         onBackClick: () -> Unit,
-        onSkipClick: () -> Unit,
         onLoginClick: () -> Unit,
     ) {
         Scaffold(
@@ -159,18 +157,6 @@ class AddBlueskyContentScreen(
                     )
                 }
                 Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-                    if (!loginMode) {
-                        Button(
-                            modifier = Modifier.align(Alignment.CenterStart),
-                            onClick = onSkipClick,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            ),
-                        ) {
-                            Text(stringResource(com.zhangke.fread.framework.Res.string.skip))
-                        }
-                    }
                     Button(
                         modifier = Modifier.align(Alignment.CenterEnd),
                         onClick = onLoginClick,

@@ -10,10 +10,11 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.fread.activitypub.app.internal.usecase.GetDefaultBaseUrlUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.source.user.SearchUserSourceUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.ISearchEngine
@@ -33,24 +34,28 @@ class ActivityPubSearchEngine @Inject constructor(
     private val hashtagAdapter: ActivityPubTagAdapter,
     private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val loggedAccountProvider: LoggedAccountProvider,
+    private val getDefaultBaseUrl: GetDefaultBaseUrlUseCase,
 ) : ISearchEngine {
 
-    override suspend fun search(role: IdentityRole, query: String): Result<List<SearchResult>> {
-        val account = loggedAccountProvider.getAccount(role)
-        return doSearch(role) { searchRepo, platform ->
+    override suspend fun search(
+        locator: PlatformLocator,
+        query: String
+    ): Result<List<SearchResult>> {
+        val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
+        return doSearch(locator) { searchRepo, platform ->
             searchRepo.query(query).map {
-                searchAdapter.toSearchResult(it, platform, role, account)
+                searchAdapter.toSearchResult(it, platform, locator, account)
             }
         }
     }
 
     override suspend fun searchStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         maxId: String?,
     ): Result<List<StatusUiState>> {
-        val account = loggedAccountProvider.getAccount(role)
-        return doSearch(role) { searchRepo, blogPlatform ->
+        val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
+        return doSearch(locator) { searchRepo, blogPlatform ->
             searchRepo.queryStatus(
                 query = query,
                 maxId = maxId,
@@ -59,7 +64,7 @@ class ActivityPubSearchEngine @Inject constructor(
                     statusAdapter.toStatusUiState(
                         entity = it,
                         platform = blogPlatform,
-                        role = role,
+                        locator = locator,
                         loggedAccount = account,
                     )
                 }
@@ -68,11 +73,11 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     override suspend fun searchHashtag(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?,
     ): Result<List<Hashtag>> {
-        return doSearch(role) { searchRepo, _ ->
+        return doSearch(locator) { searchRepo, _ ->
             searchRepo.queryHashtags(
                 query = query,
                 offset = offset,
@@ -83,11 +88,11 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     override suspend fun searchAuthor(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>> {
-        return doSearch(role) { searchRepo, _ ->
+        return doSearch(locator) { searchRepo, _ ->
             searchRepo.queryAccount(
                 query = query,
                 offset = offset,
@@ -98,23 +103,23 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     private suspend fun <T> doSearch(
-        role: IdentityRole,
+        locator: PlatformLocator,
         onSearch: suspend (SearchRepo, BlogPlatform) -> Result<List<T>>,
     ): Result<List<T>> {
-        val platformResult = platformRepo.getPlatform(role)
+        val platformResult = platformRepo.getPlatform(locator)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        val searchRepo = clientManager.getClient(role).searchRepo
+        val searchRepo = clientManager.getClient(locator).searchRepo
         return onSearch(searchRepo, platform)
     }
 
     override suspend fun searchSource(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
     ): Result<List<StatusSource>> {
-        return searchUserSource(role, query).map {
+        return searchUserSource(locator, query).map {
             if (it == null) {
                 emptyList()
             } else {
@@ -123,12 +128,21 @@ class ActivityPubSearchEngine @Inject constructor(
         }
     }
 
-    override fun searchContent(
-        role: IdentityRole,
+    override suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
+        return searchSource(PlatformLocator(baseUrl = getDefaultBaseUrl()), query)
+    }
+
+    override suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>> {
+        val locator = PlatformLocator(baseUrl = getDefaultBaseUrl())
+        return searchContent(locator = locator, query = query)
+    }
+
+    override suspend fun searchContent(
+        locator: PlatformLocator,
         query: String,
     ): Flow<List<SearchContentResult>> {
         return flow {
-            searchUserSource(role, query).getOrNull()
+            searchUserSource(locator, query).getOrNull()
                 ?.let { emit(listOf(SearchContentResult.Source(it))) }
             platformRepo.searchPlatformSnapshotFromLocal(query)
                 .map { SearchContentResult.SearchedPlatformSnapshot(it) }

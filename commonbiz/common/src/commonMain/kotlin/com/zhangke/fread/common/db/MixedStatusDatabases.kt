@@ -71,7 +71,7 @@ abstract class MixedStatusDatabases : RoomDatabase() {
 
     companion object {
 
-        const val DB_NAME = "mixed_status.db"
+        const val DB_NAME = "mixed_status_1.db"
     }
 }
 

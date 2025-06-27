@@ -19,7 +19,7 @@ import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.ReplySetting
 import com.zhangke.fread.status.model.StatusList
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +43,7 @@ class PublishPostViewModel @Inject constructor(
     private val platformUriHelper: PlatformUriHelper,
     private val configManager: FreadConfigManager,
     private val publishingPost: PublishingPostUseCase,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted replyBlogJsonString: String?,
     @Assisted quoteBlogJsonString: String?,
 ) : ViewModel() {
@@ -51,7 +51,7 @@ class PublishPostViewModel @Inject constructor(
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            role: IdentityRole,
+            locator: PlatformLocator,
             replyBlogJsonString: String?,
             quoteBlogJsonString: String?,
         ): PublishPostViewModel
@@ -79,7 +79,7 @@ class PublishPostViewModel @Inject constructor(
             _uiState.update { it.copy(replyBlog = reply, quoteBlog = quote) }
         }
         launchInViewModel {
-            val client = clientManager.getClient(role)
+            val client = clientManager.getClient(locator)
             val account = client.loggedAccountProvider() ?: return@launchInViewModel
             _uiState.update { it.copy(account = account) }
         }
@@ -228,9 +228,9 @@ class PublishPostViewModel @Inject constructor(
 
     private fun loadUserList() {
         launchInViewModel {
-            val client = clientManager.getClient(role)
+            val client = clientManager.getClient(locator)
             val account = client.loggedAccountProvider() ?: return@launchInViewModel
-            getAllLists(role, Did(account.did))
+            getAllLists(locator, Did(account.did))
                 .map { lists -> lists.map { listView -> listView.toStatusList() } }
                 .onSuccess { lists -> _uiState.update { it.copy(list = lists) } }
         }

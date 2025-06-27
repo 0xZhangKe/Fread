@@ -48,7 +48,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_hashtag_unfollow_dialog_me
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.statusui.status_ui_user_detail_relationship_following
 import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
@@ -56,19 +56,19 @@ import kotlinx.coroutines.flow.SharedFlow
 import org.jetbrains.compose.resources.stringResource
 
 data class HashtagTimelineScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val hashtag: String
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = role.toString() + hashtag
+        get() = locator.toString() + hashtag
 
     @Composable
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
-            getViewModel<HashtagTimelineContainerViewModel>().getViewModel(role, hashtag)
+            getViewModel<HashtagTimelineContainerViewModel>().getViewModel(locator, hashtag)
         val hashtagTimelineUiState by viewModel.hashtagTimelineUiState.collectAsState()
         val statusUiState by viewModel.uiState.collectAsState()
         HashtagTimelineContent(

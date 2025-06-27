@@ -70,7 +70,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_title
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_warning_desc
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_warning_title
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.utils.getScreenWidth
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -80,7 +80,7 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 class EditFilterScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val id: String?,
 ) : BaseScreen() {
 
@@ -90,7 +90,7 @@ class EditFilterScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<EditFilterViewModel, EditFilterViewModel.Factory> {
-            it.create(role, id)
+            it.create(locator, id)
         }
         val addedKeywordList by navigator.navigationResult
             .getResult<List<EditFilterUiState.Keyword>>(screenKey = HiddenKeywordScreen.SCREEN_KEY)

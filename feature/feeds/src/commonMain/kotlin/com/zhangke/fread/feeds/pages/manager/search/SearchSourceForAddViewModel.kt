@@ -7,7 +7,6 @@ import com.zhangke.framework.composable.updateToLoading
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.source.StatusSource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,7 +48,7 @@ class SearchSourceForAddViewModel @Inject constructor(
     }
 
     private suspend fun doSearch(query: String): Result<List<StatusSource>> {
-        return statusProvider.searchEngine.searchSource(IdentityRole.nonIdentityRole, query)
+        return statusProvider.searchEngine.searchSourceNoToken(query)
     }
 
     private fun StatusSource.toUiState(): StatusSourceUiState {

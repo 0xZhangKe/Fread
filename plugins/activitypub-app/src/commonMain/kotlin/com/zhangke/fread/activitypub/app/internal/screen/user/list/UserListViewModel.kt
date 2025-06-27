@@ -17,7 +17,7 @@ import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,7 +33,7 @@ class UserListViewModel @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
     @Assisted private val type: UserListType,
     @Assisted private val statusId: String?,
     @Assisted private val userUri: FormalUri?,
@@ -43,7 +43,7 @@ class UserListViewModel @Inject constructor(
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            role: IdentityRole,
+            locator: PlatformLocator,
             type: UserListType,
             statusId: String?,
             userUri: FormalUri?,
@@ -54,7 +54,7 @@ class UserListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         UserListUiState(
             type = type,
-            role = role,
+            locator = locator,
             loading = false,
             userList = emptyList(),
             loadMoreState = LoadState.Idle,
@@ -129,7 +129,7 @@ class UserListViewModel @Inject constructor(
     }
 
     private suspend fun fetchUserListFromServer(maxId: String? = null): Result<List<BlogAuthorUiState>> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val pagingResult = when (type) {
             UserListType.REBLOGS -> client.statusRepo.getReblogBy(
                 statusId = statusId!!,
@@ -167,7 +167,7 @@ class UserListViewModel @Inject constructor(
         val userIdResult = getPageTargetUserId()
         if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrThrow())
         val userId = userIdResult.getOrThrow()
-        val accountRepo = clientManager.getClient(role).accountRepo
+        val accountRepo = clientManager.getClient(locator).accountRepo
         return if (type == UserListType.FOLLOWERS) {
             accountRepo.getFollowers(
                 id = userId,
@@ -186,7 +186,7 @@ class UserListViewModel @Inject constructor(
     fun onUnblockClick(author: BlogAuthor) {
         launchInViewModel {
             val id = author.userId ?: getUserIdByUri(author.uri) ?: return@launchInViewModel
-            clientManager.getClient(role)
+            clientManager.getClient(locator)
                 .accountRepo
                 .unblock(id)
                 .onFailure {
@@ -205,7 +205,7 @@ class UserListViewModel @Inject constructor(
 
     fun onUnmuteClick(author: BlogAuthor) {
         launchInViewModel {
-            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountRepo = clientManager.getClient(locator).accountRepo
             val authorId = author.userId ?: getUserIdByUri(author.uri) ?: return@launchInViewModel
             accountRepo.unmute(authorId)
                 .onSuccess {
@@ -242,7 +242,7 @@ class UserListViewModel @Inject constructor(
             mutableSnackMessageFlow.emit(textOf("Invalid user uri: $uri"))
             return null
         }
-        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsight.webFinger, role)
+        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsight.webFinger, locator)
         if (userIdResult.isFailure) {
             mutableSnackMessageFlow.emitTextMessageFromThrowable(userIdResult.exceptionOrThrow())
             return null

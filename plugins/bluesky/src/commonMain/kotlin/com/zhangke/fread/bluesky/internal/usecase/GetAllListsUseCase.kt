@@ -3,7 +3,7 @@ package com.zhangke.fread.bluesky.internal.usecase
 import app.bsky.graph.GetListsQueryParams
 import app.bsky.graph.ListView
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtIdentifier
 
@@ -12,10 +12,10 @@ class GetAllListsUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         id: AtIdentifier,
     ): Result<List<ListView>> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         var cursor: String? = null
         val lists = mutableListOf<ListView>()
         while (true) {

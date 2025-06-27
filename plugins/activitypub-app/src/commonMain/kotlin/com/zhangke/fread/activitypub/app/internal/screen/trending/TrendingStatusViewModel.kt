@@ -7,10 +7,9 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class TrendingStatusViewModel @Inject constructor(
@@ -34,19 +33,19 @@ class TrendingStatusViewModel @Inject constructor(
             statusUiStateAdapter = statusUiStateAdapter,
             platformRepo = platformRepo,
             loggedAccountProvider = loggedAccountProvider,
-            role = params.role,
+            locator = params.locator,
         )
     }
 
     fun getSubViewModel(
-        role: IdentityRole,
+        locator: PlatformLocator,
     ): TrendingStatusSubViewModel {
-        val params = Params(role)
+        val params = Params(locator)
         return obtainSubViewModel(params)
     }
 
-    class Params(val role: IdentityRole) : SubViewModelParams() {
+    class Params(val locator: PlatformLocator) : SubViewModelParams() {
         override val key: String
-            get() = role.toString()
+            get() = locator.toString()
     }
 }

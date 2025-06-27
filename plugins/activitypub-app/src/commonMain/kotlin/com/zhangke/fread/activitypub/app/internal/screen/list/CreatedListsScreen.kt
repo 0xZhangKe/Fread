@@ -36,18 +36,18 @@ import com.zhangke.fread.activitypub.app.activity_pub_created_list_title
 import com.zhangke.fread.activitypub.app.internal.screen.list.add.AddListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
 class CreatedListsScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
 ) : BaseScreen() {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<CreatedListsViewModel, CreatedListsViewModel.Factory> {
-            it.create(role)
+            it.create(locator)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarState = rememberSnackbarHostState()
@@ -58,10 +58,10 @@ class CreatedListsScreen(
             onRetryClick = viewModel::onRetryClick,
             onListClick = {
                 navigator.push(
-                    EditListScreen(role = role, serializedList = globalJson.encodeToString(it))
+                    EditListScreen(locator = locator, serializedList = globalJson.encodeToString(it))
                 )
             },
-            onAddListClick = { navigator.push(AddListScreen(role)) },
+            onAddListClick = { navigator.push(AddListScreen(locator)) },
         )
         LaunchedEffect(Unit) { viewModel.onPageResume() }
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarFlow)

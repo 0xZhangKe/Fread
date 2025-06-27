@@ -59,7 +59,7 @@ import com.zhangke.fread.feature.profile.profile_page_logout_dialog_content
 import com.zhangke.fread.feature.profile.profile_page_title
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -270,7 +270,7 @@ class ProfileHomePage : BaseScreen() {
                                 fontSizeSp = 18F,
                                 fontWeight = FontWeight.SemiBold,
                                 onUrlClick = {
-                                    browserLauncher.launchWebTabInApp(it, account.role)
+                                    browserLauncher.launchWebTabInApp(it, account.locator)
                                 },
                             )
                             Spacer(modifier = Modifier.width(4.dp))
@@ -307,7 +307,7 @@ class ProfileHomePage : BaseScreen() {
                     emojis = account.emojis,
                     fontSizeSp = 16F,
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, account.role)
+                        browserLauncher.launchWebTabInApp(it, account.locator)
                     },
                 )
                 AccountInteractionPanel(
@@ -401,6 +401,6 @@ class ProfileHomePage : BaseScreen() {
         }
     }
 
-    private val LoggedAccount.role: IdentityRole
-        get() = IdentityRole(accountUri = uri, baseUrl = platform.baseUrl)
+    private val LoggedAccount.locator: PlatformLocator
+        get() = PlatformLocator(accountUri = uri, baseUrl = platform.baseUrl)
 }

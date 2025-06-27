@@ -2,11 +2,9 @@ package com.zhangke.fread.status.search
 
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
-import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.source.StatusSource
-import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.utils.collect
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,43 +14,53 @@ class SearchEngine(
     private val engineList: List<ISearchEngine>,
 ) {
 
-    suspend fun search(role: IdentityRole, query: String): Result<List<SearchResult>> {
-        return engineList.map { it.search(role, query.trim()) }.collect()
+    suspend fun search(locator: PlatformLocator, query: String): Result<List<SearchResult>> {
+        return engineList.map { it.search(locator, query.trim()) }.collect()
     }
 
     suspend fun searchStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         maxId: String?
     ): Result<List<StatusUiState>> {
-        return engineList.map { it.searchStatus(role, query, maxId) }.collect()
+        return engineList.map { it.searchStatus(locator, query, maxId) }.collect()
     }
 
     suspend fun searchHashtag(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?
     ): Result<List<Hashtag>> {
-        return engineList.map { it.searchHashtag(role, query, offset) }.collect()
+        return engineList.map { it.searchHashtag(locator, query, offset) }.collect()
     }
 
     suspend fun searchAuthor(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?
     ): Result<List<BlogAuthor>> {
-        return engineList.map { it.searchAuthor(role, query, offset) }.collect()
+        return engineList.map { it.searchAuthor(locator, query, offset) }.collect()
     }
 
-    suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>> {
-        return engineList.map { it.searchSource(role, query.trim()) }.collect()
+    suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
+        return engineList.map { it.searchSourceNoToken(query.trim()) }.collect()
     }
 
-    fun searchContent(
-        role: IdentityRole,
+    suspend fun searchSource(locator: PlatformLocator, query: String): Result<List<StatusSource>> {
+        return engineList.map { it.searchSource(locator, query.trim()) }.collect()
+    }
+
+    suspend fun searchContentNoToken(query: String): Flow<Pair<String, List<SearchContentResult>>> {
+        return engineList.map { it.searchContentNoToken(query) }
+            .merge()
+            .map { query to it }
+    }
+
+    suspend fun searchContent(
+        locator: PlatformLocator,
         query: String,
     ): Flow<Pair<String, List<SearchContentResult>>> {
-        return engineList.map { it.searchContent(role, query) }
+        return engineList.map { it.searchContent(locator, query) }
             .merge()
             .map { query to it }
     }
@@ -60,30 +68,34 @@ class SearchEngine(
 
 interface ISearchEngine {
 
-    suspend fun search(role: IdentityRole, query: String): Result<List<SearchResult>>
+    suspend fun search(locator: PlatformLocator, query: String): Result<List<SearchResult>>
 
     suspend fun searchStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         maxId: String?,
     ): Result<List<StatusUiState>>
 
     suspend fun searchHashtag(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?,
     ): Result<List<Hashtag>>
 
     suspend fun searchAuthor(
-        role: IdentityRole,
+        locator: PlatformLocator,
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>>
 
-    suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>>
+    suspend fun searchSource(locator: PlatformLocator, query: String): Result<List<StatusSource>>
 
-    fun searchContent(
-        role: IdentityRole,
+    suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>>
+
+    suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>>
+
+    suspend fun searchContent(
+        locator: PlatformLocator,
         query: String
     ): Flow<List<SearchContentResult>>
 }

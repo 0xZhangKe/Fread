@@ -60,12 +60,12 @@ import com.zhangke.fread.commonbiz.edit_profile_input_name_hint
 import com.zhangke.fread.commonbiz.edit_profile_input_note_hint
 import com.zhangke.fread.commonbiz.edit_profile_label_name
 import com.zhangke.fread.commonbiz.edit_profile_label_note
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 import com.zhangke.fread.commonbiz.Res as CommonRes
 
 class EditProfileScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
 ) : BaseScreen() {
 
     @Composable
@@ -73,7 +73,7 @@ class EditProfileScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<EditProfileViewModel, EditProfileViewModel.Factory> {
-            it.create(role)
+            it.create(locator)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = rememberSnackbarHostState()

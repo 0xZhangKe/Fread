@@ -3,7 +3,6 @@ package com.zhangke.fread.activitypub.app.di
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
-import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatus1to2Migration
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.fread.common.documentDirectory
@@ -29,9 +28,6 @@ actual interface ActivityPubPlatformComponent {
             name = dbFilePath,
         ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
-            .addMigrations(
-                ActivityPubStatus1to2Migration(),
-            )
             .build()
     }
 

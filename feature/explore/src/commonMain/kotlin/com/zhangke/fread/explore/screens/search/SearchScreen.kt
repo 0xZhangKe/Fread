@@ -21,10 +21,10 @@ import com.zhangke.fread.explore.screens.search.author.SearchedAuthorTab
 import com.zhangke.fread.explore.screens.search.hashtag.SearchedHashtagTab
 import com.zhangke.fread.explore.screens.search.platform.SearchedPlatformTab
 import com.zhangke.fread.explore.screens.search.status.SearchedStatusTab
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 class SearchScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val query: String,
 ) : BaseScreen() {
 
@@ -56,10 +56,10 @@ class SearchScreen(
         ) { paddingValues ->
             val tabs = remember {
                 listOf(
-                    SearchedAuthorTab(role, query),
-                    SearchedStatusTab(role, query),
-                    SearchedPlatformTab(role, query),
-                    SearchedHashtagTab(role, query),
+                    SearchedAuthorTab(locator, query),
+                    SearchedStatusTab(locator, query),
+                    SearchedPlatformTab(locator, query),
+                    SearchedHashtagTab(locator, query),
                 )
             }
             Column(

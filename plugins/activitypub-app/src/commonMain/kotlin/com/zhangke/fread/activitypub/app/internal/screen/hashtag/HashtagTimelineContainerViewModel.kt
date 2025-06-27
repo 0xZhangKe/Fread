@@ -9,7 +9,7 @@ import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class HashtagTimelineContainerViewModel @Inject constructor(
@@ -32,23 +32,23 @@ class HashtagTimelineContainerViewModel @Inject constructor(
             platformRepo = platformRepo,
             statusUiStateAdapter = statusUiStateAdapter,
             refactorToNewStatus = refactorToNewStatus,
-            role = params.role,
+            locator = params.locator,
             hashtag = params.tag,
             loggedAccountProvider = loggedAccountProvider,
         )
     }
 
-    fun getViewModel(role: IdentityRole, tag: String): HashtagTimelineViewModel {
-        val params = Params(role, tag)
+    fun getViewModel(locator: PlatformLocator, tag: String): HashtagTimelineViewModel {
+        val params = Params(locator, tag)
         return obtainSubViewModel(params)
     }
 
     class Params(
-        val role: IdentityRole,
+        val locator: PlatformLocator,
         val tag: String,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = role.toString() + tag
+            get() = locator.toString() + tag
     }
 }

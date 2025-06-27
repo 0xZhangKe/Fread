@@ -6,7 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import me.tatarka.inject.annotations.Inject
 
@@ -19,19 +19,19 @@ class GetUserStatusUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         userInsights: UserUriInsights,
         limit: Int,
         maxId: String?,
     ): Result<List<StatusUiState>> {
-        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsights.webFinger, role)
+        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsights.webFinger, locator)
         if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
         val userId = userIdResult.getOrThrow()
-        val platformResult = platformRepo.getPlatform(role)
+        val platformResult = platformRepo.getPlatform(locator)
         if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
         val platform = platformResult.getOrThrow()
-        val account = loggedAccountProvider.getAccount(role)
-        return clientManager.getClient(role)
+        val account = loggedAccountProvider.getAccount(locator)
+        return clientManager.getClient(locator)
             .accountRepo.getStatuses(
                 id = userId,
                 limit = limit,
@@ -41,7 +41,7 @@ class GetUserStatusUseCase @Inject constructor(
                     activityPubStatusAdapter.toStatusUiState(
                         entity = it,
                         platform = platform,
-                        role = role,
+                        locator = locator,
                         loggedAccount = account,
                     )
                 }

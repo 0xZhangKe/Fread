@@ -5,7 +5,7 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.client.adjustToRkey
 import com.zhangke.fread.bluesky.internal.client.followRecord
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
@@ -17,7 +17,7 @@ class UpdateRelationshipUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         targetDid: String,
         type: UpdateRelationshipType,
         followUri: String? = null,
@@ -26,7 +26,7 @@ class UpdateRelationshipUseCase @Inject constructor(
         when (type) {
             UpdateRelationshipType.FOLLOW -> {
                 return createRecord(
-                    role = role,
+                    locator = locator,
                     collection = BskyCollections.follow,
                     record = followRecord(targetDid),
                 ).map { it.uri }
@@ -34,7 +34,7 @@ class UpdateRelationshipUseCase @Inject constructor(
 
             UpdateRelationshipType.UNFOLLOW -> {
                 val finalFollowUri = if (followUri.isNullOrEmpty()) {
-                    val profileResult = clientManager.getClient(role)
+                    val profileResult = clientManager.getClient(locator)
                         .getProfileCatching(GetProfileQueryParams(did))
                     if (profileResult.isFailure) return Result.failure(profileResult.exceptionOrNull()!!)
                     profileResult.getOrThrow().viewer?.following?.atUri
@@ -43,7 +43,7 @@ class UpdateRelationshipUseCase @Inject constructor(
                 }
                 if (finalFollowUri.isNullOrEmpty()) return Result.success(null)
                 return deleteRecord(
-                    role = role,
+                    locator = locator,
                     collection = BskyCollections.follow,
                     rkey = finalFollowUri.adjustToRkey(),
                 ).map { null }

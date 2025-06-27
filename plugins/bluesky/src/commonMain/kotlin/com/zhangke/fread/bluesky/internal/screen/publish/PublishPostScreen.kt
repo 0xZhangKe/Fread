@@ -23,12 +23,12 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
 import com.zhangke.fread.commonbiz.shared.screen.publish.bottomPaddingAsBottomBar
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostInteractionSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.ReplySetting
 import com.zhangke.fread.status.ui.publish.BlogInQuoting
 
 class PublishPostScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val replyToJsonString: String? = null,
     private val quoteJsonString: String? = null,
 ) : BaseScreen() {
@@ -38,7 +38,7 @@ class PublishPostScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PublishPostViewModel, PublishPostViewModel.Factory> {
-            it.create(role, replyToJsonString, quoteJsonString)
+            it.create(locator, replyToJsonString, quoteJsonString)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()

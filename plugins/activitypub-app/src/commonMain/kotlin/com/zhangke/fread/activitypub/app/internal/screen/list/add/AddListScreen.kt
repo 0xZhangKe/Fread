@@ -12,10 +12,10 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.internal.screen.list.ListDetailPageContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 class AddListScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
 ) : BaseScreen() {
 
     @Composable
@@ -24,7 +24,7 @@ class AddListScreen(
         val navigator = LocalNavigator.currentOrThrow
         val snackbarHostState = rememberSnackbarHostState()
         val viewModel = getViewModel<AddListViewModel, AddListViewModel.Factory> {
-            it.create(role)
+            it.create(locator)
         }
         val uiState by viewModel.uiState.collectAsState()
         ListDetailPageContent(
@@ -45,7 +45,7 @@ class AddListScreen(
             onRetryLoadAccountsClick = {},
             onNameChangedRequest = viewModel::onNameChangeRequest,
             onAddUserClick = {
-                navigator.push(SearchUserScreen(role, onlyFollowing = false).apply {
+                navigator.push(SearchUserScreen(locator, onlyFollowing = false).apply {
                     onAccountSelected = { account ->
                         viewModel.onAddAccount(account)
                     }

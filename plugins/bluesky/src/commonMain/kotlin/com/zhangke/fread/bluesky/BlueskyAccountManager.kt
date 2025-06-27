@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky
 
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
@@ -10,7 +11,6 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
-import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -40,8 +40,9 @@ class BlueskyAccountManager @Inject constructor(
         return accountManager.refreshAccountProfile()
     }
 
-    override suspend fun logout(uri: FormalUri): Boolean {
-        accountManager.logout(uri)
+    override suspend fun logout(account: LoggedAccount): Boolean {
+        if (account !is BlueskyLoggedAccount) return false
+        accountManager.logout(account.uri)
         return true
     }
 

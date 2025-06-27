@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.security.Md5
 import com.zhangke.fread.commonbiz.mastodon_logo
 import com.zhangke.fread.status.model.FreadContent
+import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 
@@ -23,10 +25,18 @@ data class ActivityPubContent(
     override val order: Int,
     val baseUrl: FormalBaseUrl,
     val tabList: List<ContentTab>,
+    val accountUri: FormalUri? = null,
 ) : FreadContent {
 
-    override val id: String
-        get() = baseUrl.toString()
+    private val _id: String by lazy {
+        if (accountUri == null) {
+            Md5.md5(baseUrl.toString())
+        } else {
+            Md5.md5(baseUrl.toString() + accountUri.toString())
+        }
+    }
+
+    override val id: String get() = _id
 
     override fun newOrder(newOrder: Int): FreadContent {
         return copy(order = newOrder)

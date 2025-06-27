@@ -4,7 +4,7 @@ import app.bsky.actor.PreferencesUnion
 import app.bsky.actor.PutPreferencesRequest
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class UpdatePreferencesUseCase @Inject constructor(
@@ -12,10 +12,10 @@ class UpdatePreferencesUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         updater: (List<PreferencesUnion>) -> List<PreferencesUnion>,
     ): Result<Unit> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val preferenceResult = client.getPreferencesCatching()
         if (preferenceResult.isFailure) {
             return Result.failure(preferenceResult.exceptionOrThrow())
@@ -24,6 +24,6 @@ class UpdatePreferencesUseCase @Inject constructor(
         val request = PutPreferencesRequest(
             preferences = updater(preference.preferences),
         )
-        return clientManager.getClient(role).putPreferencesCatching(request)
+        return clientManager.getClient(locator).putPreferencesCatching(request)
     }
 }

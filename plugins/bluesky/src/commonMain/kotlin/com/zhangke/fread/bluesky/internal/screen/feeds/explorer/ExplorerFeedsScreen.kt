@@ -31,12 +31,12 @@ import com.zhangke.fread.bluesky.internal.composable.BlueskyExploringFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
 import org.jetbrains.compose.resources.stringResource
 
 class ExplorerFeedsScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val inlineMode: Boolean = false,
 ) : BaseScreen() {
 
@@ -47,7 +47,7 @@ class ExplorerFeedsScreen(
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel =
             getViewModel<ExplorerFeedsViewModel, ExplorerFeedsViewModel.Factory> {
-                it.create(role)
+                it.create(locator)
             }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarState = rememberSnackbarHostState()
@@ -59,7 +59,7 @@ class ExplorerFeedsScreen(
             onLoadMore = viewModel::onLoadMore,
             onFeedsClick = { feeds ->
                 (feeds.feeds as? BlueskyFeeds.Feeds)?.let {
-                    val feedsDetailScreen = FeedsDetailScreen.create(it, role)
+                    val feedsDetailScreen = FeedsDetailScreen.create(it, locator)
                     feedsDetailScreen.onFeedsUpdate = viewModel::onFeedsUpdate
                     bottomSheetNavigator.show(feedsDetailScreen)
                 }

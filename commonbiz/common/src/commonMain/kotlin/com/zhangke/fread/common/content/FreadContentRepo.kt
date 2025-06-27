@@ -1,31 +1,17 @@
 package com.zhangke.fread.common.content
 
-import com.zhangke.framework.architect.coroutines.ApplicationScope
-import com.zhangke.fread.common.db.ContentConfigDatabases
 import com.zhangke.fread.common.db.FreadContentDatabase
 import com.zhangke.fread.common.db.FreadContentEntity
-import com.zhangke.fread.common.status.adapter.ContentConfigAdapter
-import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.FreadContent
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import kotlin.collections.map
 
 class FreadContentRepo @Inject constructor(
     database: FreadContentDatabase,
-    private val contentConfigDatabases: ContentConfigDatabases,
-    private val statusProvider: StatusProvider,
-    private val contentConfigAdapter: ContentConfigAdapter,
 ) {
 
     private val dao = database.contentDao()
-
-    init {
-        migrateOldDb()
-    }
 
     fun getAllContentFlow() =
         dao.queryAllFlow().map { list -> list.map { it.content }.sortedBy { it.order } }
@@ -86,28 +72,4 @@ class FreadContentRepo @Inject constructor(
         )
     }
 
-    private fun migrateOldDb() {
-        ApplicationScope.launch {
-            val contentConfigList = contentConfigDatabases.getContentConfigDao()
-                .queryAllContentConfig()
-            if (contentConfigList.isEmpty()) return@launch
-            contentConfigList
-                .map(contentConfigAdapter::toContentConfig)
-                .mapNotNull { it.toContent() }
-                .let { insertAll(it) }
-            contentConfigDatabases.getContentConfigDao().deleteTable()
-        }
-    }
-
-    private fun ContentConfig.toContent(): FreadContent? {
-        if (this is ContentConfig.MixedContent) {
-            return com.zhangke.fread.status.content.MixedContent(
-                id = this.id.toString(),
-                order = this.order,
-                name = this.name,
-                sourceUriList = this.sourceUriList,
-            )
-        }
-        return statusProvider.contentManager.restoreContent(this)
-    }
 }

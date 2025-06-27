@@ -20,10 +20,10 @@ import com.zhangke.fread.activitypub.app.activity_pub_add_list_back_reminder
 import com.zhangke.fread.activitypub.app.internal.screen.list.ListDetailPageContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 class EditListScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val serializedList: String,
 ) : BaseScreen() {
 
@@ -32,7 +32,7 @@ class EditListScreen(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<EditListViewModel, EditListViewModel.Factory> {
-            it.create(role, serializedList)
+            it.create(locator, serializedList)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarState = rememberSnackbarHostState()
@@ -70,7 +70,7 @@ class EditListScreen(
             onExclusiveChangeRequest = viewModel::onExclusiveChanged,
             onRemoveAccount = viewModel::onRemoveAccount,
             onAddUserClick = {
-                val searchUserScreen = SearchUserScreen(role, true)
+                val searchUserScreen = SearchUserScreen(locator, true)
                 searchUserScreen.onAccountSelected = viewModel::onAddUser
                 navigator.push(searchUserScreen)
             },

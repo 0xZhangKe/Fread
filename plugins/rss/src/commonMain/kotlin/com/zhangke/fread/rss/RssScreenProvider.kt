@@ -10,7 +10,7 @@ import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
@@ -21,15 +21,15 @@ class RssScreenProvider @Inject constructor(
     private val uriTransformer: RssUriTransformer,
 ) : IStatusScreenProvider {
 
-    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
         return null
     }
 
-    override fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
         return null
     }
 
-    override fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
         return null
     }
 
@@ -45,7 +45,15 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri, userId: String?): Screen? {
+    override fun getUserDetailScreen(
+        locator: PlatformLocator,
+        uri: FormalUri,
+        userId: String?
+    ): Screen? {
+        return getUserDetailScreenWithoutAccount(uri)
+    }
+
+    override fun getUserDetailScreenWithoutAccount(uri: FormalUri): Screen? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri) ?: return null
         val url = uriInsight.url
@@ -53,7 +61,7 @@ class RssScreenProvider @Inject constructor(
     }
 
     override fun getUserDetailScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
     ): Screen? {
@@ -61,7 +69,7 @@ class RssScreenProvider @Inject constructor(
     }
 
     override fun getUserDetailScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         did: String,
         protocol: StatusProviderProtocol
     ): Screen? {
@@ -69,7 +77,7 @@ class RssScreenProvider @Inject constructor(
     }
 
     override fun getTagTimelineScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         tag: String,
         protocol: StatusProviderProtocol,
     ): Screen? {
@@ -77,7 +85,7 @@ class RssScreenProvider @Inject constructor(
     }
 
     override fun getBlogFavouritedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
     ): Screen? {
@@ -85,7 +93,7 @@ class RssScreenProvider @Inject constructor(
     }
 
     override fun getBlogBoostedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
     ): Screen? {
@@ -93,23 +101,23 @@ class RssScreenProvider @Inject constructor(
     }
 
     override fun getBookmarkedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
     ): Screen? {
         return null
     }
 
     override fun getFavouritedScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
     ): Screen? {
         return null
     }
 
     override fun getFollowedHashtagScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
@@ -120,12 +128,12 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
+    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
         return null
     }
 
     override fun getCreatedListScreen(
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform
     ): Screen? {
         return null

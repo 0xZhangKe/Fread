@@ -31,7 +31,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_about_rule_title
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
 
@@ -117,8 +117,8 @@ private fun ServerAboutAnnouncement(
             modifier = modifier,
             content = entity.content,
             onUrlClick = {
-                val role = IdentityRole(null, baseUrl = baseUrl)
-                browserLauncher.launchWebTabInApp(it, role)
+                val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
+                browserLauncher.launchWebTabInApp(it, locator)
             },
         )
     }

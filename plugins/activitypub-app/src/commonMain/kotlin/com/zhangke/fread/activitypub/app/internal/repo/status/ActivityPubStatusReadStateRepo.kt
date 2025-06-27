@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.repo.status
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateEntity
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubStatusReadStateRepo @Inject constructor(
@@ -13,18 +13,18 @@ class ActivityPubStatusReadStateRepo @Inject constructor(
     private val readStateDao = activityPubStatusReadStateDatabases.getDao()
 
     suspend fun getLatestReadId(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String? = null
     ): String? {
         return if (listId == null) {
             readStateDao.query(
-                role = role,
+                locator = locator,
                 type = type,
             )?.latestReadId
         } else {
             readStateDao.queryList(
-                role = role,
+                locator = locator,
                 type = type,
                 listId = listId,
             )?.latestReadId
@@ -32,13 +32,13 @@ class ActivityPubStatusReadStateRepo @Inject constructor(
     }
 
     suspend fun updateLatestReadId(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         listId: String? = null,
         latestReadId: String
     ) {
         val entity = ActivityPubStatusReadStateEntity(
-            role = role,
+            locator = locator,
             type = type,
             listId = listId.orEmpty(),
             latestReadId = latestReadId,

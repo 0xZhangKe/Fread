@@ -6,7 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapt
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.DescendantStatus
@@ -21,12 +21,12 @@ class GetStatusContextUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
     ): Result<StatusContext> {
-        val loggedAccount = loggedAccountProvider.getAccount(role)
+        val loggedAccount = loggedAccountProvider.getAccount(locator)
         val statusId = status.id
-        return clientManager.getClient(role)
+        return clientManager.getClient(locator)
             .statusRepo
             .getStatusContext(statusId)
             .map {
@@ -34,7 +34,7 @@ class GetStatusContextUseCase @Inject constructor(
                     parentId = statusId,
                     entity = it,
                     platform = status.platform,
-                    role = role,
+                    locator = locator,
                     loggedAccount = loggedAccount,
                 )
             }
@@ -44,12 +44,12 @@ class GetStatusContextUseCase @Inject constructor(
         parentId: String,
         entity: ActivityPubStatusContextEntity,
         platform: BlogPlatform,
-        role: IdentityRole,
+        locator: PlatformLocator,
         loggedAccount: ActivityPubLoggedAccount?,
     ): StatusContext {
         return StatusContext(
             ancestors = entity.ancestors.toStatusList(
-                role = role,
+                locator = locator,
                 platform = platform,
                 loggedAccount = loggedAccount,
             ),
@@ -58,7 +58,7 @@ class GetStatusContextUseCase @Inject constructor(
                 parentId = parentId,
                 descendants = entity.descendants,
                 platform = platform,
-                role = role,
+                locator = locator,
                 loggedAccount = loggedAccount,
             ),
         )
@@ -68,15 +68,15 @@ class GetStatusContextUseCase @Inject constructor(
         parentId: String,
         descendants: List<ActivityPubStatusEntity>,
         platform: BlogPlatform,
-        role: IdentityRole,
+        locator: PlatformLocator,
         loggedAccount: ActivityPubLoggedAccount?,
     ): List<DescendantStatus> {
         if (descendants.isEmpty()) return emptyList()
         val firstLevelDescendants = descendants.filter { it.inReplyToId == parentId }
         return firstLevelDescendants.map { entity ->
             DescendantStatus(
-                entity.toUiState(role, platform, loggedAccount),
-                buildDescendantsStatus(entity.id, descendants, platform, role, loggedAccount)
+                entity.toUiState(locator, platform, loggedAccount),
+                buildDescendantsStatus(entity.id, descendants, platform, locator, loggedAccount)
             )
         }
     }
@@ -85,21 +85,21 @@ class GetStatusContextUseCase @Inject constructor(
         parentId: String,
         descendants: List<ActivityPubStatusEntity>,
         platform: BlogPlatform,
-        role: IdentityRole,
+        locator: PlatformLocator,
         loggedAccount: ActivityPubLoggedAccount?,
     ): DescendantStatus? {
         if (descendants.isEmpty()) return null
         val descentEntity = descendants.firstOrNull { it.inReplyToId == parentId } ?: return null
         val descendantDescendant =
-            buildDescendantsStatus(descentEntity.id, descendants, platform, role, loggedAccount)
+            buildDescendantsStatus(descentEntity.id, descendants, platform, locator, loggedAccount)
         return DescendantStatus(
-            status = descentEntity.toUiState(role, platform, loggedAccount),
+            status = descentEntity.toUiState(locator, platform, loggedAccount),
             descendantStatus = descendantDescendant,
         )
     }
 
     private suspend fun List<ActivityPubStatusEntity>.toStatusList(
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform,
         loggedAccount: ActivityPubLoggedAccount?,
     ): List<StatusUiState> {
@@ -107,13 +107,13 @@ class GetStatusContextUseCase @Inject constructor(
             statusEntity.toUiState(
                 platform = platform,
                 loggedAccount = loggedAccount,
-                role = role,
+                locator = locator,
             )
         }
     }
 
     private suspend fun ActivityPubStatusEntity.toUiState(
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform,
         loggedAccount: ActivityPubLoggedAccount?,
     ): StatusUiState {
@@ -121,7 +121,7 @@ class GetStatusContextUseCase @Inject constructor(
             entity = this,
             platform = platform,
             loggedAccount = loggedAccount,
-            role = role,
+            locator = locator,
         )
     }
 }

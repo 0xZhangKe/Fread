@@ -38,7 +38,7 @@ import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
 import com.zhangke.fread.status.IStatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.IntoMap
@@ -65,9 +65,9 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideEditAccountInfoViewModel(creator: (FormalUri) -> EditAccountInfoViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return EditAccountInfoViewModel::class to EditAccountInfoViewModel.Factory { accountUri ->
-            creator(accountUri)
+    fun provideEditAccountInfoViewModel(creator: (FormalBaseUrl, FormalUri) -> EditAccountInfoViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return EditAccountInfoViewModel::class to EditAccountInfoViewModel.Factory { baseUrl, accountUri ->
+            creator(baseUrl, accountUri)
         }
     }
 
@@ -93,7 +93,7 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideEditFilterViewModel(creator: (IdentityRole, String?) -> EditFilterViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideEditFilterViewModel(creator: (PlatformLocator, String?) -> EditFilterViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return EditFilterViewModel::class to EditFilterViewModel.Factory { role, id ->
             creator(role, id)
         }
@@ -101,7 +101,7 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideFiltersListViewModel(creator: (IdentityRole) -> FiltersListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideFiltersListViewModel(creator: (PlatformLocator) -> FiltersListViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return FiltersListViewModel::class to FiltersListViewModel.Factory { role ->
             creator(role)
         }
@@ -161,23 +161,23 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideUserListViewModel(creator: (IdentityRole, UserListType, String?, FormalUri?, String?) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return UserListViewModel::class to UserListViewModel.Factory { role, type, statusId, userUri, userId ->
-            creator(role, type, statusId, userUri, userId)
+    fun provideUserListViewModel(creator: (PlatformLocator, UserListType, String?, FormalUri?, String?) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return UserListViewModel::class to UserListViewModel.Factory { locator, type, statusId, userUri, userId ->
+            creator(locator, type, statusId, userUri, userId)
         }
     }
 
     @IntoMap
     @Provides
-    fun provideStatusListViewModel(creator: (IdentityRole, StatusListType) -> StatusListViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return StatusListViewModel::class to StatusListViewModel.Factory { role, type ->
-            creator(role, type)
+    fun provideStatusListViewModel(creator: (PlatformLocator, StatusListType) -> StatusListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return StatusListViewModel::class to StatusListViewModel.Factory { locator, type ->
+            creator(locator, type)
         }
     }
 
     @IntoMap
     @Provides
-    fun provideTagListViewModel(creator: (IdentityRole) -> TagListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideTagListViewModel(creator: (PlatformLocator) -> TagListViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return TagListViewModel::class to TagListViewModel.Factory { role ->
             creator(role)
         }
@@ -205,7 +205,7 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideCreatedListListViewModel(creator: (IdentityRole) -> CreatedListsViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideCreatedListListViewModel(creator: (PlatformLocator) -> CreatedListsViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return CreatedListsViewModel::class to CreatedListsViewModel.Factory { role ->
             creator(role)
         }
@@ -213,7 +213,7 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideSearchUserViewModel(creator: (IdentityRole, Boolean) -> SearchUserViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideSearchUserViewModel(creator: (PlatformLocator, Boolean) -> SearchUserViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return SearchUserViewModel::class to SearchUserViewModel.Factory { role, onlyFollowing ->
             creator(role, onlyFollowing)
         }
@@ -221,7 +221,7 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideEditListViewModel(creator: (IdentityRole, String) -> EditListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideEditListViewModel(creator: (PlatformLocator, String) -> EditListViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return EditListViewModel::class to EditListViewModel.Factory { role, serializedList ->
             creator(role, serializedList)
         }
@@ -229,7 +229,7 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideAddListViewModel(creator: (IdentityRole) -> AddListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideAddListViewModel(creator: (PlatformLocator) -> AddListViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return AddListViewModel::class to AddListViewModel.Factory { role ->
             creator(role)
         }

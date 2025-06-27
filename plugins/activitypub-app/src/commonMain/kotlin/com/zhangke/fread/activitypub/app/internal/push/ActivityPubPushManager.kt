@@ -1,10 +1,10 @@
 package com.zhangke.fread.activitypub.app.internal.push
 
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 
 expect class ActivityPubPushManager {
 
-    suspend fun subscribe(role: IdentityRole, accountId: String)
+    suspend fun subscribe(locator: PlatformLocator, accountId: String)
 
-    suspend fun unsubscribe(role: IdentityRole, accountId: String)
+    suspend fun unsubscribe(locator: PlatformLocator, accountId: String)
 }

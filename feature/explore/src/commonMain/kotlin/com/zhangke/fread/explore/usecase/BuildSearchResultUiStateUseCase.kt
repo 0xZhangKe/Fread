@@ -1,20 +1,20 @@
 package com.zhangke.fread.explore.usecase
 
 import com.zhangke.fread.common.status.model.SearchResultUiState
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.search.SearchResult
 import me.tatarka.inject.annotations.Inject
 
 class BuildSearchResultUiStateUseCase @Inject constructor() {
 
-    suspend operator fun invoke(role: IdentityRole, result: SearchResult): SearchResultUiState {
+    suspend operator fun invoke(locator: PlatformLocator, result: SearchResult): SearchResultUiState {
         return when (result) {
             is SearchResult.Author -> {
-                SearchResultUiState.Author(role, result.user)
+                SearchResultUiState.Author(locator, result.user)
             }
 
             is SearchResult.Platform -> {
-                SearchResultUiState.Platform(role, result.platform)
+                SearchResultUiState.Platform(locator, result.platform)
             }
 
             is SearchResult.SearchedStatus -> {
@@ -22,7 +22,7 @@ class BuildSearchResultUiStateUseCase @Inject constructor() {
             }
 
             is SearchResult.SearchedHashtag -> {
-                SearchResultUiState.SearchedHashtag(role, result.hashtag)
+                SearchResultUiState.SearchedHashtag(locator, result.hashtag)
             }
         }
     }

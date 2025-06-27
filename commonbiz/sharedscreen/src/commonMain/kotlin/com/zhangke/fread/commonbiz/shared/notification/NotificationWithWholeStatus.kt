@@ -30,7 +30,7 @@ fun NotificationWithWholeStatus(
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
-                composedStatusInteraction.onUserInfoClick(status.role, author)
+                composedStatusInteraction.onUserInfoClick(status.locator, author)
             },
             icon = icon,
             avatar = author.avatar,

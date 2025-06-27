@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
@@ -17,7 +16,7 @@ import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.FreadContent
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
@@ -55,15 +54,15 @@ class ActivityPubAccountManager @Inject constructor(
         return accountRepo.getAllAccountFlow()
     }
 
-    fun observeAccount(baseUrl: FormalBaseUrl): Flow<ActivityPubLoggedAccount?> {
-        return accountRepo.observeAccount(baseUrl)
+    fun observeAccount(accountUri: FormalUri): Flow<ActivityPubLoggedAccount?> {
+        return accountRepo.observeAccount(accountUri.toString())
     }
 
     override suspend fun refreshAllAccountInfo(): List<AccountRefreshResult> {
         return accountRepo.queryAll().map { loggedAccount ->
-            val role =
-                IdentityRole(accountUri = loggedAccount.uri, baseUrl = loggedAccount.baseUrl)
-            val client = clientManager.getClient(role)
+            val locator =
+                PlatformLocator(accountUri = loggedAccount.uri, baseUrl = loggedAccount.baseUrl)
+            val client = clientManager.getClient(locator)
             val result = client.accountRepo
                 .getAccount(loggedAccount.userId)
                 .mapCatching {
@@ -88,20 +87,15 @@ class ActivityPubAccountManager @Inject constructor(
         oAuthor.startOauth(platform.baseUrl)
     }
 
-    override suspend fun logout(uri: FormalUri): Boolean {
-        userUriTransformer.parse(uri) ?: return false
-        val account = accountRepo.queryByUri(uri.toString())
-        if (account != null) {
-            val role = IdentityRole(accountUri = account.uri)
-            activityPubPushManager.unsubscribe(role, account.userId)
+    override suspend fun logout(account: LoggedAccount): Boolean {
+        if (account !is ActivityPubLoggedAccount) {
+            return false
         }
-        accountRepo.deleteByUri(uri)
-        loggedAccountProvider.removeAccount(uri)
+        val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        activityPubPushManager.unsubscribe(role, account.userId)
+        accountRepo.deleteByUri(account.uri)
+        loggedAccountProvider.removeAccount(account.uri)
         return true
-    }
-
-    suspend fun getAccount(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
-        return accountRepo.queryByBaseUrl(baseUrl)
     }
 
     override fun subscribeNotification() {
@@ -116,7 +110,7 @@ class ActivityPubAccountManager @Inject constructor(
     }
 
     private suspend fun subscribeNotificationForAccount(account: ActivityPubLoggedAccount) {
-        val role = IdentityRole(accountUri = account.uri)
+        val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         activityPubPushManager.subscribe(role, account.userId)
     }
 

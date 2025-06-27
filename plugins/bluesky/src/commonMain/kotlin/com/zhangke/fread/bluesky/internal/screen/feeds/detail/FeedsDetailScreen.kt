@@ -50,7 +50,7 @@ import com.zhangke.fread.bluesky.internal.model.BlueskyProfile
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.action.likeAlt
 import com.zhangke.fread.status.ui.action.likeIcon
 import com.zhangke.fread.status.ui.action.pinAlt
@@ -59,14 +59,14 @@ import kotlin.jvm.Transient
 
 class FeedsDetailScreen(
     private val feedsJson: String,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
 ) : BaseScreen() {
 
     companion object {
 
-        fun create(feeds: BlueskyFeeds, role: IdentityRole): FeedsDetailScreen {
+        fun create(feeds: BlueskyFeeds, locator: PlatformLocator): FeedsDetailScreen {
             return FeedsDetailScreen(
-                role = role,
+                locator = locator,
                 feedsJson = globalJson.encodeToString(
                     serializer = BlueskyFeeds.serializer(),
                     value = feeds,
@@ -84,7 +84,7 @@ class FeedsDetailScreen(
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<FeedsDetailViewModel, FeedsDetailViewModel.Factory> {
             val feeds = globalJson.decodeFromString<BlueskyFeeds>(feedsJson)
-            it.create(role, feeds)
+            it.create(locator, feeds)
         }
         val uiState by viewModel.uiState.collectAsState()
         val textHandler = LocalActivityTextHandler.current
@@ -92,7 +92,14 @@ class FeedsDetailScreen(
         FeedsDetailContent(
             uiState = uiState,
             snackbarHostState = snackbarHostState,
-            onCreatorClick = { navigator.push(BskyUserDetailScreen(role = role, did = it.did)) },
+            onCreatorClick = {
+                navigator.push(
+                    BskyUserDetailScreen(
+                        locator = locator,
+                        did = it.did
+                    )
+                )
+            },
             onShareFeedsClick = { textHandler.shareUrl(url = it.uri, text = it.displayName) },
             onShareListClick = { textHandler.shareUrl(url = it.uri, text = it.name) },
             onLikeClick = viewModel::onLikeClick,

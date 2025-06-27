@@ -5,18 +5,16 @@ import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.architect.http.createHttpClientEngine
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
 class ActivityPubClientManager @Inject constructor(
-    private val resolveBaseUrl: ResolveBaseUrlUseCase,
     private val loggedAccountProvider: LoggedAccountProvider,
 ) {
 
-    private val cachedClient = mutableMapOf<IdentityRole, ActivityPubClient>()
+    private val cachedClient = mutableMapOf<PlatformLocator, ActivityPubClient>()
 
     private val httpClientEngine by lazy {
         createHttpClientEngine()
@@ -26,25 +24,46 @@ class ActivityPubClientManager @Inject constructor(
         cachedClient.clear()
     }
 
-    fun getClient(role: IdentityRole): ActivityPubClient {
-        cachedClient[role]?.let { return it }
-        val baseUrl = resolveBaseUrl(role)
+    fun getClient(locator: PlatformLocator): ActivityPubClient {
+        cachedClient[locator]?.let { return it }
         return createClient(
-            baseUrl = baseUrl,
+            baseUrl = locator.baseUrl,
             tokenProvider = {
-                var token: ActivityPubTokenEntity? = null
-                if (role.accountUri != null) {
-                    token = loggedAccountProvider.getAccount(role.accountUri!!)?.token
+                if (locator.accountUri != null) {
+                    loggedAccountProvider.getAccount(locator.accountUri!!)?.token
+                } else {
+                    loggedAccountProvider.getAccount(locator.baseUrl)?.token
                 }
-                if (token == null) {
-                    token = loggedAccountProvider.getAccount(baseUrl)?.token
-                }
-                token
             },
         ).also {
-            cachedClient[role] = it
+            cachedClient[locator] = it
         }
     }
+
+    fun getClientNoAccount(baseUrl: FormalBaseUrl): ActivityPubClient {
+        return createClient(
+            baseUrl = baseUrl,
+            tokenProvider = { null },
+        )
+    }
+
+//    fun getClient(locator: PlatformLocator): ActivityPubClient {
+////        cachedClient[role]?.let { return it }
+//        val baseUrl = resolveBaseUrl(role)
+//        return createClient(
+//            baseUrl = baseUrl,
+//            tokenProvider = {
+//                var token: ActivityPubTokenEntity? = null
+//                if (role.accountUri != null) {
+//                    token = loggedAccountProvider.getAccount(role.accountUri!!)?.token
+//                }
+//                if (token == null) {
+//                    token = loggedAccountProvider.getAccount(baseUrl)?.token
+//                }
+//                token
+//            },
+//        )
+//    }
 
     private fun createClient(
         baseUrl: FormalBaseUrl,

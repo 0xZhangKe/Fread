@@ -13,7 +13,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_add_list_name_is_empty
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.ListRepliesPolicy
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -24,12 +24,12 @@ import me.tatarka.inject.annotations.Inject
 
 class AddListViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
-        fun create(role: IdentityRole): AddListViewModel
+        fun create(locator: PlatformLocator): AddListViewModel
     }
 
     private val _uiState = MutableStateFlow(AddListUiState.default())
@@ -84,7 +84,7 @@ class AddListViewModel @Inject constructor(
         }
         launchInViewModel {
             _uiState.update { it.copy(showLoadingCover = true) }
-            val listsRepo = clientManager.getClient(role).listsRepo
+            val listsRepo = clientManager.getClient(locator).listsRepo
             listsRepo.createList(
                 title = currentUiState.name.text,
                 repliesPolicy = currentUiState.repliesPolicy.apiName,

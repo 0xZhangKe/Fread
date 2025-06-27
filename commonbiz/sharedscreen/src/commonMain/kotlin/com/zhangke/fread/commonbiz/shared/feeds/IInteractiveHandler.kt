@@ -7,8 +7,8 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
@@ -34,25 +34,25 @@ interface IInteractiveHandler {
 
     fun onStatusInteractive(status: StatusUiState, type: StatusActionType)
 
-    fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor)
+    fun onUserInfoClick(locator: PlatformLocator, blogAuthor: BlogAuthor)
 
     fun onStatusClick(status: StatusUiState)
 
-    fun onBlogClick(role: IdentityRole, blog: Blog)
+    fun onBlogClick(locator: PlatformLocator, blog: Blog)
 
     fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>)
 
-    fun onFollowClick(role: IdentityRole, target: BlogAuthor)
+    fun onFollowClick(locator: PlatformLocator, target: BlogAuthor)
 
-    fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
+    fun onUnfollowClick(locator: PlatformLocator, target: BlogAuthor)
 
-    fun onMentionClick(role: IdentityRole, mention: Mention)
+    fun onMentionClick(locator: PlatformLocator, mention: Mention)
 
-    fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol)
+    fun onMentionClick(locator: PlatformLocator, did: String, protocol: StatusProviderProtocol)
 
-    fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus)
+    fun onHashtagClick(locator: PlatformLocator, tag: HashtagInStatus)
 
-    fun onHashtagClick(role: IdentityRole, tag: Hashtag)
+    fun onHashtagClick(locator: PlatformLocator, tag: Hashtag)
 
-    fun onMaybeHashtagClick(role: IdentityRole, protocol: StatusProviderProtocol, tag: String)
+    fun onMaybeHashtagClick(locator: PlatformLocator, protocol: StatusProviderProtocol, tag: String)
 }

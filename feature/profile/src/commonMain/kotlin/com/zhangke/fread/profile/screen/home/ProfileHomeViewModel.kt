@@ -6,13 +6,11 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.analytics.reportInfo
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.account.isAuthenticationFailure
-import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.krouter.KRouter
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,7 +77,7 @@ class ProfileHomeViewModel @Inject constructor(
 
     fun onLogoutClick(account: LoggedAccount) {
         viewModelScope.launch {
-            statusProvider.accountManager.logout(account.uri)
+            statusProvider.accountManager.logout(account)
             statusProvider.accountManager
                 .selectContentWithAccount(contentRepo.getAllContent(), account)
                 .forEach { contentRepo.delete(it.id) }
@@ -90,7 +88,7 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getUserDetailScreen(
-                    role = IdentityRole(account.uri, account.platform.baseUrl),
+                    locator = account.platformLocator,
                     uri = account.uri,
                     userId = account.id,
                 )?.let { _openPageFlow.emit(it) }
@@ -101,7 +99,7 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getFavouritedScreen(
-                    role = IdentityRole(account.uri, baseUrl = account.platform.baseUrl),
+                    locator = account.platformLocator,
                     protocol = account.platform.protocol,
                 )?.let { _openPageFlow.emit(it) }
         }
@@ -111,7 +109,7 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getBookmarkedScreen(
-                    role = IdentityRole(account.uri, null),
+                    locator = account.platformLocator,
                     protocol = account.platform.protocol,
                 )?.let { _openPageFlow.emit(it) }
         }
@@ -121,11 +119,12 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getFollowedHashtagScreen(
-                    role = IdentityRole(account.uri, null),
+                    locator = PlatformLocator(
+                        baseUrl = account.platform.baseUrl,
+                        accountUri = account.uri,
+                    ),
                     protocol = account.platform.protocol,
-                )
-                ?.let { KRouter.routeScreen(it) }
-                ?.let { _openPageFlow.emit(it) }
+                )?.let { _openPageFlow.emit(it) }
         }
     }
 
@@ -147,9 +146,15 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getCreatedListScreen(
-                    role = IdentityRole(account.uri, null),
+                    locator = account.platformLocator,
                     platform = account.platform,
                 )?.let { _openPageFlow.emit(it) }
         }
     }
+
+    private val LoggedAccount.platformLocator: PlatformLocator
+        get() = PlatformLocator(
+            baseUrl = platform.baseUrl,
+            accountUri = uri,
+        )
 }

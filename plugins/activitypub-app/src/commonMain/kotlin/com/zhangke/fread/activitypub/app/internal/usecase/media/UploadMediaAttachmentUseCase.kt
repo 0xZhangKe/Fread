@@ -6,7 +6,7 @@ import com.zhangke.activitypub.entities.ActivityPubResponse
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
 import me.tatarka.inject.annotations.Inject
@@ -17,11 +17,11 @@ class UploadMediaAttachmentUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         file: ContentProviderFile,
         onProgress: (Float) -> Unit = {},
     ): Result<String> {
-        val mediaRepo = clientManager.getClient(role).mediaRepo
+        val mediaRepo = clientManager.getClient(locator).mediaRepo
         val response = mediaRepo.uploadFile(file, onProgress)
         if (response.isFailure) return Result.failure(response.exceptionOrThrow())
         val (code, attachment) = response.getOrThrow()

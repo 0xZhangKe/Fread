@@ -7,11 +7,11 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 
 class ExplorerTab(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val blogPlatform: BlogPlatform,
 ) : PagerTab {
 
@@ -20,6 +20,6 @@ class ExplorerTab(
 
     @Composable
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
-        Navigator(ExplorerFeedsScreen(role, true))
+        Navigator(ExplorerFeedsScreen(locator, true))
     }
 }

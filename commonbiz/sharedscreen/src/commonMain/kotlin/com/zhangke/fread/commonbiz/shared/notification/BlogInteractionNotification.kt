@@ -17,7 +17,7 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.commonbiz.shared.composable.OnlyBlogContentUi
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 
 /**
@@ -27,7 +27,7 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 @Composable
 fun BlogInteractionNotification(
     blog: Blog,
-    role: IdentityRole,
+    locator: PlatformLocator,
     author: BlogAuthor,
     icon: ImageVector,
     interactionDesc: String,
@@ -39,13 +39,13 @@ fun BlogInteractionNotification(
     val browserLauncher = LocalActivityBrowserLauncher.current
     Column(
         modifier = Modifier
-            .clickable { composedStatusInteraction.onBlogClick(role, blog) }
+            .clickable { composedStatusInteraction.onBlogClick(locator, blog) }
             .fillMaxWidth()
             .padding(style.containerPaddings),
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
-                composedStatusInteraction.onUserInfoClick(role, author)
+                composedStatusInteraction.onUserInfoClick(locator, author)
             },
             icon = icon,
             avatar = author.avatar,
@@ -65,24 +65,24 @@ fun BlogInteractionNotification(
             style = style.statusStyle,
             onVoted = {},
             onHashtagInStatusClick = {
-                composedStatusInteraction.onHashtagInStatusClick(role, it)
+                composedStatusInteraction.onHashtagInStatusClick(locator, it)
             },
             onMentionClick = {
-                composedStatusInteraction.onMentionClick(role, it)
+                composedStatusInteraction.onMentionClick(locator, it)
             },
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, role)
+                browserLauncher.launchWebTabInApp(it, locator)
             },
             onMentionDidClick = {
                 composedStatusInteraction.onMentionClick(
-                    role = role,
+                    locator = locator,
                     did = it,
                     protocol = blog.platform.protocol,
                 )
             },
             onMaybeHashtagClick = {
                 composedStatusInteraction.onMaybeHashtagClick(
-                    role = role,
+                    locator = locator,
                     protocol = blog.platform.protocol,
                     hashtag = it,
                 )

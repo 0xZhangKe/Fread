@@ -16,7 +16,7 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.PinFeedsUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,7 +33,7 @@ class ExplorerFeedsViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
     private val feedsAdapter: BlueskyFeedsAdapter,
     private val followFeeds: PinFeedsUseCase,
-    @Assisted private val role: IdentityRole,
+    @Assisted private val locator: PlatformLocator,
 ) : ViewModel() {
 
     companion object {
@@ -44,7 +44,7 @@ class ExplorerFeedsViewModel @Inject constructor(
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            role: IdentityRole,
+            locator: PlatformLocator,
         ): ExplorerFeedsViewModel
     }
 
@@ -120,7 +120,7 @@ class ExplorerFeedsViewModel @Inject constructor(
     }
 
     private suspend fun getSuggestedFeeds(cursor: String? = this.cursor): Result<List<BlueskyFeedsUiState>> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         return supervisorScope {
             val pinnedFeedsDeferred = async { getPinnedFeeds() }
             val feedsListDeferred = async {
@@ -155,7 +155,7 @@ class ExplorerFeedsViewModel @Inject constructor(
                     },
                 )
             }
-            followFeeds(role, feedsUiState.feeds)
+            followFeeds(locator, feedsUiState.feeds)
                 .onSuccess {
                     _uiState.update { state ->
                         state.copy(
@@ -210,7 +210,7 @@ class ExplorerFeedsViewModel @Inject constructor(
 
     private suspend fun getPinnedFeeds(): Result<List<String>> {
         if (pinnedFeedsUris.isNotEmpty()) return Result.success(pinnedFeedsUris)
-        val preferenceResult = clientManager.getClient(role).getPreferencesCatching()
+        val preferenceResult = clientManager.getClient(locator).getPreferencesCatching()
         if (preferenceResult.isFailure) return Result.failure(preferenceResult.exceptionOrThrow())
         return preferenceResult.map {
             it.preferences.filterIsInstance<SavedFeedsPrefV2>()

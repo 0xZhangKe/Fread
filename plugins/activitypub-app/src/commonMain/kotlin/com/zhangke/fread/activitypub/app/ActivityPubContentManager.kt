@@ -31,6 +31,7 @@ class ActivityPubContentManager @Inject constructor() : IContentManager {
                 addAll(config.showingTabList.map { it.toTab(false) })
                 addAll(config.hiddenTabList.map { it.toTab(true) })
             },
+            accountUri = null,
         )
     }
 

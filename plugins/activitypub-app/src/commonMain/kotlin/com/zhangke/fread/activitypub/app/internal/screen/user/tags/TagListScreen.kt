@@ -24,16 +24,13 @@ import com.zhangke.fread.activitypub.app.activity_pub_followed_tags_screen_title
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import com.zhangke.fread.status.ui.hashtag.HashtagUiPlaceholder
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
 import org.jetbrains.compose.resources.stringResource
 
-@Destination(TagListScreenRoute.ROUTE)
 class TagListScreen(
-    @RouteParam(TagListScreenRoute.PARAM_ROLE) private val roleString: String,
+    private val locator: PlatformLocator,
 ) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
@@ -42,7 +39,7 @@ class TagListScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<TagListViewModel, TagListViewModel.Factory> {
-            it.create(IdentityRole.decodeFromString(roleString)!!)
+            it.create(locator)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = rememberSnackbarHostState()
@@ -55,7 +52,7 @@ class TagListScreen(
             onTagClick = { hashtag ->
                 navigator.push(
                     HashtagTimelineScreen(
-                        role = uiState.role,
+                        locator = uiState.locator,
                         hashtag = hashtag.name.removePrefix("#"),
                     )
                 )

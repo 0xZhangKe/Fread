@@ -44,11 +44,11 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_search_user_placeholder
 import com.zhangke.fread.activitypub.app.internal.screen.list.AccountItem
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
 class SearchUserScreen(
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val onlyFollowing: Boolean,
 ) : BaseScreen() {
 
@@ -59,7 +59,7 @@ class SearchUserScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewMode = getViewModel<SearchUserViewModel, SearchUserViewModel.Factory> {
-            it.create(role, onlyFollowing)
+            it.create(locator, onlyFollowing)
         }
         val snackbarHostState = rememberSnackbarHostState()
         val uiState by viewMode.uiState.collectAsState()

@@ -5,8 +5,8 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.PagedData
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -19,11 +19,11 @@ class StatusResolver(
 ) {
 
     suspend fun getStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         platform: BlogPlatform,
     ): Result<StatusUiState> {
-        return resolverList.mapFirst { it.getStatus(role, blog, platform) }
+        return resolverList.mapFirst { it.getStatus(locator, blog, platform) }
     }
 
     suspend fun getStatusList(
@@ -43,59 +43,59 @@ class StatusResolver(
     }
 
     suspend fun interactive(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         type: StatusActionType,
     ): Result<Status?> {
-        return resolverList.mapFirst { it.interactive(role, status, type) }
+        return resolverList.mapFirst { it.interactive(locator, status, type) }
     }
 
     suspend fun follow(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor,
     ): Result<Unit> {
-        return resolverList.mapFirst { it.follow(role, target) }
+        return resolverList.mapFirst { it.follow(locator, target) }
     }
 
     suspend fun unfollow(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor,
     ): Result<Unit> {
-        return resolverList.mapFirst { it.unfollow(role, target) }
+        return resolverList.mapFirst { it.unfollow(locator, target) }
     }
 
     suspend fun votePoll(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         votedOption: List<BlogPoll.Option>,
     ): Result<Status> {
-        return resolverList.mapFirst { it.votePoll(role, blog, votedOption) }
+        return resolverList.mapFirst { it.votePoll(locator, blog, votedOption) }
     }
 
-    suspend fun getStatusContext(role: IdentityRole, status: Status): Result<StatusContext> {
-        return resolverList.mapFirst { it.getStatusContext(role, status) }
+    suspend fun getStatusContext(locator: PlatformLocator, status: Status): Result<StatusContext> {
+        return resolverList.mapFirst { it.getStatusContext(locator, status) }
     }
 
     suspend fun isFollowing(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor,
     ): Result<Boolean>? {
-        return resolverList.firstNotNullOfOrNull { it.isFollowing(role, target) }
+        return resolverList.firstNotNullOfOrNull { it.isFollowing(locator, target) }
     }
 
     suspend fun translate(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         lan: String,
     ): Result<BlogTranslation> {
-        return resolverList.firstNotNullOf { it.translate(role, status, lan) }
+        return resolverList.firstNotNullOf { it.translate(locator, status, lan) }
     }
 }
 
 interface IStatusResolver {
 
     suspend fun getStatus(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         platform: BlogPlatform,
     ): Result<StatusUiState>?
@@ -110,36 +110,36 @@ interface IStatusResolver {
     ): Result<PagedData<StatusUiState>>?
 
     suspend fun interactive(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         type: StatusActionType,
     ): Result<Status?>?
 
     suspend fun votePoll(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blog: Blog,
         votedOption: List<BlogPoll.Option>,
     ): Result<Status>?
 
-    suspend fun getStatusContext(role: IdentityRole, status: Status): Result<StatusContext>?
+    suspend fun getStatusContext(locator: PlatformLocator, status: Status): Result<StatusContext>?
 
     suspend fun follow(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor,
     ): Result<Unit>?
 
     suspend fun unfollow(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor,
     ): Result<Unit>?
 
     suspend fun isFollowing(
-        role: IdentityRole,
+        locator: PlatformLocator,
         target: BlogAuthor,
     ): Result<Boolean>?
 
     suspend fun translate(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         lan: String,
     ): Result<BlogTranslation>?

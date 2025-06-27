@@ -2,7 +2,7 @@ package com.zhangke.fread.bluesky.internal.adapter
 
 import com.zhangke.fread.bluesky.internal.model.CompletedBskyNotification
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
@@ -15,14 +15,14 @@ class BlueskyNotificationAdapter @Inject constructor(
 
     fun convert(
         notification: CompletedBskyNotification,
-        role: IdentityRole,
+        locator: PlatformLocator,
         platform: BlogPlatform,
     ): StatusNotification {
-        return notification.convertNotification(role, platform)
+        return notification.convertNotification(locator, platform)
     }
 
     private fun CompletedBskyNotification.convertNotification(
-        role: IdentityRole,
+        locator: PlatformLocator,
         blogPlatform: BlogPlatform,
     ): StatusNotification {
         val author = accountAdapter.convertToBlogAuthor(this.author)
@@ -30,7 +30,7 @@ class BlueskyNotificationAdapter @Inject constructor(
             is CompletedBskyNotification.Record.Like -> {
                 StatusNotification.Like(
                     id = this.cid,
-                    role = role,
+                    locator = locator,
                     author = author,
                     unread = !this.isRead,
                     blog = statusAdapter.convertToBlog(
@@ -48,7 +48,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Follow(
                     id = this.cid,
                     author = author,
-                    role = role,
+                    locator = locator,
                     unread = !this.isRead,
                     createAt = this.record.createAt,
                 )
@@ -60,7 +60,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                     id = this.cid,
                     unread = !this.isRead,
                     status = statusAdapter.convertToUiState(
-                        role = role,
+                        locator = locator,
                         status = Status.NewBlog(
                             statusAdapter.convertToBlog(
                                 post = this.record.post,
@@ -82,7 +82,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                     author = author,
                     unread = !this.isRead,
                     reply = statusAdapter.convertToUiState(
-                        role = role,
+                        locator = locator,
                         status = Status.NewBlog(
                             statusAdapter.convertToBlog(
                                 post = this.record.reply,
@@ -104,7 +104,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                     unread = !this.isRead,
                     author = author,
                     quote = statusAdapter.convertToUiState(
-                        role = role,
+                        locator = locator,
                         status = Status.NewBlog(
                             statusAdapter.convertToBlog(
                                 post = this.record.quote,
@@ -124,7 +124,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Repost(
                     id = this.cid,
                     author = author,
-                    role = role,
+                    locator = locator,
                     unread = !this.isRead,
                     blog = statusAdapter.convertToBlog(
                         post = this.record.post.record.bskyJson(),
@@ -140,7 +140,7 @@ class BlueskyNotificationAdapter @Inject constructor(
             is CompletedBskyNotification.Record.OnlyMessage -> {
                 StatusNotification.Unknown(
                     id = this.cid,
-                    role = role,
+                    locator = locator,
                     unread = !this.isRead,
                     message = this.record.message,
                     createAt = this.record.createAt,

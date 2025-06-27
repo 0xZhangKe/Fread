@@ -4,7 +4,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapt
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
 
@@ -15,15 +15,15 @@ class GetTimelineStatusUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         type: ActivityPubStatusSourceType,
         maxId: String?,
         minId: String?,
         limit: Int,
         listId: String? = null,
     ): Result<List<Status>> {
-        val timelineRepo = clientManager.getClient(role).timelinesRepo
-        val platformResult = platformRepo.getPlatform(role)
+        val timelineRepo = clientManager.getClient(locator).timelinesRepo
+        val platformResult = platformRepo.getPlatform(locator)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }

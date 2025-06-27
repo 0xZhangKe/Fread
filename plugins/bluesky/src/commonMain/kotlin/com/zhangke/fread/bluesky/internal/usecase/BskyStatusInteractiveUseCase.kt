@@ -12,7 +12,7 @@ import com.zhangke.fread.bluesky.internal.client.likeRecord
 import com.zhangke.fread.bluesky.internal.client.repostRecord
 import com.zhangke.fread.bluesky.internal.client.rkey
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
@@ -29,11 +29,11 @@ class BskyStatusInteractiveUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        locator: PlatformLocator,
         status: Status,
         type: StatusActionType,
     ): Result<Status?> {
-        val client = clientManager.getClient(role)
+        val client = clientManager.getClient(locator)
         val loggedAccount =
             client.loggedAccountProvider() ?: return Result.failure(Exception("No logged account"))
         val repo = Did(loggedAccount.did)

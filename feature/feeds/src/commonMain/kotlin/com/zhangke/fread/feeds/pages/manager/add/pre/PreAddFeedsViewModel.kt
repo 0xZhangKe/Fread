@@ -9,7 +9,6 @@ import com.zhangke.framework.coroutines.invokeOnCancel
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.AddContentAction
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.SearchContentResult
 import kotlinx.coroutines.Job
@@ -81,7 +80,7 @@ class PreAddFeedsViewModel @Inject constructor(
                 )
             }
             statusProvider.searchEngine
-                .searchContent(IdentityRole.nonIdentityRole, _uiState.value.query)
+                .searchContentNoToken(_uiState.value.query)
                 .collect { (query, results) ->
                     if (query == _uiState.value.query) {
                         _uiState.update {

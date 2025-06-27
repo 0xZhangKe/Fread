@@ -20,7 +20,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.preParseStatus
 import com.zhangke.fread.status.richtext.preParseStatusList
 import com.zhangke.fread.status.status.model.Status
@@ -39,7 +39,7 @@ class ActivityPubTimelineViewModel(
     private val statusReadStateRepo: ActivityPubStatusReadStateRepo,
     private val accountManager: ActivityPubAccountManager,
     private val loggedAccountProvider: LoggedAccountProvider,
-    private val role: IdentityRole,
+    private val locator: PlatformLocator,
     private val type: ActivityPubStatusSourceType,
     private val listId: String?,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
@@ -68,9 +68,8 @@ class ActivityPubTimelineViewModel(
         )
         initFeeds()
         launchInViewModel {
-            val baseUrl = role.baseUrl
-            if (baseUrl != null) {
-                accountManager.observeAccount(baseUrl)
+            if (locator.accountUri != null) {
+                accountManager.observeAccount(locator.accountUri!!)
                     .collect {
                         if (latestAccount != null && latestAccount?.uri == it?.uri) {
                             return@collect
@@ -95,16 +94,16 @@ class ActivityPubTimelineViewModel(
                 )
             }
             val localStatus = timelineRepo.getStatusFromLocal(
-                role = role,
+                locator = locator,
                 type = type,
                 listId = listId,
             ).map {
                 it.preParseStatus()
                 it
             }
-            val account = loggedAccountProvider.getAccount(role)
+            val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
             if (localStatus.isNotEmpty()) {
-                val latestReadStatus = statusReadStateRepo.getLatestReadId(role, type, listId)
+                val latestReadStatus = statusReadStateRepo.getLatestReadId(locator, type, listId)
                 val initialIndex = localStatus.indexOfFirst { it.id == latestReadStatus }
                 _uiState.update {
                     it.copy(
@@ -117,13 +116,13 @@ class ActivityPubTimelineViewModel(
             val minId = localStatus.firstOrNull()?.id
             if (minId.isNullOrEmpty()) {
                 timelineRepo.getFresherStatus(
-                    role = role,
+                    locator = locator,
                     type = type,
                     listId = listId,
                 )
             } else {
                 timelineRepo.loadPreviousPageStatus(
-                    role = role,
+                    locator = locator,
                     type = type,
                     minId = minId,
                     listId = listId,
@@ -164,9 +163,9 @@ class ActivityPubTimelineViewModel(
         refreshJob?.cancel()
         refreshJob = launchInViewModel {
             _uiState.update { it.copy(refreshing = true) }
-            val account = loggedAccountProvider.getAccount(role)
+            val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
             timelineRepo.getFresherStatus(
-                role = role,
+                locator = locator,
                 type = type,
                 listId = listId,
             ).map {
@@ -199,10 +198,10 @@ class ActivityPubTimelineViewModel(
         if (initFeedsJob?.isActive == true) return
         if (loadPreviousJob?.isActive == true) return
         val minId = uiState.value.items.getStatusIdOrNull(0) ?: return
-        val account = loggedAccountProvider.getAccount(role)
+        val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
         loadPreviousJob = launchInViewModel {
             timelineRepo.loadPreviousPageStatus(
-                role = role,
+                locator = locator,
                 type = type,
                 minId = minId,
                 listId = listId,
@@ -230,9 +229,9 @@ class ActivityPubTimelineViewModel(
         loadMoreJob?.cancel()
         loadMoreJob = launchInViewModel {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
-            val account = loggedAccountProvider.getAccount(role)
+            val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
             timelineRepo.loadMore(
-                role = role,
+                locator = locator,
                 type = type,
                 maxId = maxId,
                 listId = listId,
@@ -259,7 +258,7 @@ class ActivityPubTimelineViewModel(
         val statusId = (item as ActivityPubTimelineItem.StatusItem).status.status.id
         launchInViewModel {
             statusReadStateRepo.updateLatestReadId(
-                role = role,
+                locator = locator,
                 type = type,
                 listId = listId,
                 latestReadId = statusId,
@@ -274,7 +273,7 @@ class ActivityPubTimelineViewModel(
                     state.copy(items = state.items.updateStatus(this.status))
                 }
                 timelineRepo.updateStatus(
-                    role = role,
+                    locator = locator,
                     type = type,
                     status = this.status.status,
                     listId = listId,
@@ -323,7 +322,7 @@ class ActivityPubTimelineViewModel(
             ActivityPubTimelineItem.StatusItem(
                 statusAdapter.toStatusUiState(
                     status = it,
-                    role = role,
+                    locator = locator,
                     loggedAccount = loggedAccount,
                 ),
             )

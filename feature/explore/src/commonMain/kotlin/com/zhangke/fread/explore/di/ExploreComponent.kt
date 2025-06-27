@@ -10,7 +10,7 @@ import com.zhangke.fread.explore.screens.search.bar.SearchBarViewModel
 import com.zhangke.fread.explore.screens.search.hashtag.SearchHashtagViewModel
 import com.zhangke.fread.explore.screens.search.platform.SearchPlatformViewModel
 import com.zhangke.fread.explore.screens.search.status.SearchStatusViewModel
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.Provides
 
@@ -24,7 +24,7 @@ interface ExploreComponent {
 
     @IntoMap
     @Provides
-    fun provideSearchAuthorViewModel(creator: (IdentityRole) -> SearchAuthorViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideSearchAuthorViewModel(creator: (PlatformLocator) -> SearchAuthorViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return SearchAuthorViewModel::class to SearchAuthorViewModel.Factory { role ->
             creator(role)
         }
@@ -38,7 +38,7 @@ interface ExploreComponent {
 
     @IntoMap
     @Provides
-    fun provideSearchHashtagViewModel(creator: (IdentityRole) -> SearchHashtagViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideSearchHashtagViewModel(creator: (PlatformLocator) -> SearchHashtagViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return SearchHashtagViewModel::class to SearchHashtagViewModel.Factory { role ->
             creator(role)
         }
@@ -46,7 +46,7 @@ interface ExploreComponent {
 
     @IntoMap
     @Provides
-    fun provideSearchPlatformViewModel(creator: (IdentityRole, String) -> SearchPlatformViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideSearchPlatformViewModel(creator: (PlatformLocator, String) -> SearchPlatformViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return SearchPlatformViewModel::class to SearchPlatformViewModel.Factory { role, query ->
             creator(role, query)
         }
@@ -54,7 +54,7 @@ interface ExploreComponent {
 
     @IntoMap
     @Provides
-    fun provideSearchStatusViewModel(creator: (IdentityRole) -> SearchStatusViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideSearchStatusViewModel(creator: (PlatformLocator) -> SearchStatusViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return SearchStatusViewModel::class to SearchStatusViewModel.Factory { role ->
             creator(role)
         }

@@ -21,7 +21,7 @@ fun FavouriteNotification(
     BlogInteractionNotification(
         blog = blog,
         author = notification.author,
-        role = notification.role,
+        locator = notification.locator,
         icon = Icons.Default.Favorite,
         iconTint = MaterialTheme.colorScheme.tertiary,
         interactionDesc = stringResource(Res.string.shared_notification_favourited_desc),

@@ -1,14 +1,14 @@
 package com.zhangke.fread.common.content
 
-import com.zhangke.fread.common.db.old.OldFreadContentDatabase
-import com.zhangke.fread.common.db.old.OldFreadContentEntity
+import com.zhangke.fread.common.db.FreadContentDatabase
+import com.zhangke.fread.common.db.FreadContentEntity
 import com.zhangke.fread.status.model.FreadContent
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import me.tatarka.inject.annotations.Inject
 
 class FreadContentRepo @Inject constructor(
-    database: OldFreadContentDatabase,
+    database: FreadContentDatabase,
 ) {
 
     private val dao = database.contentDao()
@@ -65,8 +65,8 @@ class FreadContentRepo @Inject constructor(
         insertAll(pendingInsertList)
     }
 
-    private fun FreadContent.toEntity(): OldFreadContentEntity {
-        return OldFreadContentEntity(
+    private fun FreadContent.toEntity(): FreadContentEntity {
+        return FreadContentEntity(
             id = this.id,
             content = this,
         )

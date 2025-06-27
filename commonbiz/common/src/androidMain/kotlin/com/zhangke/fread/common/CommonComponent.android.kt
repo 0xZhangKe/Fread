@@ -11,8 +11,8 @@ import com.russhwolf.settings.datastore.DataStoreSettings
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.OAuthHandler
-import com.zhangke.fread.common.db.old.ContentConfigDatabases
-import com.zhangke.fread.common.db.old.OldFreadContentDatabase
+import com.zhangke.fread.common.db.ContentConfigDatabases
+import com.zhangke.fread.common.db.FreadContentDatabase
 import com.zhangke.fread.common.db.MixedStatusDatabases
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
@@ -54,11 +54,11 @@ actual interface CommonPlatformComponent {
     @Provides
     fun provideFreadContentDatabases(
         context: ApplicationContext,
-    ): OldFreadContentDatabase {
+    ): FreadContentDatabase {
         return Room.databaseBuilder(
             context,
-            OldFreadContentDatabase::class.java,
-            OldFreadContentDatabase.DB_NAME,
+            FreadContentDatabase::class.java,
+            FreadContentDatabase.DB_NAME,
         ).build()
     }
 

@@ -39,7 +39,7 @@ fun SearchResultUi(
                 modifier = modifier,
                 tag = searchResult.hashtag,
                 onClick = {
-                    composedStatusInteraction.onHashtagClick(searchResult.role, it)
+                    composedStatusInteraction.onHashtagClick(searchResult.locator, it)
                 },
             )
         }
@@ -49,10 +49,10 @@ fun SearchResultUi(
                 modifier = modifier,
                 author = searchResult.author,
                 onClick = {
-                    composedStatusInteraction.onUserInfoClick(searchResult.role, it)
+                    composedStatusInteraction.onUserInfoClick(searchResult.locator, it)
                 },
                 onUrlClick = {
-                    browserLauncher.launchWebTabInApp(it, searchResult.role)
+                    browserLauncher.launchWebTabInApp(it, searchResult.locator)
                 }
             )
         }

@@ -84,7 +84,7 @@ fun StatusNotificationUi(
                 is StatusNotification.Repost -> {
                     BlogInteractionNotification(
                         blog = notification.blog,
-                        role = notification.role,
+                        locator = notification.locator,
                         author = notification.author,
                         icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
                         interactionDesc = stringResource(Res.string.shared_notification_reblog_desc),
@@ -108,7 +108,7 @@ fun StatusNotificationUi(
                         notification = notification,
                         style = style,
                         onUserInfoClick = {
-                            composedStatusInteraction.onUserInfoClick(notification.role, it)
+                            composedStatusInteraction.onUserInfoClick(notification.locator, it)
                         },
                     )
                 }
@@ -130,7 +130,7 @@ fun StatusNotificationUi(
                         notification = notification,
                         style = style,
                         onUserInfoClick = {
-                            composedStatusInteraction.onUserInfoClick(notification.role, it)
+                            composedStatusInteraction.onUserInfoClick(notification.locator, it)
                         },
                         onRejectClick = onRejectClick,
                         onAcceptClick = onAcceptClick,
@@ -166,7 +166,7 @@ fun StatusNotificationUi(
                         notification = notification,
                         style = style,
                         onUserInfoClick = {
-                            composedStatusInteraction.onUserInfoClick(notification.role, it)
+                            composedStatusInteraction.onUserInfoClick(notification.locator, it)
                         },
                     )
                 }

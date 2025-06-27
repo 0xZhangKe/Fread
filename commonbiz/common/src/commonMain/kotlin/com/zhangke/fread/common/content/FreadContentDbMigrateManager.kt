@@ -1,7 +1,7 @@
 package com.zhangke.fread.common.content
 
 import com.zhangke.framework.architect.coroutines.ApplicationScope
-import com.zhangke.fread.common.db.old.ContentConfigDatabases
+import com.zhangke.fread.common.db.ContentConfigDatabases
 import com.zhangke.fread.common.status.adapter.ContentConfigAdapter
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig

@@ -10,9 +10,6 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
-import androidx.room.migration.Migration
-import androidx.sqlite.SQLiteConnection
-import androidx.sqlite.execSQL
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusEntityConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.FormalBaseUrlConverter
@@ -22,10 +19,10 @@ import com.zhangke.fread.common.db.converts.StatusConverter
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.status.model.Status
 
-private const val DB_VERSION = 3
+private const val DB_VERSION = 1
 private const val TABLE_NAME = "activity_pub_status"
 
-@Entity(tableName = TABLE_NAME, primaryKeys = ["id", "role", "type", "listId"])
+@Entity(tableName = TABLE_NAME, primaryKeys = ["id", "locator", "type", "listId"])
 data class ActivityPubStatusTableEntity(
     // Status id
     val id: String,
@@ -107,25 +104,7 @@ abstract class ActivityPubStatusDatabases : RoomDatabase() {
     abstract fun getDao(): ActivityPubStatusDao
 
     companion object {
-        const val DB_NAME = "activity_pub_status.db"
-    }
-
-    internal class Status1to2Migration : Migration(1, 2) {
-        override fun migrate(connection: SQLiteConnection) {
-            connection.execSQL("DELETE FROM $TABLE_NAME")
-        }
-    }
-
-    internal class Status1to3Migration : Migration(1, 3) {
-        override fun migrate(connection: SQLiteConnection) {
-            connection.execSQL("DELETE FROM $TABLE_NAME")
-        }
-    }
-
-    internal class Status2to3Migration : Migration(2, 3) {
-        override fun migrate(connection: SQLiteConnection) {
-            connection.execSQL("DELETE FROM $TABLE_NAME")
-        }
+        const val DB_NAME = "activity_pub_status_1.db"
     }
 }
 

@@ -24,7 +24,7 @@ fun PollNotification(
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
-    val role = notification.role
+    val role = notification.locator
     Column(
         modifier = Modifier
             .clickable {
@@ -55,7 +55,7 @@ fun PollNotification(
             onMentionClick = { composedStatusInteraction.onMentionClick(role, it) },
             onMentionDidClick = {
                 composedStatusInteraction.onMentionClick(
-                    locator = locator,
+                    locator = role,
                     did = it,
                     protocol = notification.blog.platform.protocol,
                 )
@@ -64,7 +64,7 @@ fun PollNotification(
             onUrlClick = { browserLauncher.launchWebTabInApp(it, role) },
             onMaybeHashtagClick = {
                 composedStatusInteraction.onMaybeHashtagClick(
-                    locator = locator,
+                    locator = role,
                     protocol = notification.blog.platform.protocol,
                     hashtag = it,
                 )

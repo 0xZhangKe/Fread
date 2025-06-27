@@ -28,11 +28,6 @@ actual interface ActivityPubPlatformComponent {
             name = dbFilePath,
         ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
-            .addMigrations(
-                ActivityPubStatusDatabases.Status1to2Migration(),
-                ActivityPubStatusDatabases.Status1to3Migration(),
-                ActivityPubStatusDatabases.Status2to3Migration(),
-            )
             .build()
     }
 
@@ -43,9 +38,6 @@ actual interface ActivityPubPlatformComponent {
             name = dbFilePath,
         ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
-            .addMigrations(
-                ActivityPubStatusReadStateDatabases.StatusReadState1to2Migration(),
-            )
             .build()
     }
 }

@@ -11,18 +11,15 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
-import androidx.room.migration.Migration
-import androidx.sqlite.SQLiteConnection
-import androidx.sqlite.execSQL
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.common.db.converts.PlatformLocatorConverter
 import com.zhangke.fread.status.model.PlatformLocator
 
-private const val DB_VERSION = 2
+private const val DB_VERSION = 1
 private const val TABLE_NAME = "activity_pub_status_read_state"
 
-@Entity(tableName = TABLE_NAME, primaryKeys = ["role", "type", "listId"])
+@Entity(tableName = TABLE_NAME, primaryKeys = ["locator", "type", "listId"])
 data class ActivityPubStatusReadStateEntity(
     val locator: PlatformLocator,
     val type: ActivityPubStatusSourceType,
@@ -68,18 +65,13 @@ abstract class ActivityPubStatusReadStateDatabases : RoomDatabase() {
     abstract fun getDao(): ActivityPubStatusReadStateDao
 
     companion object {
-        internal const val DB_NAME = "activity_pub_status_read_state.db"
-    }
-
-    internal class StatusReadState1to2Migration : Migration(1, 2) {
-        override fun migrate(connection: SQLiteConnection) {
-            connection.execSQL("DELETE FROM $TABLE_NAME")
-        }
+        internal const val DB_NAME = "activity_pub_status_read_state_1.db"
     }
 }
 
 // The Room compiler generates the `actual` implementations.
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-expect object ActivityPubStatusReadStateDatabasesConstructor : RoomDatabaseConstructor<ActivityPubStatusReadStateDatabases> {
+expect object ActivityPubStatusReadStateDatabasesConstructor :
+    RoomDatabaseConstructor<ActivityPubStatusReadStateDatabases> {
     override fun initialize(): ActivityPubStatusReadStateDatabases
 }

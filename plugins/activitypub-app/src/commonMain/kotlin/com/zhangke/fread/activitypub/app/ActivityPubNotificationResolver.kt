@@ -185,13 +185,23 @@ class ActivityPubNotificationResolver @Inject constructor(
             }
 
             ActivityPubNotificationsEntity.Type.poll -> {
-                StatusNotification.Poll(
-                    id = entity.id,
-                    createAt = createAt,
-                    locator = locator,
-                    unread = unread,
-                    blog = status!!.status.intrinsicBlog,
-                )
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        locator = locator,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.Poll(
+                        id = entity.id,
+                        createAt = createAt,
+                        locator = locator,
+                        unread = unread,
+                        blog = status.status.intrinsicBlog,
+                    )
+                }
             }
 
             ActivityPubNotificationsEntity.Type.update -> {

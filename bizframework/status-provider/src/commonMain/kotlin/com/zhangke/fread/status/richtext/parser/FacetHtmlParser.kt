@@ -25,6 +25,7 @@ class FacetHtmlParser {
         for (facet in facets) {
             val start = calculateUtf8Index(facet.byteStart, document)
             val end = calculateUtf8Index(facet.byteEnd, document)
+            if (start > end) continue
             if (!legalRange.contains(start) || !legalRange.contains(end)) {
                 continue
             }

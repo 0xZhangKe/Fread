@@ -13,6 +13,7 @@ import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.db.ContentConfigDatabases
 import com.zhangke.fread.common.db.FreadContentDatabase
+import com.zhangke.fread.common.db.old.OldFreadContentDatabase
 import com.zhangke.fread.common.db.MixedStatusDatabases
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
@@ -59,6 +60,18 @@ actual interface CommonPlatformComponent {
             context,
             FreadContentDatabase::class.java,
             FreadContentDatabase.DB_NAME,
+        ).build()
+    }
+
+    @ApplicationScope
+    @Provides
+    fun provideOldFreadContentDatabases(
+        context: ApplicationContext,
+    ): OldFreadContentDatabase {
+        return Room.databaseBuilder(
+            context,
+            OldFreadContentDatabase::class.java,
+            OldFreadContentDatabase.DB_NAME,
         ).build()
     }
 

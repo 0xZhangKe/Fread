@@ -1,4 +1,4 @@
-package com.zhangke.fread.common.db
+package com.zhangke.fread.common.db.old
 
 import androidx.room.ConstructedBy
 import androidx.room.Dao
@@ -19,31 +19,31 @@ private const val DB_VERSION = 1
 private const val TABLE_NAME = "fread_content"
 
 @Entity(tableName = TABLE_NAME)
-data class FreadContentEntity(
+data class OldFreadContentEntity(
     @PrimaryKey val id: String,
     val content: FreadContent,
 )
 
 @Dao
-interface FreadContentDao {
+interface OldFreadContentDao {
 
     @Query("SELECT * FROM $TABLE_NAME")
-    fun queryAllFlow(): Flow<List<FreadContentEntity>>
+    fun queryAllFlow(): Flow<List<OldFreadContentEntity>>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id")
-    fun queryFlow(id: String): Flow<FreadContentEntity?>
+    fun queryFlow(id: String): Flow<OldFreadContentEntity?>
 
     @Query("SELECT * FROM $TABLE_NAME")
-    suspend fun queryAll(): List<FreadContentEntity>
+    suspend fun queryAll(): List<OldFreadContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id")
-    suspend fun query(id: String): FreadContentEntity?
+    suspend fun query(id: String): OldFreadContentEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(content: FreadContentEntity)
+    suspend fun insert(content: OldFreadContentEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(list: List<FreadContentEntity>)
+    suspend fun insertAll(list: List<OldFreadContentEntity>)
 
     @Query("DELETE FROM $TABLE_NAME WHERE id = :id")
     suspend fun delete(id: String)
@@ -53,22 +53,22 @@ interface FreadContentDao {
     FreadContentConverter::class
 )
 @Database(
-    entities = [FreadContentEntity::class],
+    entities = [OldFreadContentEntity::class],
     version = DB_VERSION,
     exportSchema = false,
 )
-@ConstructedBy(FreadContentDatabaseConstructor::class)
-abstract class FreadContentDatabase : RoomDatabase() {
+@ConstructedBy(OldFreadContentDatabaseConstructor::class)
+abstract class OldFreadContentDatabase : RoomDatabase() {
 
-    abstract fun contentDao(): FreadContentDao
+    abstract fun contentDao(): OldFreadContentDao
 
     companion object {
-        const val DB_NAME = "fread_content_1.db"
+        const val DB_NAME = "fread_content.db"
     }
 }
 
 // The Room compiler generates the `actual` implementations.
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-expect object FreadContentDatabaseConstructor : RoomDatabaseConstructor<FreadContentDatabase> {
-    override fun initialize(): FreadContentDatabase
+expect object OldFreadContentDatabaseConstructor : RoomDatabaseConstructor<OldFreadContentDatabase> {
+    override fun initialize(): OldFreadContentDatabase
 }

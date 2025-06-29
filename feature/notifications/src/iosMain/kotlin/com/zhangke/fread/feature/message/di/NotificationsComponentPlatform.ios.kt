@@ -16,7 +16,6 @@ actual interface NotificationsComponentPlatform {
         return Room.databaseBuilder<NotificationsDatabase>(name = dbFilePath)
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
-            .addMigrations(NotificationsDatabase.Status1to2Migration())
             .build()
     }
 }

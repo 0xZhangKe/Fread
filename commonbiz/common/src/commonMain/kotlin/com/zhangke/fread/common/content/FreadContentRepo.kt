@@ -2,6 +2,7 @@ package com.zhangke.fread.common.content
 
 import com.zhangke.fread.common.db.FreadContentDatabase
 import com.zhangke.fread.common.db.FreadContentEntity
+import com.zhangke.fread.common.db.old.OldFreadContentDatabase
 import com.zhangke.fread.status.model.FreadContent
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -9,9 +10,18 @@ import me.tatarka.inject.annotations.Inject
 
 class FreadContentRepo @Inject constructor(
     database: FreadContentDatabase,
+    private val oldContentDatabase: OldFreadContentDatabase,
 ) {
 
     private val dao = database.contentDao()
+
+    suspend fun getAllOldContents(): List<FreadContent> {
+        return oldContentDatabase.contentDao().queryAll().map { it.content }
+    }
+
+    suspend fun deleteOldContents(id: String) {
+        oldContentDatabase.contentDao().delete(id)
+    }
 
     fun getAllContentFlow() =
         dao.queryAllFlow().map { list -> list.map { it.content }.sortedBy { it.order } }

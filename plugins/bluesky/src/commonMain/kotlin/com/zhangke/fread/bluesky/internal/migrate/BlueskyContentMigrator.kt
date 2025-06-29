@@ -1,0 +1,29 @@
+package com.zhangke.fread.bluesky.internal.migrate
+
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.common.content.FreadContentRepo
+import me.tatarka.inject.annotations.Inject
+
+class BlueskyContentMigrator @Inject constructor(
+    private val freadContentRepo: FreadContentRepo,
+    private val accountManager: BlueskyLoggedAccountManager,
+) {
+
+    suspend fun migrate() {
+        val allContent = freadContentRepo.getAllOldContents().filterIsInstance<BlueskyContent>()
+        if (allContent.isEmpty()) return
+        val allAccounts = accountManager.getAllAccount()
+        allContent.map { content ->
+            if (content.accountUri != null) {
+                content
+            } else {
+                val account = allAccounts.firstOrNull { it.platform.baseUrl == content.baseUrl }
+                content.copy(accountUri = account?.uri)
+            }
+        }.let { freadContentRepo.insertAll(it) }
+        for (content in allContent) {
+            freadContentRepo.deleteOldContents(content.id)
+        }
+    }
+}

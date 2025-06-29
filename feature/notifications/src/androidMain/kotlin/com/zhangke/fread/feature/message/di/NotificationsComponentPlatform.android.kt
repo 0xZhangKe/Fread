@@ -17,7 +17,6 @@ actual interface NotificationsComponentPlatform {
             context,
             NotificationsDatabase::class.java,
             NotificationsDatabase.DB_NAME,
-        ).addMigrations(NotificationsDatabase.Status1to2Migration())
-            .build()
+        ).build()
     }
 }

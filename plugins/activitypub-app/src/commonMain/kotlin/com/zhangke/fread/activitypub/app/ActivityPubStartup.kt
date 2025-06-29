@@ -5,6 +5,7 @@ import com.zhangke.framework.collections.container
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubContentAdapter
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
+import com.zhangke.fread.activitypub.app.internal.migrate.ActivityPubContentMigrator
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.common.content.FreadContentRepo
 import kotlinx.coroutines.delay
@@ -15,10 +16,12 @@ class ActivityPubStartup @Inject constructor(
     private val contentRepo: FreadContentRepo,
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val contentAdapter: ActivityPubContentAdapter,
+    private val contentMigrator: ActivityPubContentMigrator,
 ) : ModuleStartup {
 
     override fun onAppCreate() {
         ApplicationScope.launch {
+            contentMigrator.migrate()
             accountRepo.onNewAccountFlow.collect { account ->
                 delay(500)
                 val contentExist = contentRepo.getAllContent()

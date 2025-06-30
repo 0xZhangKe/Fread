@@ -3,6 +3,7 @@ package com.zhangke.fread.status.blog
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.FormattingTime
@@ -53,6 +54,7 @@ data class Blog(
     val editedAt: Instant? = null,
     val formattedEditAt: String? = null,
     val application: PostingApplication? = null,
+    val filtered: List<BlogFiltered>? = null,
 ) : PlatformSerializable {
 
     val humanizedSpoilerText: RichText by lazy {
@@ -86,6 +88,14 @@ data class Blog(
     val formattingDisplayTime: FormattingTime by lazy {
         FormattingTime(createAt)
     }
+
+    val sensitiveByFilter: Boolean
+        get() {
+            if (filtered.isNullOrEmpty()) return false
+            return filtered.any {
+                it.action == BlogFiltered.FilterAction.WARN || it.action == BlogFiltered.FilterAction.BLUR
+            }
+        }
 
     @Serializable
     data class Like(

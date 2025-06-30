@@ -1,15 +1,18 @@
 package com.zhangke.fread.activitypub.app.internal.screen.filters.edit
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.ScreenKey
@@ -39,6 +43,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_dialog
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_dialog_title
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_remove_keyword_dialog_content
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_title
+import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_whole_word
 import com.zhangke.fread.common.page.BaseScreen
 import org.jetbrains.compose.resources.stringResource
 
@@ -52,8 +57,7 @@ class HiddenKeywordScreen(
             "com.zhangke.fread.activitypub.app.internal.screen.filters.edit.HiddenKeywordScreen"
     }
 
-    override val key: ScreenKey
-        get() = SCREEN_KEY
+    override val key: ScreenKey get() = SCREEN_KEY
 
     @OptIn(InternalVoyagerApi::class)
     @Composable
@@ -67,12 +71,8 @@ class HiddenKeywordScreen(
         var pendingEditKeyword: EditFilterUiState.Keyword? by remember {
             mutableStateOf(null)
         }
-        var showEditDialog by remember {
-            mutableStateOf(false)
-        }
-        BackHandler(true) {
-            resultNavigator.popWithResult(keywordsList)
-        }
+        var showEditDialog by remember { mutableStateOf(false) }
+        BackHandler(true) { resultNavigator.popWithResult(keywordsList) }
         Scaffold(
             topBar = {
                 Toolbar(
@@ -100,25 +100,47 @@ class HiddenKeywordScreen(
                     .fillMaxSize(),
             ) {
                 items(showingKeywordList) { keyword ->
-                    Box(
-                        modifier = Modifier
-                            .clickable {
-                                pendingEditKeyword = keyword
-                                showEditDialog = true
-                            }
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp, end = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.CenterStart),
-                            text = keyword.keyword,
-                        )
+                        Column(
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = keyword.keyword,
+                                textAlign = TextAlign.Start,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Checkbox(
+                                    checked = keyword.wholeWord,
+                                    onCheckedChange = {
+                                        keywordsList[keywordsList.indexOf(keyword)] =
+                                            keyword.copy(wholeWord = it)
+                                    },
+                                )
+                                Text(
+                                    text = stringResource(Res.string.activity_pub_filter_edit_whole_word),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         var showDeleteConfirmDialog by remember {
                             mutableStateOf(false)
                         }
                         SimpleIconButton(
-                            modifier = Modifier.align(Alignment.CenterEnd),
+                            modifier = Modifier,
                             onClick = {
                                 showDeleteConfirmDialog = true
                             },
@@ -145,7 +167,6 @@ class HiddenKeywordScreen(
                 }
             }
         }
-
         if (showEditDialog) {
             EditKeywordDialog(
                 keyword = pendingEditKeyword,
@@ -160,9 +181,7 @@ class HiddenKeywordScreen(
                     }
                     pendingEditKeyword = null
                 },
-                onDismissRequest = {
-                    showEditDialog = false
-                },
+                onDismissRequest = { showEditDialog = false },
             )
         }
     }

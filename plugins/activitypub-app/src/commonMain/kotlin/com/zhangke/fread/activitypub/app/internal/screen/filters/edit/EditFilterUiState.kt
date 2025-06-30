@@ -49,6 +49,7 @@ data class EditFilterUiState(
         val keyword: String,
         val id: String? = null,
         val deleted: Boolean = false,
+        val wholeWord: Boolean = true,
     ) : PlatformSerializable, PlatformParcelable
 
     companion object {

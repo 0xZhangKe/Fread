@@ -1,9 +1,13 @@
 package com.zhangke.fread.status.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -25,6 +29,10 @@ fun StatusUi(
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
+    if (status.status.intrinsicBlog.filtered?.firstOrNull()?.action == BlogFiltered.FilterAction.HIDE) {
+        Box(modifier = modifier.size(1.dp))
+        return
+    }
     Surface(modifier = modifier) {
         val rawStatus = status.status
         BlogUi(

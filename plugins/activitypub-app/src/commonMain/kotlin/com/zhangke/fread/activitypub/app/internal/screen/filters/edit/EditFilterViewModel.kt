@@ -116,8 +116,8 @@ class EditFilterViewModel @Inject constructor(
             keywordsAttributes = this.keywordList.map { keyword ->
                 ActivityPubCreateFilterEntity.KeywordAttribute(
                     id = keyword.id,
-                    keyword = keyword.keyword,
-                    wholeWord = true,
+                    keyword = keyword.keyword.trim(),
+                    wholeWord = keyword.wholeWord,
                     destroy = keyword.deleted,
                 )
             },
@@ -154,6 +154,7 @@ class EditFilterViewModel @Inject constructor(
         return EditFilterUiState.Keyword(
             id = this.id,
             keyword = this.keyword,
+            wholeWord = this.wholeWord,
         )
     }
 }

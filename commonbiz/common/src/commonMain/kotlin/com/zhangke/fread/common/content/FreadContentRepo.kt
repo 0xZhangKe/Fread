@@ -15,8 +15,8 @@ class FreadContentRepo @Inject constructor(
 
     private val dao = database.contentDao()
 
-    suspend fun getAllOldContents(): List<FreadContent> {
-        return oldContentDatabase.contentDao().queryAll().map { it.content }
+    suspend fun getAllOldContents(): List<Pair<String, FreadContent>> {
+        return oldContentDatabase.contentDao().queryAll().map { it.id to it.content }
     }
 
     suspend fun deleteOldContents(id: String) {

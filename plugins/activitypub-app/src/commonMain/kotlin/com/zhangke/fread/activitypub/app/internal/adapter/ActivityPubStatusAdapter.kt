@@ -1,5 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.adapter
 
+import com.zhangke.activitypub.entities.ActivityPubFilterEntity
+import com.zhangke.activitypub.entities.ActivityPubFilterResultEntity
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.date.DateParser
@@ -14,6 +16,7 @@ import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.blog.PostingApplication
+import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
@@ -177,6 +180,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             embeds = entity.card?.toEmbed()?.let { listOf(it) } ?: emptyList(),
             editedAt = entity.editedAt?.let { DateParser.parseOrCurrent(it) },
             application = entity.application?.toApplication(),
+            filtered = entity.filtered?.map { it.toFiltered() },
         )
     }
 
@@ -257,6 +261,20 @@ class ActivityPubStatusAdapter @Inject constructor(
         return PostingApplication(
             name = name,
             website = website,
+        )
+    }
+
+    private fun ActivityPubFilterResultEntity.toFiltered(): BlogFiltered {
+        //warn, hide, blur
+        return BlogFiltered(
+            id = this.filter.id,
+            title = this.filter.title,
+            action = when (this.filter.filterAction) {
+                ActivityPubFilterEntity.FILTER_ACTION_WARN -> BlogFiltered.FilterAction.WARN
+                ActivityPubFilterEntity.FILTER_ACTION_KEYWORDS -> BlogFiltered.FilterAction.HIDE
+                else -> BlogFiltered.FilterAction.BLUR
+            },
+            keywordMatches = keywordMatches ?: emptyList(),
         )
     }
 }

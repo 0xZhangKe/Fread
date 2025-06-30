@@ -11,19 +11,20 @@ class BlueskyContentMigrator @Inject constructor(
 ) {
 
     suspend fun migrate() {
-        val allContent = freadContentRepo.getAllOldContents().filterIsInstance<BlueskyContent>()
+        val allContent = freadContentRepo.getAllOldContents().filter { it.second is BlueskyContent }
         if (allContent.isEmpty()) return
         val allAccounts = accountManager.getAllAccount()
-        allContent.map { content ->
-            if (content.accountUri != null) {
-                content
-            } else {
-                val account = allAccounts.firstOrNull { it.platform.baseUrl == content.baseUrl }
-                content.copy(accountUri = account?.uri)
-            }
-        }.let { freadContentRepo.insertAll(it) }
+        allContent.map { it.second as BlueskyContent }
+            .map { content ->
+                if (content.accountUri != null) {
+                    content
+                } else {
+                    val account = allAccounts.firstOrNull { it.platform.baseUrl == content.baseUrl }
+                    content.copy(accountUri = account?.uri)
+                }
+            }.let { freadContentRepo.insertAll(it) }
         for (content in allContent) {
-            freadContentRepo.deleteOldContents(content.id)
+            freadContentRepo.deleteOldContents(content.first)
         }
     }
 }

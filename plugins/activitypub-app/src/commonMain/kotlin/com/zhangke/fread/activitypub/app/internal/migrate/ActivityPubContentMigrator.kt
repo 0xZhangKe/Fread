@@ -11,19 +11,21 @@ class ActivityPubContentMigrator @Inject constructor(
 ) {
 
     suspend fun migrate() {
-        val allContent = freadContentRepo.getAllOldContents().filterIsInstance<ActivityPubContent>()
+        val allContent =
+            freadContentRepo.getAllOldContents().filter { it.second is ActivityPubContent }
         if (allContent.isEmpty()) return
         val allAccounts = accountRepo.queryAll()
-        allContent.map { content ->
-            if (content.accountUri != null) {
-                content
-            } else {
-                val account = allAccounts.firstOrNull { it.baseUrl == content.baseUrl }
-                content.copy(accountUri = account?.uri)
-            }
-        }.let { freadContentRepo.insertAll(it) }
+        allContent.map { it.second as ActivityPubContent }
+            .map { content ->
+                if (content.accountUri != null) {
+                    content
+                } else {
+                    val account = allAccounts.firstOrNull { it.baseUrl == content.baseUrl }
+                    content.copy(accountUri = account?.uri)
+                }
+            }.let { freadContentRepo.insertAll(it) }
         for (content in allContent) {
-            freadContentRepo.deleteOldContents(content.id)
+            freadContentRepo.deleteOldContents(content.first)
         }
     }
 }

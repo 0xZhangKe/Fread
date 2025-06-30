@@ -16,6 +16,8 @@
     <string name="status_ui_unpin">取消置顶</string>
     <string name="status_ui_edit">编辑</string>
 
+    <string name="status_ui_sensitive_by_filter">内容已被“%1$s”过滤</string>
+
     <string name="status_ui_new_status">新内容</string>
 
     <string name="status_ui_delete_status_confirm">确定要删除这条内容吗？</string>

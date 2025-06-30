@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -51,6 +52,8 @@ import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle.ContentStyle
+import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.status_ui_sensitive_by_filter
 
 /**
  * 博客正文部分，仅包含内容，投票，媒体，链接预览卡片。
@@ -113,7 +116,7 @@ fun BlogContent(
                 onMaybeHashtagClick = onMaybeHashtagClick,
             )
         }
-        val sensitive = blog.sensitive
+        val sensitive = blog.sensitive || blog.sensitiveByFilter
         if (blog.poll != null) {
             BlogPoll(
                 modifier = Modifier
@@ -199,16 +202,28 @@ fun BlogTextContentSection(
     } else {
         Int.MAX_VALUE
     }
+    val showWarning = blog.spoilerText.isNotEmpty() || blog.sensitiveByFilter
     val spoilerText = blog.spoilerText
-    if (spoilerText.isNotEmpty()) {
+    if (showWarning) {
         val statusConfig = LocalStatusUiConfig.current
-        var hideContent by rememberSaveable(spoilerText, statusConfig.alwaysShowSensitiveContent) {
+        var hideContent by rememberSaveable(
+            showWarning,
+            spoilerText,
+            statusConfig.alwaysShowSensitiveContent,
+        ) {
             mutableStateOf(!statusConfig.alwaysShowSensitiveContent)
         }
         val humanizedSpoilerText = if (blogTranslationState?.showingTranslation == true) {
             blogTranslationState.blogTranslation!!.getHumanizedSpoilerText(blog)
-        } else {
+        } else if (blog.spoilerText.isNotEmpty()) {
             blog.humanizedSpoilerText
+        } else {
+            val text =
+                org.jetbrains.compose.resources.stringResource(
+                    Res.string.status_ui_sensitive_by_filter,
+                    blog.filtered!!.first().title,
+                )
+            remember { RichText(text) }
         }
         SpoilerText(
             modifier = Modifier,

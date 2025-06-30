@@ -112,16 +112,12 @@ class EditFilterScreen(
             }
         }
 
-        BackHandler(true) {
-            onBack()
-        }
+        BackHandler(true) { onBack() }
 
         EditFilterContent(
             uiState = uiState,
             snackBarHostState = snackBarHostState,
-            onBackClick = {
-                onBack()
-            },
+            onBackClick = { onBack() },
             onTitleChanged = viewModel::onTitleChanged,
             onExpiredDateSelected = viewModel::onExpiredDateSelected,
             onKeywordClick = {

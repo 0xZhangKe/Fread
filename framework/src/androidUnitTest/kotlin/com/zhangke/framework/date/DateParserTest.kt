@@ -17,7 +17,7 @@ class DateParserTest {
             LocalDateTime(2021, 9, 1, 12, 0, 0)
                 .toInstant(TimeZone.UTC)
                 .toJavaInstant(),
-            DateParser.parseISODate("2021-09-01T12:00:00Z")?.toInstant(),
+            DateParser.parseISODate("2021-09-01T12:00:00Z"),
         )
     }
 
@@ -27,7 +27,7 @@ class DateParserTest {
             LocalDateTime(2021, 9, 1, 12, 0, 0)
                 .toInstant(TimeZone.UTC)
                 .toJavaInstant(),
-            DateParser.parseRfc822Date("Wed, 01 Sep 2021 12:00:00 GMT")?.toInstant(),
+            DateParser.parseRfc822Date("Wed, 01 Sep 2021 12:00:00 GMT"),
         )
     }
 
@@ -37,7 +37,7 @@ class DateParserTest {
             LocalDateTime(2020, 7, 31, 9, 16, 15)
                 .toInstant(UtcOffset(2))
                 .toJavaInstant(),
-            DateParser.parseRfc3339Date("2020-07-31T09:16:15+02:00")?.toInstant(),
+            DateParser.parseRfc3339Date("2020-07-31T09:16:15+02:00"),
         )
     }
 
@@ -47,7 +47,7 @@ class DateParserTest {
             LocalDateTime(2021, 9, 1, 12, 0, 0)
                 .toInstant(TimeZone.UTC)
                 .toJavaInstant(),
-            DateParser.parseISO8601("2021-09-01T12:00:00Z")?.toInstant(),
+            DateParser.parseISO8601("2021-09-01T12:00:00Z"),
         )
     }
 }

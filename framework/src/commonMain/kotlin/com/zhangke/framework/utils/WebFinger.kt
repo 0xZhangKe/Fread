@@ -105,10 +105,10 @@ class WebFinger private constructor(
                 .removePrefix(HttpScheme.HTTP)
                 .removePrefix(HttpScheme.HTTPS)
             val split = maybeUrl.split('/')
-            if (split.size != 2) return null
+            if (split.size < 2) return null
             val urlHost = split[0]
             if (!hostValidate(urlHost)) return null
-            val maybeAcct = split[1].removePrefix("@")
+            val maybeAcct = split.last().removePrefix("@")
             return if (maybeAcct.contains('@')) {
                 createAsAcct(maybeAcct)
             } else {

@@ -49,7 +49,7 @@ class FreadContentDbMigrateManager @Inject constructor(
 
     private suspend fun migrateOldMixedContent() {
         contentRepo.getAllOldContents()
-            .filterIsInstance<MixedContent>()
+            .mapNotNull { it.second as? MixedContent }
             .forEach { content ->
                 contentRepo.insertContent(content)
                 contentRepo.deleteOldContents(content.id)

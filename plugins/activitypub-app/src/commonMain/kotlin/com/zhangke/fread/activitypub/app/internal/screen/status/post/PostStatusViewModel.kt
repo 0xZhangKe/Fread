@@ -121,7 +121,6 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onContentChanged(inputtedText: TextFieldValue) {
-        if (_uiState.value.requireSuccessData().allowedInputCount <= 0) return
         _uiState.updateOnSuccess {
             it.copy(content = inputtedText)
         }

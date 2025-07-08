@@ -12,6 +12,6 @@ actual suspend fun TextString.getString(): String {
     return when (this) {
         is TextString.StringText -> string
         is TextString.ResourceText -> appContext.getString(resId, *formatArgs)
-        is TextString.ComposeResourceText -> org.jetbrains.compose.resources.getString(res)
+        is TextString.ComposeResourceText -> org.jetbrains.compose.resources.getString(res, *formatArgs)
     }
 }

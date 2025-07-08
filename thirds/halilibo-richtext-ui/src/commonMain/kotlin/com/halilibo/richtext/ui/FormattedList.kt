@@ -100,7 +100,8 @@ public interface UnorderedMarkers {
  * Creates an [UnorderedMarkers] that will cycle through the values in [markers] for each
  * indentation level.
  */
-public fun @Composable RichTextScope.textUnorderedMarkers(
+@Composable
+public fun RichTextScope.textUnorderedMarkers(
   vararg markers: String
 ): UnorderedMarkers = UnorderedMarkers {
   Text(markers[it % markers.size])
@@ -126,7 +127,7 @@ public data class ListStyle(
   val contentsIndent: TextUnit? = null,
   val itemSpacing: TextUnit? = null,
   val orderedMarkers: (RichTextScope.() -> OrderedMarkers)? = null,
-  val unorderedMarkers: (RichTextScope.() -> UnorderedMarkers)? = null
+  val unorderedMarkers: (@Composable RichTextScope.() -> UnorderedMarkers)? = null
 ) {
   public companion object {
     public val Default: ListStyle = ListStyle()
@@ -150,7 +151,8 @@ private val DefaultOrderedMarkers: RichTextScope.() -> OrderedMarkers = {
     }
   )
 }
-private val DefaultUnorderedMarkers: RichTextScope.() -> UnorderedMarkers = {
+
+private val DefaultUnorderedMarkers: @Composable RichTextScope.() -> UnorderedMarkers = {
   textUnorderedMarkers("•", "◦", "▸", "▹")
 }
 

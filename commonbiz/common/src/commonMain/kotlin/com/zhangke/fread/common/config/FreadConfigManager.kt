@@ -19,6 +19,7 @@ class FreadConfigManager @Inject constructor(
         private const val LOCAL_KEY_STATUS_CONTENT_SIZE = "fread_status_content_size"
         private const val LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE =
             "fread_status_always_show_sensitive"
+        private const val LOCAL_KEY_IMMERSIVE_NAV_BAR = "immersiveNavBar"
         private const val LOCAL_KEY_DEVICE_ID = "device_id"
         private const val LOCAL_KEY_IGNORE_UPDATE_VERSION = "ignore_update_version"
         private const val LOCAL_KEY_BSKY_PUBLISH_LAN = "bsky_publish_lan"
@@ -38,22 +39,16 @@ class FreadConfigManager @Inject constructor(
 
     private suspend fun readLocalStatusConfig(): StatusConfig {
         val alwaysShowSensitiveContent =
-            localConfigManager.getBoolean(LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE) ?: false
+            localConfigManager.getBoolean(LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE) == true
         val contentSize = localConfigManager.getString(LOCAL_KEY_STATUS_CONTENT_SIZE)
             ?.toContentSize()
             ?: StatusContentSize.default()
+        val immersiveNavBar = localConfigManager.getBoolean(LOCAL_KEY_IMMERSIVE_NAV_BAR) != false
         return StatusConfig(
             alwaysShowSensitiveContent = alwaysShowSensitiveContent,
             contentSize = contentSize,
+            immersiveNavBar = immersiveNavBar,
         )
-    }
-
-    suspend fun getStatusContentSize(): StatusContentSize {
-        return withContext(Dispatchers.IO) {
-            localConfigManager.getString(LOCAL_KEY_STATUS_CONTENT_SIZE)
-                ?.toContentSize()
-                ?: StatusContentSize.default()
-        }
     }
 
     private fun String.toContentSize(): StatusContentSize? {
@@ -81,6 +76,13 @@ class FreadConfigManager @Inject constructor(
         _statusConfigFlow.value = _statusConfigFlow.value.copy(alwaysShowSensitiveContent = always)
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE, always)
+        }
+    }
+
+    suspend fun updateImmersiveNavBar(immersive: Boolean) {
+        _statusConfigFlow.value = _statusConfigFlow.value.copy(immersiveNavBar = immersive)
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_IMMERSIVE_NAV_BAR, immersive)
         }
     }
 

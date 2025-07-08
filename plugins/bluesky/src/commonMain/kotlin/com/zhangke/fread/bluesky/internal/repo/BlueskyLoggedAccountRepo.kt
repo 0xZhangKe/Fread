@@ -28,15 +28,17 @@ class BlueskyLoggedAccountRepo @Inject constructor(
     }
 
     suspend fun insert(account: BlueskyLoggedAccount) {
+        val addedTimestamp =
+            dao.queryByUri(account.uri.toString())?.addedTimestamp ?: getCurrentTimeMillis()
         val entity = BlueskyLoggedAccountEntity(
             uri = account.uri.toString(),
             account = account,
-            addedTimestamp = getCurrentTimeMillis(),
+            addedTimestamp = addedTimestamp,
         )
         dao.insert(entity)
     }
 
-    suspend fun updateAccount(account: BlueskyLoggedAccount, newAccount: BlueskyLoggedAccount){
+    suspend fun updateAccount(account: BlueskyLoggedAccount, newAccount: BlueskyLoggedAccount) {
         if (account.did != newAccount.did) {
             // maybe did will change?
             deleteByUri(account.uri.toString())

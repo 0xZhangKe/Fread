@@ -54,6 +54,7 @@ import com.zhangke.fread.commonbiz.shared.composable.NotLoginPageError
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import kotlinx.coroutines.launch
 
 class BlueskyHomeTab(
@@ -111,11 +112,12 @@ class BlueskyHomeTab(
             floatingActionButton = {
                 if (showFb) {
                     val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
+                    val immersiveNavBar = LocalStatusUiConfig.current.immersiveNavBar
                     AnimatedVisibility(
                         modifier = Modifier
                             .navigationBarsPadding()
                             .padding(bottom = 100.dp),
-                        visible = !inImmersiveMode,
+                        visible = !inImmersiveMode || !immersiveNavBar,
                         enter = scaleIn() + slideInVertically(
                             initialOffsetY = { it },
                         ),
@@ -124,9 +126,7 @@ class BlueskyHomeTab(
                         ),
                     ) {
                         FloatingActionButton(
-                            onClick = {
-                                uiState.account?.let(onPostBlogClick)
-                            },
+                            onClick = { onPostBlogClick(uiState.account) },
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary,
                             shape = CircleShape,

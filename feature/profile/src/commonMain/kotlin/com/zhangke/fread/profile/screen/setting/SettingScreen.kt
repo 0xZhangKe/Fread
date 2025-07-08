@@ -84,6 +84,8 @@ import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_de
 import com.zhangke.fread.feature.profile.profile_setting_open_source_title
 import com.zhangke.fread.feature.profile.profile_setting_ratting
 import com.zhangke.fread.feature.profile.profile_setting_ratting_desc
+import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar
+import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar_desc
 import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
@@ -139,6 +141,7 @@ class SettingScreen : BaseScreen() {
                 viewModel.onContentSizeChanged(it)
             },
             onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
+            onImmersiveBarChanged = viewModel::onImmersiveBarChanged,
         )
     }
 
@@ -150,6 +153,7 @@ class SettingScreen : BaseScreen() {
         onOpenSourceClick: () -> Unit,
         onDayNightModeClick: (DayNightMode) -> Unit,
         onLanguageClick: (LanguageSettingType) -> Unit,
+        onImmersiveBarChanged: (on: Boolean) -> Unit,
         onRatingClick: () -> Unit,
         onAboutClick: () -> Unit,
         onDonateClick: () -> Unit,
@@ -176,6 +180,10 @@ class SettingScreen : BaseScreen() {
                 AlwaysShowSensitiveContentItem(
                     alwaysShowing = uiState.alwaysShowSensitiveContent,
                     onAlwaysChanged = onAlwaysShowSensitive,
+                )
+                ImmersiveNavBar(
+                    immersive = uiState.immersiveNavBar,
+                    onImmersiveBarChanged = onImmersiveBarChanged,
                 )
                 DarNightItem(
                     uiState = uiState,
@@ -251,6 +259,20 @@ class SettingScreen : BaseScreen() {
             subtitle = stringResource(Res.string.profile_setting_always_show_sensitive_content_subtitle),
             checked = alwaysShowing,
             onCheckedChangeRequest = onAlwaysChanged,
+        )
+    }
+
+    @Composable
+    private fun ImmersiveNavBar(
+        immersive: Boolean,
+        onImmersiveBarChanged: (on: Boolean) -> Unit,
+    ) {
+        SettingItemWithSwitch(
+            icon = Icons.Default.PlayCircleOutline,
+            title = stringResource(Res.string.profile_setting_immersive_nav_bar),
+            subtitle = stringResource(Res.string.profile_setting_immersive_nav_bar_desc),
+            checked = immersive,
+            onCheckedChangeRequest = onImmersiveBarChanged,
         )
     }
 

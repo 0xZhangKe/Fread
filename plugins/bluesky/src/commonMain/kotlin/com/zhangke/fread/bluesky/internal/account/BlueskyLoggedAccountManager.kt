@@ -4,6 +4,7 @@ import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileViewDetailed
 import com.atproto.server.CreateSessionRequest
 import com.atproto.server.CreateSessionResponse
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClient
@@ -27,13 +28,14 @@ class BlueskyLoggedAccountManager @Inject constructor(
 ) {
 
     suspend fun login(
-        client: BlueskyClient,
+        baseUrl: FormalBaseUrl,
         username: String,
         password: String,
         factorToken: String? = null,
     ): Result<BlueskyLoggedAccount> {
+        val noAccountClient = clientManager.getClientNoAccount(baseUrl)
         val sessionResult =
-            client.createSessionCatching(
+            noAccountClient.createSessionCatching(
                 CreateSessionRequest(
                     identifier = username,
                     password = password,
@@ -44,9 +46,10 @@ class BlueskyLoggedAccountManager @Inject constructor(
             return Result.failure(sessionResult.exceptionOrThrow())
         }
         val session = sessionResult.getOrThrow()
-        val platform = platformRepo.getPlatform(client.baseUrl)
-        saveAccountToLocal(session, null, platform)
-        val profileResult = client.getProfile(session.did.did)
+        val platform = platformRepo.getPlatform(baseUrl)
+        val account = saveAccountToLocal(session, null, platform)
+        val locator = PlatformLocator(baseUrl = baseUrl, accountUri = account.uri)
+        val profileResult = clientManager.getClient(locator).getProfile(session.did.did)
         if (profileResult.isFailure) {
             return Result.failure(profileResult.exceptionOrThrow())
         }

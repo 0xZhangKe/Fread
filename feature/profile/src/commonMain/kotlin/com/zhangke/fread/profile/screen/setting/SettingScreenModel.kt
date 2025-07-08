@@ -24,6 +24,7 @@ class SettingScreenModel @Inject constructor(
         SettingUiState(
             autoPlayInlineVideo = freadConfigManager.autoPlayInlineVideo,
             dayNightMode = dayNightHelper.dayNightModeFlow.value,
+            immersiveNavBar = false,
             settingInfo = getAppVersionInfo(),
             contentSize = StatusContentSize.default(),
             alwaysShowSensitiveContent = false,
@@ -45,6 +46,7 @@ class SettingScreenModel @Inject constructor(
                         it.copy(
                             contentSize = config.contentSize,
                             alwaysShowSensitiveContent = config.alwaysShowSensitiveContent,
+                            immersiveNavBar = config.immersiveNavBar,
                         )
                     }
                 }
@@ -75,6 +77,12 @@ class SettingScreenModel @Inject constructor(
     fun onAlwaysShowSensitiveContentChanged(always: Boolean) {
         viewModelScope.launch {
             freadConfigManager.updateAlwaysShowSensitiveContent(always)
+        }
+    }
+
+    fun onImmersiveBarChanged(on: Boolean) {
+        viewModelScope.launch {
+            freadConfigManager.updateImmersiveNavBar(on)
         }
     }
 

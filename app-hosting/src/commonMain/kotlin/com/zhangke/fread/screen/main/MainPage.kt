@@ -39,8 +39,8 @@ import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.action.OpenNotificationPageAction
-import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.common.review.LocalFreadReviewManager
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.explore.ExploreTab
 import com.zhangke.fread.feature.message.NotificationsTab
 import com.zhangke.fread.feeds.FeedsHomeTab
@@ -48,6 +48,7 @@ import com.zhangke.fread.profile.ProfileTab
 import com.zhangke.fread.screen.main.drawer.MainDrawer
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.update.AppUpdateDialog
 import com.zhangke.fread.status.ui.utils.getScreenWidth
 import com.zhangke.fread.utils.LocalActivityHelper
@@ -57,6 +58,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Screen.MainPage() {
     val activityHelper = LocalActivityHelper.current
+    val statusUiConfig = LocalStatusUiConfig.current
     val viewModel = getViewModel<MainViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -126,7 +128,7 @@ fun Screen.MainPage() {
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .fillMaxWidth(),
-                            visible = !inImmersiveMode || !inFeedsTab,
+                            visible = !inFeedsTab || !inImmersiveMode || !statusUiConfig.immersiveNavBar,
                             enter = slideInVertically(
                                 initialOffsetY = { it },
                             ),

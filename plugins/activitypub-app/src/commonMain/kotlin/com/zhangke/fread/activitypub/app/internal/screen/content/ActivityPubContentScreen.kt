@@ -55,6 +55,7 @@ import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import kotlinx.coroutines.launch
 
 internal class ActivityPubContentScreen(
@@ -111,11 +112,12 @@ internal class ActivityPubContentScreen(
             floatingActionButton = {
                 if (showFb) {
                     val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
+                    val immersiveNavBar = LocalStatusUiConfig.current.immersiveNavBar
                     AnimatedVisibility(
                         modifier = Modifier
                             .navigationBarsPadding()
                             .padding(bottom = 100.dp),
-                        visible = !inImmersiveMode,
+                        visible = !inImmersiveMode || !immersiveNavBar,
                         enter = scaleIn() + slideInVertically(
                             initialOffsetY = { it },
                         ),

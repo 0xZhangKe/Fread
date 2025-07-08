@@ -32,6 +32,8 @@
     <string name="profile_setting_font_size_small">小</string>
     <string name="profile_setting_font_size_medium">中</string>
     <string name="profile_setting_font_size_large">大</string>
+    <string name="profile_setting_immersive_nav_bar">沉浸式导航栏</string>
+    <string name="profile_setting_immersive_nav_bar_desc">打开后，首页滑动时会隐藏底部的导航栏。</string>
 
     <string name="profile_about_version">版本：</string>
     <string name="profile_about_website">官网：</string>
@@ -47,4 +49,5 @@
     <string name="profile_donate_page_title">请选择捐赠方式</string>
 
     <string name="profile_account_not_login">登陆已失效</string>
+
 </resources>

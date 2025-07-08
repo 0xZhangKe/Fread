@@ -12,6 +12,7 @@ val LocalStatusUiConfig: ProvidableCompositionLocal<StatusUiConfig> =
 data class StatusUiConfig(
     val alwaysShowSensitiveContent: Boolean,
     val contentStyle: StatusStyle,
+    val immersiveNavBar: Boolean,
 ) {
 
     companion object {
@@ -23,6 +24,7 @@ data class StatusUiConfig(
             return StatusUiConfig(
                 alwaysShowSensitiveContent = config.alwaysShowSensitiveContent,
                 contentStyle = config.contentSize.toStyle(),
+                immersiveNavBar = config.immersiveNavBar,
             )
         }
 

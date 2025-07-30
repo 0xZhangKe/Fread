@@ -43,9 +43,10 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_hashtag_unfollow_dialog_message
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.status.model.PlatformLocator
@@ -58,13 +59,13 @@ import org.jetbrains.compose.resources.stringResource
 data class HashtagTimelineScreen(
     private val locator: PlatformLocator,
     private val hashtag: String
-) : BaseScreen() {
+) : BaseAnimatedScreen() {
 
     override val key: ScreenKey
         get() = locator.toString() + hashtag
 
     @Composable
-    override fun Content() {
+    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
@@ -75,6 +76,7 @@ data class HashtagTimelineScreen(
             hashtagTimelineUiState = hashtagTimelineUiState,
             statusUiState = statusUiState,
             messageFlow = viewModel.errorMessageFlow,
+            animatedScreenContentScope = animatedScreenContentScope,
             openScreenFlow = viewModel.openScreenFlow,
             newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
             onBackClick = navigator::pop,
@@ -94,6 +96,7 @@ data class HashtagTimelineScreen(
         messageFlow: SharedFlow<TextString>,
         openScreenFlow: SharedFlow<Screen>,
         newStatusNotifyFlow: SharedFlow<Unit>,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
         onBackClick: () -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
@@ -137,6 +140,7 @@ data class HashtagTimelineScreen(
                         openScreenFlow = openScreenFlow,
                         newStatusNotifyFlow = newStatusNotifyFlow,
                         composedStatusInteraction = composedStatusInteraction,
+                        animatedScreenContentScope = animatedScreenContentScope,
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,
                         nestedScrollConnection = null,

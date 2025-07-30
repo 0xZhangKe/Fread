@@ -18,24 +18,27 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.explore.screens.search.bar.ExplorerSearchBar
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 
-class ExplorerHomeScreen : BaseScreen() {
+class ExplorerHomeScreen : BaseAnimatedScreen() {
 
     @Composable
-    override fun Content() {
-        super.Content()
+    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
+        super.AnimationContent(animatedScreenContentScope)
         val viewModel = getViewModel<ExplorerHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         CompositionLocalProvider(LocalNavigator provides navigator) {
             ExplorerHomeContent(
                 uiState = uiState,
+                animatedScreenContentScope = animatedScreenContentScope,
                 onAccountSelected = {
                     viewModel.onAccountSelected(it)
                 },
@@ -47,6 +50,7 @@ class ExplorerHomeScreen : BaseScreen() {
     private fun ExplorerHomeContent(
         uiState: ExplorerHomeUiState,
         onAccountSelected: (LoggedAccount) -> Unit,
+        animatedScreenContentScope: AnimatedScreenContentScope,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         Scaffold(
@@ -76,7 +80,11 @@ class ExplorerHomeScreen : BaseScreen() {
                         LocalNestedTabConnection provides nestedTabConnection,
                     ) {
                         key(uiState.tab) {
-                            uiState.tab.TabContent(this@ExplorerHomeScreen, null)
+                            uiState.tab.TabContent(
+                                this@ExplorerHomeScreen,
+                                null,
+                                animatedScreenContentScope,
+                            )
                         }
                     }
                 }

@@ -14,6 +14,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
@@ -28,8 +29,12 @@ internal class TrendingStatusTab(private val locator: PlatformLocator) : BasePag
         )
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    ) {
+        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = screen.getViewModel<TrendingStatusViewModel>().getSubViewModel(locator)
         val uiState by viewModel.uiState.collectAsState()
@@ -43,6 +48,7 @@ internal class TrendingStatusTab(private val locator: PlatformLocator) : BasePag
                 openScreenFlow = viewModel.openScreenFlow,
                 newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
                 composedStatusInteraction = viewModel.composedStatusInteraction,
+                animatedScreenContentScope = animatedScreenContentScope,
                 onRefresh = viewModel::onRefresh,
                 onLoadMore = viewModel::onLoadMore,
                 observeScrollToTopEvent = true,

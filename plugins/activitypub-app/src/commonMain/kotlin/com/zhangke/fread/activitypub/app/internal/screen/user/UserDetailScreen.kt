@@ -73,6 +73,8 @@ import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.voyager.AnimatedScreen
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
@@ -109,6 +111,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimel
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.framework.cancel
@@ -136,14 +139,14 @@ data class UserDetailScreen(
     val userUri: FormalUri? = null,
     val webFinger: WebFinger? = null,
     val userId: String? = null,
-) : BaseScreen() {
+) : BaseAnimatedScreen() {
 
     override val key: ScreenKey
         get() = locator.toString() + webFinger.toString() + userUri + userId
 
     @Composable
-    override fun Content() {
-        super.Content()
+    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
+        super.AnimationContent(animatedScreenContentScope)
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
         val browserLauncher = LocalActivityBrowserLauncher.current

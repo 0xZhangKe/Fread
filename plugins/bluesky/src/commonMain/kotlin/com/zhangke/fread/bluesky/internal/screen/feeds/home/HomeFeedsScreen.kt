@@ -15,8 +15,9 @@ import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.feeds
 import com.zhangke.fread.status.model.PlatformLocator
@@ -25,7 +26,7 @@ import org.jetbrains.compose.resources.stringResource
 class HomeFeedsScreen(
     private val feedsJson: String,
     private val locator: PlatformLocator,
-) : BaseScreen() {
+) : BaseAnimatedScreen() {
 
     companion object {
 
@@ -41,8 +42,8 @@ class HomeFeedsScreen(
     }
 
     @Composable
-    override fun Content() {
-        super.Content()
+    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
+        super.AnimationContent(animatedScreenContentScope)
         val navigator = LocalNavigator.currentOrThrow
         val snackbarHostState = rememberSnackbarHostState()
 
@@ -68,7 +69,7 @@ class HomeFeedsScreen(
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackbarHostState,
                 ) {
-                    tab.TabContent(this@HomeFeedsScreen, null)
+                    tab.TabContent(this@HomeFeedsScreen, null, animatedScreenContentScope)
                 }
             }
         }

@@ -44,6 +44,7 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.TopBarWithTabLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
@@ -67,8 +68,12 @@ internal class ActivityPubContentScreen(
         @Composable get() = null
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    ) {
+        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = screen.getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
@@ -83,6 +88,7 @@ internal class ActivityPubContentScreen(
             onPostBlogClick = {
                 navigator.push(PostStatusScreen(accountUri = it.uri))
             },
+            animatedScreenContentScope = animatedScreenContentScope,
         )
     }
 
@@ -93,6 +99,7 @@ internal class ActivityPubContentScreen(
         uiState: ActivityPubContentUiState,
         onTitleClick: (ActivityPubContent) -> Unit,
         onPostBlogClick: (ActivityPubLoggedAccount) -> Unit,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val (locator, config, account, errorMessage) = uiState
         val coroutineScope = rememberCoroutineScope()
@@ -213,7 +220,7 @@ internal class ActivityPubContentScreen(
                                 state = pagerState,
                                 userScrollEnabled = !contentScrollInProgress,
                             ) { pageIndex ->
-                                tabList[pageIndex].TabContent(screen, null)
+                                tabList[pageIndex].TabContent(screen, null, animatedScreenContentScope)
                             }
                         }
                     } else if (!errorMessage.isNullOrBlank()) {

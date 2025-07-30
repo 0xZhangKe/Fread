@@ -22,6 +22,7 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
@@ -43,8 +44,11 @@ internal class SearchedAuthorTab(
         )
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun TabContent(
+        screen: Screen, nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    ) {
+        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = screen.getViewModel<SearchAuthorViewModel, SearchAuthorViewModel.Factory> {
             it.create(locator)
@@ -70,7 +74,10 @@ internal class SearchedAuthorTab(
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.tryPush(it)
         }
-        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.snackMessageFlow)
+        ConsumeSnackbarFlow(
+            hostState = snackbarHostState,
+            messageTextFlow = viewModel.snackMessageFlow
+        )
     }
 
     @OptIn(ExperimentalMaterialApi::class)

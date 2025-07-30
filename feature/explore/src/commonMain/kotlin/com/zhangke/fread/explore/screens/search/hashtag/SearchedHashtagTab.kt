@@ -23,6 +23,7 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.explore.Res
 import com.zhangke.fread.explore.explorer_search_tab_title_hashtag
@@ -31,7 +32,8 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import org.jetbrains.compose.resources.stringResource
 
-internal class SearchedHashtagTab(private val locator: PlatformLocator, private val query: String) : BasePagerTab() {
+internal class SearchedHashtagTab(private val locator: PlatformLocator, private val query: String) :
+    BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -40,8 +42,12 @@ internal class SearchedHashtagTab(private val locator: PlatformLocator, private 
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    ) {
+        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = with(screen) {
             getViewModel<SearchHashtagViewModel, SearchHashtagViewModel.Factory> {
@@ -70,7 +76,10 @@ internal class SearchedHashtagTab(private val locator: PlatformLocator, private 
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.push(it)
         }
-        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.snackMessageFlow)
+        ConsumeSnackbarFlow(
+            hostState = snackbarHostState,
+            messageTextFlow = viewModel.snackMessageFlow
+        )
     }
 
     @OptIn(ExperimentalMaterialApi::class)

@@ -43,8 +43,9 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.commonbiz.illustration_message
 import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.notification_tab_title
@@ -55,11 +56,11 @@ import com.zhangke.fread.status.ui.common.SelectAccountDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-class NotificationsHomeScreen : BaseScreen() {
+class NotificationsHomeScreen : BaseAnimatedScreen() {
 
     @Composable
-    override fun Content() {
-        super.Content()
+    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
+        super.AnimationContent(animatedScreenContentScope)
         val viewModel: NotificationsHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
@@ -69,6 +70,7 @@ class NotificationsHomeScreen : BaseScreen() {
             NotificationsHomeScreenContent(
                 uiState = uiState,
                 onAccountSelected = viewModel::onAccountSelected,
+                animatedScreenContentScope = animatedScreenContentScope,
             )
         }
     }
@@ -77,6 +79,7 @@ class NotificationsHomeScreen : BaseScreen() {
     private fun NotificationsHomeScreenContent(
         uiState: NotificationsHomeUiState,
         onAccountSelected: (LoggedAccount) -> Unit,
+        animatedScreenContentScope: AnimatedScreenContentScope,
     ) {
         val snackbarHost = rememberSnackbarHostState()
         Scaffold(
@@ -150,7 +153,11 @@ class NotificationsHomeScreen : BaseScreen() {
                             userScrollEnabled = false,
                         ) { pageIndex ->
                             with(uiState.tabs[pageIndex]) {
-                                TabContent(this@NotificationsHomeScreen, null)
+                                TabContent(
+                                    this@NotificationsHomeScreen,
+                                    null,
+                                    animatedScreenContentScope
+                                )
                             }
                         }
                     }

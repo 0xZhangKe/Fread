@@ -37,6 +37,7 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.commonbiz.shared.screen.list_content_empty_placeholder
 import com.zhangke.fread.commonbiz.shared.screen.shared_feeds_go_to_login
@@ -67,6 +68,7 @@ fun FeedsContent(
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
     onScrollInProgress: ((Boolean) -> Unit)? = null,
     onLoginClick: (() -> Unit)? = null,
+    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
     FeedsContent(
@@ -85,6 +87,7 @@ fun FeedsContent(
         onImmersiveEvent = onImmersiveEvent,
         onScrollInProgress = onScrollInProgress,
         onLoginClick = onLoginClick,
+        animatedScreenContentScope = animatedScreenContentScope,
     )
 }
 
@@ -105,6 +108,7 @@ fun FeedsContent(
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
     onScrollInProgress: ((Boolean) -> Unit)? = null,
     onLoginClick: (() -> Unit)? = null,
+    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     if (feeds.isEmpty()) {
         if (showPagingLoadingPlaceholder) {
@@ -168,6 +172,7 @@ fun FeedsContent(
                         status = item,
                         composedStatusInteraction = composedStatusInteraction,
                         indexInList = index,
+                        animatedScreenContentScope = animatedScreenContentScope,
                     )
                 }
             }

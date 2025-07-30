@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import kotlinx.coroutines.launch
 
 interface PagerTab {
@@ -21,7 +22,11 @@ interface PagerTab {
         @Composable get
 
     @Composable
-    fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?)
+    fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    )
 }
 
 data class PagerTabOptions(
@@ -36,6 +41,7 @@ fun Screen.HorizontalPagerWithTab(
     pagerUserScrollEnabled: Boolean = true,
     onPageChanged: ((Int) -> Unit)? = null,
     nestedScrollConnection: NestedScrollConnection? = null,
+    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     val coroutineScope = rememberCoroutineScope()
     Column(modifier = Modifier.fillMaxSize()) {
@@ -69,7 +75,11 @@ fun Screen.HorizontalPagerWithTab(
             userScrollEnabled = pagerUserScrollEnabled,
         ) { pageIndex ->
             with(tabList[pageIndex]) {
-                TabContent(this@HorizontalPagerWithTab, nestedScrollConnection)
+                TabContent(
+                    this@HorizontalPagerWithTab,
+                    nestedScrollConnection,
+                    animatedScreenContentScope,
+                )
             }
         }
     }

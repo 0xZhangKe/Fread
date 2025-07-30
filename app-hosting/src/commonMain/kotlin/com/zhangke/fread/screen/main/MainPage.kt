@@ -12,7 +12,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -82,74 +81,72 @@ fun Screen.MainPage() {
     CompositionLocalProvider(
         LocalNestedTabConnection provides nestedTabConnection,
     ) {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                gesturesEnabled = inFeedsTab,
-                drawerContent = {
-                    val drawerWidth = getScreenWidth() * 0.8F
-                    ModalDrawerSheet(
-                        modifier = Modifier.widthIn(max = drawerWidth),
-                    ) {
-                        MainDrawer(
-                            onDismissRequest = {
-                                coroutineScope.launch {
-                                    drawerState.close()
-                                }
-                            },
-                        )
-                    }
-                },
-            ) {
-                val tabs = remember {
-                    createMainTabs()
-                }
-                TabNavigator(
-                    tab = tabs.first(),
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            gesturesEnabled = inFeedsTab,
+            drawerContent = {
+                val drawerWidth = getScreenWidth() * 0.8F
+                ModalDrawerSheet(
+                    modifier = Modifier.widthIn(max = drawerWidth),
                 ) {
-                    val tabNavigator = LocalTabNavigator.current
-                    RegisterNotificationAction(tabs, tabNavigator)
-                    inFeedsTab = tabNavigator.current.key == tabs.first().key
-                    BackHandler(true) {
-                        if (inFeedsTab) {
-                            activityHelper.goHome()
-                        } else {
-                            tabNavigator.current = tabs.first()
-                        }
+                    MainDrawer(
+                        onDismissRequest = {
+                            coroutineScope.launch {
+                                drawerState.close()
+                            }
+                        },
+                    )
+                }
+            },
+        ) {
+            val tabs = remember {
+                createMainTabs()
+            }
+            TabNavigator(
+                tab = tabs.first(),
+            ) {
+                val tabNavigator = LocalTabNavigator.current
+                RegisterNotificationAction(tabs, tabNavigator)
+                inFeedsTab = tabNavigator.current.key == tabs.first().key
+                BackHandler(true) {
+                    if (inFeedsTab) {
+                        activityHelper.goHome()
+                    } else {
+                        tabNavigator.current = tabs.first()
                     }
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize()
+                }
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CurrentTab()
+                    }
+                    val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
+                    AnimatedVisibility(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth(),
+                        visible = !inFeedsTab || !inImmersiveMode || !statusUiConfig.immersiveNavBar,
+                        enter = slideInVertically(
+                            initialOffsetY = { it },
+                        ),
+                        exit = slideOutVertically(
+                            targetOffsetY = { it },
+                        ),
+                    ) {
+                        NavigationBar(
+                            modifier = Modifier,
                         ) {
-                            CurrentTab()
-                        }
-                        val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
-                        AnimatedVisibility(
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .fillMaxWidth(),
-                            visible = !inFeedsTab || !inImmersiveMode || !statusUiConfig.immersiveNavBar,
-                            enter = slideInVertically(
-                                initialOffsetY = { it },
-                            ),
-                            exit = slideOutVertically(
-                                targetOffsetY = { it },
-                            ),
-                        ) {
-                            NavigationBar(
-                                modifier = Modifier,
-                            ) {
-                                tabs.forEach { tab ->
-                                    TabNavigationItem(
-                                        tab = tab,
-                                        detectDoubleTap = inFeedsTab,
-                                        onDoubleTap = {
-                                            coroutineScope.launch {
-                                                nestedTabConnection.scrollToTop()
-                                            }
-                                        },
-                                    )
-                                }
+                            tabs.forEach { tab ->
+                                TabNavigationItem(
+                                    tab = tab,
+                                    detectDoubleTap = inFeedsTab,
+                                    onDoubleTap = {
+                                        coroutineScope.launch {
+                                            nestedTabConnection.scrollToTop()
+                                        }
+                                    },
+                                )
                             }
                         }
                     }

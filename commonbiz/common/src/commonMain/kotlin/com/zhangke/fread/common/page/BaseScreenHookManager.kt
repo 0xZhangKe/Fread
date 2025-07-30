@@ -1,6 +1,7 @@
 package com.zhangke.fread.common.page
 
 import androidx.compose.runtime.Composable
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.krouter.KRouter
 
 object BaseScreenHookManager {
@@ -16,5 +17,5 @@ object BaseScreenHookManager {
 interface BaseScreenHook {
 
     @Composable
-    fun HookContent(screen: BaseScreen)
+    fun HookContent(screen: Screen)
 }

@@ -8,7 +8,7 @@ kotlinx-datetime = "0.6.2"
 
 arrow = "1.2.4"
 
-compose-multiplatform = "1.8.0-alpha04"
+compose-multiplatform = "1.8.2"
 
 androidx-core = "1.13.1"
 androidx-fragment = "1.7.1"

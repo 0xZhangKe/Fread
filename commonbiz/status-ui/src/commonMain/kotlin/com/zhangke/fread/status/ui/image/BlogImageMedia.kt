@@ -1,5 +1,7 @@
 package com.zhangke.fread.status.ui.image
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +42,8 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
+import com.zhangke.framework.voyager.sharedElementBetweenScreen
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -63,6 +67,7 @@ sealed interface BlogMediaClickEvent {
 /**
  * Image and Gifv
  */
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BlogImageMedias(
     mediaList: List<BlogMedia>,
@@ -71,6 +76,7 @@ fun BlogImageMedias(
     style: BlogImageMediaStyle = BlogImageMediaDefault.defaultStyle,
     onMediaClick: OnBlogMediaClick,
     showAlt: Boolean = true,
+    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
     val mediaPosition: Array<LayoutCoordinates?> = remember(mediaList) {
@@ -101,6 +107,7 @@ fun BlogImageMedias(
                 media = media,
                 hideContent = hideContent,
                 showAlt = showAlt,
+                animatedScreenContentScope = animatedScreenContentScope,
             )
         }
     )
@@ -165,13 +172,14 @@ internal fun BlogImageLayout(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun BlogImage(
     modifier: Modifier,
     media: BlogMedia,
     hideContent: Boolean,
     showAlt: Boolean,
+    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     val imageUrl = if (media.type == BlogMediaType.GIFV) media.previewUrl else media.url
     if (hideContent) {
@@ -187,18 +195,15 @@ internal fun BlogImage(
 
     Box(modifier = modifier.blurhash(media.blurhash)) {
         if (!hideContent) {
-            AutoSizeImage(
-                request = remember {
-                    ImageRequest {
-                        data(imageUrl)
-                    }
-                },
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
+            BlogAutoSizeImage(
+                modifier = Modifier.sharedElementBetweenScreen(
+                    animatedScreenContentScope = animatedScreenContentScope,
+                    key = imageUrl,
+                ),
+                imageUrl = imageUrl,
+                description = media.description,
             )
         }
-
         if (media.type == BlogMediaType.GIFV) {
             Icon(
                 modifier = Modifier
@@ -246,6 +251,24 @@ internal fun BlogImage(
             }
         }
     }
+}
+
+@Composable
+private fun BlogAutoSizeImage(
+    modifier: Modifier,
+    imageUrl: String?,
+    description: String?,
+) {
+    AutoSizeImage(
+        request = remember {
+            ImageRequest {
+                data(imageUrl)
+            }
+        },
+        modifier = modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+        contentDescription = description.ifNullOrEmpty { "Blog Image Media" },
+    )
 }
 
 @Composable

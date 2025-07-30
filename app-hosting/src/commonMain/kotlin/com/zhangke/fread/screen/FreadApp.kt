@@ -1,5 +1,7 @@
 package com.zhangke.fread.screen
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,9 +20,9 @@ import cafe.adriel.voyager.hilt.LocalViewModelProviderFactory
 import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
-import cafe.adriel.voyager.transitions.SlideTransition
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
+import com.zhangke.framework.voyager.CurrentAnimatedScreen
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.bubble.BubbleManager
@@ -58,7 +60,11 @@ import me.tatarka.inject.annotations.Inject
 
 typealias FreadApp = @Composable () -> Unit
 
-@OptIn(ExperimentalVoyagerApi::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalVoyagerApi::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Inject
 @Composable
 internal fun FreadApp(
@@ -98,32 +104,31 @@ internal fun FreadApp(
         LocalBubbleManager provides bubbleManager,
     ) {
         ProvideNavigatorLifecycleKMPSupport {
-            TransparentNavigator {
+            SharedTransitionLayout {
                 BottomSheetNavigator(
                     modifier = Modifier,
                     sheetShape = RoundedCornerShape(12.dp),
                 ) {
-                    Navigator(
-                        screen = remember { FreadScreen() },
-                        key = ROOT_NAVIGATOR_KEY,
-                    ) { navigator ->
-                        SlideTransition(
-                            navigator = navigator,
-                            disposeScreenAfterTransitionEnd = false,
-                        )
-                        LaunchedEffect(Unit) {
-                            GlobalScreenNavigation.openScreenFlow
-                                .debounce(300)
-                                .distinctUntilChanged()
-                                .collect { screen ->
-                                    navigator.push(screen)
-                                }
-                        }
-                        val bubbles by bubbleManager.bubbleListFlow.collectAsState()
-                        if (bubbles.isNotEmpty()) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                for (bubble in bubbles) {
-                                    with(bubble) { Content() }
+                    TransparentNavigator {
+                        Navigator(
+                            screen = remember { FreadScreen() },
+                            key = ROOT_NAVIGATOR_KEY,
+                        ) { navigator ->
+                            CurrentAnimatedScreen(navigator)
+                            LaunchedEffect(Unit) {
+                                GlobalScreenNavigation.openScreenFlow
+                                    .debounce(300)
+                                    .distinctUntilChanged()
+                                    .collect { screen ->
+                                        navigator.push(screen)
+                                    }
+                            }
+                            val bubbles by bubbleManager.bubbleListFlow.collectAsState()
+                            if (bubbles.isNotEmpty()) {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    for (bubble in bubbles) {
+                                        with(bubble) { Content() }
+                                    }
                                 }
                             }
                         }

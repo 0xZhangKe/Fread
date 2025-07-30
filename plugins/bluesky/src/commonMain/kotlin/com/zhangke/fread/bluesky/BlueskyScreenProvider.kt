@@ -171,7 +171,7 @@ class BlueskyScreenProvider @Inject constructor(
 
     override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
         if (platform.protocol.notBluesky) return null
-        return ExplorerTab(locator, platform)
+        return ExplorerTab(locator)
     }
 
     override fun getCreatedListScreen(

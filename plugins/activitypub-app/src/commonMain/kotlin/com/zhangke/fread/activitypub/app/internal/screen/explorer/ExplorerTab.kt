@@ -35,6 +35,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.pxToDp
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_explorer_tab_hashtag_title
 import com.zhangke.fread.activitypub.app.activity_pub_explorer_tab_status_title
@@ -65,7 +66,11 @@ class ExplorerTab(
         )
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    ) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = screen.getViewModel<ExplorerContainerViewModel>()
             .getViewModel(locator, platform, feedsTabType)
@@ -80,6 +85,7 @@ class ExplorerTab(
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             composedStatusInteraction = viewModel.composedStatusInteraction,
+            animatedScreenContentScope = animatedScreenContentScope,
         )
     }
 
@@ -89,6 +95,7 @@ class ExplorerTab(
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         composedStatusInteraction: ComposedStatusInteraction,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val errorMessage = uiState.errorMessage?.let { textString(it) }
         var containerHeight: Dp? by remember {
@@ -124,6 +131,7 @@ class ExplorerTab(
                         locator = locator,
                         composedStatusInteraction = composedStatusInteraction,
                         indexInList = index,
+                        animatedScreenContentScope = animatedScreenContentScope,
                     )
                 }
                 if (!errorMessage.isNullOrEmpty() && uiState.dataList.isEmpty()) {
@@ -157,6 +165,7 @@ class ExplorerTab(
         locator: PlatformLocator,
         indexInList: Int,
         composedStatusInteraction: ComposedStatusInteraction,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         when (item) {
             is ExplorerItem.ExplorerStatus -> {
@@ -165,6 +174,7 @@ class ExplorerTab(
                     status = item.status,
                     composedStatusInteraction = composedStatusInteraction,
                     indexInList = indexInList,
+                    animatedScreenContentScope = animatedScreenContentScope,
                 )
             }
 

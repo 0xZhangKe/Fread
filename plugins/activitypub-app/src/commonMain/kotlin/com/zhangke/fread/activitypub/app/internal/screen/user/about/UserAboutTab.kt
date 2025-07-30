@@ -22,6 +22,7 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_about
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_about_joined
@@ -45,8 +46,11 @@ internal class UserAboutTab(
         )
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun TabContent(
+        screen: Screen, nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    ) {
+        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
         val viewModel = screen.getViewModel<UserAboutContainerViewModel>()
             .getViewModel(locator, userWebFinger, userId)
         val uiState by viewModel.uiState.collectAsState()

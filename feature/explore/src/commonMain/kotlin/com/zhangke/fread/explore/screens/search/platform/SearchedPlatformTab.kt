@@ -14,6 +14,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.DefaultLoading
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.explore.Res
 import com.zhangke.fread.explore.explorer_search_tab_title_server
@@ -33,8 +34,12 @@ internal class SearchedPlatformTab(
         )
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    ) {
+        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
         val viewModel = with(screen) {
             getViewModel<SearchPlatformViewModel, SearchPlatformViewModel.Factory> {
                 it.create(locator, query)

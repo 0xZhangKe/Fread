@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -16,6 +17,7 @@ fun FeedsStatusNode(
     status: StatusUiState,
     indexInList: Int,
     composedStatusInteraction: ComposedStatusInteraction,
+    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -26,6 +28,7 @@ fun FeedsStatusNode(
         status = status,
         indexInList = indexInList,
         composedStatusInteraction = composedStatusInteraction,
+        animatedScreenContentScope = animatedScreenContentScope,
         onMediaClick = { event ->
             onStatusMediaClick(
                 transparentNavigator = transparentNavigator,

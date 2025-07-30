@@ -19,11 +19,10 @@ actual fun onStatusMediaClick(
                 navigator.push(FullVideoScreen(event.mediaList[event.index].url))
                 return
             }
-            transparentNavigator.push(
+            navigator.push(
                 ImageViewerScreen(
                     imageList = event.mediaList.toImages(),
                     selectedIndex = event.index,
-                    coordinatesList = event.coordinatesList,
                 )
             )
         }

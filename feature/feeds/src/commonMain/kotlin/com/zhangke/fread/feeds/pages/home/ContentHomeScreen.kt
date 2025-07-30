@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -17,16 +16,17 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 
-class ContentHomeScreen : BaseScreen() {
+class ContentHomeScreen : BaseAnimatedScreen() {
 
     @Composable
-    override fun Content() {
-        super.Content()
+    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
+        super.AnimationContent(animatedScreenContentScope)
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         CompositionLocalProvider(
             LocalNavigator provides navigator
@@ -78,7 +78,7 @@ class ContentHomeScreen : BaseScreen() {
                         Text(text = "Error! can't find any tab fro this config!")
                     } else {
                         with(currentScreen) {
-                            TabContent(this@ContentHomeScreen, null)
+                            TabContent(this@ContentHomeScreen, null, animatedScreenContentScope)
                         }
                     }
                 }

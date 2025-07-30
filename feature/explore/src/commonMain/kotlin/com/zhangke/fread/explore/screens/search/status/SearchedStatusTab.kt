@@ -23,6 +23,7 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
@@ -34,7 +35,8 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import org.jetbrains.compose.resources.stringResource
 
-internal class SearchedStatusTab(private val locator: PlatformLocator, private val query: String) : BasePagerTab() {
+internal class SearchedStatusTab(private val locator: PlatformLocator, private val query: String) :
+    BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -43,8 +45,12 @@ internal class SearchedStatusTab(private val locator: PlatformLocator, private v
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
+    ) {
+        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         val viewModel = screen.getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory> {
             it.create(locator)

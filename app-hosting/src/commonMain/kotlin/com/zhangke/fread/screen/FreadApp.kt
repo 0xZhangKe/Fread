@@ -104,12 +104,12 @@ internal fun FreadApp(
         LocalBubbleManager provides bubbleManager,
     ) {
         ProvideNavigatorLifecycleKMPSupport {
-            SharedTransitionLayout {
-                BottomSheetNavigator(
-                    modifier = Modifier,
-                    sheetShape = RoundedCornerShape(12.dp),
-                ) {
-                    TransparentNavigator {
+            BottomSheetNavigator(
+                modifier = Modifier,
+                sheetShape = RoundedCornerShape(12.dp),
+            ) {
+                TransparentNavigator {
+                    SharedTransitionLayout {
                         Navigator(
                             screen = remember { FreadScreen() },
                             key = ROOT_NAVIGATOR_KEY,

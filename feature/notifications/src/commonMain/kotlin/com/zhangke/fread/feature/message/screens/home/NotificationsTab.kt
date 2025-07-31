@@ -32,22 +32,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
+import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.commonbiz.illustration_message
 import com.zhangke.fread.feature.notifications.Res
+import com.zhangke.fread.feature.notifications.ic_notification_tab
 import com.zhangke.fread.feature.notifications.notification_tab_title
 import com.zhangke.fread.feature.notifications.notifications_account_empty_tip
 import com.zhangke.fread.status.account.LoggedAccount
@@ -56,18 +60,31 @@ import com.zhangke.fread.status.ui.common.SelectAccountDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-class NotificationsHomeScreen : BaseAnimatedScreen() {
+class NotificationsTab() : PagerTab {
+
+    override val options: PagerTabOptions
+        @Composable get() {
+            val icon = painterResource(Res.drawable.ic_notification_tab)
+            return remember {
+                PagerTabOptions(
+                    title = "Notifications", icon = icon
+                )
+            }
+        }
 
     @Composable
-    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
-        super.AnimationContent(animatedScreenContentScope)
-        val viewModel: NotificationsHomeViewModel = getViewModel()
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+        animatedScreenContentScope: AnimatedScreenContentScope?
+    ) {
+        val viewModel: NotificationsHomeViewModel = screen.getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         CompositionLocalProvider(
             LocalNavigator provides navigator
         ) {
-            NotificationsHomeScreenContent(
+            screen.NotificationsHomeScreenContent(
                 uiState = uiState,
                 onAccountSelected = viewModel::onAccountSelected,
                 animatedScreenContentScope = animatedScreenContentScope,
@@ -76,14 +93,14 @@ class NotificationsHomeScreen : BaseAnimatedScreen() {
     }
 
     @Composable
-    private fun NotificationsHomeScreenContent(
+    private fun Screen.NotificationsHomeScreenContent(
         uiState: NotificationsHomeUiState,
         onAccountSelected: (LoggedAccount) -> Unit,
-        animatedScreenContentScope: AnimatedScreenContentScope,
+        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val snackbarHost = rememberSnackbarHostState()
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.Companion.fillMaxSize(),
             topBar = {
                 if (uiState.tabs.size > 1 && uiState.selectedAccount != null) {
                     NotificationTopBar(
@@ -93,7 +110,7 @@ class NotificationsHomeScreen : BaseAnimatedScreen() {
                     )
                 } else {
                     Spacer(
-                        modifier = Modifier
+                        modifier = Modifier.Companion
                             .statusBarsPadding()
                             .height(16.dp)
                     )
@@ -102,36 +119,40 @@ class NotificationsHomeScreen : BaseAnimatedScreen() {
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackbarHost,
-                    modifier = Modifier.padding(bottom = 60.dp),
+                    modifier = Modifier.Companion.padding(bottom = 60.dp),
                 )
             },
         ) { paddings ->
             if (uiState.tabs.isEmpty()) {
                 Column(
-                    modifier = Modifier
+                    modifier = Modifier.Companion
                         .padding(paddings)
                         .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.Companion.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Image(
-                        modifier = Modifier
+                        modifier = Modifier.Companion
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        contentScale = ContentScale.Inside,
+                        contentScale = ContentScale.Companion.Inside,
                         painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.illustration_message),
                         contentDescription = null,
                     )
 
                     Text(
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        modifier = Modifier.Companion.padding(
+                            start = 16.dp,
+                            top = 16.dp,
+                            end = 16.dp
+                        ),
                         text = stringResource(Res.string.notifications_account_empty_tip),
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Companion.Center,
                     )
                 }
             } else {
                 Column(
-                    modifier = Modifier
+                    modifier = Modifier.Companion
                         .padding(paddings)
                         .fillMaxSize(),
                 ) {
@@ -148,15 +169,15 @@ class NotificationsHomeScreen : BaseAnimatedScreen() {
                         LocalSnackbarHostState provides snackbarHost,
                     ) {
                         HorizontalPager(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.Companion.fillMaxSize(),
                             state = pagerState,
                             userScrollEnabled = false,
                         ) { pageIndex ->
                             with(uiState.tabs[pageIndex]) {
                                 TabContent(
-                                    this@NotificationsHomeScreen,
+                                    this@NotificationsHomeScreenContent,
                                     null,
-                                    animatedScreenContentScope
+                                    animatedScreenContentScope,
                                 )
                             }
                         }
@@ -173,47 +194,47 @@ class NotificationsHomeScreen : BaseAnimatedScreen() {
         onAccountSelected: (LoggedAccount) -> Unit,
     ) {
         Row(
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .fillMaxWidth()
                 .statusBarsPadding(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Companion.CenterVertically,
         ) {
             Text(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.Companion.padding(16.dp),
                 text = stringResource(Res.string.notification_tab_title),
                 style = MaterialTheme.typography.titleLarge,
             )
-            Spacer(modifier = Modifier.weight(1F))
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.Companion.weight(1F))
+            Spacer(modifier = Modifier.Companion.width(8.dp))
             var showSelectAccountPopup by remember {
                 mutableStateOf(false)
             }
-            Box(modifier = Modifier.padding(end = 8.dp)) {
+            Box(modifier = Modifier.Companion.padding(end = 8.dp)) {
                 Row(
-                    modifier = Modifier.noRippleClick {
+                    modifier = Modifier.Companion.noRippleClick {
                         showSelectAccountPopup = !showSelectAccountPopup
                     },
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Companion.CenterVertically,
                 ) {
                     BlogAuthorAvatar(
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.Companion.size(32.dp),
                         imageUrl = account.avatar,
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier.Companion.width(6.dp))
                     Column {
                         Text(
                             text = account.userName,
                             style = MaterialTheme.typography.titleMedium
-                                .copy(fontWeight = FontWeight.SemiBold),
+                                .copy(fontWeight = FontWeight.Companion.SemiBold),
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                            overflow = TextOverflow.Companion.Ellipsis,
                         )
                         Text(
                             text = account.prettyHandle,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                            overflow = TextOverflow.Companion.Ellipsis,
                         )
                     }
                     Icon(

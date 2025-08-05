@@ -1,7 +1,6 @@
 package com.zhangke.fread.status.ui.image
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -43,7 +42,7 @@ import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.voyager.AnimatedScreenContentScope
-import com.zhangke.framework.voyager.sharedElementBetweenScreen
+import com.zhangke.framework.voyager.sharedBoundsBetweenScreen
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -196,7 +195,7 @@ internal fun BlogImage(
     Box(modifier = modifier.blurhash(media.blurhash)) {
         if (!hideContent) {
             BlogAutoSizeImage(
-                modifier = Modifier.sharedElementBetweenScreen(
+                modifier = Modifier.sharedBoundsBetweenScreen(
                     animatedScreenContentScope = animatedScreenContentScope,
                     key = imageUrl,
                 ),

@@ -55,7 +55,7 @@ import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.framework.voyager.AnimatedScreenContentScope
-import com.zhangke.framework.voyager.sharedElementBetweenScreen
+import com.zhangke.framework.voyager.sharedBoundsBetweenScreen
 import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.blog.BlogMedia
@@ -181,7 +181,7 @@ class ImageViewerScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .blurhash(image.blurhash)
-                        .sharedElementBetweenScreen(
+                        .sharedBoundsBetweenScreen(
                             animatedScreenContentScope = animatedScreenContentScope,
                             key = image.url
                         ),

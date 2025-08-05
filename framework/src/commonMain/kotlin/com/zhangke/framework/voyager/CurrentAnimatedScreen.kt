@@ -65,3 +65,19 @@ fun Modifier.sharedElementBetweenScreen(
         )
     }
 }
+
+@Composable
+@OptIn(ExperimentalSharedTransitionApi::class)
+fun Modifier.sharedBoundsBetweenScreen(
+    animatedScreenContentScope: AnimatedScreenContentScope?,
+    key: String?,
+): Modifier {
+    if (key.isNullOrEmpty()) return this
+    if (animatedScreenContentScope == null) return this
+    return with(animatedScreenContentScope.sharedTransitionScope) {
+        sharedBounds(
+            sharedContentState = rememberSharedContentState(key),
+            animatedVisibilityScope = animatedScreenContentScope.animatedContentScope
+        )
+    }
+}

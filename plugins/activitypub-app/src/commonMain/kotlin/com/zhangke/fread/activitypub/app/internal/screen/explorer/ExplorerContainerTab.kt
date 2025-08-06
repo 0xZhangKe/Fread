@@ -19,7 +19,10 @@ class ExplorerContainerTab(
         @Composable get() = null
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    ) {
         val tabs = remember {
             listOf(
                 ExplorerTab(

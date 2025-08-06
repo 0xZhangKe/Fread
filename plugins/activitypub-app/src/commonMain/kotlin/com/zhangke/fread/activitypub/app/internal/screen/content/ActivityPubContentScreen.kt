@@ -67,7 +67,10 @@ internal class ActivityPubContentScreen(
         @Composable get() = null
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    ) {
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = screen.getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)

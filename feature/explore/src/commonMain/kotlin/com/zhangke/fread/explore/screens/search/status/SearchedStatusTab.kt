@@ -34,7 +34,8 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import org.jetbrains.compose.resources.stringResource
 
-internal class SearchedStatusTab(private val locator: PlatformLocator, private val query: String) : BasePagerTab() {
+internal class SearchedStatusTab(private val locator: PlatformLocator, private val query: String) :
+    BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -43,7 +44,10 @@ internal class SearchedStatusTab(private val locator: PlatformLocator, private v
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    ) {
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         val viewModel = screen.getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory> {

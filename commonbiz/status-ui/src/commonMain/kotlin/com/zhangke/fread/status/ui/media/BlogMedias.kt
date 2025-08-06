@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.ui.media
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,9 +25,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.pxToDp
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.image.BlogImageMedias
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -38,6 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 
 private var cachedContainerWidth: Dp? = null
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BlogMedias(
     modifier: Modifier,
@@ -114,6 +116,7 @@ fun BlogMedias(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun BlogMediaContent(
     mediaList: List<BlogMedia>,

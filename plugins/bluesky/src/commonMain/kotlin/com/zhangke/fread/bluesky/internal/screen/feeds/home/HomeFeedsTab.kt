@@ -33,7 +33,7 @@ class HomeFeedsTab(
     @Composable
     override fun TabContent(
         screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?
+        nestedScrollConnection: NestedScrollConnection?,
     ) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =

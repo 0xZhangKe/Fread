@@ -65,7 +65,10 @@ class ExplorerTab(
         )
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    ) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = screen.getViewModel<ExplorerContainerViewModel>()
             .getViewModel(locator, platform, feedsTabType)

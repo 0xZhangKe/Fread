@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.ui.image
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,6 +65,7 @@ sealed interface BlogMediaClickEvent {
 /**
  * Image and Gifv
  */
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BlogImageMedias(
     mediaList: List<BlogMedia>,
@@ -165,7 +168,7 @@ internal fun BlogImageLayout(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun BlogImage(
     modifier: Modifier,
@@ -187,18 +190,12 @@ internal fun BlogImage(
 
     Box(modifier = modifier.blurhash(media.blurhash)) {
         if (!hideContent) {
-            AutoSizeImage(
-                request = remember {
-                    ImageRequest {
-                        data(imageUrl)
-                    }
-                },
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
+            BlogAutoSizeImage(
+                modifier = Modifier,
+                imageUrl = imageUrl,
+                description = media.description,
             )
         }
-
         if (media.type == BlogMediaType.GIFV) {
             Icon(
                 modifier = Modifier
@@ -240,12 +237,32 @@ internal fun BlogImage(
                             .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 28.dp)
                             .wrapContentHeight()
                     ) {
-                        Text(text = media.description.orEmpty())
+                        SelectionContainer {
+                            Text(text = media.description.orEmpty())
+                        }
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun BlogAutoSizeImage(
+    modifier: Modifier,
+    imageUrl: String?,
+    description: String?,
+) {
+    AutoSizeImage(
+        request = remember {
+            ImageRequest {
+                data(imageUrl)
+            }
+        },
+        modifier = modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+        contentDescription = description.ifNullOrEmpty { "Blog Image Media" },
+    )
 }
 
 @Composable

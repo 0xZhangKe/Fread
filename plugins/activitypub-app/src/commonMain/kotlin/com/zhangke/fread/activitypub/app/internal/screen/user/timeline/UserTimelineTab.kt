@@ -39,7 +39,10 @@ internal class UserTimelineTab(
         }
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    ) {
         super.TabContent(screen, nestedScrollConnection)
         val viewModel = screen.getViewModel<UserTimelineContainerViewModel>().getSubViewModel(
             tabType = tabType,

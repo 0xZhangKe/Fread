@@ -22,6 +22,7 @@ kotlin {
                 implementation(compose.components.resources)
 
                 implementation(libs.androidx.room)
+                implementation(libs.compose.jb.backhandler)
 
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)

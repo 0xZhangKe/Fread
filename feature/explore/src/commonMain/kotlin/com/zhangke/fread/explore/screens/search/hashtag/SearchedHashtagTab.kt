@@ -31,7 +31,8 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import org.jetbrains.compose.resources.stringResource
 
-internal class SearchedHashtagTab(private val locator: PlatformLocator, private val query: String) : BasePagerTab() {
+internal class SearchedHashtagTab(private val locator: PlatformLocator, private val query: String) :
+    BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -40,7 +41,10 @@ internal class SearchedHashtagTab(private val locator: PlatformLocator, private 
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    ) {
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = with(screen) {
@@ -70,7 +74,10 @@ internal class SearchedHashtagTab(private val locator: PlatformLocator, private 
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.push(it)
         }
-        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.snackMessageFlow)
+        ConsumeSnackbarFlow(
+            hostState = snackbarHostState,
+            messageTextFlow = viewModel.snackMessageFlow
+        )
     }
 
     @OptIn(ExperimentalMaterialApi::class)

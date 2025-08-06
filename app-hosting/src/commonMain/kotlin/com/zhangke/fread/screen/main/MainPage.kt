@@ -8,17 +8,19 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,21 +32,18 @@ import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.internal.BackHandler
-import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
+import com.zhangke.framework.composable.PagerTab
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.action.OpenNotificationPageAction
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
-import com.zhangke.fread.explore.ExploreTab
-import com.zhangke.fread.feature.message.NotificationsTab
-import com.zhangke.fread.feeds.FeedsHomeTab
-import com.zhangke.fread.profile.ProfileTab
+import com.zhangke.fread.explore.screens.home.ExploreTab
+import com.zhangke.fread.feature.message.screens.home.NotificationsTab
+import com.zhangke.fread.feeds.pages.home.FeedsHomeTab
+import com.zhangke.fread.profile.screen.home.ProfileTab
 import com.zhangke.fread.screen.main.drawer.MainDrawer
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
@@ -60,14 +59,17 @@ fun Screen.MainPage() {
     val activityHelper = LocalActivityHelper.current
     val statusUiConfig = LocalStatusUiConfig.current
     val viewModel = getViewModel<MainViewModel>()
+    val tabs = remember { createMainTabs() }
     val uiState by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-    val nestedTabConnection = remember {
-        NestedTabConnection()
-    }
-    var inFeedsTab by remember {
-        mutableStateOf(false)
+    val nestedTabConnection = remember { NestedTabConnection() }
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    var inFeedsTab by remember { mutableStateOf(false) }
+    val pagerState = rememberPagerState { tabs.size }
+    LaunchedEffect(selectedIndex) {
+        inFeedsTab = selectedIndex == 0
+        pagerState.scrollToPage(selectedIndex)
     }
     ConsumeFlow(nestedTabConnection.openDrawerFlow) {
         if (inFeedsTab) {
@@ -82,75 +84,83 @@ fun Screen.MainPage() {
     CompositionLocalProvider(
         LocalNestedTabConnection provides nestedTabConnection,
     ) {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                gesturesEnabled = inFeedsTab,
-                drawerContent = {
-                    val drawerWidth = getScreenWidth() * 0.8F
-                    ModalDrawerSheet(
-                        modifier = Modifier.widthIn(max = drawerWidth),
-                    ) {
-                        MainDrawer(
-                            onDismissRequest = {
-                                coroutineScope.launch {
-                                    drawerState.close()
-                                }
-                            },
-                        )
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            gesturesEnabled = inFeedsTab,
+            drawerContent = {
+                val drawerWidth = getScreenWidth() * 0.8F
+                ModalDrawerSheet(
+                    modifier = Modifier.widthIn(max = drawerWidth),
+                ) {
+                    MainDrawer(
+                        onDismissRequest = {
+                            coroutineScope.launch {
+                                drawerState.close()
+                            }
+                        },
+                    )
+                }
+            },
+        ) {
+            RegisterNotificationAction(
+                tabs = tabs,
+                onTabSelected = {
+                    val index = tabs.indexOf(it)
+                    if (index >= 0 && index < tabs.size && index != selectedIndex) {
+                        selectedIndex = index
                     }
                 },
-            ) {
-                val tabs = remember {
-                    createMainTabs()
+            )
+            BackHandler(true) {
+                if (inFeedsTab) {
+                    activityHelper.goHome()
+                } else {
+                    selectedIndex = 0
                 }
-                TabNavigator(
-                    tab = tabs.first(),
+            }
+            Box(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    val tabNavigator = LocalTabNavigator.current
-                    RegisterNotificationAction(tabs, tabNavigator)
-                    inFeedsTab = tabNavigator.current.key == tabs.first().key
-                    BackHandler(true) {
-                        if (inFeedsTab) {
-                            activityHelper.goHome()
-                        } else {
-                            tabNavigator.current = tabs.first()
-                        }
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize(),
+                        userScrollEnabled = false,
+                    ) {
+                        tabs[it].TabContent(
+                            screen = this@MainPage,
+                            nestedScrollConnection = null,
+                        )
                     }
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            CurrentTab()
-                        }
-                        val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
-                        AnimatedVisibility(
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .fillMaxWidth(),
-                            visible = !inFeedsTab || !inImmersiveMode || !statusUiConfig.immersiveNavBar,
-                            enter = slideInVertically(
-                                initialOffsetY = { it },
-                            ),
-                            exit = slideOutVertically(
-                                targetOffsetY = { it },
-                            ),
-                        ) {
-                            NavigationBar(
-                                modifier = Modifier,
-                            ) {
-                                tabs.forEach { tab ->
-                                    TabNavigationItem(
-                                        tab = tab,
-                                        detectDoubleTap = inFeedsTab,
-                                        onDoubleTap = {
-                                            coroutineScope.launch {
-                                                nestedTabConnection.scrollToTop()
-                                            }
-                                        },
-                                    )
-                                }
-                            }
+                }
+                val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
+                AnimatedVisibility(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
+                    visible = !inFeedsTab || !inImmersiveMode || !statusUiConfig.immersiveNavBar,
+                    enter = slideInVertically(
+                        initialOffsetY = { it },
+                    ),
+                    exit = slideOutVertically(
+                        targetOffsetY = { it },
+                    ),
+                ) {
+                    NavigationBar(
+                        modifier = Modifier,
+                    ) {
+                        tabs.forEachIndexed { index, tab ->
+                            TabNavigationItem(
+                                tab = tab,
+                                selected = index == selectedIndex,
+                                detectDoubleTap = inFeedsTab,
+                                onDoubleTap = {
+                                    coroutineScope.launch {
+                                        nestedTabConnection.scrollToTop()
+                                    }
+                                },
+                                onTabSelected = { selectedIndex = index },
+                            )
                         }
                     }
                 }
@@ -166,26 +176,24 @@ fun Screen.MainPage() {
     }
 }
 
-private fun createMainTabs(): List<Tab> {
+private fun createMainTabs(): List<PagerTab> {
     return listOf(
-        FeedsHomeTab(0u),
-        ExploreTab(1u),
-        NotificationsTab(2u),
-        ProfileTab(3u),
+        FeedsHomeTab(),
+        ExploreTab(),
+        NotificationsTab(),
+        ProfileTab(),
     )
 }
 
 @Composable
 private fun RowScope.TabNavigationItem(
-    tab: Tab,
+    tab: PagerTab,
+    selected: Boolean,
     detectDoubleTap: Boolean,
     onDoubleTap: () -> Unit,
+    onTabSelected: (PagerTab) -> Unit,
 ) {
-    val tabNavigator = LocalTabNavigator.current
-    val selected = tabNavigator.current.key == tab.key
-    var latestClickTime by remember {
-        mutableLongStateOf(0L)
-    }
+    var latestClickTime by remember { mutableLongStateOf(0L) }
     val freadReviewManager = LocalFreadReviewManager.current
     NavigationBarItem(
         selected = selected,
@@ -198,20 +206,20 @@ private fun RowScope.TabNavigationItem(
                 latestClickTime = currentTime
                 return@NavigationBarItem
             } else {
-                tabNavigator.current = tab
+                onTabSelected(tab)
                 latestClickTime = 0L
                 freadReviewManager.trigger()
             }
         },
         alwaysShowLabel = false,
-        icon = { Icon(painter = tab.options.icon!!, contentDescription = tab.options.title) },
+        icon = { Icon(painter = tab.options!!.icon!!, contentDescription = tab.options?.title) },
     )
 }
 
 @Composable
 private fun RegisterNotificationAction(
-    tabs: List<Tab>,
-    tabNavigator: TabNavigator,
+    tabs: List<PagerTab>,
+    onTabSelected: (PagerTab) -> Unit,
 ) {
     val composableActions = LocalComposableActions.current
     LaunchedEffect(tabs, composableActions) {
@@ -219,9 +227,7 @@ private fun RegisterNotificationAction(
             if (!action.startsWith(OpenNotificationPageAction.URI)) return@collect
             val notificationTab =
                 tabs.firstNotNullOfOrNull { it as? NotificationsTab } ?: return@collect
-            if (tabNavigator.current != notificationTab) {
-                tabNavigator.current = notificationTab
-            }
+            onTabSelected(notificationTab)
         }
     }
 }

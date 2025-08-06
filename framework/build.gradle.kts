@@ -21,6 +21,8 @@ kotlin {
 
                 implementation(compose.components.resources)
 
+                implementation(libs.compose.jb.backhandler)
+
                 implementation(libs.androidx.annotation)
 
                 implementation(libs.arrow.core)

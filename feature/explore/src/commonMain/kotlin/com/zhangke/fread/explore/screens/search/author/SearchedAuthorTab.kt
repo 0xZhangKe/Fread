@@ -43,7 +43,9 @@ internal class SearchedAuthorTab(
         )
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen, nestedScrollConnection: NestedScrollConnection?,
+    ) {
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = screen.getViewModel<SearchAuthorViewModel, SearchAuthorViewModel.Factory> {
@@ -70,7 +72,10 @@ internal class SearchedAuthorTab(
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.tryPush(it)
         }
-        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.snackMessageFlow)
+        ConsumeSnackbarFlow(
+            hostState = snackbarHostState,
+            messageTextFlow = viewModel.snackMessageFlow
+        )
     }
 
     @OptIn(ExperimentalMaterialApi::class)

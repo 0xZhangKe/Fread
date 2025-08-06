@@ -28,7 +28,10 @@ internal class TrendingStatusTab(private val locator: PlatformLocator) : BasePag
         )
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    ) {
         super.TabContent(screen, nestedScrollConnection)
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = screen.getViewModel<TrendingStatusViewModel>().getSubViewModel(locator)

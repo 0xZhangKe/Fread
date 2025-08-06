@@ -21,7 +21,10 @@ interface PagerTab {
         @Composable get
 
     @Composable
-    fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?)
+    fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    )
 }
 
 data class PagerTabOptions(
@@ -69,7 +72,10 @@ fun Screen.HorizontalPagerWithTab(
             userScrollEnabled = pagerUserScrollEnabled,
         ) { pageIndex ->
             with(tabList[pageIndex]) {
-                TabContent(this@HorizontalPagerWithTab, nestedScrollConnection)
+                TabContent(
+                    this@HorizontalPagerWithTab,
+                    nestedScrollConnection,
+                )
             }
         }
     }

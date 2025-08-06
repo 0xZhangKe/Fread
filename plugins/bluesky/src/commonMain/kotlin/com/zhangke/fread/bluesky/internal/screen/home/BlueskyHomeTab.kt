@@ -68,7 +68,7 @@ class BlueskyHomeTab(
     @Composable
     override fun TabContent(
         screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?
+        nestedScrollConnection: NestedScrollConnection?,
     ) {
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
@@ -224,7 +224,10 @@ class BlueskyHomeTab(
                                     state = pagerState,
                                     userScrollEnabled = !contentScrollInProgress,
                                 ) { pageIndex ->
-                                    tabList[pageIndex].TabContent(screen, null)
+                                    tabList[pageIndex].TabContent(
+                                        screen,
+                                        null,
+                                    )
                                 }
                             }
                         }

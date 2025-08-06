@@ -58,8 +58,9 @@ class NotificationTab(
     @Composable
     override fun TabContent(
         screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?
+        nestedScrollConnection: NestedScrollConnection?,
     ) {
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
             screen.getViewModel<NotificationContainerViewModel>().getSubViewModel(loggedAccount)

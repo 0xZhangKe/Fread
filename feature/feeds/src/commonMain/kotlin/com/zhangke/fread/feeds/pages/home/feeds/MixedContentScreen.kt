@@ -38,7 +38,10 @@ internal class MixedContentScreen(
         @Composable get() = null
 
     @Composable
-    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(
+        screen: Screen,
+        nestedScrollConnection: NestedScrollConnection?,
+    ) {
         super.TabContent(screen, nestedScrollConnection)
         val snackBarHostState = rememberSnackbarHostState()
         val viewModel = screen.getViewModel<MixedContentViewModel>().getSubViewModel(configId)

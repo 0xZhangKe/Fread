@@ -26,6 +26,8 @@ data class MixedContent(
     val sourceUriList: List<FormalUri>,
 ) : FreadContent {
 
+    override val accountUri: FormalUri? = null
+
     override fun newOrder(newOrder: Int): FreadContent {
         return copy(order = newOrder)
     }

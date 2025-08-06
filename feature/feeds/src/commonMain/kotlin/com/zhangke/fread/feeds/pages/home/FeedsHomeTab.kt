@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -47,7 +48,7 @@ class FeedsHomeTab : PagerTab {
     ) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: ContentHomeViewModel = screen.getViewModel()
-        val uiState by viewModel.uiState.collectAsState()
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         if (uiState.contentConfigList.isEmpty()) {
             if (uiState.loading) {
                 Box(modifier = Modifier.Companion.fillMaxSize())

@@ -1,10 +1,11 @@
 package com.zhangke.fread.commonbiz.shared.screen
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -30,13 +31,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.LocalImageLoader
@@ -53,25 +59,28 @@ import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.permission.RequireLocalStoragePermission
+import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.PlatformSerializable
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.sharedBoundsBetweenScreen
-import com.zhangke.fread.common.page.BaseAnimatedScreen
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ImageViewerScreen(
     private val selectedIndex: Int,
     private val imageList: List<Image>,
-) : BaseAnimatedScreen() {
+) : BaseScreen() {
 
     private val backgroundCommonAlpha = 0.95F
 
+    @OptIn(InternalVoyagerApi::class, ExperimentalComposeUiApi::class)
     @Composable
-    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
-        super.AnimationContent(animatedScreenContentScope)
+    override fun Content() {
+        super.Content()
+        val coroutineScope = rememberCoroutineScope()
         val navigator = LocalNavigator.currentOrThrow
         if (imageList.isEmpty()) {
             navigator.pop()
@@ -79,6 +88,19 @@ class ImageViewerScreen(
         }
         var backgroundColorAlpha by remember {
             mutableFloatStateOf(0F)
+        }
+
+        fun goback() {
+            coroutineScope.launch {
+                Animatable(backgroundCommonAlpha).animateTo(
+                    targetValue = 0.3F,
+                    animationSpec = tween(90, easing = LinearEasing),
+                ) {
+                    Log.d("F_TEST") { "onAlphaUpdate: $value" }
+                    backgroundColorAlpha = value
+                }
+                navigator.pop()
+            }
         }
         var showIndicator by remember {
             mutableStateOf(false)
@@ -88,7 +110,7 @@ class ImageViewerScreen(
                 targetValue = backgroundCommonAlpha,
                 animationSpec = tween(
                     ImageViewerDefault.ANIMATION_DURATION,
-                    easing = FastOutSlowInEasing
+                    easing = LinearEasing,
                 ),
             ) {
                 backgroundColorAlpha = value
@@ -96,14 +118,14 @@ class ImageViewerScreen(
         }
         Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize().background(Color.Black).alpha(backgroundColorAlpha),
         ) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawRect(
-                    color = Color.Black,
-                    alpha = backgroundColorAlpha,
-                )
-            }
+//            Canvas(modifier = Modifier.fillMaxSize()) {
+//                drawRect(
+//                    color = Color.Black,
+//                    alpha = backgroundColorAlpha,
+//                )
+//            }
             val pagerState = rememberPagerState(
                 initialPage = selectedIndex,
                 pageCount = imageList::size,
@@ -117,9 +139,8 @@ class ImageViewerScreen(
                     val currentMedia = imageList[pageIndex]
                     ImagePageContent(
                         image = currentMedia,
-                        animatedScreenContentScope = animatedScreenContentScope,
                         onDismissRequest = {
-                            navigator.pop()
+                            goback()
                         },
                     )
                 }
@@ -148,7 +169,6 @@ class ImageViewerScreen(
     private fun ImagePageContent(
         image: Image,
         onDismissRequest: () -> Unit,
-        animatedScreenContentScope: AnimatedScreenContentScope,
     ) {
         val imageLoader = LocalImageLoader.current
         var aspectRatio: Float? by remember {
@@ -181,10 +201,7 @@ class ImageViewerScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .blurhash(image.blurhash)
-                        .sharedBoundsBetweenScreen(
-                            animatedScreenContentScope = animatedScreenContentScope,
-                            key = image.url
-                        ),
+                        .sharedBoundsBetweenScreen(key = image.url),
                     contentScale = ContentScale.FillBounds,
                     contentDescription = image.description,
                 )

@@ -22,7 +22,6 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.common.page.BasePagerTab
@@ -55,9 +54,8 @@ internal class ActivityPubTimelineTab(
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
-        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
+        super.TabContent(screen, nestedScrollConnection)
         val viewModel = screen.getViewModel<ActivityPubTimelineContainerViewModel>()
             .getSubViewModel(locator, type, listId)
         val uiState by viewModel.uiState.collectAsState()
@@ -66,7 +64,6 @@ internal class ActivityPubTimelineTab(
             uiState = uiState,
             nestedScrollConnection = nestedScrollConnection,
             composedStatusInteraction = viewModel.composedStatusInteraction,
-            animatedScreenContentScope = animatedScreenContentScope,
             onJumpedToStatus = viewModel::onJumpedToStatus,
             onLoadPrevious = viewModel::onLoadPreviousPage,
             onRefresh = viewModel::onRefresh,
@@ -82,7 +79,6 @@ internal class ActivityPubTimelineTab(
         uiState: ActivityPubTimelineUiState,
         nestedScrollConnection: NestedScrollConnection?,
         composedStatusInteraction: ComposedStatusInteraction,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
         onJumpedToStatus: () -> Unit,
         onLoadPrevious: () -> Unit,
         onLoadMore: () -> Unit,
@@ -151,7 +147,6 @@ internal class ActivityPubTimelineTab(
                                 status = (item as ActivityPubTimelineItem.StatusItem).status,
                                 composedStatusInteraction = composedStatusInteraction,
                                 indexInList = index,
-                                animatedScreenContentScope = animatedScreenContentScope,
                             )
                         }
                     }

@@ -44,7 +44,6 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.TopBarWithTabLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
@@ -70,9 +69,8 @@ class BlueskyHomeTab(
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
-        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
             screen.getViewModel<BlueskyHomeContainerViewModel>().getSubViewModel(contentId)
@@ -82,7 +80,6 @@ class BlueskyHomeTab(
             screen = screen,
             uiState = uiState,
             snackBarHostState = snackBarHostState,
-            animatedScreenContentScope = animatedScreenContentScope,
             onPostBlogClick = { uiState.locator?.let { navigator.push(PublishPostScreen(it)) } },
             onTitleClick = {},
             onLoginClick = {
@@ -107,7 +104,6 @@ class BlueskyHomeTab(
         onPostBlogClick: (BlueskyLoggedAccount) -> Unit,
         onTitleClick: (BlueskyContent) -> Unit,
         onLoginClick: () -> Unit,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalNestedTabConnection.current
@@ -231,7 +227,6 @@ class BlueskyHomeTab(
                                     tabList[pageIndex].TabContent(
                                         screen,
                                         null,
-                                        animatedScreenContentScope,
                                     )
                                 }
                             }

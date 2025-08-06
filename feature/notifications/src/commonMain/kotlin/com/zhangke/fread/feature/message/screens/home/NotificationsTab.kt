@@ -47,7 +47,6 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.commonbiz.illustration_message
 import com.zhangke.fread.feature.notifications.Res
@@ -76,7 +75,6 @@ class NotificationsTab() : PagerTab {
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?
     ) {
         val viewModel: NotificationsHomeViewModel = screen.getViewModel()
         val uiState by viewModel.uiState.collectAsState()
@@ -87,7 +85,6 @@ class NotificationsTab() : PagerTab {
             screen.NotificationsHomeScreenContent(
                 uiState = uiState,
                 onAccountSelected = viewModel::onAccountSelected,
-                animatedScreenContentScope = animatedScreenContentScope,
             )
         }
     }
@@ -96,7 +93,6 @@ class NotificationsTab() : PagerTab {
     private fun Screen.NotificationsHomeScreenContent(
         uiState: NotificationsHomeUiState,
         onAccountSelected: (LoggedAccount) -> Unit,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val snackbarHost = rememberSnackbarHostState()
         Scaffold(
@@ -177,7 +173,6 @@ class NotificationsTab() : PagerTab {
                                 TabContent(
                                     this@NotificationsHomeScreenContent,
                                     null,
-                                    animatedScreenContentScope,
                                 )
                             }
                         }

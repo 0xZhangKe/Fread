@@ -52,7 +52,6 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.resources.PlatformLogo
@@ -87,7 +86,6 @@ class ProfileTab() : PagerTab {
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?
     ) {
         val viewModel = screen.getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()

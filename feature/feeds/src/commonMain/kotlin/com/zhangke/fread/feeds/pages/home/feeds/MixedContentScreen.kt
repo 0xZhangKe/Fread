@@ -22,7 +22,6 @@ import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -42,9 +41,8 @@ internal class MixedContentScreen(
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
-        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
+        super.TabContent(screen, nestedScrollConnection)
         val snackBarHostState = rememberSnackbarHostState()
         val viewModel = screen.getViewModel<MixedContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()

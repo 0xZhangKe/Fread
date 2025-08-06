@@ -15,7 +15,6 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
@@ -35,7 +34,6 @@ class HomeFeedsTab(
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
@@ -52,7 +50,6 @@ class HomeFeedsTab(
             composedStatusInteraction = viewModel.composedStatusInteraction,
             observeScrollToTopEvent = true,
             contentCanScrollBackward = contentCanScrollBackward,
-            animatedScreenContentScope = animatedScreenContentScope,
             nestedScrollConnection = nestedScrollConnection,
             onImmersiveEvent = {
                 if (it) {

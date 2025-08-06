@@ -20,7 +20,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.ic_home
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
@@ -45,7 +44,6 @@ class FeedsHomeTab : PagerTab {
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: ContentHomeViewModel = screen.getViewModel()
@@ -95,7 +93,7 @@ class FeedsHomeTab : PagerTab {
                     Text(text = "Error! can't find any tab fro this config!")
                 } else {
                     with(currentScreen) {
-                        TabContent(screen, null, animatedScreenContentScope)
+                        TabContent(screen, null)
                     }
                 }
             }

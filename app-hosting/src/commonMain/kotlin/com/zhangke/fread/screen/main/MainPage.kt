@@ -36,7 +36,6 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
 import com.zhangke.framework.composable.PagerTab
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.action.OpenNotificationPageAction
 import com.zhangke.fread.common.review.LocalFreadReviewManager
@@ -56,7 +55,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(InternalVoyagerApi::class)
 @Composable
-fun Screen.MainPage(animatedScreenContentScope: AnimatedScreenContentScope) {
+fun Screen.MainPage() {
     val activityHelper = LocalActivityHelper.current
     val statusUiConfig = LocalStatusUiConfig.current
     val viewModel = getViewModel<MainViewModel>()
@@ -131,7 +130,6 @@ fun Screen.MainPage(animatedScreenContentScope: AnimatedScreenContentScope) {
                         tabs[it].TabContent(
                             screen = this@MainPage,
                             nestedScrollConnection = null,
-                            animatedScreenContentScope = animatedScreenContentScope,
                         )
                     }
                 }

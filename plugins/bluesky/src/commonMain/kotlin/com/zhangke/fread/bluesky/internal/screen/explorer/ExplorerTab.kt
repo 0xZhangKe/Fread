@@ -7,8 +7,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
-import com.zhangke.framework.voyager.CurrentAnimatedScreen
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreen
 import com.zhangke.fread.status.model.PlatformLocator
 
@@ -24,18 +22,7 @@ class ExplorerTab(
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
-        if (animatedScreenContentScope == null) {
-            Navigator(ExplorerFeedsScreen(locator, true))
-        } else {
-            with(animatedScreenContentScope.sharedTransitionScope) {
-                Navigator(
-                    screen = ExplorerFeedsScreen(locator, true),
-                ) {
-                    CurrentAnimatedScreen(it)
-                }
-            }
-        }
+        Navigator(ExplorerFeedsScreen(locator, true))
     }
 }

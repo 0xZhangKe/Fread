@@ -36,7 +36,6 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.notification.StatusNotificationUi
 import com.zhangke.fread.feature.notifications.Res
@@ -60,8 +59,8 @@ class NotificationTab(
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
             screen.getViewModel<NotificationContainerViewModel>().getSubViewModel(loggedAccount)

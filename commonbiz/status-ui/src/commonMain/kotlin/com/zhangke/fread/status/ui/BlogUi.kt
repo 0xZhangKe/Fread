@@ -13,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
@@ -60,7 +59,6 @@ fun BlogUi(
     detailModel: Boolean = false,
     showDivider: Boolean = true,
     threadsType: ThreadsType = ThreadsType.NONE,
-    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     val textHandler = LocalActivityTextHandler.current
     val mentionOnly = blog.visibility == StatusVisibility.DIRECT
@@ -138,7 +136,6 @@ fun BlogUi(
             onShowOriginalClick = onShowOriginalClick,
             onBlogClick = onBlogClick,
             onMaybeHashtagClick = onMaybeHashtagClick,
-            animatedScreenContentScope = animatedScreenContentScope,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier

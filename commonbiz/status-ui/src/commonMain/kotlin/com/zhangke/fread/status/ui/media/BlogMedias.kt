@@ -1,7 +1,6 @@
 package com.zhangke.fread.status.ui.media
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -26,10 +25,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.pxToDp
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.image.BlogImageMedias
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -51,7 +49,6 @@ fun BlogMedias(
     onMediaClick: OnBlogMediaClick,
     showAlt: Boolean = true,
     blogTranslationState: BlogTranslationUiState? = null,
-    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     val density = LocalDensity.current
     var containerWidth: Dp? by remember {
@@ -81,7 +78,6 @@ fun BlogMedias(
                 containerWidth = containerWidth!!,
                 onMediaClick = onMediaClick,
                 showAlt = showAlt,
-                animatedScreenContentScope = animatedScreenContentScope,
             )
         }
         if (sensitive) {
@@ -130,7 +126,6 @@ private fun BlogMediaContent(
     containerWidth: Dp,
     showAlt: Boolean,
     onMediaClick: OnBlogMediaClick,
-    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     if (mediaList.firstOrNull()?.type == BlogMediaType.VIDEO) {
         BlogVideos(
@@ -150,7 +145,6 @@ private fun BlogMediaContent(
                 onMediaClick(it.transformTranslatedEvent(blogTranslationState))
             },
             showAlt = showAlt,
-            animatedScreenContentScope = animatedScreenContentScope,
         )
     }
 }

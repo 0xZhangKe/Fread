@@ -7,7 +7,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 
@@ -23,7 +22,6 @@ class ExplorerContainerTab(
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val tabs = remember {
             listOf(
@@ -48,7 +46,6 @@ class ExplorerContainerTab(
             HorizontalPagerWithTab(
                 tabList = tabs,
                 pagerUserScrollEnabled = true,
-                animatedScreenContentScope = animatedScreenContentScope,
             )
         }
     }

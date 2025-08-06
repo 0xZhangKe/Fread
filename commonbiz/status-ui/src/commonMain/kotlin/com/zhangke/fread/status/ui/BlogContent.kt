@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -80,7 +79,6 @@ fun BlogContent(
     onShowOriginalClick: () -> Unit,
     detailModel: Boolean = false,
     editedTime: String? = null,
-    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     Column(
         modifier = modifier,
@@ -141,7 +139,6 @@ fun BlogContent(
                 indexInList = indexOfFeeds,
                 sensitive = sensitive,
                 onMediaClick = onMediaClick,
-                animatedScreenContentScope = animatedScreenContentScope,
             )
         } else if (blog.embeds.isNotEmpty()) {
             BlogEmbedsUi(

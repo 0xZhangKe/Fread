@@ -15,12 +15,9 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.AnimatedScreen
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
 import com.zhangke.fread.activitypub.app.activity_pub_favourites_list_title
-import com.zhangke.fread.common.page.BaseAnimatedScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.PlatformLocator
@@ -29,11 +26,11 @@ import org.jetbrains.compose.resources.stringResource
 class StatusListScreen(
     private val locator: PlatformLocator,
     private val type: StatusListType,
-) : BaseAnimatedScreen() {
+) : BaseScreen() {
 
     @Composable
-    override fun AnimationContent(animatedScreenContentScope: AnimatedScreenContentScope) {
-        super.AnimationContent(animatedScreenContentScope)
+    override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<StatusListViewModel, StatusListViewModel.Factory> {
             it.create(locator, type)
@@ -61,7 +58,6 @@ class StatusListScreen(
                     uiState = uiState,
                     openScreenFlow = viewModel.openScreenFlow,
                     newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-                    animatedScreenContentScope = animatedScreenContentScope,
                     onRefresh = viewModel::onRefresh,
                     onLoadMore = viewModel::onLoadMore,
                     composedStatusInteraction = viewModel.composedStatusInteraction,

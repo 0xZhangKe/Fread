@@ -6,7 +6,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.StatusUiState
@@ -28,7 +27,6 @@ fun StatusUi(
     composedStatusInteraction: ComposedStatusInteraction,
     detailModel: Boolean = false,
     threadsType: ThreadsType = ThreadsType.NONE,
-    animatedScreenContentScope: AnimatedScreenContentScope? = null,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
     if (status.status.intrinsicBlog.filtered?.firstOrNull()?.action == BlogFiltered.FilterAction.HIDE) {
@@ -49,7 +47,6 @@ fun StatusUi(
             detailModel = detailModel,
             following = status.following,
             style = if (detailModel) style else style.contentIndentStyle(),
-            animatedScreenContentScope = animatedScreenContentScope,
             onInteractive = { type, _ ->
                 composedStatusInteraction.onStatusInteractive(status, type)
             },

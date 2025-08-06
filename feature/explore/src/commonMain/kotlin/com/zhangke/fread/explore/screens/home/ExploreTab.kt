@@ -22,7 +22,6 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.ic_logo_small
@@ -48,7 +47,6 @@ class ExploreTab() : PagerTab {
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?
     ) {
         val viewModel = screen.getViewModel<ExplorerHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
@@ -56,7 +54,6 @@ class ExploreTab() : PagerTab {
         CompositionLocalProvider(LocalNavigator provides navigator) {
             screen.ExplorerHomeContent(
                 uiState = uiState,
-                animatedScreenContentScope = animatedScreenContentScope,
                 onAccountSelected = {
                     viewModel.onAccountSelected(it)
                 },
@@ -68,7 +65,6 @@ class ExploreTab() : PagerTab {
     private fun Screen.ExplorerHomeContent(
         uiState: ExplorerHomeUiState,
         onAccountSelected: (LoggedAccount) -> Unit,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         Scaffold(
@@ -101,7 +97,6 @@ class ExploreTab() : PagerTab {
                             uiState.tab.TabContent(
                                 this@ExplorerHomeContent,
                                 null,
-                                animatedScreenContentScope,
                             )
                         }
                     }

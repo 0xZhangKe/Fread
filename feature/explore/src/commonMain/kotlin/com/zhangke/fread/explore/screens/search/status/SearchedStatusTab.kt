@@ -23,7 +23,6 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.voyager.AnimatedScreenContentScope
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
@@ -48,9 +47,8 @@ internal class SearchedStatusTab(private val locator: PlatformLocator, private v
     override fun TabContent(
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?,
-        animatedScreenContentScope: AnimatedScreenContentScope?,
     ) {
-        super.TabContent(screen, nestedScrollConnection, animatedScreenContentScope)
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         val viewModel = screen.getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory> {
             it.create(locator)

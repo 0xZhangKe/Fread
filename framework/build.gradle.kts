@@ -20,6 +20,8 @@ kotlin {
                 implementation(libs.bundles.voyager)
 
                 implementation(compose.components.resources)
+                implementation(libs.nav3.runtime)
+                implementation(libs.nav3.ui)
 
                 implementation(libs.androidx.annotation)
 

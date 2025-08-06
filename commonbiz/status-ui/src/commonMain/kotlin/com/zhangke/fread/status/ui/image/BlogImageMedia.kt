@@ -42,7 +42,6 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.framework.voyager.sharedBoundsBetweenScreen
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -192,7 +191,7 @@ internal fun BlogImage(
     Box(modifier = modifier.blurhash(media.blurhash)) {
         if (!hideContent) {
             BlogAutoSizeImage(
-                modifier = Modifier.sharedBoundsBetweenScreen(key = imageUrl),
+                modifier = Modifier,
                 imageUrl = imageUrl,
                 description = media.description,
             )

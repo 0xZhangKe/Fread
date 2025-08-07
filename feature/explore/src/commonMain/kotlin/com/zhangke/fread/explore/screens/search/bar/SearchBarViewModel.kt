@@ -38,8 +38,15 @@ class SearchBarViewModel @Inject constructor(
 
     var selectedAccount: LoggedAccount? = null
         set(value) {
+            if (field == value) return
             field = value
-            _uiState.update { it.copy(locator = locator) }
+            _uiState.update {
+                it.copy(
+                    locator = locator,
+                    query = "",
+                    resultList = emptyList(),
+                )
+            }
         }
 
     private val locator: PlatformLocator?
@@ -76,9 +83,7 @@ class SearchBarViewModel @Inject constructor(
             _uiState.update { it.copy(query = "", resultList = emptyList()) }
             return
         }
-        _uiState.update {
-            it.copy(query = query)
-        }
+        _uiState.update { it.copy(query = query) }
         searchJob?.cancel()
         searchJob = launchInViewModel {
             statusProvider.searchEngine

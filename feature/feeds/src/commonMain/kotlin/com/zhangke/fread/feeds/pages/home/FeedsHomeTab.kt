@@ -11,9 +11,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -25,6 +25,7 @@ import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.ic_home
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 class FeedsHomeTab : PagerTab {
@@ -47,8 +48,9 @@ class FeedsHomeTab : PagerTab {
         nestedScrollConnection: NestedScrollConnection?,
     ) {
         val navigator = LocalNavigator.currentOrThrow
+        val coroutineScope = rememberCoroutineScope()
         val viewModel: ContentHomeViewModel = screen.getViewModel()
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val uiState by viewModel.uiState.collectAsState()
         if (uiState.contentConfigList.isEmpty()) {
             if (uiState.loading) {
                 Box(modifier = Modifier.Companion.fillMaxSize())
@@ -59,27 +61,36 @@ class FeedsHomeTab : PagerTab {
             }
         } else {
             val mainTabConnection = LocalNestedTabConnection.current
-            val pagerState = rememberPagerState(pageCount = { uiState.contentConfigList.size })
+            val pagerState = rememberPagerState(
+                initialPage = uiState.currentPageIndex,
+                pageCount = { uiState.contentConfigList.size },
+            )
             ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
                 if (pagerState.currentPage < pagerState.pageCount - 1) {
-                    viewModel.onCurrentPageChange(pagerState.currentPage + 1)
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
                 }
             }
             ConsumeFlow(mainTabConnection.scrollToContentTabFlow) {
                 val index = uiState.contentConfigList.indexOf(it)
                 if (index in 0 until pagerState.pageCount) {
-                    viewModel.onCurrentPageChange(index)
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(index)
+                    }
+                }
+            }
+            ConsumeFlow(viewModel.switchPageFlow) {
+                coroutineScope.launch {
+                    viewModel.onSwitchPageFlowUsed()
+                    pagerState.animateScrollToPage(it)
                 }
             }
             val targetPage = pagerState.targetPage
             LaunchedEffect(targetPage) {
-                viewModel.onCurrentPageChange(targetPage)
+                viewModel.onCurrentPageChanged(targetPage)
             }
-            LaunchedEffect(uiState.currentPageIndex) {
-                pagerState.animateScrollToPage(uiState.currentPageIndex)
-            }
-            val contentScrollInProgress by
-            mainTabConnection.contentScrollInpProgress.collectAsState()
+            val contentScrollInProgress by mainTabConnection.contentScrollInpProgress.collectAsState()
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = !contentScrollInProgress,

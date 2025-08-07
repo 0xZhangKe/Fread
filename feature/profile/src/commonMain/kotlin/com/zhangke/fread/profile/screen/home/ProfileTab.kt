@@ -1,5 +1,7 @@
 package com.zhangke.fread.profile.screen.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -39,8 +41,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -256,48 +260,48 @@ class ProfileTab() : PagerTab {
         val account = accountUiState.account
         val browserLauncher = LocalActivityBrowserLauncher.current
         Row(
-            modifier = Modifier.Companion
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
                 .noRippleClick { onAccountClick(account) }) {
             BlogAuthorAvatar(
-                modifier = Modifier.Companion
-                    .size(48.dp)
+                modifier = Modifier.size(48.dp)
                     .clip(CircleShape),
                 imageUrl = account.avatar,
             )
             Column(
-                modifier = Modifier.Companion.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.Companion.fillMaxWidth(),
-                    verticalAlignment = Alignment.Companion.CenterVertically,
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(
-                        modifier = Modifier.Companion.weight(1F),
+                        modifier = Modifier.weight(1F)
+                            .padding(end = 8.dp)
+                            .align(Alignment.CenterVertically),
                     ) {
                         Row(
-                            modifier = Modifier.Companion.fillMaxWidth(),
-                            verticalAlignment = Alignment.Companion.CenterVertically,
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             FreadRichText(
-                                modifier = Modifier.Companion.padding(start = 16.dp),
+                                modifier = Modifier.padding(start = 16.dp),
                                 maxLines = 1,
                                 content = account.userName,
                                 emojis = account.emojis,
+                                overflow = TextOverflow.Ellipsis,
                                 fontSizeSp = 18F,
-                                fontWeight = FontWeight.Companion.SemiBold,
+                                fontWeight = FontWeight.SemiBold,
                                 onUrlClick = {
                                     browserLauncher.launchWebTabInApp(it, account.locator)
                                 },
                             )
-                            Spacer(modifier = Modifier.Companion.width(4.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
                             PlatformLogo(
-                                modifier = Modifier.Companion.size(14.dp),
+                                modifier = Modifier.size(14.dp),
                                 protocol = account.platform.protocol,
                             )
                         }
                         Text(
-                            modifier = Modifier.Companion.padding(start = 16.dp, top = 2.dp),
+                            modifier = Modifier.padding(start = 16.dp, top = 2.dp),
                             text = account.prettyHandle,
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -305,7 +309,8 @@ class ProfileTab() : PagerTab {
                     }
                     if (!accountUiState.logged) {
                         TextButton(
-                            modifier = Modifier.Companion.padding(end = 8.dp),
+                            modifier = Modifier.padding(end = 8.dp)
+                                .align(Alignment.CenterVertically),
                             onClick = { onLoginClick(account) },
                             colors = ButtonDefaults.textButtonColors(
                                 contentColor = MaterialTheme.colorScheme.error,
@@ -313,12 +318,19 @@ class ProfileTab() : PagerTab {
                         ) {
                             Text(text = stringResource(Res.string.profile_account_not_login))
                         }
-                    } else {
-                        Spacer(modifier = Modifier.Companion.width(16.dp))
                     }
+                    if (accountUiState.active) {
+                        Box(
+                            modifier = Modifier.padding(top = 8.dp)
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF22C55E))
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
                 }
                 FreadRichText(
-                    modifier = Modifier.Companion.padding(start = 16.dp, top = 4.dp),
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp),
                     maxLines = 5,
                     content = account.description.orEmpty(),
                     emojis = account.emojis,
@@ -328,7 +340,7 @@ class ProfileTab() : PagerTab {
                     },
                 )
                 AccountInteractionPanel(
-                    modifier = Modifier.Companion.padding(end = 8.dp),
+                    modifier = Modifier.padding(end = 8.dp),
                     account = account,
                     onLikedClick = onFavouritedClick,
                     onBookmarkedClick = onBookmarkedClick,

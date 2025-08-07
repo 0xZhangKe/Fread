@@ -24,7 +24,8 @@ class ActiveAccountsSynchronizer @Inject constructor(
         }
     }
 
-    fun onAccountSelected(accountUri: String) {
+    suspend fun onAccountSelected(accountUri: String) {
         _activeAccountUriFlow.value = accountUri
+        freadConfigManager.updateLastSelectedAccount(accountUri)
     }
 }

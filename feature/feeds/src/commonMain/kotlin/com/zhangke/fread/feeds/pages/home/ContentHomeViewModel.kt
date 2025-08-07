@@ -3,13 +3,16 @@ package com.zhangke.fread.feeds.pages.home
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.model.FreadContent
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.mapNotNull
@@ -24,6 +27,9 @@ class ContentHomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ContentHomeUiState.default)
     val uiState: StateFlow<ContentHomeUiState> = _uiState
+
+    private val _switchPageFlow = MutableSharedFlow<Int>(1)
+    val switchPageFlow: SharedFlow<Int> = _switchPageFlow
 
     init {
         launchInViewModel {
@@ -50,7 +56,7 @@ class ContentHomeViewModel @Inject constructor(
                         config.accountUri?.toString() == uri
                     }
                     if (activeIndex >= 0 && activeIndex != _uiState.value.currentPageIndex) {
-                        _uiState.update { it.copy(currentPageIndex = activeIndex) }
+                        _switchPageFlow.emit(activeIndex)
                     }
                 }
         }
@@ -81,19 +87,21 @@ class ContentHomeViewModel @Inject constructor(
         return statusProvider.screenProvider.getContentScreen(contentConfig, isLatestTab)
     }
 
-    fun onCurrentPageChange(currentPage: Int) {
+    fun onCurrentPageChanged(currentPage: Int) {
         val currentState = _uiState.value
         if (currentPage == currentState.currentPageIndex) return
-        _uiState.value = currentState.copy(
-            currentPageIndex = currentPage,
-        )
+        _uiState.update { it.copy(currentPageIndex = currentPage) }
         launchInViewModel {
             _uiState.value
                 .contentConfigList
-                .getOrNull(_uiState.value.currentPageIndex)
+                .getOrNull(currentPage)
                 ?.accountUri
                 ?.toString()
                 ?.let { activeAccountsSynchronizer.onAccountSelected(it) }
         }
+    }
+
+    fun onSwitchPageFlowUsed() {
+        _switchPageFlow.resetReplayCache()
     }
 }

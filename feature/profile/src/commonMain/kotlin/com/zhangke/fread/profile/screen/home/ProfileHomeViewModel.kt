@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.analytics.reportInfo
+import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.AccountRefreshResult
@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
@@ -25,6 +26,7 @@ import me.tatarka.inject.annotations.Inject
 class ProfileHomeViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val contentRepo: FreadContentRepo,
+    private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileHomeUiState(emptyList()))
@@ -37,17 +39,40 @@ class ProfileHomeViewModel @Inject constructor(
 
     init {
         observeAccountFlow()
+        launchInViewModel {
+            activeAccountsSynchronizer.activeAccountUriFlow
+                .mapNotNull { it?.takeIf { it.isNotEmpty() } }
+                .collect { lastActiveAccountUri ->
+                    _uiState.update { state ->
+                        state.copy(
+                            accountDataList = state.accountDataList.map { (platform, accounts) ->
+                                platform to accounts.map { account ->
+                                    account.copy(active = account.account.uri.toString() == lastActiveAccountUri)
+                                }
+                            }
+                        )
+                    }
+                }
+        }
     }
 
     private fun observeAccountFlow() {
         viewModelScope.launch {
             statusProvider.accountManager
                 .getAllAccountFlow()
-                .map { list -> list.map { ProfileAccountUiState(it, true) } }
+                .map { list ->
+                    val activeAccountUri = activeAccountsSynchronizer.activeAccountUriFlow.value
+                    list.map {
+                        ProfileAccountUiState(
+                            account = it,
+                            logged = true,
+                            active = it.uri.toString() == activeAccountUri,
+                        )
+                    }
+                }
                 .map { list -> list.groupBy { it.account.platform }.map { it.key to it.value } }
                 .collect { list ->
                     _uiState.update { it.copy(accountDataList = list) }
-                    reportInfo { put("accountCount", list.size.toString()) }
                 }
         }
     }

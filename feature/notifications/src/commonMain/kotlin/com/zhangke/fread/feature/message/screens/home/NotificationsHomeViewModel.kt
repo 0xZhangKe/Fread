@@ -2,24 +2,19 @@ package com.zhangke.fread.feature.message.screens.home
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.common.config.LocalConfigManager
+import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 
 class NotificationsHomeViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val localConfigManager: LocalConfigManager,
+    private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
 ) : ViewModel() {
-
-    companion object {
-
-        private const val LATEST_SELECTED_ACCOUNT = "notification_tab_last_selected_account"
-    }
 
     private val _uiState = MutableStateFlow(
         NotificationsHomeUiState(
@@ -36,8 +31,12 @@ class NotificationsHomeViewModel @Inject constructor(
                 .collect { accounts ->
                     var selectedAccount = _uiState.value.selectedAccount
                     if (selectedAccount == null) {
-                        val latestSelectedAccount = getLastedSelectedAccount()
-                        selectedAccount = accounts.firstOrNull { it.uri == latestSelectedAccount }
+                        val lastActiveAccountUri =
+                            activeAccountsSynchronizer.activeAccountUriFlow.value
+                        if (!lastActiveAccountUri.isNullOrEmpty()) {
+                            selectedAccount =
+                                accounts.firstOrNull { it.uri.toString() == lastActiveAccountUri }
+                        }
                     }
                     if (selectedAccount == null) {
                         selectedAccount = accounts.firstOrNull()
@@ -50,21 +49,25 @@ class NotificationsHomeViewModel @Inject constructor(
                     }
                 }
         }
+        launchInViewModel {
+            activeAccountsSynchronizer.activeAccountUriFlow
+                .mapNotNull { it?.takeIf { it.isNotEmpty() } }
+                .collect { lastActiveAccountUri ->
+                    val accounts = uiState.value.accountList
+                    val selectedAccount =
+                        accounts.firstOrNull { it.uri.toString() == lastActiveAccountUri }
+                    if (selectedAccount != null && selectedAccount.uri != uiState.value.selectedAccount?.uri) {
+                        _uiState.update { it.copy(selectedAccount = selectedAccount) }
+                    }
+                }
+        }
     }
 
     fun onAccountSelected(account: LoggedAccount) {
         if (account.uri == uiState.value.selectedAccount?.uri) return
         launchInViewModel {
-            updateLatestSelectedAccount(account.uri)
-            _uiState.value = _uiState.value.copy(selectedAccount = account)
+            _uiState.update { it.copy(selectedAccount = account) }
+            activeAccountsSynchronizer.onAccountSelected(account.uri.toString())
         }
-    }
-
-    private suspend fun getLastedSelectedAccount(): FormalUri? {
-        return localConfigManager.getString(LATEST_SELECTED_ACCOUNT)?.let { FormalUri.from(it) }
-    }
-
-    private suspend fun updateLatestSelectedAccount(accountUri: FormalUri) {
-        localConfigManager.putString(LATEST_SELECTED_ACCOUNT, accountUri.toString())
     }
 }

@@ -10,4 +10,5 @@ data class ProfileHomeUiState(
 data class ProfileAccountUiState(
     val account: LoggedAccount,
     val logged: Boolean,
+    val active: Boolean,
 )

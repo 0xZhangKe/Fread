@@ -42,7 +42,7 @@ data class BlueskyContent(
     override val order: Int,
     val baseUrl: FormalBaseUrl,
     val feedsList: List<BlueskyFeeds>,
-    val accountUri: FormalUri? = null,
+    override val accountUri: FormalUri? = null,
 ) : FreadContent {
 
     private val _id: String by lazy {

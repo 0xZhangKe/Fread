@@ -25,7 +25,7 @@ data class ActivityPubContent(
     override val order: Int,
     val baseUrl: FormalBaseUrl,
     val tabList: List<ContentTab>,
-    val accountUri: FormalUri? = null,
+    override val accountUri: FormalUri? = null,
 ) : FreadContent {
 
     private val _id: String by lazy {

@@ -3,37 +3,62 @@ package com.zhangke.fread.feeds.pages.home
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.Log
+import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
-import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.FreadContent
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 
 class ContentHomeViewModel @Inject constructor(
     private val contentRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
+    private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ContentHomeUiState.default)
     val uiState: StateFlow<ContentHomeUiState> = _uiState
 
+    private val _switchPageFlow = MutableSharedFlow<Int>(1)
+    val switchPageFlow: SharedFlow<Int> = _switchPageFlow
+
     init {
         launchInViewModel {
             _uiState.update { it.copy(loading = true) }
-            val allConfig = contentRepo.getAllContent()
+            val allContent = contentRepo.getAllContent()
+            var currentPageIndex = 0
+            val lastActiveAccount = activeAccountsSynchronizer.activeAccountUriFlow.value
+            if (!lastActiveAccount.isNullOrEmpty()) {
+                allContent.indexOfFirst { it.accountUri?.toString() == lastActiveAccount }
+                    .takeIf { it >= 0 }
+                    ?.let { currentPageIndex = it }
+            }
             _uiState.update { currentState ->
                 currentState.copy(
-                    currentPageIndex = 0,
-                    contentConfigList = allConfig,
+                    currentPageIndex = currentPageIndex,
+                    contentConfigList = allContent,
                     loading = false,
                 )
             }
+            activeAccountsSynchronizer.activeAccountUriFlow
+                .mapNotNull { it?.takeIf { it.isNotEmpty() } }
+                .collect { uri ->
+                    val activeIndex = _uiState.value.contentConfigList.indexOfFirst { config ->
+                        config.accountUri?.toString() == uri
+                    }
+                    if (activeIndex >= 0 && activeIndex != _uiState.value.currentPageIndex) {
+                        _switchPageFlow.emit(activeIndex)
+                    }
+                }
         }
         launchInViewModel {
             contentRepo.getAllContentFlow()
@@ -62,11 +87,21 @@ class ContentHomeViewModel @Inject constructor(
         return statusProvider.screenProvider.getContentScreen(contentConfig, isLatestTab)
     }
 
-    fun onCurrentPageChange(currentPage: Int) {
+    fun onCurrentPageChanged(currentPage: Int) {
         val currentState = _uiState.value
         if (currentPage == currentState.currentPageIndex) return
-        _uiState.value = currentState.copy(
-            currentPageIndex = currentPage,
-        )
+        _uiState.update { it.copy(currentPageIndex = currentPage) }
+        launchInViewModel {
+            _uiState.value
+                .contentConfigList
+                .getOrNull(currentPage)
+                ?.accountUri
+                ?.toString()
+                ?.let { activeAccountsSynchronizer.onAccountSelected(it) }
+        }
+    }
+
+    fun onSwitchPageFlowUsed() {
+        _switchPageFlow.resetReplayCache()
     }
 }

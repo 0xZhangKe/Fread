@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.model
 
 import androidx.compose.runtime.Composable
+import com.zhangke.fread.status.uri.FormalUri
 
 interface FreadContent {
 
@@ -9,6 +10,8 @@ interface FreadContent {
     val order: Int
 
     val name: String
+
+    val accountUri: FormalUri?
 
     fun newOrder(newOrder: Int): FreadContent
 

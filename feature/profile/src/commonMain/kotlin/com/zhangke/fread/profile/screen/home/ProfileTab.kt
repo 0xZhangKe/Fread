@@ -31,7 +31,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,7 +55,6 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.resources.PlatformLogo
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
@@ -93,47 +91,42 @@ class ProfileTab() : PagerTab {
     ) {
         val viewModel = screen.getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
-        val rootNavigator = LocalNavigator.currentOrThrow.rootNavigator
         val moduleScreenVisitor = LocalModuleScreenVisitor.current
         LaunchedEffect(Unit) {
             viewModel.refreshAccountInfo()
         }
-        CompositionLocalProvider(
-            LocalNavigator provides rootNavigator
-        ) {
-            val navigator = LocalNavigator.currentOrThrow
-            ProfileHomePageContent(
-                uiState = uiState,
-                onAddAccountClick = {
-                    rootNavigator.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
-                },
-                onSettingClick = {
-                    navigator.push(SettingScreen())
-                },
-                onLogoutClick = {
-                    viewModel.onLogoutClick(it)
-                },
-                onAccountClick = {
-                    viewModel.onAccountClick(it)
-                },
-                onFavouritedClick = {
-                    viewModel.onFavouritedClick(it)
-                },
-                onBookmarkedClick = {
-                    viewModel.onBookmarkedClick(it)
-                },
-                onFollowedHashtagClick = {
-                    viewModel.onFollowedHashtagClick(it)
-                },
-                onPinnedFeedsClick = {
-                    viewModel.onPinnedFeedsClick(it)
-                },
-                onLoginClick = viewModel::onLoginClick,
-                onListsClick = viewModel::onListsClick,
-            )
-            ConsumeFlow(viewModel.openPageFlow) {
-                navigator.push(it)
-            }
+        val navigator = LocalNavigator.currentOrThrow
+        ProfileHomePageContent(
+            uiState = uiState,
+            onAddAccountClick = {
+                navigator.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
+            },
+            onSettingClick = {
+                navigator.push(SettingScreen())
+            },
+            onLogoutClick = {
+                viewModel.onLogoutClick(it)
+            },
+            onAccountClick = {
+                viewModel.onAccountClick(it)
+            },
+            onFavouritedClick = {
+                viewModel.onFavouritedClick(it)
+            },
+            onBookmarkedClick = {
+                viewModel.onBookmarkedClick(it)
+            },
+            onFollowedHashtagClick = {
+                viewModel.onFollowedHashtagClick(it)
+            },
+            onPinnedFeedsClick = {
+                viewModel.onPinnedFeedsClick(it)
+            },
+            onLoginClick = viewModel::onLoginClick,
+            onListsClick = viewModel::onListsClick,
+        )
+        ConsumeFlow(viewModel.openPageFlow) {
+            navigator.push(it)
         }
     }
 

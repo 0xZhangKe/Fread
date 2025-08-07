@@ -24,7 +24,6 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.zhangke.framework.voyager.CurrentAnimatedScreen
 import com.zhangke.framework.voyager.LocalSharedTransitionScope
-import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.bubble.BubbleManager
 import com.zhangke.fread.common.bubble.LocalBubbleManager
@@ -51,7 +50,6 @@ import com.zhangke.fread.common.utils.ThumbnailHelper
 import com.zhangke.fread.common.utils.ToastHelper
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.ModuleScreenVisitor
-import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
@@ -117,7 +115,6 @@ internal fun FreadApp(
                         ) {
                             Navigator(
                                 screen = remember { FreadScreen() },
-                                key = ROOT_NAVIGATOR_KEY,
                             ) { navigator ->
                                 CurrentAnimatedScreen(navigator)
                                 LaunchedEffect(Unit) {

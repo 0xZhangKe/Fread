@@ -6,6 +6,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.mapNotNull
@@ -37,17 +38,17 @@ class ExplorerHomeViewModel @Inject constructor(
                         selectedAccount = accountsList.firstOrNull()
                     }
                     val newUiState = currentUiState.copy(
-                        loggedAccountsList = accountsList,
+                        accountWithTabList = convertContentsToWithTab(accountsList),
                         selectedAccount = selectedAccount,
                     )
-                    _uiState.value = newUiState.copy(tab = getPagerTab(newUiState))
+                    _uiState.value = newUiState
                 }
         }
         launchInViewModel {
             activeAccountsSynchronizer.activeAccountUriFlow
                 .mapNotNull { it?.takeIf { it.isNotEmpty() } }
                 .collect { lastActiveAccountUri ->
-                    val accounts = uiState.value.loggedAccountsList
+                    val accounts = uiState.value.accountWithTabList.map { it.first }
                     val selectedAccount =
                         accounts.firstOrNull { it.uri.toString() == lastActiveAccountUri }
                     if (selectedAccount != null && selectedAccount.uri != uiState.value.selectedAccount?.uri) {
@@ -60,20 +61,20 @@ class ExplorerHomeViewModel @Inject constructor(
     fun onAccountSelected(account: LoggedAccount) {
         if (account.uri == uiState.value.selectedAccount?.uri) return
         launchInViewModel {
-            val newUiState = _uiState.value.copy(selectedAccount = account)
-            _uiState.update { newUiState.copy(tab = getPagerTab(newUiState)) }
+            _uiState.update { it.copy(selectedAccount = account) }
             activeAccountsSynchronizer.onAccountSelected(account.uri.toString())
         }
     }
 
-    private fun getPagerTab(uiState: ExplorerHomeUiState): PagerTab? {
-        return if (uiState.locator != null && uiState.platform != null) {
+    private fun convertContentsToWithTab(accounts: List<LoggedAccount>): List<Pair<LoggedAccount, PagerTab>> {
+        return accounts.mapNotNull { account ->
             statusProvider.screenProvider.getExplorerTab(
-                locator = uiState.locator!!,
-                platform = uiState.platform!!,
-            )
-        } else {
-            null
+                locator = PlatformLocator(
+                    baseUrl = account.platform.baseUrl,
+                    accountUri = account.uri,
+                ),
+                platform = account.platform,
+            )?.let { account to it }
         }
     }
 }

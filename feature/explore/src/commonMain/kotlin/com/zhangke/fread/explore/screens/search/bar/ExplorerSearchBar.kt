@@ -49,7 +49,6 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
 import com.zhangke.fread.explore.Res
 import com.zhangke.fread.explore.explorer_search_bar_hint
@@ -69,7 +68,7 @@ fun Screen.ExplorerSearchBar(
     accountList: List<LoggedAccount>,
     onAccountSelected: (LoggedAccount) -> Unit,
 ) {
-    val navigator = LocalNavigator.currentOrThrow.rootNavigator
+    val navigator = LocalNavigator.currentOrThrow
     var active by remember {
         mutableStateOf(false)
     }

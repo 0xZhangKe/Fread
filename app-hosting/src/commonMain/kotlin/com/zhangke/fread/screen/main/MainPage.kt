@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,8 +65,8 @@ fun Screen.MainPage() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val nestedTabConnection = remember { NestedTabConnection() }
-    var selectedIndex by remember { mutableIntStateOf(0) }
-    var inFeedsTab by remember { mutableStateOf(false) }
+    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
+    var inFeedsTab by rememberSaveable { mutableStateOf(false) }
     val pagerState = rememberPagerState { tabs.size }
     LaunchedEffect(selectedIndex) {
         inFeedsTab = selectedIndex == 0

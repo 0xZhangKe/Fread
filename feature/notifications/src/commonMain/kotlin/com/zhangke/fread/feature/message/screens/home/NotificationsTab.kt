@@ -40,14 +40,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.commonbiz.illustration_message
 import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.ic_notification_tab
@@ -78,15 +75,10 @@ class NotificationsTab() : PagerTab {
     ) {
         val viewModel: NotificationsHomeViewModel = screen.getViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow.rootNavigator
-        CompositionLocalProvider(
-            LocalNavigator provides navigator
-        ) {
-            screen.NotificationsHomeScreenContent(
-                uiState = uiState,
-                onAccountSelected = viewModel::onAccountSelected,
-            )
-        }
+        screen.NotificationsHomeScreenContent(
+            uiState = uiState,
+            onAccountSelected = viewModel::onAccountSelected,
+        )
     }
 
     @Composable

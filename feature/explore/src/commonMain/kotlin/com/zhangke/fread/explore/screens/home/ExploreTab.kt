@@ -3,26 +3,24 @@ package com.zhangke.fread.explore.screens.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.ic_logo_small
 import com.zhangke.fread.explore.screens.search.bar.ExplorerSearchBar
@@ -50,15 +48,10 @@ class ExploreTab() : PagerTab {
     ) {
         val viewModel = screen.getViewModel<ExplorerHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow.rootNavigator
-        CompositionLocalProvider(LocalNavigator provides navigator) {
-            screen.ExplorerHomeContent(
-                uiState = uiState,
-                onAccountSelected = {
-                    viewModel.onAccountSelected(it)
-                },
-            )
-        }
+        screen.ExplorerHomeContent(
+            uiState = uiState,
+            onAccountSelected = viewModel::onAccountSelected,
+        )
     }
 
     @Composable
@@ -82,23 +75,26 @@ class ExploreTab() : PagerTab {
             ) {
                 ExplorerSearchBar(
                     selectedAccount = uiState.selectedAccount,
-                    accountList = uiState.loggedAccountsList,
+                    accountList = uiState.accountWithTabList.map { it.first },
                     onAccountSelected = onAccountSelected,
                 )
-                if (uiState.tab != null) {
-                    val nestedTabConnection = remember {
-                        NestedTabConnection()
-                    }
+//                val pagerState = rememberPagerState { uiState.accountWithTabList.size }
+//                HorizontalPager(
+//                    state = pagerState,
+//                    userScrollEnabled = false,
+//                ){
+//
+//                }
+                uiState.tab?.let { tab ->
+                    val nestedTabConnection = remember { NestedTabConnection() }
                     CompositionLocalProvider(
                         LocalSnackbarHostState provides snackbarHostState,
                         LocalNestedTabConnection provides nestedTabConnection,
                     ) {
-                        key(uiState.tab) {
-                            uiState.tab.TabContent(
-                                this@ExplorerHomeContent,
-                                null,
-                            )
-                        }
+                        tab.TabContent(
+                            this@ExplorerHomeContent,
+                            null,
+                        )
                     }
                 }
             }

@@ -51,7 +51,7 @@ class FeedsHomeTab : PagerTab {
         val coroutineScope = rememberCoroutineScope()
         val viewModel: ContentHomeViewModel = screen.getViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        if (uiState.contentConfigList.isEmpty()) {
+        if (uiState.contentAndTabList.isEmpty()) {
             if (uiState.loading) {
                 Box(modifier = Modifier.Companion.fillMaxSize())
             } else {
@@ -63,7 +63,7 @@ class FeedsHomeTab : PagerTab {
             val mainTabConnection = LocalNestedTabConnection.current
             val pagerState = rememberPagerState(
                 initialPage = uiState.currentPageIndex,
-                pageCount = { uiState.contentConfigList.size },
+                pageCount = { uiState.contentAndTabList.size },
             )
             ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
                 if (pagerState.currentPage < pagerState.pageCount - 1) {
@@ -72,8 +72,8 @@ class FeedsHomeTab : PagerTab {
                     }
                 }
             }
-            ConsumeFlow(mainTabConnection.scrollToContentTabFlow) {
-                val index = uiState.contentConfigList.indexOf(it)
+            ConsumeFlow(mainTabConnection.scrollToContentTabFlow) { content ->
+                val index = uiState.contentAndTabList.indexOfFirst { it.first == content }
                 if (index in 0 until pagerState.pageCount) {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
@@ -95,18 +95,9 @@ class FeedsHomeTab : PagerTab {
                 state = pagerState,
                 userScrollEnabled = !contentScrollInProgress,
             ) { pageIndex ->
-                val currentScreen = remember(uiState.contentConfigList, pageIndex) {
-                    viewModel.getContentScreen(
-                        contentConfig = uiState.contentConfigList[pageIndex],
-                        isLatestTab = pageIndex == uiState.contentConfigList.lastIndex,
-                    )
-                }
-                if (currentScreen == null) {
-                    Text(text = "Error! can't find any tab fro this config!")
-                } else {
-                    with(currentScreen) {
-                        TabContent(screen, null)
-                    }
+                val currentScreen = uiState.contentAndTabList[pageIndex].second
+                with(currentScreen) {
+                    TabContent(screen, null)
                 }
             }
         }

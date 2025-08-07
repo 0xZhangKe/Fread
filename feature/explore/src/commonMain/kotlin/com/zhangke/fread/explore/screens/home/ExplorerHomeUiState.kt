@@ -7,8 +7,7 @@ import com.zhangke.fread.status.platform.BlogPlatform
 
 data class ExplorerHomeUiState(
     val selectedAccount: LoggedAccount?,
-    val loggedAccountsList: List<LoggedAccount>,
-    val tab: PagerTab?,
+    val accountWithTabList: List<Pair<LoggedAccount, PagerTab>>,
 ) {
 
     val locator: PlatformLocator?
@@ -22,13 +21,17 @@ data class ExplorerHomeUiState(
 
     val platform: BlogPlatform? get() = selectedAccount?.platform
 
+    val tab: PagerTab?
+        get() {
+            return accountWithTabList.firstOrNull { it.first.uri == selectedAccount?.uri }?.second
+        }
+
     companion object {
 
         fun default(): ExplorerHomeUiState {
             return ExplorerHomeUiState(
                 selectedAccount = null,
-                loggedAccountsList = emptyList(),
-                tab = null,
+                accountWithTabList = emptyList(),
             )
         }
     }

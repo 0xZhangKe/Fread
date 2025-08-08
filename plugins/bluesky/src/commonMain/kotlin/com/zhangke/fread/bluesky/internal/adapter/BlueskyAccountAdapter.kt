@@ -3,6 +3,7 @@ package com.zhangke.fread.bluesky.internal.adapter
 import app.bsky.actor.ProfileView
 import app.bsky.actor.ProfileViewBasic
 import app.bsky.actor.ProfileViewDetailed
+import app.bsky.actor.ViewerState
 import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
 import com.zhangke.framework.architect.json.Empty
@@ -13,6 +14,7 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.source.StatusSource
 import kotlinx.serialization.json.JsonObject
@@ -65,6 +67,7 @@ class BlueskyAccountAdapter @Inject constructor(
             followersCount = profileViewDetailed?.followersCount,
             followingCount = profileViewDetailed?.followsCount,
             statusesCount = profileViewDetailed?.postsCount,
+            relationships = profileViewDetailed?.viewer?.let(::convertRelationship)
         )
     }
 
@@ -81,6 +84,7 @@ class BlueskyAccountAdapter @Inject constructor(
             followersCount = null,
             followingCount = null,
             statusesCount = null,
+            relationships = profile.viewer?.let(::convertRelationship)
         )
     }
 
@@ -98,6 +102,7 @@ class BlueskyAccountAdapter @Inject constructor(
             followersCount = null,
             followingCount = null,
             statusesCount = null,
+            relationships = profile.viewer?.let(::convertRelationship)
         )
     }
 
@@ -162,5 +167,17 @@ class BlueskyAccountAdapter @Inject constructor(
     private fun JsonContent.tryToJsonObject(): JsonObject? {
         return bskyJson.encodeToJsonElement(JsonContent.serializer(), this)
             .takeIf { it is JsonObject }?.jsonObject
+    }
+
+    fun convertRelationship(viewerState: ViewerState): Relationships {
+        return Relationships(
+            following = viewerState.following?.atUri != null,
+            followedBy = viewerState.followedBy?.atUri != null,
+            blocking = viewerState.blocking?.atUri != null,
+            blockedBy = viewerState.blockedBy == true,
+            muting = viewerState.muted == true,
+            requested = null,
+            requestedBy = null,
+        )
     }
 }

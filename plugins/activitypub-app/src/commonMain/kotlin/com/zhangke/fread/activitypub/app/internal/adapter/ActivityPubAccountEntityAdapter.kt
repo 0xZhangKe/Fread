@@ -1,11 +1,13 @@
 package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
+import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.reportToLogger
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 
@@ -31,6 +33,7 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
             followersCount = entity.followersCount.toLong(),
             followingCount = entity.followingCount.toLong(),
             statusesCount = entity.statusesCount.toLong(),
+            relationships = null,
         )
     }
 
@@ -51,5 +54,17 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
             }
             throw e
         }
+    }
+
+    fun convertRelationship(entity: ActivityPubRelationshipEntity): Relationships {
+        return Relationships(
+            following = entity.following,
+            followedBy = entity.followedBy,
+            blocking = entity.blocking,
+            blockedBy = entity.blockedBy,
+            muting = entity.muting,
+            requested = entity.requested,
+            requestedBy = entity.requestedBy,
+        )
     }
 }

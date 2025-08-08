@@ -74,7 +74,6 @@ fun FollowNotification(
             modifier = Modifier.padding(top = style.headLineToContentPadding)
                 .fillMaxWidth(),
             user = notification.author,
-            relationship = null,
             onUserClick = onUserInfoClick,
             onFollowAccountClick = onFollowAccountClick,
             onUnfollowAccountClick = onUnfollowAccountClick,

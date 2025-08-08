@@ -13,6 +13,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.utils.formatToHumanReadable
@@ -29,9 +30,10 @@ fun UserFollowLine(
     followersCount: Long?,
     followingCount: Long?,
     statusesCount: Long?,
-    onFollowerClick: () -> Unit,
-    onFollowingClick: () -> Unit,
-){
+    isHighlightBigger: Boolean = true,
+    onFollowerClick: (() -> Unit)? = null,
+    onFollowingClick: (() -> Unit)? = null,
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -40,6 +42,7 @@ fun UserFollowLine(
             count = followersCount,
             descId = Res.string.status_ui_user_detail_follower_info,
             onClick = onFollowerClick,
+            isHighlightBigger = isHighlightBigger,
         )
         Text(
             modifier = Modifier
@@ -51,6 +54,7 @@ fun UserFollowLine(
             count = followingCount,
             descId = Res.string.status_ui_user_detail_following_info,
             onClick = onFollowingClick,
+            isHighlightBigger = isHighlightBigger,
         )
         Text(
             modifier = Modifier
@@ -60,6 +64,7 @@ fun UserFollowLine(
         )
         CountInfoItem(
             count = statusesCount,
+            isHighlightBigger = isHighlightBigger,
             descId = Res.string.status_ui_user_detail_posts,
         )
     }
@@ -69,6 +74,7 @@ fun UserFollowLine(
 private fun CountInfoItem(
     count: Long?,
     descId: StringResource,
+    isHighlightBigger: Boolean,
     onClick: (() -> Unit)? = null,
 ) {
     val descSuffix = stringResource(descId)
@@ -76,7 +82,7 @@ private fun CountInfoItem(
         if (count == null) {
             buildAnnotatedString { append("    ") }
         } else {
-            buildCountedDesc(count, descSuffix)
+            buildCountedDesc(count, descSuffix, isHighlightBigger)
         }
     }
     Text(
@@ -88,13 +94,18 @@ private fun CountInfoItem(
     )
 }
 
-private fun buildCountedDesc(count: Long, desc: String): AnnotatedString {
+private fun buildCountedDesc(
+    count: Long,
+    desc: String,
+    isHighlightBigger: Boolean,
+): AnnotatedString {
     val formattedCount = count.formatToHumanReadable()
     return buildAnnotatedString {
         append(formattedCount)
+
         addStyle(
             style = SpanStyle(
-                fontSize = 16.sp,
+                fontSize = if (isHighlightBigger) 16.sp else TextUnit.Unspecified,
                 fontWeight = FontWeight.Medium,
             ),
             start = 0,

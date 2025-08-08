@@ -25,12 +25,15 @@ import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_blocking
 import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow
 import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow_request
 import com.zhangke.fread.statusui.status_ui_user_detail_relationship_blocking
+import com.zhangke.fread.statusui.status_ui_user_detail_relationship_follow_back
 import com.zhangke.fread.statusui.status_ui_user_detail_relationship_following
+import com.zhangke.fread.statusui.status_ui_user_detail_relationship_mutuals
 import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
 import com.zhangke.fread.statusui.status_ui_user_detail_relationship_requested
 import com.zhangke.fread.statusui.status_ui_user_detail_request_by_tip
@@ -138,6 +141,108 @@ fun RelationshipStateButton(
         RelationshipUiState.UNKNOWN -> {
             Box(modifier = modifier)
         }
+    }
+}
+
+@Composable
+fun RelationshipStateButton(
+    modifier: Modifier,
+    relationship: Relationships,
+    onUnblockClick: () -> Unit,
+    onFollowClick: () -> Unit,
+    onUnfollowClick: () -> Unit,
+    onCancelFollowRequestClick: () -> Unit = {},
+    onAcceptClick: () -> Unit = {},
+    onRejectClick: () -> Unit = {},
+) {
+    var showUnfollowDialog by remember { mutableStateOf(false) }
+    when {
+        relationship.blocking -> {
+            var showDialog by remember { mutableStateOf(false) }
+            RelationshipTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.ALERT,
+                text = stringResource(Res.string.status_ui_user_detail_relationship_blocking),
+                onClick = {
+                    showDialog = true
+                },
+            )
+            if (showDialog) {
+                AlertConfirmDialog(
+                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_blocking),
+                    onConfirm = onUnblockClick,
+                    onDismissRequest = { showDialog = false }
+                )
+            }
+        }
+
+        relationship.requested == true -> {
+            var showDialog by remember { mutableStateOf(false) }
+            RelationshipTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.STANDARD,
+                text = stringResource(Res.string.status_ui_user_detail_relationship_requested),
+                onClick = { showDialog = true },
+            )
+            if (showDialog) {
+                AlertConfirmDialog(
+                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow_request),
+                    onConfirm = onCancelFollowRequestClick,
+                    onDismissRequest = { showDialog = false }
+                )
+            }
+        }
+
+        relationship.requestedBy == true -> {
+            FollowRequestBy(
+                modifier = modifier,
+                onAcceptClick = onAcceptClick,
+                onRejectClick = onRejectClick,
+            )
+        }
+
+        relationship.following && relationship.followedBy -> {
+            RelationshipTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.DISABLE,
+                text = stringResource(Res.string.status_ui_user_detail_relationship_mutuals),
+                onClick = { showUnfollowDialog = true },
+            )
+        }
+
+        relationship.following -> {
+            RelationshipTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.STANDARD,
+                text = stringResource(Res.string.status_ui_user_detail_relationship_following),
+                onClick = { showUnfollowDialog = true },
+            )
+        }
+
+        relationship.followedBy -> {
+            RelationshipTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.ACTIVE,
+                text = stringResource(Res.string.status_ui_user_detail_relationship_follow_back),
+                onClick = onFollowClick,
+            )
+        }
+
+        else -> {
+            RelationshipTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.DISABLE,
+                text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow),
+                onClick = onFollowClick,
+            )
+        }
+    }
+    if (showUnfollowDialog) {
+        AlertConfirmDialog(
+            content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow),
+            onConfirm = onUnfollowClick,
+            onDismissRequest = { showUnfollowDialog = false }
+        )
     }
 }
 

@@ -62,6 +62,9 @@ class BlueskyAccountAdapter @Inject constructor(
             avatar = profileViewDetailed?.avatar?.uri,
             description = profileViewDetailed?.description.orEmpty(),
             emojis = emptyList(),
+            followersCount = profileViewDetailed?.followersCount,
+            followingCount = profileViewDetailed?.followsCount,
+            statusesCount = profileViewDetailed?.postsCount,
         )
     }
 
@@ -75,6 +78,9 @@ class BlueskyAccountAdapter @Inject constructor(
             description = "",
             avatar = profile.avatar?.uri,
             emojis = emptyList(),
+            followersCount = null,
+            followingCount = null,
+            statusesCount = null,
         )
     }
 
@@ -89,6 +95,9 @@ class BlueskyAccountAdapter @Inject constructor(
             avatar = profile.avatar?.uri,
             description = profile.description.orEmpty(),
             emojis = emptyList(),
+            followersCount = null,
+            followingCount = null,
+            statusesCount = null,
         )
     }
 

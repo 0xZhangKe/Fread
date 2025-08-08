@@ -1,6 +1,7 @@
 package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_follow_desc
 import com.zhangke.fread.status.author.BlogAuthor
@@ -27,42 +29,59 @@ fun FollowNotification(
     notification: StatusNotification.Follow,
     style: NotificationStyle,
     onUserInfoClick: (BlogAuthor) -> Unit,
+    onFollowAccountClick: (BlogAuthor) -> Unit,
+    onUnfollowAccountClick: (BlogAuthor) -> Unit,
+    onAcceptClick: (BlogAuthor) -> Unit,
+    onRejectClick: (BlogAuthor) -> Unit,
+    onCancelFollowRequestClick: (BlogAuthor) -> Unit,
+    onUnblockClick: (BlogAuthor) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onUserInfoClick(notification.author)
-            }
+    Column(
+        modifier = Modifier.fillMaxWidth()
             .padding(style.containerPaddings),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-
-        Icon(
-            modifier = Modifier.size(style.typeLogoSize),
-            imageVector = Icons.Default.PersonAdd,
-            contentDescription = null,
-        )
-
-        BlogAuthorAvatar(
+        Row(
             modifier = Modifier
-                .padding(start = 6.dp)
-                .size(style.triggerAccountAvatarSize),
-            imageUrl = notification.author.avatar,
-        )
-
-        FreadRichText(
-            modifier = Modifier.padding(start = 6.dp),
-            richText = notification.author.humanizedName,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        Text(
-            modifier = Modifier.padding(start = 6.dp),
-            text = stringResource(Res.string.shared_notification_follow_desc),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+                .fillMaxWidth()
+                .clickable { onUserInfoClick(notification.author) },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.size(style.typeLogoSize),
+                imageVector = Icons.Default.PersonAdd,
+                contentDescription = null,
+            )
+            BlogAuthorAvatar(
+                modifier = Modifier
+                    .padding(start = 6.dp)
+                    .size(style.triggerAccountAvatarSize),
+                imageUrl = notification.author.avatar,
+            )
+            FreadRichText(
+                modifier = Modifier.padding(start = 6.dp),
+                richText = notification.author.humanizedName,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                modifier = Modifier.padding(start = 6.dp),
+                text = stringResource(Res.string.shared_notification_follow_desc),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        UserInfoCard(
+            modifier = Modifier.padding(top = style.headLineToContentPadding)
+                .fillMaxWidth(),
+            user = notification.author,
+            relationship = null,
+            onUserClick = onUserInfoClick,
+            onFollowAccountClick = onFollowAccountClick,
+            onUnfollowAccountClick = onUnfollowAccountClick,
+            onAcceptClick = onAcceptClick,
+            onRejectClick = onRejectClick,
+            onCancelFollowRequestClick = onCancelFollowRequestClick,
+            onUnblockClick = onUnblockClick,
         )
     }
 }

@@ -37,7 +37,8 @@ actual interface ActivityPubPlatformComponent {
             context,
             ActivityPubStatusDatabases::class.java,
             ActivityPubStatusDatabases.DB_NAME,
-        ).build()
+        ).addMigrations(ActivityPubStatusDatabases.MIGRATION_1_2)
+            .build()
     }
 
     @ApplicationScope

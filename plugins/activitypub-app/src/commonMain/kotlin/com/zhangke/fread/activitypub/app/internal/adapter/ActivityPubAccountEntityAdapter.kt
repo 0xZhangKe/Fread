@@ -27,6 +27,10 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
             avatar = entity.avatar,
             emojis = entity.emojis.map(emojiEntityAdapter::toEmoji),
             userId = entity.id,
+            bot = entity.bot,
+            followersCount = entity.followersCount.toLong(),
+            followingCount = entity.followingCount.toLong(),
+            statusesCount = entity.statusesCount.toLong(),
         )
     }
 

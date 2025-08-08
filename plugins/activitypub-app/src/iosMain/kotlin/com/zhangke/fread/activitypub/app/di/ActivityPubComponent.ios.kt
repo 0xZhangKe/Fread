@@ -28,6 +28,7 @@ actual interface ActivityPubPlatformComponent {
             name = dbFilePath,
         ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
+            .addMigrations(ActivityPubStatusDatabases.MIGRATION_1_2)
             .build()
     }
 

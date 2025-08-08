@@ -10,6 +10,9 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusEntityConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.FormalBaseUrlConverter
@@ -19,7 +22,7 @@ import com.zhangke.fread.common.db.converts.StatusConverter
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.status.model.Status
 
-private const val DB_VERSION = 1
+private const val DB_VERSION = 2
 private const val TABLE_NAME = "activity_pub_status"
 
 @Entity(tableName = TABLE_NAME, primaryKeys = ["id", "locator", "type", "listId"])
@@ -105,6 +108,13 @@ abstract class ActivityPubStatusDatabases : RoomDatabase() {
 
     companion object {
         const val DB_NAME = "activity_pub_status_1.db"
+
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+
+            override fun migrate(connection: SQLiteConnection) {
+                connection.execSQL("DELETE FROM $TABLE_NAME")
+            }
+        }
     }
 }
 

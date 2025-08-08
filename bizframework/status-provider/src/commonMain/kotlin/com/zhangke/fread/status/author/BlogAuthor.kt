@@ -20,11 +20,24 @@ data class BlogAuthor(
     val avatar: String?,
     val emojis: List<Emoji>,
     val userId: String? = null,
+    val bot: Boolean = false,
+    val followersCount: Long?,
+    val followingCount: Long?,
+    val statusesCount: Long?,
 ) : PlatformSerializable {
 
     val humanizedName: RichText by lazy {
         buildRichText(
             document = name,
+            mentions = emptyList(),
+            emojis = emojis,
+            hashTags = emptyList(),
+        )
+    }
+
+    val humanizedDescription: RichText by lazy {
+        buildRichText(
+            document = description,
             mentions = emptyList(),
             emojis = emojis,
             hashTags = emptyList(),

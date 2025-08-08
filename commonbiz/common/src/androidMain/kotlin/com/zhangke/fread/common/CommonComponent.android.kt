@@ -82,7 +82,7 @@ actual interface CommonPlatformComponent {
             context,
             MixedStatusDatabases::class.java,
             MixedStatusDatabases.DB_NAME,
-        ).build()
+        ).addMigrations(MixedStatusDatabases.MIGRATION_1_2).build()
     }
 
     @IntoSet

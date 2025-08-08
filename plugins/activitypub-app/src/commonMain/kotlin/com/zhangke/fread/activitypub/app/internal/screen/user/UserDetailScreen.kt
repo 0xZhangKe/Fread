@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,10 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.filled.AlternateEmail
@@ -27,7 +23,6 @@ import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,7 +46,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -123,9 +117,9 @@ import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.RelationshipUiState
 import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
-import com.zhangke.fread.statusui.status_ui_user_detail_follows_you
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -376,46 +370,12 @@ data class UserDetailScreen(
                         description = accountUiState?.description,
                         privateNote = uiState.relationship?.note,
                         acctLine = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                if (account?.bot == true) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(end = 4.dp)
-                                            .size(16.dp),
-                                        imageVector = Icons.Outlined.SmartToy,
-                                        contentDescription = "Bot",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
-                                SelectionContainer {
-                                    Text(
-                                        modifier = Modifier,
-                                        text = account?.prettyAcct.orEmpty(),
-                                        maxLines = 1,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.labelMedium
-                                            .copy(fontWeight = FontWeight.Normal),
-                                    )
-                                }
-                                if (uiState.relationship?.followedBy == true) {
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(start = 4.dp)
-                                            .background(
-                                                color = MaterialTheme.colorScheme.surfaceContainer,
-                                                shape = RoundedCornerShape(2.dp),
-                                            )
-                                            .padding(horizontal = 4.dp),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_user_detail_follows_you),
-                                        style = MaterialTheme.typography.bodySmall
-                                            .copy(fontWeight = FontWeight.Normal),
-                                    )
-                                }
-                            }
+                            UserHandleLine(
+                                modifier = Modifier,
+                                handle = account?.prettyAcct.orEmpty(),
+                                bot = account?.bot == true,
+                                followedBy = uiState.relationship?.followedBy == true
+                            )
                         },
                         followInfo = {
                             UserFollowLine(

@@ -1,6 +1,8 @@
 package com.zhangke.fread.status.account
 
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.FreadContent
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -55,6 +57,24 @@ class AccountManager(
             manager.subscribeNotification()
         }
     }
+
+    suspend fun getRelationships(
+        account: LoggedAccount,
+        accounts: List<BlogAuthor>,
+    ): Result<Map<FormalUri, Relationships>> {
+        val allResult = mutableMapOf<FormalUri, Relationships>()
+        for (manager in accountManagerList) {
+            manager.getRelationships(account, accounts).onSuccess { map -> allResult.putAll(map) }
+        }
+        return Result.success(allResult)
+    }
+
+    suspend fun unblockAccount(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit> {
+        return accountManagerList.firstNotNullOf { it.unblockAccount(account, user) }
+    }
 }
 
 interface IAccountManager {
@@ -73,6 +93,16 @@ interface IAccountManager {
         contentList: List<FreadContent>,
         account: LoggedAccount,
     ): List<FreadContent>
+
+    suspend fun getRelationships(
+        account: LoggedAccount,
+        accounts: List<BlogAuthor>,
+    ): Result<Map<FormalUri, Relationships>>
+
+    suspend fun unblockAccount(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit>?
 
     fun subscribeNotification()
 }

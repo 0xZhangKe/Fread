@@ -15,26 +15,33 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.VerticalIndentLayout
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.utils.HighlightTextBuildUtil
+import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
-import com.zhangke.fread.status.ui.common.RelationshipUiState
-import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.richtext.SelectableRichText
 import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.img_banner_background
+import com.zhangke.fread.statusui.status_ui_user_detail_follower_info
+import com.zhangke.fread.statusui.status_ui_user_detail_following_info
+import com.zhangke.fread.statusui.status_ui_user_detail_posts
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 private const val BANNER_ASPECT = 3F
 
@@ -47,7 +54,6 @@ fun UserInfoCard(
     onUnfollowAccountClick: (BlogAuthor) -> Unit,
     onAcceptClick: (BlogAuthor) -> Unit,
     onRejectClick: (BlogAuthor) -> Unit,
-    onCancelFollowRequestClick: (BlogAuthor) -> Unit,
     onUnblockClick: (BlogAuthor) -> Unit,
 ) {
     Box(modifier = modifier) {
@@ -133,19 +139,16 @@ fun UserInfoCard(
                         )
 
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
+                            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 2.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             if (user.followingCount != null && user.followersCount != null) {
-                                Box(modifier = Modifier.weight(1F)) {
-                                    UserFollowLine(
-                                        modifier = Modifier,
-                                        isHighlightBigger = false,
-                                        followersCount = user.followersCount,
-                                        followingCount = user.followingCount,
-                                        statusesCount = user.statusesCount,
-                                    )
-                                }
+                                UserFollowInfo(
+                                    modifier = Modifier.weight(1F),
+                                    followersCount = user.followersCount,
+                                    followingCount = user.followingCount,
+                                    statusesCount = user.statusesCount,
+                                )
                             } else {
                                 Spacer(modifier = Modifier.weight(1F))
                             }
@@ -158,7 +161,6 @@ fun UserInfoCard(
                                     onUnfollowClick = { onUnfollowAccountClick(user) },
                                     onAcceptClick = { onAcceptClick(user) },
                                     onRejectClick = { onRejectClick(user) },
-                                    onCancelFollowRequestClick = { onCancelFollowRequestClick(user) },
                                     onUnblockClick = { onUnblockClick(user) },
                                 )
                             } else {
@@ -170,4 +172,59 @@ fun UserInfoCard(
             )
         }
     }
+}
+
+@Composable
+private fun UserFollowInfo(
+    modifier: Modifier,
+    followersCount: Long?,
+    followingCount: Long?,
+    statusesCount: Long?,
+) {
+    val followerText = stringResource(Res.string.status_ui_user_detail_follower_info)
+    val followingText = stringResource(Res.string.status_ui_user_detail_following_info)
+    val statusText = stringResource(Res.string.status_ui_user_detail_posts)
+    val infoText = remember(followingCount, followersCount, statusesCount) {
+        buildString {
+            if (followersCount != null) {
+                append(HighlightTextBuildUtil.HIGHLIGHT_START_SYMBOL)
+                append(followersCount.formatToHumanReadable())
+                append(HighlightTextBuildUtil.HIGHLIGHT_END_SYMBOL)
+                append(' ')
+                append(followerText)
+            }
+            if (followingCount != null) {
+                if (followersCount != null) {
+                    append(" · ")
+                }
+                append(HighlightTextBuildUtil.HIGHLIGHT_START_SYMBOL)
+                append(followingCount.formatToHumanReadable())
+                append(HighlightTextBuildUtil.HIGHLIGHT_END_SYMBOL)
+                append(' ')
+                append(followingText)
+            }
+            if (statusesCount != null) {
+                if (followersCount != null || followingCount != null) {
+                    append(" · ")
+                }
+                append(HighlightTextBuildUtil.HIGHLIGHT_START_SYMBOL)
+                append(statusesCount.formatToHumanReadable())
+                append(HighlightTextBuildUtil.HIGHLIGHT_END_SYMBOL)
+                append(' ')
+                append(statusText)
+            }
+        }.let {
+            HighlightTextBuildUtil.buildHighlightText(
+                text = it,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+    }
+    Text(
+        text = infoText,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodySmall,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
 }

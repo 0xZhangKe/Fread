@@ -151,7 +151,6 @@ fun RelationshipStateButton(
     onUnblockClick: () -> Unit,
     onFollowClick: () -> Unit,
     onUnfollowClick: () -> Unit,
-    onCancelFollowRequestClick: () -> Unit = {},
     onAcceptClick: () -> Unit = {},
     onRejectClick: () -> Unit = {},
 ) {
@@ -176,23 +175,6 @@ fun RelationshipStateButton(
             }
         }
 
-        relationship.requested == true -> {
-            var showDialog by remember { mutableStateOf(false) }
-            RelationshipTextButton(
-                modifier = modifier,
-                style = TextButtonStyle.STANDARD,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_requested),
-                onClick = { showDialog = true },
-            )
-            if (showDialog) {
-                AlertConfirmDialog(
-                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow_request),
-                    onConfirm = onCancelFollowRequestClick,
-                    onDismissRequest = { showDialog = false }
-                )
-            }
-        }
-
         relationship.requestedBy == true -> {
             FollowRequestBy(
                 modifier = modifier,
@@ -204,7 +186,7 @@ fun RelationshipStateButton(
         relationship.following && relationship.followedBy -> {
             RelationshipTextButton(
                 modifier = modifier,
-                style = TextButtonStyle.DISABLE,
+                style = TextButtonStyle.STANDARD,
                 text = stringResource(Res.string.status_ui_user_detail_relationship_mutuals),
                 onClick = { showUnfollowDialog = true },
             )
@@ -231,9 +213,9 @@ fun RelationshipStateButton(
         else -> {
             RelationshipTextButton(
                 modifier = modifier,
-                style = TextButtonStyle.DISABLE,
+                style = TextButtonStyle.STANDARD,
                 text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow),
-                onClick = onFollowClick,
+                onClick = { showUnfollowDialog = true },
             )
         }
     }

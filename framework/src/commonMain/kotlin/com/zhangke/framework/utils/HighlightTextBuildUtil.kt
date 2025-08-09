@@ -10,8 +10,8 @@ import androidx.compose.ui.unit.TextUnit
 
 object HighlightTextBuildUtil {
 
-    private const val HIGHLIGHT_START_SYMBOL = "[["
-    private const val HIGHLIGHT_END_SYMBOL = "]]"
+    const val HIGHLIGHT_START_SYMBOL = "[["
+    const val HIGHLIGHT_END_SYMBOL = "]]"
 
     /**
      * some text[[high light text]]end text

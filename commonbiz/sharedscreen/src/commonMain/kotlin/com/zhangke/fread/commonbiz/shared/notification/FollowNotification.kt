@@ -33,7 +33,6 @@ fun FollowNotification(
     onUnfollowAccountClick: (BlogAuthor) -> Unit,
     onAcceptClick: (BlogAuthor) -> Unit,
     onRejectClick: (BlogAuthor) -> Unit,
-    onCancelFollowRequestClick: (BlogAuthor) -> Unit,
     onUnblockClick: (BlogAuthor) -> Unit,
 ) {
     Column(
@@ -79,7 +78,6 @@ fun FollowNotification(
             onUnfollowAccountClick = onUnfollowAccountClick,
             onAcceptClick = onAcceptClick,
             onRejectClick = onRejectClick,
-            onCancelFollowRequestClick = onCancelFollowRequestClick,
             onUnblockClick = onUnblockClick,
         )
     }

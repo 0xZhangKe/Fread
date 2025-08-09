@@ -13,10 +13,15 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.feature.message.repo.notification.NotificationsRepo
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.StatusNotification
+import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class NotificationViewModel(
     private val statusProvider: StatusProvider,
@@ -49,6 +54,8 @@ class NotificationViewModel(
     private var reportedNotificationId: String? = null
     private var cursor: String? = null
 
+    private val userRelationshipsSnapshot = mutableMapOf<FormalUri, Relationships?>()
+
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
@@ -63,6 +70,14 @@ class NotificationViewModel(
 
                     is InteractiveHandleResult.UpdateFollowState -> {
                         // no-op
+                        updateUiStateRelationships(
+                            authorUri = interactiveResult.userUri,
+                            block = { relationships ->
+                                relationships?.copy(
+                                    following = interactiveResult.following,
+                                )
+                            }
+                        )
                     }
                 }
             }
@@ -126,21 +141,98 @@ class NotificationViewModel(
         }
     }
 
-    fun onRejectClick(notification: StatusNotification.FollowRequest) {
+    fun onRejectClick(author: BlogAuthor) {
         launchInViewModel {
             statusProvider.notificationResolver
-                .rejectFollowRequest(account, notification.author)
+                .rejectFollowRequest(account, author)
                 .onSuccess { onRefresh(true) }
                 .onFailure { mutableErrorMessageFlow.emitTextMessageFromThrowable(it) }
         }
     }
 
-    fun onAcceptClick(notification: StatusNotification.FollowRequest) {
+    fun onAcceptClick(author: BlogAuthor) {
         launchInViewModel {
             statusProvider.notificationResolver
-                .acceptFollowRequest(account, notification.author)
+                .acceptFollowRequest(account, author)
                 .onSuccess { onRefresh(true) }
                 .onFailure { mutableErrorMessageFlow.emitTextMessageFromThrowable(it) }
+        }
+    }
+
+    fun onUnblockClick(locator: PlatformLocator, author: BlogAuthor) {
+        launchInViewModel {
+            statusProvider.accountManager.unblockAccount(
+                account = account,
+                user = author,
+            ).onSuccess {
+                updateUiStateRelationships(
+                    authorUri = author.uri,
+                    block = { relationships ->
+                        relationships?.copy(blocking = false)
+                    },
+                )
+            }.onFailure {
+                mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
+            }
+        }
+    }
+
+    private fun updateUiStateRelationships(
+        authorUri: FormalUri,
+        block: (Relationships?) -> Relationships?,
+    ) {
+        userRelationshipsSnapshot.remove(authorUri)?.let {
+            userRelationshipsSnapshot[authorUri] = block(it)
+        }
+        _uiState.update { state ->
+            state.copy(
+                dataList = updateAuthorRelationships(
+                    notifications = state.dataList,
+                    authorUri = authorUri,
+                    block = block,
+                )
+            )
+        }
+    }
+
+    private fun updateAuthorRelationships(
+        notifications: List<StatusNotificationUiState>,
+        authorUri: FormalUri,
+        block: (Relationships?) -> Relationships?,
+    ): List<StatusNotificationUiState> {
+        return notifications.map { notificationUiState ->
+            val notification = notificationUiState.notification
+            when (notification) {
+                is StatusNotification.Follow -> {
+                    if (notification.author.uri == authorUri) {
+                        notificationUiState.copy(
+                            notification = notification.copy(
+                                author = notification.author.copy(
+                                    relationships = block(notification.author.relationships)
+                                )
+                            )
+                        )
+                    } else {
+                        notificationUiState
+                    }
+                }
+
+                is StatusNotification.FollowRequest -> {
+                    if (notification.author.uri == authorUri) {
+                        notificationUiState.copy(
+                            notification = notification.copy(
+                                author = notification.author.copy(
+                                    relationships = block(notification.author.relationships)
+                                )
+                            )
+                        )
+                    } else {
+                        notificationUiState
+                    }
+                }
+
+                else -> notificationUiState
+            }
         }
     }
 
@@ -158,12 +250,77 @@ class NotificationViewModel(
             cursor = cursor,
         ).map {
             this.cursor = it.cursor
-            it.notifications.map { n -> StatusNotificationUiState(n, fromLocal = false) }
+            it.notifications
+                .map { n -> StatusNotificationUiState(n, fromLocal = false) }
+                .let { list -> fillRelationships(list, userRelationshipsSnapshot) }
         }.onSuccess {
             if (loadMore || uiState.value.inOnlyMentionTab) {
                 notificationsRepo.insertNotification(account.uri, it.map { n -> n.notification })
             } else {
                 notificationsRepo.replaceNotifications(account.uri, it.map { n -> n.notification })
+            }
+            launch { loadRelationships(account, it) }
+        }
+    }
+
+    private suspend fun loadRelationships(
+        account: LoggedAccount,
+        notifications: List<StatusNotificationUiState>
+    ) {
+        val users = notifications.map { it.notification }
+            .mapNotNull { notification ->
+                when (notification) {
+                    is StatusNotification.Follow -> notification.author
+                    is StatusNotification.FollowRequest -> notification.author
+                    else -> null
+                }
+            }
+        if (users.isEmpty()) return
+        getRelationships(account, users).onSuccess { relationships ->
+            if (relationships.isNotEmpty()) {
+                userRelationshipsSnapshot.putAll(relationships)
+                _uiState.update { state ->
+                    state.copy(dataList = fillRelationships(notifications, relationships))
+                }
+            }
+        }
+    }
+
+    private fun fillRelationships(
+        notifications: List<StatusNotificationUiState>,
+        relationships: Map<FormalUri, Relationships?>,
+    ): List<StatusNotificationUiState> {
+        if (relationships.isEmpty() || notifications.isEmpty()) return notifications
+        return notifications.map { notificationUiState ->
+            val notification = notificationUiState.notification
+            when {
+                notification is StatusNotification.Follow && notification.author.relationships == null -> {
+                    val relationship = relationships[notification.author.uri]
+                    if (relationship != null) {
+                        notificationUiState.copy(
+                            notification = notification.copy(
+                                author = notification.author.copy(relationships = relationship)
+                            )
+                        )
+                    } else {
+                        notificationUiState
+                    }
+                }
+
+                notification is StatusNotification.FollowRequest && notification.author.relationships == null -> {
+                    val relationship = relationships[notification.author.uri]
+                    if (relationship != null) {
+                        notificationUiState.copy(
+                            notification = notification.copy(
+                                author = notification.author.copy(relationships = relationship)
+                            )
+                        )
+                    } else {
+                        notificationUiState
+                    }
+                }
+
+                else -> notificationUiState
             }
         }
     }
@@ -196,8 +353,16 @@ class NotificationViewModel(
         if (updatedNotification != null) {
             notificationsRepo.updateNotification(
                 accountUri = account.uri,
-                notification = updatedNotification!!,
+                notification = updatedNotification,
             )
         }
+    }
+
+    private suspend fun getRelationships(
+        account: LoggedAccount,
+        users: List<BlogAuthor>
+    ): Result<Map<FormalUri, Relationships>> {
+        if (users.isEmpty()) return Result.success(emptyMap())
+        return statusProvider.accountManager.getRelationships(account, users)
     }
 }

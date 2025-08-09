@@ -36,12 +36,15 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.notification.StatusNotificationUi
 import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.notifications_tab_all
 import com.zhangke.fread.feature.notifications.notifications_tab_mention
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
@@ -76,6 +79,7 @@ class NotificationTab(
             onAcceptClick = viewModel::onAcceptClick,
             onRejectClick = viewModel::onRejectClick,
             onNotificationShown = viewModel::onNotificationShown,
+            onUnblockClick = viewModel::onUnblockClick,
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.openScreenFlow) {
@@ -99,8 +103,9 @@ class NotificationTab(
         onSwitchTab: (Boolean) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
-        onRejectClick: (StatusNotification.FollowRequest) -> Unit,
-        onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
+        onUnblockClick: (PlatformLocator, BlogAuthor) -> Unit,
+        onRejectClick: (BlogAuthor) -> Unit,
+        onAcceptClick: (BlogAuthor) -> Unit,
         onNotificationShown: (StatusNotificationUiState) -> Unit,
     ) {
         Column(
@@ -148,6 +153,7 @@ class NotificationTab(
                             indexInList = index,
                             onAcceptClick = onAcceptClick,
                             onRejectClick = onRejectClick,
+                            onUnblockClick = onUnblockClick,
                         )
                         if (notification.unreadState) {
                             LaunchedEffect(notification) {

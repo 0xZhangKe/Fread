@@ -19,6 +19,8 @@ import com.zhangke.fread.commonbiz.shared.screen.shared_notification_quote_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reblog_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reply_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_update_desc
+import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.action.quoteIcon
@@ -35,8 +37,9 @@ fun StatusNotificationUi(
     notification: StatusNotification,
     indexInList: Int,
     style: NotificationStyle = defaultNotificationStyle(),
-    onRejectClick: (StatusNotification.FollowRequest) -> Unit,
-    onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
+    onRejectClick: (BlogAuthor) -> Unit,
+    onAcceptClick: (BlogAuthor) -> Unit,
+    onUnblockClick: (PlatformLocator, BlogAuthor) -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     Column(modifier = modifier) {
@@ -105,12 +108,15 @@ fun StatusNotificationUi(
                         onUserInfoClick = {
                             composedStatusInteraction.onUserInfoClick(notification.locator, it)
                         },
-                        onFollowAccountClick = {},
-                        onUnblockClick = {},
-                        onAcceptClick = {},
-                        onRejectClick = {},
-                        onUnfollowAccountClick = {},
-                        onCancelFollowRequestClick = {},
+                        onFollowAccountClick = {
+                            composedStatusInteraction.onFollowClick(notification.locator, it)
+                        },
+                        onUnblockClick = { onUnblockClick(notification.locator, it) },
+                        onAcceptClick = onAcceptClick,
+                        onRejectClick = onRejectClick,
+                        onUnfollowAccountClick = {
+                            composedStatusInteraction.onUnfollowClick(notification.locator, it)
+                        },
                     )
                 }
 

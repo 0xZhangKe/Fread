@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app
 
 import com.zhangke.framework.utils.exceptionOrThrow
+import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
@@ -15,8 +16,10 @@ import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
@@ -34,6 +37,7 @@ class ActivityPubAccountManager @Inject constructor(
     private val accountAdapter: ActivityPubLoggedAccountAdapter,
     private val activityPubPushManager: ActivityPubPushManager,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
+    private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
 ) : IAccountManager {
 
     init {
@@ -112,6 +116,50 @@ class ActivityPubAccountManager @Inject constructor(
     private suspend fun subscribeNotificationForAccount(account: ActivityPubLoggedAccount) {
         val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         activityPubPushManager.subscribe(role, account.userId)
+    }
+
+    override suspend fun getRelationships(
+        account: LoggedAccount,
+        accounts: List<BlogAuthor>,
+    ): Result<Map<FormalUri, Relationships>> {
+        val userIdList = accounts.filter { userUriTransformer.parse(it.uri) != null }
+            .mapNotNull { it.userId }
+        if (userIdList.isEmpty()) return Result.success(emptyMap())
+        val locator = PlatformLocator(
+            baseUrl = account.platform.baseUrl,
+            accountUri = account.uri,
+        )
+        return clientManager.getClient(locator)
+            .accountRepo
+            .getRelationships(idList = userIdList)
+            .map { list ->
+                val relationships = mutableMapOf<FormalUri, Relationships>()
+                for (entity in list) {
+                    val user = accounts.firstOrNull { it.userId == entity.id }
+                    if (user != null) {
+                        relationships[user.uri] = accountEntityAdapter.convertRelationship(entity)
+                    }
+                }
+                relationships
+            }
+    }
+
+    override suspend fun unblockAccount(
+        account: LoggedAccount,
+        user: BlogAuthor
+    ): Result<Unit>? {
+        if (account.platform.protocol.notActivityPub) return null
+        if (user.userId.isNullOrEmpty()) {
+            return Result.failure(IllegalArgumentException("User ID cannot be null or empty"))
+        }
+        val locator = PlatformLocator(
+            baseUrl = account.platform.baseUrl,
+            accountUri = account.uri,
+        )
+        return clientManager.getClient(locator)
+            .accountRepo
+            .unblock(user.userId!!)
+            .map { }
     }
 
     override suspend fun selectContentWithAccount(

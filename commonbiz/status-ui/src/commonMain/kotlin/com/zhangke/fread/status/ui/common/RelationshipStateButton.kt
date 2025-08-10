@@ -151,8 +151,6 @@ fun RelationshipStateButton(
     onUnblockClick: () -> Unit,
     onFollowClick: () -> Unit,
     onUnfollowClick: () -> Unit,
-    onAcceptClick: () -> Unit = {},
-    onRejectClick: () -> Unit = {},
 ) {
     var showUnfollowDialog by remember { mutableStateOf(false) }
     when {
@@ -173,14 +171,6 @@ fun RelationshipStateButton(
                     onDismissRequest = { showDialog = false }
                 )
             }
-        }
-
-        relationship.requestedBy == true -> {
-            FollowRequestBy(
-                modifier = modifier,
-                onAcceptClick = onAcceptClick,
-                onRejectClick = onRejectClick,
-            )
         }
 
         relationship.following && relationship.followedBy -> {

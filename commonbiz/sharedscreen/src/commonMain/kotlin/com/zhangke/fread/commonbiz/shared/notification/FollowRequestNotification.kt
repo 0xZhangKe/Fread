@@ -38,7 +38,11 @@ fun FollowRequestNotification(
     onRejectClick: (BlogAuthor) -> Unit,
     onAcceptClick: (BlogAuthor) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(style.containerPaddings)) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(style.containerPaddings)
+            .padding(bottom = 16.dp)
+    ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
                 onUserInfoClick(notification.author)

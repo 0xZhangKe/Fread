@@ -1,7 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.composable
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,11 +51,9 @@ fun UserInfoCard(
     onUserClick: (BlogAuthor) -> Unit,
     onFollowAccountClick: (BlogAuthor) -> Unit,
     onUnfollowAccountClick: (BlogAuthor) -> Unit,
-    onAcceptClick: (BlogAuthor) -> Unit,
-    onRejectClick: (BlogAuthor) -> Unit,
     onUnblockClick: (BlogAuthor) -> Unit,
 ) {
-    Box(modifier = modifier) {
+    Box(modifier = modifier.noRippleClick { onUserClick(user) }) {
         Card(
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -71,8 +68,7 @@ fun UserInfoCard(
                     AutoSizeImage(
                         modifier = Modifier.fillMaxWidth()
                             .clip(RoundedCornerShape(12.dp))
-                            .aspectRatio(BANNER_ASPECT)
-                            .noRippleClick { onUserClick(user) },
+                            .aspectRatio(BANNER_ASPECT),
                         url = user.avatar.orEmpty(),
                         contentScale = ContentScale.Crop,
                         contentDescription = null,
@@ -101,7 +97,6 @@ fun UserInfoCard(
                                         color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                         shape = CircleShape,
                                     )
-                                    .clickable { onUserClick(user) }
                                     .size(avatarSize),
                                 imageUrl = user.avatar.orEmpty(),
                             )
@@ -159,8 +154,6 @@ fun UserInfoCard(
                                     relationship = user.relationships!!,
                                     onFollowClick = { onFollowAccountClick(user) },
                                     onUnfollowClick = { onUnfollowAccountClick(user) },
-                                    onAcceptClick = { onAcceptClick(user) },
-                                    onRejectClick = { onRejectClick(user) },
                                     onUnblockClick = { onUnblockClick(user) },
                                 )
                             } else {

@@ -112,8 +112,6 @@ fun StatusNotificationUi(
                             composedStatusInteraction.onFollowClick(notification.locator, it)
                         },
                         onUnblockClick = { onUnblockClick(notification.locator, it) },
-                        onAcceptClick = onAcceptClick,
-                        onRejectClick = onRejectClick,
                         onUnfollowAccountClick = {
                             composedStatusInteraction.onUnfollowClick(notification.locator, it)
                         },

@@ -239,11 +239,15 @@ class ActivityPubNotificationResolver @Inject constructor(
         requestAuthor: BlogAuthor
     ): Result<Unit>? {
         if (account.platform.protocol.notActivityPub) return null
-        val activityPubAccount = account as? ActivityPubLoggedAccount ?: return null
+        if (account !is ActivityPubLoggedAccount) return null
+        val userId = requestAuthor.userId
+        if (userId.isNullOrEmpty()) {
+            return Result.failure(IllegalArgumentException("Request author userId is empty"))
+        }
         val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         return clientManager.getClient(role)
             .accountRepo
-            .rejectFollowRequest(activityPubAccount.userId)
+            .rejectFollowRequest(userId)
             .map { }
     }
 
@@ -252,11 +256,15 @@ class ActivityPubNotificationResolver @Inject constructor(
         requestAuthor: BlogAuthor
     ): Result<Unit>? {
         if (account.platform.protocol.notActivityPub) return null
-        val activityPubAccount = account as? ActivityPubLoggedAccount ?: return null
+        if (account !is ActivityPubLoggedAccount) return null
+        val userId = requestAuthor.userId
+        if (userId.isNullOrEmpty()) {
+            return Result.failure(IllegalArgumentException("Request author userId is empty"))
+        }
         val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         return clientManager.getClient(role)
             .accountRepo
-            .authorizeFollowRequest(activityPubAccount.userId)
+            .authorizeFollowRequest(userId)
             .map { }
     }
 

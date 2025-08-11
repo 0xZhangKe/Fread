@@ -35,8 +35,8 @@ fun BlogUi(
     blog: Blog,
     blogTranslationState: BlogTranslationUiState,
     following: Boolean?,
-    isOwner: Boolean,
-    logged: Boolean,
+    isOwner: Boolean?,
+    logged: Boolean?,
     indexInList: Int,
     style: StatusStyle,
     topLabel: (@Composable () -> Unit)? = null,
@@ -58,6 +58,8 @@ fun BlogUi(
     onFollowClick: ((BlogAuthor) -> Unit)? = null,
     detailModel: Boolean = false,
     showDivider: Boolean = true,
+    showBottomPanel: Boolean = true,
+    showMoreOperationIcon: Boolean = true,
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
     val textHandler = LocalActivityTextHandler.current
@@ -100,7 +102,8 @@ fun BlogUi(
             displayTime = blog.formattingDisplayTime.formattedTime(),
             visibility = blog.visibility,
             isOwner = isOwner,
-            showFollowButton = !isOwner && detailModel && following == false,
+            showMoreOperationIcon = showMoreOperationIcon,
+            showFollowButton = isOwner == false && detailModel && following == false,
             onInteractive = onInteractive,
             onUserInfoClick = onUserInfoClick,
             onUrlClick = onUrlClick,
@@ -137,25 +140,27 @@ fun BlogUi(
             onBlogClick = onBlogClick,
             onMaybeHashtagClick = onMaybeHashtagClick,
         )
-        StatusBottomInteractionPanel(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = style.containerStartPadding / 2 + style.bottomPanelStyle.startPadding,
-                    top = style.contentStyle.contentVerticalSpacing,
-                    style.containerEndPadding / 2
-                ),
-            style = style,
-            blog = blog,
-            logged = logged,
-            onInteractive = { type, blog ->
-                if (type == StatusActionType.SHARE) {
-                    textHandler.shareUrl(blog.link, blog.content)
-                    return@StatusBottomInteractionPanel
-                }
-                onInteractive(type, blog)
-            },
-        )
+        if (showBottomPanel) {
+            StatusBottomInteractionPanel(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = style.containerStartPadding / 2 + style.bottomPanelStyle.startPadding,
+                        top = style.contentStyle.contentVerticalSpacing,
+                        style.containerEndPadding / 2
+                    ),
+                style = style,
+                blog = blog,
+                logged = logged,
+                onInteractive = { type, blog ->
+                    if (type == StatusActionType.SHARE) {
+                        textHandler.shareUrl(blog.link, blog.content)
+                        return@StatusBottomInteractionPanel
+                    }
+                    onInteractive(type, blog)
+                },
+            )
+        }
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()

@@ -5,16 +5,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.filled.Poll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.commonbiz.shared.composable.WholeBlogUi
+import com.zhangke.fread.commonbiz.shared.composable.BlogUi
 import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_favourited_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_poll_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_quote_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reblog_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reply_desc
@@ -46,56 +52,76 @@ fun StatusNotificationUi(
         Box(modifier = Modifier) {
             when (notification) {
                 is StatusNotification.Like -> {
-                    FavouriteNotification(
-                        notification = notification,
+                    NotificationWithWholeStatus(
+                        blog = notification.blog,
+                        locator = notification.locator,
+                        author = notification.author,
+                        createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
+                        icon = Icons.Default.Favorite,
+                        iconTint = MaterialTheme.colorScheme.tertiary,
+                        interactionDesc = stringResource(Res.string.shared_notification_favourited_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
                 is StatusNotification.Mention -> {
-                    WholeBlogUi(
+                    BlogUi(
                         modifier = Modifier
+                            .clickable { composedStatusInteraction.onStatusClick(notification.status) }
                             .fillMaxWidth()
-                            .clickable { composedStatusInteraction.onStatusClick(notification.status) },
-                        statusUiState = notification.status,
+                            .padding(top = style.headLineToContentPadding)
+                            .padding(style.containerPaddings),
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
                         indexInList = indexInList,
                         style = style.statusStyle,
-                        showDivider = false,
+                        showBottomPanel = false,
+                        showMoreOperationIcon = false,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
                 is StatusNotification.Reply -> {
-                    NotificationWithWholeStatus(
-                        status = notification.status,
-                        author = notification.status.status.triggerAuthor,
+                    BlogUi(
+                        modifier = Modifier
+                            .clickable { composedStatusInteraction.onStatusClick(notification.status) }
+                            .fillMaxWidth()
+                            .padding(style.containerPaddings),
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
                         indexInList = indexInList,
-                        icon = replyIcon(),
+                        style = style.statusStyle,
+                        showBottomPanel = false,
+                        showMoreOperationIcon = false,
+                        composedStatusInteraction = composedStatusInteraction,
+                    )
+                }
+
+                is StatusNotification.Repost -> {
+                    NotificationWithWholeStatus(
+                        blog = notification.blog,
+                        locator = notification.locator,
+                        author = notification.author,
+                        createAt = notification.formattingDisplayTime,
+                        indexInList = indexInList,
+                        icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
                         interactionDesc = stringResource(Res.string.shared_notification_reply_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
-                is StatusNotification.Repost -> {
-                    BlogInteractionNotification(
+                is StatusNotification.Poll -> {
+                    NotificationWithWholeStatus(
                         blog = notification.blog,
                         locator = notification.locator,
-                        author = notification.author,
-                        icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
-                        interactionDesc = stringResource(Res.string.shared_notification_reblog_desc),
+                        createAt = notification.formattingDisplayTime,
+                        author = null,
                         indexInList = indexInList,
-                        style = style,
-                        composedStatusInteraction = composedStatusInteraction,
-                    )
-                }
-
-                is StatusNotification.Poll -> {
-                    PollNotification(
-                        notification = notification,
-                        indexInList = indexInList,
+                        icon = Icons.Default.Poll,
+                        interactionDesc = stringResource(Res.string.shared_notification_poll_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
@@ -120,8 +146,10 @@ fun StatusNotificationUi(
 
                 is StatusNotification.Update -> {
                     NotificationWithWholeStatus(
-                        status = notification.status,
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
                         author = notification.status.status.triggerAuthor,
+                        createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = Icons.Default.Edit,
                         interactionDesc = stringResource(Res.string.shared_notification_update_desc),
@@ -144,8 +172,10 @@ fun StatusNotificationUi(
 
                 is StatusNotification.NewStatus -> {
                     NotificationWithWholeStatus(
-                        status = notification.status,
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
                         author = notification.status.status.triggerAuthor,
+                        createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = Icons.Default.NotificationsNone,
                         interactionDesc = stringResource(Res.string.shared_notification_new_status_desc),
@@ -156,8 +186,10 @@ fun StatusNotificationUi(
 
                 is StatusNotification.Quote -> {
                     NotificationWithWholeStatus(
-                        status = notification.status,
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
                         author = notification.status.status.triggerAuthor,
+                        createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = quoteIcon(),
                         interactionDesc = stringResource(Res.string.shared_notification_quote_desc),
@@ -247,7 +279,12 @@ fun defaultNotificationStyle(
         bottom = NotificationStyleDefaults.internalBlogBottomPadding,
     ),
     headLineToContentPadding: Dp = NotificationStyleDefaults.headLineToContentPadding,
-    statusStyle: StatusStyle = LocalStatusUiConfig.current.contentStyle,
+    statusStyle: StatusStyle = LocalStatusUiConfig.current.contentStyle.copy(
+        containerStartPadding = 0.dp,
+        containerTopPadding = 0.dp,
+        containerEndPadding = 0.dp,
+        containerBottomPadding = 0.dp,
+    ),
     triggerAccountAvatarSize: Dp = NotificationStyleDefaults.triggerAccountAvatarSize,
     typeLogoSize: Dp = NotificationStyleDefaults.typeLogoSize,
 ) = NotificationStyle(

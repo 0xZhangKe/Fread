@@ -3,6 +3,7 @@ package com.zhangke.fread.status.notification
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.FormattingTime
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import kotlinx.serialization.Serializable
@@ -26,6 +27,8 @@ sealed interface StatusNotification {
 
     val unread: Boolean
 
+    val formattingDisplayTime: FormattingTime
+
     @Serializable
     data class Like(
         override val locator: PlatformLocator,
@@ -35,6 +38,10 @@ sealed interface StatusNotification {
         override val createAt: Instant,
         override val unread: Boolean,
     ) : StatusNotification {
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
 
         override val status: StatusUiState? = null
     }
@@ -49,6 +56,10 @@ sealed interface StatusNotification {
     ) : StatusNotification {
 
         override val status: StatusUiState? = null
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -64,6 +75,10 @@ sealed interface StatusNotification {
 
         override val locator: PlatformLocator
             get() = status.locator
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -77,6 +92,10 @@ sealed interface StatusNotification {
     ) : StatusNotification {
 
         override val status: StatusUiState? = null
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -94,6 +113,10 @@ sealed interface StatusNotification {
 
         override val locator: PlatformLocator
             get() = quote.locator
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -111,6 +134,10 @@ sealed interface StatusNotification {
 
         override val locator: PlatformLocator
             get() = reply.locator
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -126,6 +153,10 @@ sealed interface StatusNotification {
 
         override val locator: PlatformLocator
             get() = status.locator
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -139,6 +170,10 @@ sealed interface StatusNotification {
 
         override val status: StatusUiState?
             get() = null
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -151,6 +186,10 @@ sealed interface StatusNotification {
     ) : StatusNotification {
 
         override val status: StatusUiState? = null
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -163,6 +202,10 @@ sealed interface StatusNotification {
 
         override val locator: PlatformLocator
             get() = status.locator
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -174,7 +217,12 @@ sealed interface StatusNotification {
         val reason: String,
         override val unread: Boolean,
     ) : StatusNotification {
+
         override val status: StatusUiState? = null
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 
     @Serializable
@@ -187,5 +235,9 @@ sealed interface StatusNotification {
     ) : StatusNotification {
 
         override val status: StatusUiState? = null
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
     }
 }

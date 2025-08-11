@@ -44,7 +44,7 @@ fun StatusInfoLine(
     modifier: Modifier,
     blog: Blog,
     blogTranslationState: BlogTranslationUiState,
-    isOwner: Boolean,
+    isOwner: Boolean?,
     displayTime: String,
     style: StatusStyle,
     visibility: StatusVisibility,

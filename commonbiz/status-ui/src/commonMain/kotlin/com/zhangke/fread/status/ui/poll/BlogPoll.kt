@@ -7,8 +7,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_poll_vote_finished_tip
 import com.zhangke.fread.statusui.status_ui_poll_votes_finished_tip
@@ -18,16 +18,16 @@ import org.jetbrains.compose.resources.stringResource
 fun BlogPoll(
     modifier: Modifier,
     poll: BlogPoll,
-    isSelf: Boolean,
+    isSelf: Boolean?,
     blogTranslationState: BlogTranslationUiState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     // 显示投票占比，满足任意条件：发帖人、投票结束、已投票
     Column(modifier = modifier) {
         if (poll.multiple) {
-            MultipleChoicePoll(poll, isSelf, blogTranslationState, onVoted)
+            MultipleChoicePoll(poll, isSelf == true, blogTranslationState, onVoted)
         } else {
-            SingleChoicePoll(poll, isSelf, blogTranslationState, onVoted)
+            SingleChoicePoll(poll, isSelf == true, blogTranslationState, onVoted)
         }
         if (poll.expired) {
             val count = poll.votesCount

@@ -48,6 +48,7 @@ fun FollowRequestNotification(
                 onUserInfoClick(notification.author)
             },
             icon = Icons.Default.PersonAddAlt1,
+            createAt = notification.formattingDisplayTime,
             avatar = null,
             accountName = null,
             interactionDesc = stringResource(Res.string.shared_notification_follow_request),

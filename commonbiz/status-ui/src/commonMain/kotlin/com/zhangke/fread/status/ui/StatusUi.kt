@@ -26,6 +26,7 @@ fun StatusUi(
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
     detailModel: Boolean = false,
+    showDivider: Boolean = true,
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
@@ -50,7 +51,7 @@ fun StatusUi(
             onInteractive = { type, _ ->
                 composedStatusInteraction.onStatusInteractive(status, type)
             },
-            showDivider = threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
+            showDivider = showDivider && threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
             onMediaClick = onMediaClick,
             onUserInfoClick = {
                 composedStatusInteraction.onUserInfoClick(status.locator, it)

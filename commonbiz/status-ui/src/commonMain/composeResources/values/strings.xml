@@ -72,6 +72,8 @@
     <string name="status_ui_user_detail_follower_info">Followers</string>
     <string name="status_ui_user_detail_following_info">Following</string>
 
+    <string name="status_ui_top_label_continued_thread">Continued thread</string>
+
     <string name="status_ui_update_dialog_title">Update</string>
     <string name="status_ui_update_dialog_release_note">Version %1$s Update Log:\n%2$s</string>
 

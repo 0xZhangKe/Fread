@@ -166,6 +166,7 @@ class ActivityPubStatusAdapter @Inject constructor(
                 repliesCount = entity.repliesCount.toLong(),
             ),
             supportEdit = true,
+            isReply = !entity.inReplyToId.isNullOrEmpty(),
             quote = Blog.Quote(support = false),
             platform = platform,
             mediaList = entity.mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),

@@ -11,6 +11,7 @@ import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.label.ContinueThread
 import com.zhangke.fread.status.ui.label.ReblogTopLabel
 import com.zhangke.fread.status.ui.label.StatusPinnedLabel
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
@@ -27,7 +28,7 @@ fun StatusUi(
     composedStatusInteraction: ComposedStatusInteraction,
     detailModel: Boolean = false,
     showDivider: Boolean = true,
-    threadsType: ThreadsType = ThreadsType.NONE,
+    threadsType: ThreadsType = ThreadsType.UNSPECIFIED,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
     if (status.status.intrinsicBlog.filtered?.firstOrNull()?.action == BlogFiltered.FilterAction.HIDE) {
@@ -44,7 +45,11 @@ fun StatusUi(
             blogTranslationState = status.blogTranslationState,
             topLabel = getStatusTopLabel(status, style, composedStatusInteraction),
             indexInList = indexInList,
-            threadsType = threadsType,
+            threadsType = if (threadsType == ThreadsType.UNSPECIFIED && status.status.intrinsicBlog.isReply) {
+                ThreadsType.CONTINUED_THREAD
+            } else {
+                threadsType
+            },
             detailModel = detailModel,
             following = status.following,
             style = if (detailModel) style else style.contentIndentStyle(),
@@ -119,6 +124,10 @@ private fun getStatusTopLabel(
                     composedStatusInteraction.onUserInfoClick(statusUiState.locator, it)
                 },
             )
+        }
+    } else if (statusUiState.status.intrinsicBlog.isReply) {
+        return {
+            ContinueThread(style = style)
         }
     }
     if (rawStatus.intrinsicBlog.pinned) {

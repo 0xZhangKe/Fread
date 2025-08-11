@@ -55,15 +55,13 @@ fun NotificationHeadLine(
         TwoTextsInRow(
             modifier = Modifier.weight(1F),
             firstText = {
-                if (accountName != null) {
-                    FreadRichText(
-                        modifier = Modifier.padding(start = 6.dp),
-                        richText = accountName,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSizeSp = 12F,
-                    )
-                }
+                FreadRichText(
+                    modifier = Modifier.padding(start = 6.dp),
+                    richText = accountName ?: RichText.empty,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSizeSp = 12F,
+                )
             },
             secondText = {
                 Text(

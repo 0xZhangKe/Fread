@@ -3,7 +3,10 @@ package com.zhangke.fread.status.ui.threads
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.status.ui.publish.PublishBlogStyle
@@ -17,56 +20,84 @@ fun Modifier.threads(
     containerStartPadding: Dp,
     containerTopPadding: Dp,
 ): Modifier {
-    if (threadsType == ThreadsType.NONE) return this
+    if (threadsType == ThreadsType.NONE || threadsType == ThreadsType.UNSPECIFIED) return this
     infoToTopSpacing ?: return this
-    val startMargin = containerStartPadding + avatarSize / 2
     return this.drawBehind {
-        val topPaddingPx = containerTopPadding.toPx()
-        val threadToAvatarSpacing = 2.dp.toPx()
         val containerTopPaddingPx = containerTopPadding.toPx()
         val strokeWidthPx = threadStyle.lineWidth.toPx()
-        val startMarginPx = startMargin.toPx()
-        if (threadsType.drawTopOfAvatarLine) {
-            val needDrawTwoLine = infoToTopSpacing > containerTopPaddingPx * 2
-            val firstLineBottom = if (needDrawTwoLine) {
-                topPaddingPx / 2
-            } else {
-                topPaddingPx - threadToAvatarSpacing
+        val threadToAvatarSpacing = 2.dp.toPx()
+        if (threadsType == ThreadsType.CONTINUED_THREAD) {
+            val path = Path().apply {
+                moveTo(
+                    x = containerStartPadding.toPx() + avatarSize.toPx() / 1.2F,
+                    y = containerTopPaddingPx + 6.dp.toPx(),
+                )
+                lineTo(
+                    x = containerStartPadding.toPx() + avatarSize.toPx() / 2,
+                    y = containerTopPaddingPx + 6.dp.toPx(),
+                )
+                lineTo(
+                    x = containerStartPadding.toPx() + avatarSize.toPx() / 2,
+                    y = infoToTopSpacing - threadToAvatarSpacing,
+                )
             }
-            drawLine(
+            drawPath(
+                path = path,
                 color = threadStyle.color,
-                strokeWidth = strokeWidthPx,
-                start = Offset(x = startMarginPx, y = 0F),
-                end = Offset(
-                    x = startMarginPx,
-                    y = firstLineBottom,
+                style = Stroke(
+                    width = strokeWidthPx,
+                    cap = StrokeCap.Round,
+                    pathEffect = PathEffect.cornerPathEffect(6.dp.toPx()),
                 ),
-                cap = StrokeCap.Round,
             )
-            if (needDrawTwoLine) {
-                // draw avatar-top to top-label-bottom line
+        } else {
+            val startMargin = containerStartPadding + avatarSize / 2
+            val startMarginPx = startMargin.toPx()
+            if (threadsType.drawTopOfAvatarLine) {
+                val needDrawTwoLine = infoToTopSpacing > containerTopPaddingPx * 2
+                val firstLineBottom = if (needDrawTwoLine) {
+                    threadToAvatarSpacing / 2
+                } else {
+                    threadToAvatarSpacing - threadToAvatarSpacing
+                }
                 drawLine(
                     color = threadStyle.color,
                     strokeWidth = strokeWidthPx,
-                    start = Offset(
+                    start = Offset(x = startMarginPx, y = 0F),
+                    end = Offset(
                         x = startMarginPx,
-                        y = infoToTopSpacing - topPaddingPx / 2
+                        y = firstLineBottom,
                     ),
-                    end = Offset(x = startMarginPx, y = infoToTopSpacing - threadToAvatarSpacing),
+                    cap = StrokeCap.Round,
+                )
+                if (needDrawTwoLine) {
+                    // draw avatar-top to top-label-bottom line
+                    drawLine(
+                        color = threadStyle.color,
+                        strokeWidth = strokeWidthPx,
+                        start = Offset(
+                            x = startMarginPx,
+                            y = infoToTopSpacing - containerTopPaddingPx / 2
+                        ),
+                        end = Offset(
+                            x = startMarginPx,
+                            y = infoToTopSpacing - threadToAvatarSpacing
+                        ),
+                        cap = StrokeCap.Round,
+                    )
+                }
+            }
+            if (threadsType.drawBottomOfAvatarLine) {
+                val lineOnBottomOfAvatarY =
+                    infoToTopSpacing + avatarSize.toPx() + threadToAvatarSpacing
+                drawLine(
+                    color = threadStyle.color,
+                    start = Offset(x = startMarginPx, y = lineOnBottomOfAvatarY),
+                    end = Offset(x = startMarginPx, y = size.height),
+                    strokeWidth = strokeWidthPx,
                     cap = StrokeCap.Round,
                 )
             }
-        }
-        if (threadsType.drawBottomOfAvatarLine) {
-            val lineOnBottomOfAvatarY =
-                infoToTopSpacing + avatarSize.toPx() + threadToAvatarSpacing
-            drawLine(
-                color = threadStyle.color,
-                start = Offset(x = startMarginPx, y = lineOnBottomOfAvatarY),
-                end = Offset(x = startMarginPx, y = size.height),
-                strokeWidth = strokeWidthPx,
-                cap = StrokeCap.Round,
-            )
         }
     }
 }

@@ -215,6 +215,7 @@ class BlueskyStatusAdapter @Inject constructor(
             supportEdit = false,
             sensitive = false,
             spoilerText = "",
+            isReply = post.reply != null,
             language = post.langs.firstOrNull()?.tag,
             platform = platform,
             mediaList = mediaList,

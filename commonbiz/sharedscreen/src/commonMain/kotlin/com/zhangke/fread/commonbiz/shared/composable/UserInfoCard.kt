@@ -52,6 +52,7 @@ fun UserInfoCard(
     onFollowAccountClick: (BlogAuthor) -> Unit,
     onUnfollowAccountClick: (BlogAuthor) -> Unit,
     onUnblockClick: (BlogAuthor) -> Unit,
+    onCancelFollowRequestClick: (BlogAuthor) -> Unit,
 ) {
     Box(modifier = modifier.noRippleClick { onUserClick(user) }) {
         Card(
@@ -147,7 +148,6 @@ fun UserInfoCard(
                             } else {
                                 Spacer(modifier = Modifier.weight(1F))
                             }
-
                             if (user.relationships != null) {
                                 RelationshipStateButton(
                                     modifier = Modifier,
@@ -155,6 +155,7 @@ fun UserInfoCard(
                                     onFollowClick = { onFollowAccountClick(user) },
                                     onUnfollowClick = { onUnfollowAccountClick(user) },
                                     onUnblockClick = { onUnblockClick(user) },
+                                    onCancelFollowRequestClick = { onCancelFollowRequestClick(user) },
                                 )
                             } else {
                                 Box(modifier = Modifier.size(height = 28.dp, width = 8.dp))

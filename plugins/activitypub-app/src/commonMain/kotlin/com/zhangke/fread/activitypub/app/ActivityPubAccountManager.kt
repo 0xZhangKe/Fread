@@ -113,6 +113,21 @@ class ActivityPubAccountManager @Inject constructor(
         }
     }
 
+    override suspend fun cancelFollowRequest(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit>? {
+        if (account.platform.protocol.notActivityPub) return null
+        if (user.userId.isNullOrEmpty()) {
+            return Result.failure(IllegalArgumentException("User ID cannot be null or empty"))
+        }
+        val locator = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        return clientManager.getClient(locator)
+            .accountRepo
+            .unfollow(user.userId!!)
+            .map { }
+    }
+
     private suspend fun subscribeNotificationForAccount(account: ActivityPubLoggedAccount) {
         val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         activityPubPushManager.subscribe(role, account.userId)

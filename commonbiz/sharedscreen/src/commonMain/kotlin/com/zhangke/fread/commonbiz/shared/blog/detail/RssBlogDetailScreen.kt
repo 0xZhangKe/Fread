@@ -101,7 +101,7 @@ class RssBlogDetailScreen(
                     },
                     blogTranslationState = BlogTranslationUiState(support = false),
                     editedAt = blog.editedAt?.instant,
-                    showFollowButton = false,
+                    allowToShowFollowButton = false,
                     onTranslateClick = {},
                 )
                 WebViewPreviewer(

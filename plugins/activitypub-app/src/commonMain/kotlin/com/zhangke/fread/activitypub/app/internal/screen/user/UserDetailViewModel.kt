@@ -45,6 +45,7 @@ class UserDetailViewModel(
             relationship = null,
             domainBlocked = false,
             isAccountOwner = false,
+            relationships = null,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -108,7 +109,7 @@ class UserDetailViewModel(
         }
         val relationshipEntity = relationshipEntityResult.getOrThrow().firstOrNull() ?: return
         _uiState.value = _uiState.value.copy(
-            relationship = relationshipEntity
+            relationships = accountEntityAdapter.convertRelationship(relationshipEntity),
         )
     }
 
@@ -132,18 +133,6 @@ class UserDetailViewModel(
     fun onUnfollowClick() {
         performRelationshipAction { accountsRepo, accountId ->
             accountsRepo.unfollow(accountId)
-        }
-    }
-
-    fun onAcceptClick() {
-        performRelationshipAction { accountsRepo, accountId ->
-            accountsRepo.authorizeFollowRequest(accountId)
-        }
-    }
-
-    fun onRejectClick() {
-        performRelationshipAction { accountsRepo, accountId ->
-            accountsRepo.rejectFollowRequest(accountId)
         }
     }
 

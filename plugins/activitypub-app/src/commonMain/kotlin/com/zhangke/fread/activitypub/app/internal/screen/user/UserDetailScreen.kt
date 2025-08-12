@@ -114,7 +114,6 @@ import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
-import com.zhangke.fread.status.ui.common.RelationshipUiState
 import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.user.UserHandleLine
@@ -162,8 +161,6 @@ data class UserDetailScreen(
             onBackClick = navigator::pop,
             onFollowAccountClick = viewModel::onFollowClick,
             onUnfollowAccountClick = viewModel::onUnfollowClick,
-            onAcceptClick = viewModel::onAcceptClick,
-            onRejectClick = viewModel::onRejectClick,
             onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
             onUnblockClick = viewModel::onUnblockClick,
             onBlockClick = viewModel::onBlockClick,
@@ -293,8 +290,6 @@ data class UserDetailScreen(
         onFollowAccountClick: () -> Unit,
         onUnfollowAccountClick: () -> Unit,
         onCancelFollowRequestClick: () -> Unit,
-        onAcceptClick: () -> Unit,
-        onRejectClick: () -> Unit,
         onBlockClick: () -> Unit,
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
@@ -387,13 +382,11 @@ data class UserDetailScreen(
                                 onFollowingClick = onFollowingClick,
                             )
                         },
-                        relationship = if (uiState.isAccountOwner) null else uiState.relationship?.toUiState(),
+                        relationship = if (uiState.isAccountOwner) null else uiState.relationships,
                         onBannerClick = onBannerClick,
                         onAvatarClick = onAvatarClick,
                         onUnblockClick = onUnblockClick,
                         onCancelFollowRequestClick = onCancelFollowRequestClick,
-                        onAcceptClick = onAcceptClick,
-                        onRejectClick = onRejectClick,
                         onFollowAccountClick = onFollowAccountClick,
                         onUnfollowAccountClick = onUnfollowAccountClick,
                         onUrlClick = {
@@ -894,17 +887,4 @@ data class UserDetailScreen(
                 acct
             }
         }
-
-    private fun ActivityPubRelationshipEntity?.toUiState(): RelationshipUiState {
-        return when {
-            this == null -> RelationshipUiState.UNKNOWN
-            this.blockedBy -> RelationshipUiState.BLOCKED_BY
-            this.blocking -> RelationshipUiState.BLOCKING
-            this.requested -> RelationshipUiState.REQUESTED
-            this.requestedBy -> RelationshipUiState.REQUEST_BY
-            this.following -> RelationshipUiState.FOLLOWING
-            this.followedBy -> RelationshipUiState.FOLLOWED_BY
-            else -> RelationshipUiState.CAN_FOLLOW
-        }
-    }
 }

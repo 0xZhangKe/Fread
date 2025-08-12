@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,19 +20,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.StyledTextButton
-import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_follow
 import com.zhangke.fread.statusui.status_ui_info_label_edited
+import com.zhangke.fread.statusui.status_ui_user_detail_relationship_follow_back
+import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
 import kotlinx.datetime.Instant
 import org.jetbrains.compose.resources.stringResource
 
@@ -48,7 +49,7 @@ fun StatusInfoLine(
     displayTime: String,
     style: StatusStyle,
     visibility: StatusVisibility,
-    showFollowButton: Boolean,
+    allowToShowFollowButton: Boolean,
     showMoreOperationIcon: Boolean = true,
     onUrlClick: (url: String) -> Unit = {},
     onInteractive: (StatusActionType, Blog) -> Unit = { _, _ -> },
@@ -92,7 +93,7 @@ fun StatusInfoLine(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 2.dp),
+                    .padding(top = 1.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (visibility == StatusVisibility.PRIVATE ||
@@ -142,21 +143,21 @@ fun StatusInfoLine(
             }
         }
 
-        if (showFollowButton) {
-            StyledTextButton(
+        val relationships = blogAuthor.relationships
+        if (allowToShowFollowButton && (relationships?.following == false)) {
+            FollowButton(
                 modifier = Modifier
                     .align(Alignment.Top)
                     .heightIn(min = 20.dp)
                     .padding(end = 4.dp),
-                text = stringResource(Res.string.status_ui_follow),
-                style = TextButtonStyle.STANDARD,
+                relationships = relationships,
                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 4.dp),
-                onClick = { onFollowClick?.invoke(blogAuthor) },
+                onFollowClick = { onFollowClick?.invoke(blogAuthor) },
             )
         }
 
         if (showMoreOperationIcon) {
-            val moreIconAlign = if (showFollowButton) {
+            val moreIconAlign = if (allowToShowFollowButton) {
                 Alignment.CenterVertically
             } else {
                 Alignment.Top
@@ -173,5 +174,27 @@ fun StatusInfoLine(
                 onTranslateClick = onTranslateClick,
             )
         }
+    }
+}
+
+@Composable
+private fun FollowButton(
+    modifier: Modifier,
+    relationships: Relationships,
+    contentPadding: PaddingValues,
+    onFollowClick: () -> Unit,
+) {
+    Button(
+        modifier = modifier,
+        onClick = onFollowClick,
+        contentPadding = contentPadding,
+    ) {
+        Text(
+            text = if (relationships.followedBy) {
+                stringResource(Res.string.status_ui_user_detail_relationship_follow_back)
+            } else {
+                stringResource(Res.string.status_ui_user_detail_relationship_not_follow)
+            },
+        )
     }
 }

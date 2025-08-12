@@ -19,17 +19,18 @@ fun Modifier.threads(
     avatarSize: Dp,
     containerStartPadding: Dp,
     containerTopPadding: Dp,
+    nameToAvatarSpacing: Dp,
 ): Modifier {
     if (threadsType == ThreadsType.NONE || threadsType == ThreadsType.UNSPECIFIED) return this
     infoToTopSpacing ?: return this
     return this.drawBehind {
         val containerTopPaddingPx = containerTopPadding.toPx()
         val strokeWidthPx = threadStyle.lineWidth.toPx()
-        val threadToAvatarSpacing = 2.dp.toPx()
+        val threadPadding = 4.dp.toPx()
         if (threadsType == ThreadsType.CONTINUED_THREAD) {
             val path = Path().apply {
                 moveTo(
-                    x = containerStartPadding.toPx() + avatarSize.toPx() / 1.2F,
+                    x = containerStartPadding.toPx() + avatarSize.toPx() + nameToAvatarSpacing.toPx() - threadPadding,
                     y = containerTopPaddingPx + 6.dp.toPx(),
                 )
                 lineTo(
@@ -38,7 +39,7 @@ fun Modifier.threads(
                 )
                 lineTo(
                     x = containerStartPadding.toPx() + avatarSize.toPx() / 2,
-                    y = infoToTopSpacing - threadToAvatarSpacing,
+                    y = infoToTopSpacing - threadPadding,
                 )
             }
             drawPath(
@@ -56,9 +57,9 @@ fun Modifier.threads(
             if (threadsType.drawTopOfAvatarLine) {
                 val needDrawTwoLine = infoToTopSpacing > containerTopPaddingPx * 2
                 val firstLineBottom = if (needDrawTwoLine) {
-                    threadToAvatarSpacing / 2
+                    containerTopPaddingPx / 2
                 } else {
-                    threadToAvatarSpacing - threadToAvatarSpacing
+                    containerTopPaddingPx - threadPadding
                 }
                 drawLine(
                     color = threadStyle.color,
@@ -81,7 +82,7 @@ fun Modifier.threads(
                         ),
                         end = Offset(
                             x = startMarginPx,
-                            y = infoToTopSpacing - threadToAvatarSpacing
+                            y = infoToTopSpacing - threadPadding
                         ),
                         cap = StrokeCap.Round,
                     )
@@ -89,7 +90,7 @@ fun Modifier.threads(
             }
             if (threadsType.drawBottomOfAvatarLine) {
                 val lineOnBottomOfAvatarY =
-                    infoToTopSpacing + avatarSize.toPx() + threadToAvatarSpacing
+                    infoToTopSpacing + avatarSize.toPx() + threadPadding
                 drawLine(
                     color = threadStyle.color,
                     start = Offset(x = startMarginPx, y = lineOnBottomOfAvatarY),
@@ -114,6 +115,7 @@ fun Modifier.threads(
         threadStyle = style.threadsStyle,
         containerStartPadding = style.containerStartPadding,
         containerTopPadding = style.containerTopPadding,
+        nameToAvatarSpacing = style.infoLineStyle.nameToAvatarSpacing,
     )
 }
 
@@ -128,6 +130,7 @@ fun Modifier.blogBeReplyThreads(
         containerTopPadding = 0.dp,
         containerStartPadding = publishBlogStyle.startPadding,
         avatarSize = publishBlogStyle.statusStyle.infoLineStyle.avatarSize,
+        nameToAvatarSpacing = publishBlogStyle.statusStyle.infoLineStyle.nameToAvatarSpacing,
     )
 }
 
@@ -142,6 +145,7 @@ fun Modifier.blogInReplyingThreads(
         containerTopPadding = publishBlogStyle.topPadding,
         containerStartPadding = publishBlogStyle.startPadding,
         avatarSize = publishBlogStyle.statusStyle.infoLineStyle.avatarSize,
+        nameToAvatarSpacing = publishBlogStyle.statusStyle.infoLineStyle.nameToAvatarSpacing,
     )
 }
 

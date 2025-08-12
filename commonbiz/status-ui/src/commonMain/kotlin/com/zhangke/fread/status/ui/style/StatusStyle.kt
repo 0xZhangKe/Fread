@@ -14,6 +14,7 @@ data class StatusStyle(
     val containerEndPadding: Dp,
     val containerBottomPadding: Dp,
     val topLabelStyle: TopLabelStyle,
+    val infolineToTopLabelPadding: Dp,
     val infoLineStyle: InfoLineStyle,
     val contentStyle: ContentStyle,
     val bottomPanelStyle: BottomPanelStyle,

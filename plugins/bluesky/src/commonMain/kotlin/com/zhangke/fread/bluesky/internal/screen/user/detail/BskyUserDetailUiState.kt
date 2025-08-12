@@ -1,6 +1,7 @@
 package com.zhangke.fread.bluesky.internal.screen.user.detail
 
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.ui.common.RelationshipUiState
 
 data class BskyUserDetailUiState(
@@ -17,7 +18,7 @@ data class BskyUserDetailUiState(
     val followersCount: Long?,
     val followsCount: Long?,
     val postsCount: Long?,
-    val relationship: RelationshipUiState,
+    val relationship: Relationships?,
     val followUri: String?,
     val blockUri: String?,
     val muted: Boolean,
@@ -43,7 +44,7 @@ data class BskyUserDetailUiState(
                 followersCount = null,
                 followsCount = null,
                 postsCount = null,
-                relationship = RelationshipUiState.UNKNOWN,
+                relationship = null,
                 followUri = null,
                 blockUri = null,
                 muted = false,

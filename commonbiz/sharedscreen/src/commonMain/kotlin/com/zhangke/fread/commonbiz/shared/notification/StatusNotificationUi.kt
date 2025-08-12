@@ -22,7 +22,6 @@ import com.zhangke.fread.commonbiz.shared.screen.shared_notification_favourited_
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_poll_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_quote_desc
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reblog_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reply_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_update_desc
 import com.zhangke.fread.status.author.BlogAuthor
@@ -30,7 +29,6 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.action.quoteIcon
-import com.zhangke.fread.status.ui.action.replyIcon
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.ic_status_forward
@@ -46,6 +44,7 @@ fun StatusNotificationUi(
     onRejectClick: (BlogAuthor) -> Unit,
     onAcceptClick: (BlogAuthor) -> Unit,
     onUnblockClick: (PlatformLocator, BlogAuthor) -> Unit,
+    onCancelFollowRequestClick: (PlatformLocator, BlogAuthor) -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     Column(modifier = modifier) {
@@ -140,6 +139,9 @@ fun StatusNotificationUi(
                         onUnblockClick = { onUnblockClick(notification.locator, it) },
                         onUnfollowAccountClick = {
                             composedStatusInteraction.onUnfollowClick(notification.locator, it)
+                        },
+                        onCancelFollowRequestClick = {
+                            onCancelFollowRequestClick(notification.locator, it)
                         },
                     )
                 }

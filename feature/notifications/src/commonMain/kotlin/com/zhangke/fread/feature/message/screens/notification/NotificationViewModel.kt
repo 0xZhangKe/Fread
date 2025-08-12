@@ -177,6 +177,24 @@ class NotificationViewModel(
         }
     }
 
+    fun onCancelFollowRequestClick(locator: PlatformLocator, author: BlogAuthor) {
+        launchInViewModel {
+            statusProvider.accountManager.cancelFollowRequest(
+                account = account,
+                user = author,
+            ).onSuccess {
+                updateUiStateRelationships(
+                    authorUri = author.uri,
+                    block = { relationships ->
+                        relationships?.copy(requested = false)
+                    },
+                )
+            }.onFailure {
+                mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
+            }
+        }
+    }
+
     private fun updateUiStateRelationships(
         authorUri: FormalUri,
         block: (Relationships?) -> Relationships?,

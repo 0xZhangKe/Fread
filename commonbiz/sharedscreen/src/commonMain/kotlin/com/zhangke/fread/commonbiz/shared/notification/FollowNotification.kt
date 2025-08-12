@@ -22,6 +22,7 @@ fun FollowNotification(
     onFollowAccountClick: (BlogAuthor) -> Unit,
     onUnfollowAccountClick: (BlogAuthor) -> Unit,
     onUnblockClick: (BlogAuthor) -> Unit,
+    onCancelFollowRequestClick: (BlogAuthor) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -44,6 +45,7 @@ fun FollowNotification(
             onFollowAccountClick = onFollowAccountClick,
             onUnfollowAccountClick = onUnfollowAccountClick,
             onUnblockClick = onUnblockClick,
+            onCancelFollowRequestClick = onCancelFollowRequestClick,
         )
     }
 }

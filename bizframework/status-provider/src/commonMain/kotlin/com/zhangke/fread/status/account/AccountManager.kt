@@ -75,6 +75,13 @@ class AccountManager(
     ): Result<Unit> {
         return accountManagerList.firstNotNullOf { it.unblockAccount(account, user) }
     }
+
+    suspend fun cancelFollowRequest(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit> {
+        return accountManagerList.firstNotNullOf { it.cancelFollowRequest(account, user) }
+    }
 }
 
 interface IAccountManager {
@@ -100,6 +107,11 @@ interface IAccountManager {
     ): Result<Map<FormalUri, Relationships>>
 
     suspend fun unblockAccount(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit>?
+
+    suspend fun cancelFollowRequest(
         account: LoggedAccount,
         user: BlogAuthor,
     ): Result<Unit>?

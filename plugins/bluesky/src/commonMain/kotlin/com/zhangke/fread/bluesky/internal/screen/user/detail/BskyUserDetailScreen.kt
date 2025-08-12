@@ -78,7 +78,6 @@ import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.ProgressedAvatar
 import com.zhangke.fread.status.ui.common.ProgressedBanner
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
-import com.zhangke.fread.status.ui.common.RelationshipUiState
 import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.statusui.status_ui_user_detail_follows_you
 import org.jetbrains.compose.resources.stringResource
@@ -279,7 +278,7 @@ private fun UserDetailInfo(
             )
 
             // relationship button
-            if (uiState.isOwner) {
+            if (uiState.isOwner || uiState.relationship == null) {
                 Box(modifier = Modifier.constrainAs(relationRef) {
                     top.linkTo(bannerRef.bottom, 8.dp)
                     end.linkTo(parent.end, 16.dp)
@@ -294,6 +293,7 @@ private fun UserDetailInfo(
                     onFollowClick = onFollowClick,
                     onUnfollowClick = onUnfollowClick,
                     onUnblockClick = onUnblockClick,
+                    onCancelFollowRequestClick = {},
                 )
             }
 
@@ -381,7 +381,7 @@ private fun DetailSubtitle(
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        if (uiState.relationship == RelationshipUiState.FOLLOWED_BY) {
+        if (uiState.relationship?.followedBy == true) {
             Text(
                 modifier = Modifier
                     .padding(start = 4.dp)

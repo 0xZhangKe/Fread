@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.ui.common.ProgressedAvatar
@@ -41,11 +42,9 @@ fun DetailHeaderContent(
     onUrlClick: (String) -> Unit,
     onMaybeHashtagClick: (String) -> Unit,
     privateNote: String? = null,
-    relationship: RelationshipUiState? = null,
+    relationship: Relationships? = null,
     onUnblockClick: (() -> Unit)? = null,
     onCancelFollowRequestClick: (() -> Unit)? = null,
-    onAcceptClick: (() -> Unit)? = null,
-    onRejectClick: (() -> Unit)? = null,
     onFollowAccountClick: (() -> Unit)? = null,
     onUnfollowAccountClick: (() -> Unit)? = null,
 ) {
@@ -98,8 +97,6 @@ fun DetailHeaderContent(
                 relationship = relationship,
                 onFollowClick = onFollowAccountClick ?: {},
                 onUnfollowClick = onUnfollowAccountClick ?: {},
-                onAcceptClick = onAcceptClick ?: {},
-                onRejectClick = onRejectClick ?: {},
                 onCancelFollowRequestClick = onCancelFollowRequestClick ?: {},
                 onUnblockClick = onUnblockClick ?: {},
             )

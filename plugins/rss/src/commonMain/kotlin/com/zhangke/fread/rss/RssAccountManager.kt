@@ -43,6 +43,13 @@ class RssAccountManager @Inject constructor() : IAccountManager {
         return Result.success(emptyMap())
     }
 
+    override suspend fun cancelFollowRequest(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit>? {
+        return null
+    }
+
     override suspend fun unblockAccount(
         account: LoggedAccount,
         user: BlogAuthor

@@ -36,7 +36,6 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.notification.StatusNotificationUi
 import com.zhangke.fread.feature.notifications.Res
@@ -45,7 +44,6 @@ import com.zhangke.fread.feature.notifications.notifications_tab_mention
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
-import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import kotlinx.coroutines.delay
@@ -80,6 +78,7 @@ class NotificationTab(
             onRejectClick = viewModel::onRejectClick,
             onNotificationShown = viewModel::onNotificationShown,
             onUnblockClick = viewModel::onUnblockClick,
+            onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.openScreenFlow) {
@@ -107,6 +106,7 @@ class NotificationTab(
         onRejectClick: (BlogAuthor) -> Unit,
         onAcceptClick: (BlogAuthor) -> Unit,
         onNotificationShown: (StatusNotificationUiState) -> Unit,
+        onCancelFollowRequestClick: (PlatformLocator, BlogAuthor) -> Unit,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -154,6 +154,7 @@ class NotificationTab(
                             onAcceptClick = onAcceptClick,
                             onRejectClick = onRejectClick,
                             onUnblockClick = onUnblockClick,
+                            onCancelFollowRequestClick = onCancelFollowRequestClick,
                         )
                         if (notification.unreadState) {
                             LaunchedEffect(notification) {

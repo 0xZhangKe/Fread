@@ -1,7 +1,6 @@
 package com.zhangke.fread.status.ui.common
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -10,8 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Button
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,27 +43,22 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun RelationshipStateButton(
     modifier: Modifier,
-    relationship: RelationshipUiState,
+    relationship: Relationships,
     onUnblockClick: () -> Unit,
     onFollowClick: () -> Unit,
     onUnfollowClick: () -> Unit,
-    onCancelFollowRequestClick: () -> Unit = {},
-    onAcceptClick: () -> Unit = {},
-    onRejectClick: () -> Unit = {},
+    onCancelFollowRequestClick: () -> Unit,
 ) {
-    when (relationship) {
-        RelationshipUiState.BLOCKING -> {
-            var showDialog by remember {
-                mutableStateOf(false)
-            }
-            RelationshipTextButton(
+    var showUnfollowDialog by remember { mutableStateOf(false) }
+    when {
+        relationship.blocking -> {
+            var showDialog by remember { mutableStateOf(false) }
+            Button(
                 modifier = modifier,
-                style = TextButtonStyle.ALERT,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_blocking),
-                onClick = {
-                    showDialog = true
-                },
-            )
+                onClick = { showDialog = true },
+            ) {
+                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_blocking))
+            }
             if (showDialog) {
                 AlertConfirmDialog(
                     content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_blocking),
@@ -72,55 +68,14 @@ fun RelationshipStateButton(
             }
         }
 
-        RelationshipUiState.BLOCKED_BY -> {
-            RelationshipTextButton(
+        relationship.requested == true -> {
+            var showDialog by remember { mutableStateOf(false) }
+            OutlinedButton(
                 modifier = modifier,
-                style = TextButtonStyle.DISABLE,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow),
-                onClick = onUnfollowClick,
-            )
-        }
-
-        RelationshipUiState.FOLLOWING -> {
-            var showDialog by remember {
-                mutableStateOf(false)
-            }
-            RelationshipTextButton(
-                modifier = modifier,
-                style = TextButtonStyle.STANDARD,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_following),
-                onClick = {
-                    showDialog = true
-                },
-            )
-            if (showDialog) {
-                AlertConfirmDialog(
-                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow),
-                    onConfirm = onUnfollowClick,
-                    onDismissRequest = { showDialog = false }
-                )
-            }
-        }
-
-        RelationshipUiState.FOLLOWED_BY, RelationshipUiState.CAN_FOLLOW -> {
-            RelationshipTextButton(
-                modifier = modifier,
-                style = TextButtonStyle.ACTIVE,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow),
-                onClick = onFollowClick,
-            )
-        }
-
-        RelationshipUiState.REQUESTED -> {
-            var showDialog by remember {
-                mutableStateOf(false)
-            }
-            RelationshipTextButton(
-                modifier = modifier,
-                style = TextButtonStyle.STANDARD,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_requested),
                 onClick = { showDialog = true },
-            )
+            ) {
+                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_requested))
+            }
             if (showDialog) {
                 AlertConfirmDialog(
                     content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow_request),
@@ -130,83 +85,40 @@ fun RelationshipStateButton(
             }
         }
 
-        RelationshipUiState.REQUEST_BY -> {
-            FollowRequestBy(
+        relationship.following && relationship.followedBy -> {
+            OutlinedButton(
                 modifier = modifier,
-                onAcceptClick = onAcceptClick,
-                onRejectClick = onRejectClick,
-            )
-        }
-
-        RelationshipUiState.UNKNOWN -> {
-            Box(modifier = modifier)
-        }
-    }
-}
-
-@Composable
-fun RelationshipStateButton(
-    modifier: Modifier,
-    relationship: Relationships,
-    onUnblockClick: () -> Unit,
-    onFollowClick: () -> Unit,
-    onUnfollowClick: () -> Unit,
-) {
-    var showUnfollowDialog by remember { mutableStateOf(false) }
-    when {
-        relationship.blocking -> {
-            var showDialog by remember { mutableStateOf(false) }
-            RelationshipTextButton(
-                modifier = modifier,
-                style = TextButtonStyle.ALERT,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_blocking),
-                onClick = {
-                    showDialog = true
-                },
-            )
-            if (showDialog) {
-                AlertConfirmDialog(
-                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_blocking),
-                    onConfirm = onUnblockClick,
-                    onDismissRequest = { showDialog = false }
-                )
+                onClick = { showUnfollowDialog = true },
+            ) {
+                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_mutuals))
             }
         }
 
-        relationship.following && relationship.followedBy -> {
-            RelationshipTextButton(
-                modifier = modifier,
-                style = TextButtonStyle.STANDARD,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_mutuals),
-                onClick = { showUnfollowDialog = true },
-            )
-        }
-
         relationship.following -> {
-            RelationshipTextButton(
+            OutlinedButton(
                 modifier = modifier,
-                style = TextButtonStyle.STANDARD,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_following),
                 onClick = { showUnfollowDialog = true },
-            )
+            ) {
+                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_following))
+            }
         }
 
         relationship.followedBy -> {
-            RelationshipTextButton(
+            Button(
                 modifier = modifier,
-                style = TextButtonStyle.ACTIVE,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_follow_back),
                 onClick = onFollowClick,
-            )
+            ) {
+                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_follow_back))
+            }
         }
 
         else -> {
-            RelationshipTextButton(
+            Button(
                 modifier = modifier,
-                style = TextButtonStyle.STANDARD,
-                text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow),
-                onClick = { showUnfollowDialog = true },
-            )
+                onClick = onFollowClick,
+            ) {
+                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow))
+            }
         }
     }
     if (showUnfollowDialog) {

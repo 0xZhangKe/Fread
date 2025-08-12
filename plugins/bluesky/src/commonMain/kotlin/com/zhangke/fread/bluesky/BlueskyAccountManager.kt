@@ -64,6 +64,13 @@ class BlueskyAccountManager @Inject constructor(
         return Result.success(emptyMap())
     }
 
+    override suspend fun cancelFollowRequest(
+        account: LoggedAccount,
+        user: BlogAuthor
+    ): Result<Unit>? {
+        return null
+    }
+
     override suspend fun unblockAccount(
         account: LoggedAccount,
         user: BlogAuthor

@@ -120,7 +120,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                         id = entity.id,
                         author = author,
                         locator = locator,
-                        blog = status!!.status.intrinsicBlog,
+                        blog = status.status.intrinsicBlog,
                         createAt = createAt,
                         unread = unread,
                     )

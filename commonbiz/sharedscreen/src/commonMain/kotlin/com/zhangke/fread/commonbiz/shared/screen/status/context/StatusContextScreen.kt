@@ -189,6 +189,7 @@ data class StatusContextScreen(
                 status = statusInContext.status,
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
+                threadsType = ThreadsType.NONE,
                 composedStatusInteraction = composedStatusInteraction,
             )
 

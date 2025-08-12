@@ -34,7 +34,6 @@ fun BlogUi(
     modifier: Modifier,
     blog: Blog,
     blogTranslationState: BlogTranslationUiState,
-    following: Boolean?,
     isOwner: Boolean?,
     logged: Boolean?,
     indexInList: Int,
@@ -80,7 +79,7 @@ fun BlogUi(
             )
         }
         val infoTopPadding = if (topLabel != null || mentionOnly) {
-            style.containerTopPadding / 2
+            style.infolineToTopLabelPadding
         } else {
             style.containerTopPadding
         }
@@ -89,7 +88,7 @@ fun BlogUi(
                 .padding(top = infoTopPadding)
                 .fillMaxWidth()
                 .let {
-                    if (threadsType != ThreadsType.NONE) {
+                    if (threadsType != ThreadsType.NONE && threadsType != ThreadsType.UNSPECIFIED) {
                         it.onGloballyPositioned { coordinates ->
                             infoToTopSpacing = coordinates.positionInParent().y
                         }
@@ -103,7 +102,7 @@ fun BlogUi(
             visibility = blog.visibility,
             isOwner = isOwner,
             showMoreOperationIcon = showMoreOperationIcon,
-            showFollowButton = isOwner == false && detailModel && following == false,
+            allowToShowFollowButton = isOwner == false && detailModel,
             onInteractive = onInteractive,
             onUserInfoClick = onUserInfoClick,
             onUrlClick = onUrlClick,

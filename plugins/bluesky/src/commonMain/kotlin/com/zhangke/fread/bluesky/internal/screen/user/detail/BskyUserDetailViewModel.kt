@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileViewDetailed
-import app.bsky.actor.ViewerState
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
+import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.RefreshSessionUseCase
@@ -19,7 +19,6 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.framework.unknown_error
 import com.zhangke.fread.status.model.PlatformLocator
-import com.zhangke.fread.status.ui.common.RelationshipUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +31,7 @@ import sh.christian.ozone.api.Did
 
 class BskyUserDetailViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
+    private val accountAdapter: BlueskyAccountAdapter,
     private val updateRelationship: UpdateRelationshipUseCase,
     private val updateBlock: UpdateBlockUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
@@ -180,20 +180,9 @@ class BskyUserDetailViewModel @Inject constructor(
             followUri = this.viewer?.following?.atUri,
             muted = this.viewer?.muted == true,
             blockUri = this.viewer?.blocking?.atUri,
-            relationship = this.viewer?.relationship ?: RelationshipUiState.UNKNOWN,
+            relationship = this.viewer?.let { accountAdapter.convertRelationship(it) },
         )
     }
-
-    private val ViewerState.relationship: RelationshipUiState
-        get() {
-            return when {
-                this.blocking != null -> RelationshipUiState.BLOCKING
-                this.blockedBy == true -> RelationshipUiState.BLOCKED_BY
-                this.following != null -> RelationshipUiState.FOLLOWING
-                this.followedBy != null -> RelationshipUiState.FOLLOWED_BY
-                else -> RelationshipUiState.CAN_FOLLOW
-            }
-        }
 
     private fun createTabs(isOwner: Boolean): List<BlueskyFeeds> {
         return mutableListOf<BlueskyFeeds>().apply {

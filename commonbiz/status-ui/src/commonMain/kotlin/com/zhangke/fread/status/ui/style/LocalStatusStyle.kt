@@ -16,6 +16,7 @@ object StatusStyles {
             containerTopPadding = 10.dp,
             containerEndPadding = 16.dp,
             containerBottomPadding = 10.dp,
+            infolineToTopLabelPadding = 5.dp,
             topLabelStyle = smallTopLabelStyle(),
             infoLineStyle = smallInfoStyle(),
             contentStyle = smallContentStyle(),
@@ -33,6 +34,7 @@ object StatusStyles {
             containerTopPadding = 12.dp,
             containerEndPadding = 16.dp,
             containerBottomPadding = 12.dp,
+            infolineToTopLabelPadding = 6.dp,
             topLabelStyle = mediumTopLabelStyle(),
             infoLineStyle = mediumInfoStyle(),
             contentStyle = mediumContentStyle(),
@@ -50,6 +52,7 @@ object StatusStyles {
             containerTopPadding = 14.dp,
             containerEndPadding = 16.dp,
             containerBottomPadding = 14.dp,
+            infolineToTopLabelPadding = 7.dp,
             topLabelStyle = largeTopLabelStyle(),
             infoLineStyle = largeInfoStyle(),
             contentStyle = largeContentStyle(),
@@ -106,7 +109,7 @@ object StatusStyles {
     private fun smallInfoStyle(): StatusStyle.InfoLineStyle {
         return StatusStyle.InfoLineStyle(
             nameSize = 14.sp,
-            avatarSize = 36.dp,
+            avatarSize = 38.dp,
             nameToAvatarSpacing = 6.dp,
             descStyle = MaterialTheme.typography.bodySmall
                 .copy(fontWeight = FontWeight.Light)
@@ -117,7 +120,7 @@ object StatusStyles {
     private fun mediumInfoStyle(): StatusStyle.InfoLineStyle {
         return StatusStyle.InfoLineStyle(
             nameSize = 16.sp,
-            avatarSize = 40.dp,
+            avatarSize = 42.dp,
             nameToAvatarSpacing = 8.dp,
             descStyle = MaterialTheme.typography.bodySmall
                 .copy(fontWeight = FontWeight.Normal)
@@ -128,7 +131,7 @@ object StatusStyles {
     private fun largeInfoStyle(): StatusStyle.InfoLineStyle {
         return StatusStyle.InfoLineStyle(
             nameSize = 16.sp,
-            avatarSize = 44.dp,
+            avatarSize = 46.dp,
             nameToAvatarSpacing = 8.dp,
             descStyle = MaterialTheme.typography.bodyMedium
                 .copy(fontWeight = FontWeight.Medium)

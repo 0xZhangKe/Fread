@@ -12,7 +12,9 @@ import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.BlogUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.status.ui.getStatusTopLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.status.ui.threads.ThreadsType
 
 @Composable
 fun BlogUi(
@@ -28,6 +30,11 @@ fun BlogUi(
     val browserLauncher = LocalActivityBrowserLauncher.current
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
+    val fixedThreadType = if (blog.isReply) {
+        ThreadsType.CONTINUED_THREAD
+    } else {
+        ThreadsType.NONE
+    }
     Box(modifier = modifier) {
         BlogUi(
             modifier = Modifier,
@@ -36,9 +43,20 @@ fun BlogUi(
             isOwner = null,
             blogTranslationState = BlogTranslationUiState.DEFAULT,
             indexInList = indexInList,
-            following = null,
             showMoreOperationIcon = showMoreOperationIcon,
             style = style,
+            threadsType = fixedThreadType,
+            topLabel = getStatusTopLabel(
+                isReblog = false,
+                pinned = blog.pinned,
+                isReply = blog.isReply,
+                author = blog.author,
+                style = style,
+                threadsType = fixedThreadType,
+                onUserInfoClick = {
+                    composedStatusInteraction.onUserInfoClick(locator, it)
+                },
+            ),
             onInteractive = { type, _ -> },
             onUserInfoClick = {
                 composedStatusInteraction.onUserInfoClick(locator, it)

@@ -2,6 +2,10 @@ package com.zhangke.fread.commonbiz.shared.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -10,6 +14,7 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.BlogUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.getStatusTopLabel
@@ -35,6 +40,7 @@ fun BlogUi(
     } else {
         ThreadsType.NONE
     }
+    var continueThreadHeight: Int? by remember { mutableStateOf(null) }
     Box(modifier = modifier) {
         BlogUi(
             modifier = Modifier,
@@ -46,16 +52,19 @@ fun BlogUi(
             showMoreOperationIcon = showMoreOperationIcon,
             style = style,
             threadsType = fixedThreadType,
-            topLabel = getStatusTopLabel(
+            continueThreadLabelHeight = continueThreadHeight,
+            topLabels = getStatusTopLabel(
                 isReblog = false,
                 pinned = blog.pinned,
                 isReply = blog.isReply,
                 author = blog.author,
+                mentionOnly = blog.visibility == StatusVisibility.DIRECT,
                 style = style,
                 threadsType = fixedThreadType,
                 onUserInfoClick = {
                     composedStatusInteraction.onUserInfoClick(locator, it)
                 },
+                onContinueThreadHeightChanged = { continueThreadHeight = it }
             ),
             onInteractive = { type, _ -> },
             onUserInfoClick = {

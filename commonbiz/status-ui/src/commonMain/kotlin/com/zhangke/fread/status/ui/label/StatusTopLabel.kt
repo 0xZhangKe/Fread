@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
@@ -25,8 +26,8 @@ import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_status_forward
 import com.zhangke.fread.statusui.status_ui_boosted
 import com.zhangke.fread.statusui.status_ui_label_pinned
-import com.zhangke.fread.statusui.status_ui_visibility_mentioned_only
 import com.zhangke.fread.statusui.status_ui_top_label_continued_thread
+import com.zhangke.fread.statusui.status_ui_visibility_mentioned_only
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -104,6 +105,7 @@ fun StatusPinnedLabel(
 @Composable
 fun ContinueThread(
     style: StatusStyle,
+    onHeightChanged: (Int) -> Unit,
 ) {
     val startPadding =
         style.containerStartPadding + style.infoLineStyle.avatarSize + style.infoLineStyle.nameToAvatarSpacing
@@ -112,7 +114,7 @@ fun ContinueThread(
             start = startPadding,
             top = style.containerTopPadding / 2,
             end = style.containerEndPadding,
-        ),
+        ).onSizeChanged { onHeightChanged(it.height) },
         maxLines = 1,
         text = stringResource(Res.string.status_ui_top_label_continued_thread),
         color = style.secondaryFontColor,

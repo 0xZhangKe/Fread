@@ -3,16 +3,22 @@ package com.zhangke.fread.status.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.ContinueThread
 import com.zhangke.fread.status.ui.label.ReblogTopLabel
+import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.label.StatusPinnedLabel
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -42,80 +48,86 @@ fun StatusUi(
             threadsType
         }
     val rawStatus = status.status
-    BlogUi(
-        modifier = modifier,
-        blog = rawStatus.intrinsicBlog,
-        isOwner = status.isOwner,
-        logged = status.logged,
-        blogTranslationState = status.blogTranslationState,
-        topLabel = getStatusTopLabel(
-            isReblog = rawStatus == Status.Reblog,
-            pinned = rawStatus.intrinsicBlog.pinned,
-            isReply = rawStatus.intrinsicBlog.isReply,
-            author = rawStatus.triggerAuthor,
-            style = style,
+    var continueThreadHeight: Int? by remember { mutableStateOf(null) }
+    Box(modifier = modifier) {
+        BlogUi(
+            modifier = Modifier,
+            blog = rawStatus.intrinsicBlog,
+            isOwner = status.isOwner,
+            logged = status.logged,
+            blogTranslationState = status.blogTranslationState,
+            continueThreadLabelHeight = continueThreadHeight,
+            topLabels = getStatusTopLabel(
+                isReblog = rawStatus == Status.Reblog,
+                pinned = rawStatus.intrinsicBlog.pinned,
+                isReply = rawStatus.intrinsicBlog.isReply,
+                author = rawStatus.triggerAuthor,
+                style = style,
+                threadsType = fixedThreadType,
+                mentionOnly = rawStatus.intrinsicBlog.visibility == StatusVisibility.DIRECT,
+                onUserInfoClick = {
+                    composedStatusInteraction.onUserInfoClick(status.locator, it)
+                },
+                onContinueThreadHeightChanged = { continueThreadHeight = it }
+            ),
+            indexInList = indexInList,
             threadsType = fixedThreadType,
+            detailModel = detailModel,
+            style = if (detailModel) style else style.contentIndentStyle(),
+            onInteractive = { type, _ ->
+                composedStatusInteraction.onStatusInteractive(status, type)
+            },
+            showDivider = showDivider && threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
+            onMediaClick = onMediaClick,
             onUserInfoClick = {
                 composedStatusInteraction.onUserInfoClick(status.locator, it)
             },
-        ),
-        indexInList = indexInList,
-        threadsType = fixedThreadType,
-        detailModel = detailModel,
-        style = if (detailModel) style else style.contentIndentStyle(),
-        onInteractive = { type, _ ->
-            composedStatusInteraction.onStatusInteractive(status, type)
-        },
-        showDivider = showDivider && threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
-        onMediaClick = onMediaClick,
-        onUserInfoClick = {
-            composedStatusInteraction.onUserInfoClick(status.locator, it)
-        },
-        onVoted = { options ->
-            composedStatusInteraction.onVoted(status, options)
-        },
-        onHashtagInStatusClick = {
-            composedStatusInteraction.onHashtagInStatusClick(status.locator, it)
-        },
-        onMentionClick = {
-            composedStatusInteraction.onMentionClick(status.locator, it)
-        },
-        onMentionDidClick = {
-            composedStatusInteraction.onMentionClick(
-                locator = status.locator,
-                did = it,
-                protocol = status.status.platform.protocol,
-            )
-        },
-        onFollowClick = {
-            composedStatusInteraction.onFollowClick(status.locator, it)
-        },
-        onUrlClick = {
-            browserLauncher.launchWebTabInApp(it, status.locator)
-        },
-        onBoostedClick = {
-            composedStatusInteraction.onBoostedClick(status.locator, status)
-        },
-        onFavouritedClick = {
-            composedStatusInteraction.onFavouritedClick(status.locator, status)
-        },
-        onShowOriginalClick = {
-            composedStatusInteraction.onShowOriginalClick(status)
-        },
-        onTranslateClick = {
-            composedStatusInteraction.onTranslateClick(status.locator, status)
-        },
-        onBlogClick = {
-            composedStatusInteraction.onBlockClick(status.locator, it)
-        },
-        onMaybeHashtagClick = {
-            composedStatusInteraction.onMaybeHashtagClick(
-                locator = status.locator,
-                protocol = status.status.platform.protocol,
-                hashtag = it,
-            )
-        },
-    )
+            onVoted = { options ->
+                composedStatusInteraction.onVoted(status, options)
+            },
+            onHashtagInStatusClick = {
+                composedStatusInteraction.onHashtagInStatusClick(status.locator, it)
+            },
+            onMentionClick = {
+                composedStatusInteraction.onMentionClick(status.locator, it)
+            },
+            onMentionDidClick = {
+                composedStatusInteraction.onMentionClick(
+                    locator = status.locator,
+                    did = it,
+                    protocol = status.status.platform.protocol,
+                )
+            },
+            onFollowClick = {
+                composedStatusInteraction.onFollowClick(status.locator, it)
+            },
+            onUrlClick = {
+                browserLauncher.launchWebTabInApp(it, status.locator)
+            },
+            onBoostedClick = {
+                composedStatusInteraction.onBoostedClick(status.locator, status)
+            },
+            onFavouritedClick = {
+                composedStatusInteraction.onFavouritedClick(status.locator, status)
+            },
+            onShowOriginalClick = {
+                composedStatusInteraction.onShowOriginalClick(status)
+            },
+            onTranslateClick = {
+                composedStatusInteraction.onTranslateClick(status.locator, status)
+            },
+            onBlogClick = {
+                composedStatusInteraction.onBlockClick(status.locator, it)
+            },
+            onMaybeHashtagClick = {
+                composedStatusInteraction.onMaybeHashtagClick(
+                    locator = status.locator,
+                    protocol = status.status.platform.protocol,
+                    hashtag = it,
+                )
+            },
+        )
+    }
 }
 
 fun getStatusTopLabel(
@@ -125,10 +137,13 @@ fun getStatusTopLabel(
     pinned: Boolean,
     isReply: Boolean,
     author: BlogAuthor,
+    mentionOnly: Boolean,
     onUserInfoClick: (blogAuthor: BlogAuthor) -> Unit,
-): (@Composable () -> Unit)? {
+    onContinueThreadHeightChanged: (height: Int) -> Unit,
+): List<@Composable () -> Unit> {
+    val labels = mutableListOf<@Composable () -> Unit>()
     if (isReblog) {
-        return {
+        labels += {
             ReblogTopLabel(
                 author = author,
                 style = style,
@@ -136,16 +151,24 @@ fun getStatusTopLabel(
             )
         }
     } else if (threadsType == ThreadsType.CONTINUED_THREAD && isReply) {
-        return {
-            ContinueThread(style = style)
+        labels += {
+            ContinueThread(style = style, onHeightChanged = onContinueThreadHeightChanged)
+        }
+    }
+    if (mentionOnly) {
+        labels += {
+            StatusMentionOnlyLabel(
+                modifier = Modifier,
+                style = style,
+            )
         }
     }
     if (pinned) {
-        return {
+        labels += {
             StatusPinnedLabel(
                 style = style,
             )
         }
     }
-    return null
+    return labels
 }

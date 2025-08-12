@@ -165,6 +165,7 @@ internal class ActivityPubContentScreen(
                                 ContentToolbar(
                                     title = config.name,
                                     showNextIcon = !isLatestContent,
+                                    account = account,
                                     onMenuClick = {
                                         coroutineScope.launch {
                                             mainTabConnection.openDrawer()

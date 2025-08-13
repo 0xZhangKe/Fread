@@ -51,11 +51,13 @@ fun ReblogTopLabel(
     style: StatusStyle,
     onAuthorClick: (BlogAuthor) -> Unit,
 ) {
+    val startPadding =
+        style.containerStartPadding + style.infoLineStyle.avatarSize - style.topLabelStyle.iconSize
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = style.containerStartPadding,
+                start = startPadding,
                 top = style.containerTopPadding / 2,
                 end = style.containerEndPadding,
             )
@@ -131,11 +133,13 @@ private fun IconWithTextLabel(
     style: StatusStyle,
     color: Color = style.secondaryFontColor,
 ) {
+    val startPadding =
+        style.containerStartPadding + style.infoLineStyle.avatarSize - style.topLabelStyle.iconSize
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                start = style.containerStartPadding,
+                start = startPadding,
                 top = style.containerTopPadding / 2,
                 end = style.containerEndPadding,
             ),
@@ -148,7 +152,7 @@ private fun IconWithTextLabel(
             tint = color,
         )
         Text(
-            modifier = Modifier.padding(start = 4.dp),
+            modifier = Modifier.padding(start = style.infoLineStyle.nameToAvatarSpacing),
             maxLines = 1,
             text = text,
             color = color,

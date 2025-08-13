@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -79,8 +81,8 @@ fun StatusInfoLine(
         ) {
             FreadRichText(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(enabled = onUserInfoClick != null) {
+                    .wrapContentWidth(unbounded = false)
+                    .noRippleClick(enabled = onUserInfoClick != null) {
                         onUserInfoClick?.invoke(blogAuthor)
                     },
                 maxLines = 1,

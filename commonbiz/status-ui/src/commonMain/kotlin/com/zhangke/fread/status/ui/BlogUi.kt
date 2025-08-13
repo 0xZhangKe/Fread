@@ -73,6 +73,9 @@ fun BlogUi(
                 continueThreadLabelHeight = continueThreadLabelHeight,
             )
     ) {
+        if (topLabels.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(style.containerTopPadding / 2))
+        }
         topLabels.forEachIndexed { index, composable ->
             composable()
             Spacer(modifier = Modifier.height(style.infolineToTopLabelPadding))

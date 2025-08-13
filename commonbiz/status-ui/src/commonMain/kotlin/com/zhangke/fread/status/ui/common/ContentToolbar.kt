@@ -1,7 +1,7 @@
 package com.zhangke.fread.status.ui.common
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -58,11 +58,9 @@ fun ContentToolbar(
         },
         scrollBehavior = scrollBehavior,
         title = {
-            Row {
+            Column {
                 Text(
-                    modifier = Modifier.noRippleClick {
-                        onTitleClick()
-                    }.alignByBaseline(),
+                    modifier = Modifier.noRippleClick { onTitleClick() },
                     text = title,
                     fontSize = 18.sp,
                     maxLines = 1,
@@ -70,7 +68,7 @@ fun ContentToolbar(
                 )
                 if (account != null && showAccountInfo) {
                     Text(
-                        modifier = Modifier.padding(start = 4.dp).alignByBaseline(),
+                        modifier = Modifier.padding(top = 1.dp),
                         text = account.prettyHandle,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

@@ -176,8 +176,8 @@ private fun MainDrawerContent(
                                     ContentConfigItem(
                                         modifier = Modifier
                                             .fillMaxWidth(),
-                                        contentConfig = contentConfig,
-                                        onClick = { onContentConfigClick(contentConfig) },
+                                        mainDrawerContent = contentConfig,
+                                        onClick = { onContentConfigClick(contentConfig.content) },
                                         onEditClick = onEditClick,
                                     )
                                 }
@@ -228,7 +228,7 @@ private fun MainDrawerContent(
 @Composable
 private fun ContentConfigItem(
     modifier: Modifier,
-    contentConfig: FreadContent,
+    mainDrawerContent: MainDrawerContent,
     onClick: () -> Unit,
     onEditClick: (FreadContent) -> Unit,
 ) {
@@ -246,13 +246,13 @@ private fun ContentConfigItem(
         ) {
             Text(
                 modifier = Modifier,
-                text = contentConfig.name,
+                text = mainDrawerContent.content.name,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            contentConfig.Subtitle()
+            mainDrawerContent.content.Subtitle(mainDrawerContent.account)
         }
         SimpleIconButton(
             modifier = Modifier
@@ -260,7 +260,7 @@ private fun ContentConfigItem(
                 .size(24.dp)
                 .alpha(0.7F)
                 .padding(2.dp),
-            onClick = { onEditClick(contentConfig) },
+            onClick = { onEditClick(mainDrawerContent.content) },
             imageVector = Icons.Default.Settings,
             contentDescription = "Edit Content Config",
         )

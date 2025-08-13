@@ -78,6 +78,7 @@ internal class MixedContentScreen(
                     showNextIcon = !isLatestTab,
                     scrollBehavior = scrollBehavior,
                     account = null,
+                    showAccountInfo = false,
                     onMenuClick = {
                         coroutineScope.launch {
                             mainTabConnection.openDrawer()

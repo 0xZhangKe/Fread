@@ -57,7 +57,7 @@ fun Modifier.threads(
         } else {
             val startMargin = containerStartPadding + avatarSize / 2
             val startMarginPx = startMargin.toPx()
-            val firstLineY = containerTopPaddingPx - threadPadding
+            val firstLineY = infoToTopSpacing - threadPadding
             if (threadsType.drawTopOfAvatarLine) {
                 drawLine(
                     color = threadStyle.color,

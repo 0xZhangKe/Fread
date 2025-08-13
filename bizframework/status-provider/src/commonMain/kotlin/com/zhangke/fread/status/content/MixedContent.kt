@@ -10,6 +10,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.uri.FormalUri
 import fread.bizframework.status_provider.generated.resources.Res
@@ -33,7 +34,7 @@ data class MixedContent(
     }
 
     @Composable
-    override fun Subtitle() {
+    override fun Subtitle(account: LoggedAccount?) {
         Text(
             modifier = Modifier,
             text = buildSubtitle(),

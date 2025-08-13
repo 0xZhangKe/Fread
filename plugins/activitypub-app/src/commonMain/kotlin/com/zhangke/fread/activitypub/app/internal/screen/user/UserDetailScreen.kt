@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -471,7 +472,7 @@ data class UserDetailScreen(
         if (uiState.isAccountOwner) {
             SimpleIconButton(
                 onClick = onEditClick,
-                imageVector = Icons.Default.Edit,
+                imageVector = Icons.Default.Settings,
                 contentDescription = "Edit Profile",
             )
             Box(modifier = Modifier.width(8.dp))

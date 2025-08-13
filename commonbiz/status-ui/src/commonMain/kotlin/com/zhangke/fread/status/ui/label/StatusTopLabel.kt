@@ -58,7 +58,6 @@ fun ReblogTopLabel(
             .fillMaxWidth()
             .padding(
                 start = startPadding,
-                top = style.containerTopPadding / 2,
                 end = style.containerEndPadding,
             )
             .noRippleClick { onAuthorClick(author) },
@@ -114,7 +113,6 @@ fun ContinueThread(
     Text(
         modifier = Modifier.padding(
             start = startPadding,
-            top = style.containerTopPadding / 2,
             end = style.containerEndPadding,
         ).onSizeChanged { onHeightChanged(it.height) },
         maxLines = 1,
@@ -140,7 +138,6 @@ private fun IconWithTextLabel(
             .fillMaxWidth()
             .padding(
                 start = startPadding,
-                top = style.containerTopPadding / 2,
                 end = style.containerEndPadding,
             ),
         verticalAlignment = Alignment.CenterVertically,

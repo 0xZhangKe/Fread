@@ -30,6 +30,7 @@ fun ContentToolbar(
     modifier: Modifier = Modifier,
     title: String,
     account: LoggedAccount?,
+    showAccountInfo: Boolean,
     showNextIcon: Boolean,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
@@ -67,7 +68,7 @@ fun ContentToolbar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                if (account != null) {
+                if (account != null && showAccountInfo) {
                     Text(
                         modifier = Modifier.padding(start = 4.dp).alignByBaseline(),
                         text = account.prettyHandle,

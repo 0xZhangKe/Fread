@@ -8,11 +8,20 @@ data class ActivityPubContentUiState(
     val locator: PlatformLocator?,
     val config: ActivityPubContent?,
     val account: ActivityPubLoggedAccount?,
-    val errorMessage: String? = null,
+    val showAccountInTopBar: Boolean,
+    val errorMessage: String?,
 ) {
 
     companion object {
 
-        val DEFAULT = ActivityPubContentUiState(null, null, null)
+        fun default(): ActivityPubContentUiState {
+            return ActivityPubContentUiState(
+                locator = null,
+                config = null,
+                account = null,
+                showAccountInTopBar = false,
+                errorMessage = null,
+            )
+        }
     }
 }

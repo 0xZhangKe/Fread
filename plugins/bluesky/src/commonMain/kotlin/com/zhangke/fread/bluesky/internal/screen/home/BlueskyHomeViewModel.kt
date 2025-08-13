@@ -66,8 +66,9 @@ class BlueskyHomeViewModel(
             accountManager.getAccountFlow(locator.accountUri!!)
                 .distinctUntilChanged()
                 .collect { account ->
+                    val accountSize = accountManager.getAllAccount().size
                     _uiState.update {
-                        it.copy(account = account)
+                        it.copy(account = account, showAccountInTopBar = accountSize > 1)
                     }
                     updateHomeTab(contentId, locator)
                 }

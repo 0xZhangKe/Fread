@@ -121,11 +121,12 @@ fun Modifier.blogBeReplyThreads(
 
 fun Modifier.blogInReplyingThreads(
     threadsType: ThreadsType,
+    infoToTopSpacing: Float,
     publishBlogStyle: PublishBlogStyle,
 ): Modifier {
     return this.threads(
         threadsType = threadsType,
-        infoToTopSpacing = 0F,
+        infoToTopSpacing = infoToTopSpacing,
         continueThreadLabelHeight = null,
         threadStyle = publishBlogStyle.statusStyle.threadsStyle,
         containerTopPadding = publishBlogStyle.topPadding,

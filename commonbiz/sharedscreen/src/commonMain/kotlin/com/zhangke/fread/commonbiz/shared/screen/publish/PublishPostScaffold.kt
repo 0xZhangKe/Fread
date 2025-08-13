@@ -29,7 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.buildAnnotatedString
@@ -40,6 +40,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.pxToDp
+import com.zhangke.framework.utils.toPx
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
@@ -107,9 +108,9 @@ fun PublishPostScaffold(
         }
         Column(
             modifier = Modifier.fillMaxSize()
-                .onGloballyPositioned {
+                .onSizeChanged {
                     if (contentHeight === null || contentHeight == 0F) {
-                        contentHeight = it.size.height.toFloat()
+                        contentHeight = it.height.toFloat()
                     }
                 }
                 .padding(innerPadding)
@@ -125,9 +126,9 @@ fun PublishPostScaffold(
             if (replyingBlog != null) {
                 BlogInEmbedding(
                     modifier = Modifier.fillMaxWidth()
-                        .onGloballyPositioned {
+                        .onSizeChanged {
                             if (replyingHeight == null || replyingHeight == 0F) {
-                                replyingHeight = it.size.height.toFloat()
+                                replyingHeight = it.height.toFloat()
                             }
                         }
                         .blogBeReplyThreads(
@@ -148,6 +149,7 @@ fun PublishPostScaffold(
                         if (replyingBlog != null) {
                             it.blogInReplyingThreads(
                                 threadsType = ThreadsType.ANCHOR,
+                                infoToTopSpacing = style.topPadding.toPx(),
                                 publishBlogStyle = style,
                             ).padding(top = style.topPadding)
                         } else {
@@ -157,8 +159,7 @@ fun PublishPostScaffold(
             ) {
                 AutoSizeImage(
                     url = account?.avatar.orEmpty(),
-                    modifier = Modifier
-                        .padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp)
                         .clip(CircleShape)
                         .size(style.statusStyle.infoLineStyle.avatarSize),
                     contentDescription = null,

@@ -92,7 +92,9 @@ fun BlogUi(
                 .let {
                     if (threadsType != ThreadsType.NONE && threadsType != ThreadsType.UNSPECIFIED) {
                         it.onGloballyPositioned { coordinates ->
-                            infoToTopSpacing = coordinates.positionInParent().y
+                            if (coordinates.positionInParent().y != infoToTopSpacing) {
+                                infoToTopSpacing = coordinates.positionInParent().y
+                            }
                         }
                     } else {
                         it

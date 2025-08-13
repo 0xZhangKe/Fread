@@ -83,6 +83,7 @@ fun StatusNotificationUi(
                         status = notification.status,
                         indexInList = indexInList,
                         style = style.statusStyle,
+                        showDivider = false,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }

@@ -22,6 +22,7 @@ data class BlogAuthor(
     val emojis: List<Emoji>,
     val userId: String? = null,
     val bot: Boolean = false,
+    val banner: String? = null,
     val followersCount: Long?,
     val followingCount: Long?,
     val statusesCount: Long?,

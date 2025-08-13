@@ -1,11 +1,14 @@
 package com.zhangke.fread.commonbiz.shared.composable
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,10 +29,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.VerticalIndentLayout
-import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.Relationships
+import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.richtext.SelectableRichText
@@ -54,7 +58,46 @@ fun UserInfoCard(
     onUnblockClick: (BlogAuthor) -> Unit,
     onCancelFollowRequestClick: (BlogAuthor) -> Unit,
 ) {
-    Box(modifier = modifier.noRippleClick { onUserClick(user) }) {
+    BasicProfileCard(
+        modifier = modifier,
+        banner = user.banner.orEmpty(),
+        avatar = user.avatar.orEmpty(),
+        nickName = user.humanizedName,
+        prettyHandle = user.prettyHandle,
+        bot = user.bot,
+        description = user.humanizedDescription,
+        followersCount = user.followersCount,
+        followingCount = user.followingCount,
+        statusesCount = user.statusesCount,
+        relationships = user.relationships,
+        onProfileClick = { onUserClick(user) },
+        onFollowAccountClick = { onFollowAccountClick(user) },
+        onUnfollowAccountClick = { onUnfollowAccountClick(user) },
+        onUnblockClick = { onUnblockClick(user) },
+        onCancelFollowRequestClick = { onCancelFollowRequestClick(user) },
+    )
+}
+
+@Composable
+fun BasicProfileCard(
+    modifier: Modifier,
+    banner: String,
+    avatar: String,
+    nickName: RichText,
+    prettyHandle: String,
+    bot: Boolean,
+    description: RichText,
+    followersCount: Long?,
+    followingCount: Long?,
+    statusesCount: Long?,
+    relationships: Relationships?,
+    onProfileClick: () -> Unit,
+    onFollowAccountClick: () -> Unit,
+    onUnfollowAccountClick: () -> Unit,
+    onUnblockClick: () -> Unit,
+    onCancelFollowRequestClick: () -> Unit,
+) {
+    Box(modifier = modifier.clickable { onProfileClick() }) {
         Card(
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -66,20 +109,30 @@ fun UserInfoCard(
                     .padding(8.dp),
                 indentHeight = overLapHeight,
                 headerContent = {
-                    AutoSizeImage(
+                    Box(
                         modifier = Modifier.fillMaxWidth()
                             .clip(RoundedCornerShape(12.dp))
                             .aspectRatio(BANNER_ASPECT),
-                        url = user.avatar.orEmpty(),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                        placeholderPainter = {
-                            painterResource(Res.drawable.img_banner_background)
-                        },
-                        errorPainter = {
-                            painterResource(Res.drawable.img_banner_background)
-                        },
-                    )
+                    ) {
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            painter = painterResource(Res.drawable.img_banner_background),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+                        AutoSizeImage(
+                            modifier = Modifier.fillMaxSize(),
+                            url = banner,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null,
+                            placeholderPainter = {
+                                painterResource(Res.drawable.img_banner_background)
+                            },
+                            errorPainter = {
+                                painterResource(Res.drawable.img_banner_background)
+                            },
+                        )
+                    }
                 },
                 indentContent = {
                     Column(
@@ -99,7 +152,7 @@ fun UserInfoCard(
                                         shape = CircleShape,
                                     )
                                     .size(avatarSize),
-                                imageUrl = user.avatar.orEmpty(),
+                                imageUrl = avatar,
                             )
                             Column(
                                 modifier = Modifier.padding(start = avatarSize, top = overLapHeight)
@@ -107,7 +160,7 @@ fun UserInfoCard(
                             ) {
                                 SelectableRichText(
                                     modifier = Modifier,
-                                    richText = user.humanizedName,
+                                    richText = nickName,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     fontSizeSp = 18F,
@@ -115,8 +168,8 @@ fun UserInfoCard(
                                 )
                                 UserHandleLine(
                                     modifier = Modifier.padding(top = 1.dp),
-                                    handle = user.prettyHandle,
-                                    bot = user.bot,
+                                    handle = prettyHandle,
+                                    bot = bot,
                                     followedBy = false,
                                 )
                             }
@@ -129,7 +182,7 @@ fun UserInfoCard(
                                     end = 16.dp,
                                 )
                                 .fillMaxWidth(),
-                            richText = user.humanizedDescription,
+                            richText = description,
                             onUrlClick = {},
                             onMaybeHashtagClick = {},
                         )
@@ -138,24 +191,24 @@ fun UserInfoCard(
                             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 2.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            if (user.followingCount != null && user.followersCount != null) {
+                            if (followingCount != null && followersCount != null) {
                                 UserFollowInfo(
                                     modifier = Modifier.weight(1F),
-                                    followersCount = user.followersCount,
-                                    followingCount = user.followingCount,
-                                    statusesCount = user.statusesCount,
+                                    followersCount = followersCount,
+                                    followingCount = followingCount,
+                                    statusesCount = statusesCount,
                                 )
                             } else {
                                 Spacer(modifier = Modifier.weight(1F))
                             }
-                            if (user.relationships != null) {
+                            if (relationships != null) {
                                 RelationshipStateButton(
                                     modifier = Modifier,
-                                    relationship = user.relationships!!,
-                                    onFollowClick = { onFollowAccountClick(user) },
-                                    onUnfollowClick = { onUnfollowAccountClick(user) },
-                                    onUnblockClick = { onUnblockClick(user) },
-                                    onCancelFollowRequestClick = { onCancelFollowRequestClick(user) },
+                                    relationship = relationships,
+                                    onFollowClick = { onFollowAccountClick() },
+                                    onUnfollowClick = { onUnfollowAccountClick() },
+                                    onUnblockClick = { onUnblockClick() },
+                                    onCancelFollowRequestClick = { onCancelFollowRequestClick() },
                                 )
                             } else {
                                 Box(modifier = Modifier.size(height = 28.dp, width = 8.dp))

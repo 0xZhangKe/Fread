@@ -59,7 +59,12 @@ fun NotificationWithWholeStatus(
             blog = blog,
             locator = locator,
             indexInList = indexInList,
-            style = style.statusStyle,
+            style = style.statusStyle.copy(
+                containerStartPadding = 0.dp,
+                containerEndPadding = 0.dp,
+                containerTopPadding = 0.dp,
+                containerBottomPadding = 0.dp,
+            ),
             showBottomPanel = false,
             showMoreOperationIcon = false,
             composedStatusInteraction = composedStatusInteraction,

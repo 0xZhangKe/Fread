@@ -1,6 +1,5 @@
 package com.zhangke.fread.commonbiz.shared.notification
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.commonbiz.shared.composable.BlogUi
+import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_favourited_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
@@ -66,34 +65,23 @@ fun StatusNotificationUi(
                 }
 
                 is StatusNotification.Mention -> {
-                    BlogUi(
-                        modifier = Modifier
-                            .clickable { composedStatusInteraction.onStatusClick(notification.status) }
-                            .fillMaxWidth()
-                            .padding(top = style.headLineToContentPadding)
-                            .padding(style.containerPaddings),
-                        blog = notification.status.status.intrinsicBlog,
-                        locator = notification.locator,
+                    FeedsStatusNode(
+                        modifier = Modifier.fillMaxWidth(),
+                        status = notification.status,
                         indexInList = indexInList,
                         style = style.statusStyle,
-                        showBottomPanel = false,
-                        showMoreOperationIcon = false,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
                 is StatusNotification.Reply -> {
-                    BlogUi(
+                    FeedsStatusNode(
                         modifier = Modifier
-                            .clickable { composedStatusInteraction.onStatusClick(notification.status) }
                             .fillMaxWidth()
                             .padding(style.containerPaddings),
-                        blog = notification.status.status.intrinsicBlog,
-                        locator = notification.locator,
+                        status = notification.status,
                         indexInList = indexInList,
                         style = style.statusStyle,
-                        showBottomPanel = false,
-                        showMoreOperationIcon = false,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
@@ -281,12 +269,7 @@ fun defaultNotificationStyle(
         bottom = NotificationStyleDefaults.internalBlogBottomPadding,
     ),
     headLineToContentPadding: Dp = NotificationStyleDefaults.headLineToContentPadding,
-    statusStyle: StatusStyle = LocalStatusUiConfig.current.contentStyle.copy(
-        containerStartPadding = 0.dp,
-        containerTopPadding = 0.dp,
-        containerEndPadding = 0.dp,
-        containerBottomPadding = 0.dp,
-    ),
+    statusStyle: StatusStyle = LocalStatusUiConfig.current.contentStyle,
     triggerAccountAvatarSize: Dp = NotificationStyleDefaults.triggerAccountAvatarSize,
     typeLogoSize: Dp = NotificationStyleDefaults.typeLogoSize,
 ) = NotificationStyle(

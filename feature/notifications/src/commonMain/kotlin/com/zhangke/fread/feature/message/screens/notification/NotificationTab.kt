@@ -131,9 +131,7 @@ class NotificationTab(
                         .applyNestedScrollConnection(nestedScrollConnection),
                     refreshing = uiState.refreshing,
                     loadState = uiState.loadMoreState,
-                    contentPadding = PaddingValues(
-                        bottom = 20.dp,
-                    )
+                    contentPadding = PaddingValues(bottom = 20.dp)
                 ) {
                     itemsIndexed(
                         items = uiState.dataList,

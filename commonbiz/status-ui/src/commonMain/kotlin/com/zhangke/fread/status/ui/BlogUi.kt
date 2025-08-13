@@ -145,7 +145,7 @@ fun BlogUi(
                     .padding(
                         start = style.containerStartPadding / 2 + style.bottomPanelStyle.startPadding,
                         top = style.contentStyle.contentVerticalSpacing,
-                        style.containerEndPadding / 2
+                        end = style.containerEndPadding / 2
                     ),
                 style = style,
                 blog = blog,

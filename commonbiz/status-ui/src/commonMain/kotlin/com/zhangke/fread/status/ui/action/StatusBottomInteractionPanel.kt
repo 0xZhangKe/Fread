@@ -28,8 +28,7 @@ fun StatusBottomInteractionPanel(
     onInteractive: (StatusActionType, Blog) -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         StatusActionIcon(
@@ -40,6 +39,7 @@ fun StatusBottomInteractionPanel(
             contentDescription = forwardAlt(),
             text = blog.forward.forwardCount?.countToLabel(),
             highLight = blog.forward.forward == true,
+            contentAlignment = Alignment.CenterStart,
             onClick = { onInteractive(StatusActionType.FORWARD, blog) },
         )
         Spacer(modifier = Modifier.weight(1F))
@@ -53,7 +53,7 @@ fun StatusBottomInteractionPanel(
             highLight = false,
             onClick = { onInteractive(StatusActionType.REPLY, blog) },
         )
-        if (blog.quote.support){
+        if (blog.quote.support) {
             Spacer(modifier = Modifier.weight(1F))
             StatusActionIcon(
                 modifier = Modifier,
@@ -99,6 +99,7 @@ fun StatusBottomInteractionPanel(
             contentDescription = shareAlt(),
             text = null,
             highLight = false,
+            contentAlignment = Alignment.CenterEnd,
             onClick = { onInteractive(StatusActionType.SHARE, blog) },
         )
     }
@@ -114,11 +115,13 @@ private fun StatusActionIcon(
     text: String? = null,
     highLight: Boolean,
     onClick: () -> Unit,
+    contentAlignment: Alignment = Alignment.Center,
 ) {
     StatusIconButton(
         modifier = modifier.height(style.bottomPanelStyle.iconSize),
         onClick = onClick,
         enabled = enabled,
+        contentAlignment = contentAlignment,
     ) {
         Row(
             modifier.padding(horizontal = 6.dp),

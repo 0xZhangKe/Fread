@@ -88,7 +88,7 @@ class NotificationsTab() : PagerTab {
     ) {
         val snackbarHost = rememberSnackbarHostState()
         Scaffold(
-            modifier = Modifier.Companion.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (uiState.tabs.size > 1 && uiState.selectedAccount != null) {
                     NotificationTopBar(
@@ -98,8 +98,7 @@ class NotificationsTab() : PagerTab {
                     )
                 } else {
                     Spacer(
-                        modifier = Modifier.Companion
-                            .statusBarsPadding()
+                        modifier = Modifier.statusBarsPadding()
                             .height(16.dp)
                     )
                 }

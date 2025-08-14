@@ -70,7 +70,7 @@ class ExploreTab() : PagerTab {
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackbarHostState,
-                    modifier = Modifier.Companion.padding(bottom = 60.dp),
+                    modifier = Modifier.padding(bottom = 60.dp),
                 )
             },
         ) { paddingValues ->

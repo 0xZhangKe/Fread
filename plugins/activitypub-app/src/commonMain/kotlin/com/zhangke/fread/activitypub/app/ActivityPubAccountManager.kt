@@ -18,12 +18,14 @@ import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.FreadContent
+import com.zhangke.fread.status.model.LoggedAccountDetail
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -57,6 +59,12 @@ class ActivityPubAccountManager @Inject constructor(
     override fun getAllAccountFlow(): Flow<List<ActivityPubLoggedAccount>> {
         return accountRepo.getAllAccountFlow()
     }
+
+//    override fun getAllAccountDetailFlow(): Flow<List<LoggedAccountDetail>>? {
+//        return accountRepo.getAllAccountFlow().map {
+//
+//        }
+//    }
 
     fun observeAccount(accountUri: FormalUri): Flow<ActivityPubLoggedAccount?> {
         return accountRepo.observeAccount(accountUri.toString())

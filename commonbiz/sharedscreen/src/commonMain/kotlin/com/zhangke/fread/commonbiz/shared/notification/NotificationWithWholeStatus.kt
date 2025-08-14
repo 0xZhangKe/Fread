@@ -44,7 +44,7 @@ fun NotificationWithWholeStatus(
                 composedStatusInteraction.onUserInfoClick(locator, author!!)
             },
             icon = icon,
-            avatar = null,
+            avatar = author?.avatar,
             iconTint = iconTint,
             createAt = createAt,
             accountName = author?.humanizedName,

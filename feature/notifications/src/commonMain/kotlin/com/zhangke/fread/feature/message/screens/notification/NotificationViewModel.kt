@@ -1,5 +1,7 @@
 package com.zhangke.fread.feature.message.screens.notification
 
+import com.zhangke.framework.collections.getOrNull
+import com.zhangke.framework.collections.removeFirstOrNull
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
@@ -53,8 +55,9 @@ class NotificationViewModel(
 
     private var reportedNotificationId: String? = null
     private var cursor: String? = null
+    private var reachEnd: Boolean = false
 
-    private val userRelationshipsSnapshot = mutableMapOf<FormalUri, Relationships?>()
+    private val userDetailSnapshot = mutableSetOf<BlogAuthor>()
 
     init {
         initInteractiveHandler(
@@ -91,6 +94,7 @@ class NotificationViewModel(
     fun onSwitchTab(onlyMentions: Boolean) {
         _uiState.update { it.copy(inOnlyMentionTab = onlyMentions) }
         cursor = null
+        reachEnd = false
         loadableController.initData(
             getDataFromServer = ::getDataFromServer,
             getDataFromLocal = ::getDataFromLocal,
@@ -104,6 +108,7 @@ class NotificationViewModel(
     }
 
     fun onLoadMore() {
+        if (reachEnd) return
         loadableController.onLoadMore {
             getDataFromServer(loadMore = true)
         }
@@ -199,8 +204,10 @@ class NotificationViewModel(
         authorUri: FormalUri,
         block: (Relationships?) -> Relationships?,
     ) {
-        userRelationshipsSnapshot.remove(authorUri)?.let {
-            userRelationshipsSnapshot[authorUri] = block(it)
+        userDetailSnapshot.removeFirstOrNull { it.uri == authorUri }?.let { user ->
+            block(user.relationships)?.let {
+                userDetailSnapshot.add(user.copy(relationships = it))
+            }
         }
         _uiState.update { state ->
             state.copy(
@@ -268,71 +275,76 @@ class NotificationViewModel(
             cursor = cursor,
         ).map {
             this.cursor = it.cursor
+            this.reachEnd = it.reachEnd
             it.notifications
                 .map { n -> StatusNotificationUiState(n, fromLocal = false) }
-                .let { list -> fillRelationships(list, userRelationshipsSnapshot) }
+                .let { list -> fillUserDetails(list, userDetailSnapshot) }
         }.onSuccess {
             if (loadMore || uiState.value.inOnlyMentionTab) {
-                notificationsRepo.insertNotification(account.uri, it.map { n -> n.notification })
+                notificationsRepo.insertNotification(
+                    account.uri,
+                    it.map { n -> n.notification })
             } else {
-                notificationsRepo.replaceNotifications(account.uri, it.map { n -> n.notification })
+                notificationsRepo.replaceNotifications(
+                    account.uri,
+                    it.map { n -> n.notification })
             }
-            launch { loadRelationships(account, it) }
+            launch { loadAdditionalData(account, it) }
         }
     }
 
-    private suspend fun loadRelationships(
+    private suspend fun loadAdditionalData(
         account: LoggedAccount,
         notifications: List<StatusNotificationUiState>
     ) {
-        val users = notifications.map { it.notification }
-            .mapNotNull { notification ->
-                when (notification) {
-                    is StatusNotification.Follow -> notification.author
-                    is StatusNotification.FollowRequest -> notification.author
+        // Just Follow/FollowRequest notifications need additional data currently.
+        val users = notifications
+            .mapNotNull {
+                when (it.notification) {
+                    is StatusNotification.Follow -> it.notification.author
+                    is StatusNotification.FollowRequest -> it.notification.author
                     else -> null
                 }
             }
+            .distinctBy { it.uri }
         if (users.isEmpty()) return
-        getRelationships(account, users).onSuccess { relationships ->
-            if (relationships.isNotEmpty()) {
-                userRelationshipsSnapshot.putAll(relationships)
-                _uiState.update { state ->
-                    state.copy(dataList = fillRelationships(notifications, relationships))
+        statusProvider.notificationResolver
+            .getNotificationUserDetail(
+                account = account,
+                users = users,
+            ).onSuccess { users ->
+                if (users.isNotEmpty()) {
+                    userDetailSnapshot.addAll(users)
+                    _uiState.update { state ->
+                        state.copy(
+                            dataList = fillUserDetails(state.dataList, userDetailSnapshot)
+                        )
+                    }
                 }
             }
-        }
     }
 
-    private fun fillRelationships(
+    private fun fillUserDetails(
         notifications: List<StatusNotificationUiState>,
-        relationships: Map<FormalUri, Relationships?>,
+        users: Collection<BlogAuthor>,
     ): List<StatusNotificationUiState> {
-        if (relationships.isEmpty() || notifications.isEmpty()) return notifications
+        if (users.isEmpty() || notifications.isEmpty()) return notifications
         return notifications.map { notificationUiState ->
             val notification = notificationUiState.notification
-            when {
-                notification is StatusNotification.Follow && notification.author.relationships == null -> {
-                    val relationship = relationships[notification.author.uri]
-                    if (relationship != null) {
-                        notificationUiState.copy(
-                            notification = notification.copy(
-                                author = notification.author.copy(relationships = relationship)
-                            )
-                        )
+            when (notification) {
+                is StatusNotification.Follow -> {
+                    val user = users.getOrNull { it.uri == notification.author.uri }
+                    if (user != null) {
+                        notificationUiState.copy(notification = notification.copy(author = user))
                     } else {
                         notificationUiState
                     }
                 }
 
-                notification is StatusNotification.FollowRequest && notification.author.relationships == null -> {
-                    val relationship = relationships[notification.author.uri]
-                    if (relationship != null) {
-                        notificationUiState.copy(
-                            notification = notification.copy(
-                                author = notification.author.copy(relationships = relationship)
-                            )
-                        )
+                is StatusNotification.FollowRequest -> {
+                    val user = users.getOrNull { it.uri == notification.author.uri }
+                    if (user != null) {
+                        notificationUiState.copy(notification = notification.copy(author = user))
                     } else {
                         notificationUiState
                     }
@@ -374,13 +386,5 @@ class NotificationViewModel(
                 notification = updatedNotification,
             )
         }
-    }
-
-    private suspend fun getRelationships(
-        account: LoggedAccount,
-        users: List<BlogAuthor>
-    ): Result<Map<FormalUri, Relationships>> {
-        if (users.isEmpty()) return Result.success(emptyMap())
-        return statusProvider.accountManager.getRelationships(account, users)
     }
 }

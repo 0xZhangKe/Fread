@@ -49,7 +49,7 @@ fun FollowRequestNotification(
             },
             icon = Icons.Default.PersonAddAlt1,
             createAt = notification.formattingDisplayTime,
-            avatar = null,
+            avatar = notification.author.avatar,
             accountName = null,
             interactionDesc = stringResource(Res.string.shared_notification_follow_request),
             style = style,

@@ -132,9 +132,7 @@ internal class ActivityPubTimelineTab(
                         },
                         refreshing = uiState.refreshing,
                         loadState = uiState.loadMoreState,
-                        contentPadding = PaddingValues(
-                            bottom = 64.dp,
-                        )
+                        contentPadding = PaddingValues(bottom = 64.dp),
                     ) {
                         itemsIndexed(
                             items = uiState.items,

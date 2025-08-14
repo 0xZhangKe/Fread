@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 data class PagedStatusNotification(
     val notifications: List<StatusNotification>,
     val cursor: String?,
+    val reachEnd: Boolean,
 )
 
 @Serializable

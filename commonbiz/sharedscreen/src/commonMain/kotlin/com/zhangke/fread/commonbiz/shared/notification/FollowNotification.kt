@@ -31,7 +31,7 @@ fun FollowNotification(
         NotificationHeadLine(
             modifier = Modifier.fillMaxWidth(),
             icon = Icons.Default.PersonAdd,
-            avatar = null,
+            avatar = notification.author.avatar,
             createAt = notification.formattingDisplayTime,
             accountName = notification.author.humanizedName,
             interactionDesc = stringResource(Res.string.shared_notification_follow_desc),

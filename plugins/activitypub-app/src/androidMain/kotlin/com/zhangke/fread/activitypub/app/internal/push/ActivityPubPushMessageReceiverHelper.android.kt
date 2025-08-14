@@ -38,10 +38,10 @@ actual class ActivityPubPushMessageReceiverHelper {
                     contentEncoding = message.contentEncoding,
                 ).let { convertDataToNotification(it, account) }
             } catch (e: Throwable) {
-                Log.d("F_TEST", "decrypted data error: ${e.stackTraceToString()}")
+                Log.d("PushManager", "decrypted data error: ${e.stackTraceToString()}")
                 null
             }
-            Log.d("F_TEST", "pushMessage: $pushMessage")
+            Log.d("PushManager", "pushMessage: $pushMessage")
             if (pushMessage != null) {
                 appContext.activityPubComponent.pushNotificationManager
                     .onReceiveNewMessage(appContext, pushMessage)

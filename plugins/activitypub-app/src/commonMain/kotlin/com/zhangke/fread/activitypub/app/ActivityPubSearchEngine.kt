@@ -2,7 +2,6 @@ package com.zhangke.fread.activitypub.app
 
 import com.zhangke.activitypub.api.SearchRepo
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.framework.utils.Log
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubSearchAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -152,9 +151,6 @@ class ActivityPubSearchEngine @Inject constructor(
                 ?.let { platformRepo.getPlatform(it).getOrNull() }
                 ?.let { emit(listOf(SearchContentResult.Platform(it))) }
             platformRepo.searchPlatformFromServer(query)
-                .also {
-                    Log.i("F_TEST") { it.toString() }
-                }
                 .getOrNull()
                 ?.map { SearchContentResult.SearchedPlatformSnapshot(it) }
                 ?.takeIf { it.isNotEmpty() }

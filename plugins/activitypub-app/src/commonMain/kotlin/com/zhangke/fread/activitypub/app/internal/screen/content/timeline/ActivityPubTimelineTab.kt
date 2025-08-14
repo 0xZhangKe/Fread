@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -85,9 +84,7 @@ internal class ActivityPubTimelineTab(
         onRefresh: () -> Unit,
         onReadMinIndex: (ActivityPubTimelineItem) -> Unit,
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             if (uiState.items.isEmpty()) {
                 if (uiState.showPagingLoadingPlaceholder) {
                     StatusListPlaceholder()

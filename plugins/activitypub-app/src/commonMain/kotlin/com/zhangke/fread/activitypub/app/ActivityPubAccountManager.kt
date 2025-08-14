@@ -60,11 +60,12 @@ class ActivityPubAccountManager @Inject constructor(
         return accountRepo.getAllAccountFlow()
     }
 
-//    override fun getAllAccountDetailFlow(): Flow<List<LoggedAccountDetail>>? {
-//        return accountRepo.getAllAccountFlow().map {
-//
-//        }
-//    }
+    override fun getAllAccountDetailFlow(): Flow<List<LoggedAccountDetail>>? {
+        return accountRepo.getAllAccountFlow()
+            .map { list ->
+                list.map { accountEntityAdapter.convertLoggedAccountDetail(it) }
+            }
+    }
 
     fun observeAccount(accountUri: FormalUri): Flow<ActivityPubLoggedAccount?> {
         return accountRepo.observeAccount(accountUri.toString())

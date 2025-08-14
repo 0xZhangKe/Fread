@@ -28,7 +28,7 @@ class AccountManager(
 
     fun getAllAccountDetailFlow(): Flow<List<LoggedAccountDetail>> {
         val flowList = accountManagerList.mapNotNull {
-            it.getAllAccountFlow()
+            it.getAllAccountDetailFlow()
         }
         return combine(*flowList.toTypedArray()) {
             it.flatMap { list -> list }

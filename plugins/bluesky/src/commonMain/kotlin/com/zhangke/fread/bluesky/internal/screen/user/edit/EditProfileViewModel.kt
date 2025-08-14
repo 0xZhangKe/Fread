@@ -72,7 +72,7 @@ class EditProfileViewModel @Inject constructor(
                     userName = TextFieldValue(account.userName),
                     description = TextFieldValue(account.description),
                     avatar = account.avatar.orEmpty(),
-                    banner = account.banner.orEmpty(),
+                    banner = account.user.banner.orEmpty(),
                 )
             }
             getProfile(account.did)

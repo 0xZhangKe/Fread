@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky.internal.account
 
+import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
@@ -20,7 +21,7 @@ data class BlueskyLoggedAccount(
     val accessJwt: String,
     val refreshJwt: String,
     val active: Boolean?,
-    val banner: String? = null,
+    val createAt: Instant? = null,
 ) : LoggedAccount {
 
     val locator: PlatformLocator

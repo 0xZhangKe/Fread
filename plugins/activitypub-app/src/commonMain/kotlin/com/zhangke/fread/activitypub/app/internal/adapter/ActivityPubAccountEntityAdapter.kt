@@ -4,9 +4,11 @@ import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.reportToLogger
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.LoggedAccountDetail
 import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -35,6 +37,31 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
             followingCount = entity.followingCount.toLong(),
             statusesCount = entity.statusesCount.toLong(),
             relationships = null,
+        )
+    }
+
+    fun convertLoggedAccountDetail(
+        account: ActivityPubLoggedAccount,
+    ): LoggedAccountDetail {
+        val author = BlogAuthor(
+            uri = account.uri,
+            webFinger = account.webFinger,
+            name = account.userName,
+            handle = account.webFinger.toString(),
+            description = account.description.orEmpty(),
+            avatar = account.avatar,
+            emojis = account.emojis,
+            userId = account.id,
+            bot = account.bot,
+            banner = account.banner,
+            followersCount = account.followersCount,
+            followingCount = account.followingCount,
+            statusesCount = account.statusesCount,
+            relationships = null,
+        )
+        return LoggedAccountDetail(
+            account = account,
+            author = author,
         )
     }
 

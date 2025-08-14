@@ -17,11 +17,13 @@ class ActivityPubStartup @Inject constructor(
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val contentAdapter: ActivityPubContentAdapter,
     private val contentMigrator: ActivityPubContentMigrator,
+    private val loggedAccountRepo: ActivityPubLoggedAccountRepo,
 ) : ModuleStartup {
 
     override fun onAppCreate() {
         ApplicationScope.launch {
             contentMigrator.migrate()
+            loggedAccountRepo.initialize()
             accountRepo.onNewAccountFlow.collect { account ->
                 delay(500)
                 val contentExist = contentRepo.getAllContent()

@@ -47,24 +47,6 @@ class ActivityPubClientManager @Inject constructor(
         )
     }
 
-//    fun getClient(locator: PlatformLocator): ActivityPubClient {
-////        cachedClient[role]?.let { return it }
-//        val baseUrl = resolveBaseUrl(role)
-//        return createClient(
-//            baseUrl = baseUrl,
-//            tokenProvider = {
-//                var token: ActivityPubTokenEntity? = null
-//                if (role.accountUri != null) {
-//                    token = loggedAccountProvider.getAccount(role.accountUri!!)?.token
-//                }
-//                if (token == null) {
-//                    token = loggedAccountProvider.getAccount(baseUrl)?.token
-//                }
-//                token
-//            },
-//        )
-//    }
-
     private fun createClient(
         baseUrl: FormalBaseUrl,
         tokenProvider: () -> ActivityPubTokenEntity?,

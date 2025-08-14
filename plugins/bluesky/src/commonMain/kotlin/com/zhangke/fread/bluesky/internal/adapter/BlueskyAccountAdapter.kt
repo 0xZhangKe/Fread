@@ -7,6 +7,7 @@ import app.bsky.actor.ViewerState
 import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
 import com.zhangke.framework.architect.json.Empty
+import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.prettyHandle
 import com.zhangke.fread.bluesky.createBlueskyProtocol
@@ -47,7 +48,7 @@ class BlueskyAccountAdapter @Inject constructor(
             accessJwt = createSessionResponse.accessJwt,
             refreshJwt = createSessionResponse.refreshJwt,
             active = createSessionResponse.active,
-            banner = profileViewDetailed?.banner?.uri,
+            createAt = profileViewDetailed?.createdAt?.let { Instant(it) },
         )
     }
 
@@ -163,7 +164,7 @@ class BlueskyAccountAdapter @Inject constructor(
             user = convertToBlogAuthor(newDid, profile.handle.handle, profile),
             handle = profile.handle.handle,
             did = newDid,
-            banner = profile.banner?.uri,
+            createAt = profile.createdAt?.let { Instant(it) },
         )
     }
 

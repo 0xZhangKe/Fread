@@ -6,12 +6,12 @@ import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
-import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
+import com.zhangke.fread.activitypub.app.internal.db.old.OldActivityPubLoggedAccountEntity
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.reportToLogger
+import com.zhangke.fread.status.model.LoggedAccountDetail
 import com.zhangke.fread.status.platform.BlogPlatform
-import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
@@ -19,44 +19,6 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) {
-
-    suspend fun adapt(
-        entity: ActivityPubLoggedAccountEntity,
-    ): ActivityPubLoggedAccount {
-        return ActivityPubLoggedAccount(
-            userId = entity.userId,
-            uri = FormalUri.from(entity.uri)!!,
-            webFinger = entity.webFinger,
-            platform = entity.platform.toPlatform(),
-            baseUrl = entity.baseUrl,
-            userName = entity.name,
-            description = entity.description,
-            avatar = entity.avatar,
-            url = entity.url,
-            token = entity.token,
-            emojis = entity.emojis,
-        )
-    }
-
-    fun recovery(
-        user: ActivityPubLoggedAccount,
-        addedTimestamp: Long,
-    ): ActivityPubLoggedAccountEntity {
-        return ActivityPubLoggedAccountEntity(
-            userId = user.userId,
-            uri = user.uri.toString(),
-            webFinger = user.webFinger,
-            platform = user.platform.toEntity(),
-            baseUrl = user.baseUrl,
-            name = user.userName,
-            description = user.description,
-            avatar = user.avatar,
-            url = user.url,
-            token = user.token,
-            emojis = user.emojis,
-            addedTimestamp = addedTimestamp,
-        )
-    }
 
     suspend fun createFromAccount(
         baseUrl: FormalBaseUrl,
@@ -88,27 +50,15 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             avatar = account.avatar,
             url = account.url,
             token = token,
+            banner = account.header,
+            note = account.note,
+            bot = account.bot,
+            followersCount = account.followersCount.toLong(),
+            followingCount = account.followingCount.toLong(),
+            statusesCount = account.statusesCount.toLong(),
             emojis = account.emojis.map(emojiEntityAdapter::toEmoji),
         )
     }
-
-    private suspend fun ActivityPubLoggedAccountEntity.BlogPlatformEntity.toPlatform(): BlogPlatform =
-        BlogPlatform(
-            uri = uri,
-            name = name,
-            description = description,
-            baseUrl = baseUrl,
-            thumbnail = thumbnail,
-            protocol = createActivityPubProtocol(),
-        )
-
-    private fun BlogPlatform.toEntity() = ActivityPubLoggedAccountEntity.BlogPlatformEntity(
-        uri = uri,
-        name = name,
-        description = description,
-        baseUrl = baseUrl,
-        thumbnail = thumbnail,
-    )
 
     private fun accountToWebFinger(
         account: ActivityPubAccountEntity,

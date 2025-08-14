@@ -28,7 +28,8 @@ actual class ActivityPubPushMessageReceiverHelper {
         val accountId = String(Base64.UrlSafe.decode(message.encodedAccountId))
         coroutineScope.launch {
             val info = getPushRepo().getPushInfo(accountId) ?: return@launch
-            val account = getAccountRepo().queryById(accountId) ?: return@launch
+            val account =
+                getAccountRepo().queryAll().firstOrNull { it.userId == accountId } ?: return@launch
             val pushMessage = try {
                 CryptoUtil.decryptData(
                     keys = info,

@@ -11,12 +11,14 @@ import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.FreadContent
+import com.zhangke.fread.status.model.LoggedAccountDetail
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyAccountManager @Inject constructor(
@@ -30,6 +32,18 @@ class BlueskyAccountManager @Inject constructor(
 
     override fun getAllAccountFlow(): Flow<List<LoggedAccount>> {
         return accountManager.getAllAccountFlow()
+    }
+
+    override fun getAllAccountDetailFlow(): Flow<List<LoggedAccountDetail>>? {
+        return accountManager.getAllAccountFlow()
+            .map { list ->
+                list.map {
+                    LoggedAccountDetail(
+                        account = it,
+                        author = it.user,
+                    )
+                }
+            }
     }
 
     override suspend fun triggerLaunchAuth(platform: BlogPlatform) {

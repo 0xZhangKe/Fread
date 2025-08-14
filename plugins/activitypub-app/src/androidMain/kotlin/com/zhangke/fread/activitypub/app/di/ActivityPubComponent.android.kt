@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.di
 import android.content.Context
 import androidx.room.Room
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
+import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountDatabase
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.fread.activitypub.app.internal.push.PushInfoDatabase
@@ -25,6 +26,18 @@ actual interface ActivityPubPlatformComponent {
             context,
             ActivityPubDatabases::class.java,
             ActivityPubDatabases.DB_NAME,
+        ).build()
+    }
+
+    @ApplicationScope
+    @Provides
+    fun provideActivityPubLoggedAccountDatabases(
+        context: ApplicationContext,
+    ): ActivityPubLoggedAccountDatabase {
+        return Room.databaseBuilder(
+            context = context,
+            klass = ActivityPubLoggedAccountDatabase::class.java,
+            name = ActivityPubLoggedAccountDatabase.DB_NAME,
         ).build()
     }
 

@@ -20,7 +20,7 @@ import com.zhangke.fread.commonbiz.shared.screen.shared_notification_favourited_
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_poll_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_quote_desc
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reply_desc
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reblog_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_update_desc
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
@@ -93,7 +93,7 @@ fun StatusNotificationUi(
                         createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
-                        interactionDesc = stringResource(Res.string.shared_notification_reply_desc),
+                        interactionDesc = stringResource(Res.string.shared_notification_reblog_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )

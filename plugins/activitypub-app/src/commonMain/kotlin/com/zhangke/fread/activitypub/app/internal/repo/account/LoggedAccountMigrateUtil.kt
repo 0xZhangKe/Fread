@@ -17,6 +17,7 @@ object LoggedAccountMigrateUtil {
     ) {
         val oldAccountList = oldDao.queryAll()
             .map { convertToLoggedAccount(it) }
+        if (oldAccountList.isEmpty()) return
         accountDao.insert(oldAccountList)
         oldDao.nukeTable()
     }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.filled.AlternateEmail
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -66,6 +69,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.LocalTransparentNavigator
@@ -82,6 +86,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_rol
 import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_title
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block_domain
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_join_date
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block_domain
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_edit_private_note
@@ -105,8 +110,10 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimel
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.formatDate
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
@@ -394,6 +401,16 @@ data class UserDetailScreen(
                             browserLauncher.launchWebTabInApp(it, locator)
                         },
                         onMaybeHashtagClick = onMaybeHashtagClick,
+                        bottomArea = if (uiState.accountUiState?.account != null) {
+                            {
+                                UserAboutCard(
+                                    uiState.accountUiState.account,
+                                    uiState.accountUiState.emojis
+                                )
+                            }
+                        } else {
+                            null
+                        },
                     )
                 },
                 contentCanScrollBackward = contentCanScrollBackward,
@@ -875,6 +892,64 @@ data class UserDetailScreen(
                 modifier = Modifier.weight(1F),
                 text = role,
                 textAlign = TextAlign.Start,
+            )
+        }
+    }
+
+    @Composable
+    private fun UserAboutCard(
+        account: ActivityPubAccountEntity,
+        emojis: List<Emoji>,
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            SelectionContainer {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                ) {
+                    FieldLine(
+                        key = stringResource(Res.string.activity_pub_user_detail_join_date),
+                        value = DateParser.parseOrCurrent(account.createdAt).formatDate(),
+                        emojis = emojis,
+                    )
+                    for (field in account.fields) {
+                        FieldLine(
+                            key = field.name,
+                            value = field.value,
+                            emojis = emojis,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun FieldLine(key: String, value: String, emojis: List<Emoji>) {
+        val browserLauncher = LocalActivityBrowserLauncher.current
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = key,
+                maxLines = 1,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Spacer(modifier = Modifier.weight(1F))
+            Spacer(modifier = Modifier.width(16.dp))
+            FreadRichText(
+                content = value,
+                mentions = emptyList(),
+                tags = emptyList(),
+                onMentionClick = {},
+                onHashtagClick = {},
+                emojis = emojis,
+                onUrlClick = {
+                    browserLauncher.launchWebTabInApp(it, locator)
+                },
             )
         }
     }

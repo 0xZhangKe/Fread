@@ -20,11 +20,9 @@ import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.richtext.RichText
-import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.ui.common.ProgressedAvatar
 import com.zhangke.fread.status.ui.common.ProgressedBanner
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
-import com.zhangke.fread.status.ui.common.RelationshipUiState
 import com.zhangke.fread.status.ui.richtext.SelectableRichText
 
 @Composable
@@ -47,12 +45,14 @@ fun DetailHeaderContent(
     onCancelFollowRequestClick: (() -> Unit)? = null,
     onFollowAccountClick: (() -> Unit)? = null,
     onUnfollowAccountClick: (() -> Unit)? = null,
+    bottomArea: (@Composable () -> Unit)? = null,
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxWidth(),
     ) {
         val (bannerRef, avatarRef, relationBtnRef, nameRef) = createRefs()
         val (acctRef, privateNoteRef, noteRef, followRef) = createRefs()
+        val bottomAreaRef = createRef()
         ProgressedBanner(
             modifier = Modifier
                 .clickable { onBannerClick() }
@@ -107,7 +107,7 @@ fun DetailHeaderContent(
             modifier = Modifier
                 .freadPlaceholder(loading)
                 .constrainAs(nameRef) {
-                    top.linkTo(avatarRef.bottom, 16.dp)
+                    top.linkTo(avatarRef.bottom, 8.dp)
                     start.linkTo(parent.start, 16.dp)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
@@ -194,6 +194,19 @@ fun DetailHeaderContent(
                 },
         ) {
             followInfo()
+        }
+
+        // bottom area
+        Box(
+            modifier = Modifier.constrainAs(bottomAreaRef) {
+                top.linkTo(followRef.bottom, 8.dp)
+                start.linkTo(followRef.start)
+                end.linkTo(parent.end, 16.dp)
+                bottom.linkTo(parent.bottom)
+                width = Dimension.fillToConstraints
+            },
+        ) {
+            bottomArea?.invoke()
         }
     }
 }

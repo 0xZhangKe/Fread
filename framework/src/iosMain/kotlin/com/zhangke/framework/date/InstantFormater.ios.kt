@@ -27,4 +27,17 @@ actual class InstantFormater {
                 }
             )
     }
+
+    actual fun formatToMediumDateWithoutTime(instant: Instant): String {
+        return instant.toLocalDateTime(TimeZone.currentSystemDefault())
+            .format(
+                LocalDateTime.Format {
+                    year()
+                    char('-')
+                    monthNumber()
+                    char('-')
+                    dayOfMonth()
+                }
+            )
+    }
 }

@@ -17,4 +17,10 @@ actual class InstantFormater {
             append(timeFormat.format(date))
         }
     }
+
+    actual fun formatToMediumDateWithoutTime(instant: Instant): String {
+        val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
+        val date = Date(instant.toEpochMilliseconds())
+        return dateFormat.format(date)
+    }
 }

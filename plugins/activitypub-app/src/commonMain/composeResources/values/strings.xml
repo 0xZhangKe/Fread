@@ -38,6 +38,7 @@
     <string name="post_status_poll_is_empty">Please enter the content for the vote</string>
     <string name="post_status_media_is_not_upload">Media not uploaded yet</string>
 
+    <string name="activity_pub_user_detail_join_date">Joined on</string>
     <string name="activity_pub_user_detail_tab_about_joined">Joined on %1$s</string>
     <string name="activity_pub_user_detail_menu_block">Block %1$s</string>
     <string name="activity_pub_user_detail_menu_block_domain">Block %1$s</string>

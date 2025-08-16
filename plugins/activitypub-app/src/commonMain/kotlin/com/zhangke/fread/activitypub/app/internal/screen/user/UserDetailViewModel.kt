@@ -258,6 +258,7 @@ class UserDetailViewModel(
                 document = note,
                 emojis = customEmojis,
             ),
+            emojis = customEmojis,
         )
     }
 }

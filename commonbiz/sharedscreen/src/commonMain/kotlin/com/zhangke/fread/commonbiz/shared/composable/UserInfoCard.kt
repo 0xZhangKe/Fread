@@ -1,6 +1,7 @@
 package com.zhangke.fread.commonbiz.shared.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,7 +34,6 @@ import com.zhangke.framework.composable.VerticalIndentLayout
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
@@ -65,16 +66,53 @@ fun UserInfoCard(
         nickName = user.humanizedName,
         prettyHandle = user.prettyHandle,
         bot = user.bot,
+        showActiveState = false,
         description = user.humanizedDescription,
         followersCount = user.followersCount,
         followingCount = user.followingCount,
         statusesCount = user.statusesCount,
-        relationships = user.relationships,
+        actionButton = if (user.relationships != null) {
+            {
+                RelationshipStateButton(
+                    modifier = Modifier,
+                    relationship = user.relationships!!,
+                    onFollowClick = { onFollowAccountClick(user) },
+                    onUnfollowClick = { onUnfollowAccountClick(user) },
+                    onUnblockClick = { onUnblockClick(user) },
+                    onCancelFollowRequestClick = { onCancelFollowRequestClick(user) },
+                )
+            }
+        } else {
+            null
+        },
         onProfileClick = { onUserClick(user) },
-        onFollowAccountClick = { onFollowAccountClick(user) },
-        onUnfollowAccountClick = { onUnfollowAccountClick(user) },
-        onUnblockClick = { onUnblockClick(user) },
-        onCancelFollowRequestClick = { onCancelFollowRequestClick(user) },
+    )
+}
+
+@Composable
+fun UserInfoCard(
+    modifier: Modifier,
+    user: BlogAuthor,
+    showActiveState: Boolean,
+    onUserClick: (BlogAuthor) -> Unit,
+    actionButton: (@Composable () -> Unit)?,
+    bottomPanel: (@Composable () -> Unit)? = null,
+) {
+    BasicProfileCard(
+        modifier = modifier,
+        banner = user.banner.orEmpty(),
+        avatar = user.avatar.orEmpty(),
+        nickName = user.humanizedName,
+        prettyHandle = user.prettyHandle,
+        bot = user.bot,
+        showActiveState = showActiveState,
+        description = user.humanizedDescription,
+        followersCount = user.followersCount,
+        followingCount = user.followingCount,
+        statusesCount = user.statusesCount,
+        actionButton = actionButton,
+        onProfileClick = { onUserClick(user) },
+        bottomPanel = bottomPanel,
     )
 }
 
@@ -90,12 +128,10 @@ fun BasicProfileCard(
     followersCount: Long?,
     followingCount: Long?,
     statusesCount: Long?,
-    relationships: Relationships?,
+    actionButton: (@Composable () -> Unit)?,
+    showActiveState: Boolean,
     onProfileClick: () -> Unit,
-    onFollowAccountClick: () -> Unit,
-    onUnfollowAccountClick: () -> Unit,
-    onUnblockClick: () -> Unit,
-    onCancelFollowRequestClick: () -> Unit,
+    bottomPanel: (@Composable () -> Unit)? = null,
 ) {
     Box(modifier = modifier.clickable { onProfileClick() }) {
         Card(
@@ -105,8 +141,7 @@ fun BasicProfileCard(
             val overLapHeight = 16.dp
             val avatarSize = 68.dp
             VerticalIndentLayout(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(8.dp),
+                modifier = Modifier.fillMaxWidth().padding(8.dp),
                 indentHeight = overLapHeight,
                 headerContent = {
                     Box(
@@ -158,14 +193,27 @@ fun BasicProfileCard(
                                 modifier = Modifier.padding(start = avatarSize, top = overLapHeight)
                                     .padding(start = 8.dp, top = 2.dp)
                             ) {
-                                SelectableRichText(
+                                Row(
                                     modifier = Modifier,
-                                    richText = nickName,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontSizeSp = 18F,
-                                    onUrlClick = {},
-                                )
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    SelectableRichText(
+                                        modifier = Modifier,
+                                        richText = nickName,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontSizeSp = 18F,
+                                        onUrlClick = {},
+                                    )
+                                    if (showActiveState) {
+                                        Box(
+                                            modifier = Modifier.padding(start = 4.dp)
+                                                .size(6.dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xFF22C55E))
+                                        )
+                                    }
+                                }
                                 UserHandleLine(
                                     modifier = Modifier.padding(top = 1.dp),
                                     handle = prettyHandle,
@@ -188,7 +236,7 @@ fun BasicProfileCard(
                         )
 
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 2.dp),
+                            modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             if (followingCount != null && followersCount != null) {
@@ -201,18 +249,14 @@ fun BasicProfileCard(
                             } else {
                                 Spacer(modifier = Modifier.weight(1F))
                             }
-                            if (relationships != null) {
-                                RelationshipStateButton(
-                                    modifier = Modifier,
-                                    relationship = relationships,
-                                    onFollowClick = { onFollowAccountClick() },
-                                    onUnfollowClick = { onUnfollowAccountClick() },
-                                    onUnblockClick = { onUnblockClick() },
-                                    onCancelFollowRequestClick = { onCancelFollowRequestClick() },
-                                )
+                            if (actionButton != null) {
+                                actionButton()
                             } else {
                                 Box(modifier = Modifier.size(height = 28.dp, width = 8.dp))
                             }
+                        }
+                        if (bottomPanel != null) {
+                            bottomPanel()
                         }
                     }
                 }

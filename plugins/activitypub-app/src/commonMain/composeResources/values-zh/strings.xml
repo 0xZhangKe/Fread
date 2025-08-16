@@ -13,6 +13,7 @@
     <string name="activity_pub_instance_detail_active_month_label">月活: %1$s</string>
 
 
+    <string name="activity_pub_user_detail_join_date">加入时间</string>
     <string name="activity_pub_user_detail_tab_post">帖子</string>
     <string name="activity_pub_user_detail_tab_replies">回复</string>
     <string name="activity_pub_user_detail_tab_media">媒体</string>

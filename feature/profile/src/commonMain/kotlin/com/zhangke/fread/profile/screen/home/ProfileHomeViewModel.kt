@@ -3,6 +3,7 @@ package com.zhangke.fread.profile.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
@@ -45,10 +46,10 @@ class ProfileHomeViewModel @Inject constructor(
                 .collect { lastActiveAccountUri ->
                     _uiState.update { state ->
                         state.copy(
-                            accountDataList = state.accountDataList.map { (platform, accounts) ->
-                                platform to accounts.map { account ->
-                                    account.copy(active = account.account.uri.toString() == lastActiveAccountUri)
-                                }
+                            accountDataList = state.accountDataList.map { account ->
+                                account.copy(
+                                    active = account.account.account.uri.toString() == lastActiveAccountUri,
+                                )
                             }
                         )
                     }
@@ -59,18 +60,21 @@ class ProfileHomeViewModel @Inject constructor(
     private fun observeAccountFlow() {
         viewModelScope.launch {
             statusProvider.accountManager
-                .getAllAccountFlow()
+                .getAllAccountDetailFlow()
                 .map { list ->
                     val activeAccountUri = activeAccountsSynchronizer.activeAccountUriFlow.value
-                    list.map {
+                    val dirtyAccountList = uiState.value.accountDataList
+                    list.map { account ->
+                        val authFailed = dirtyAccountList.firstOrNull {
+                            it.account.account.uri == account.account.uri
+                        }?.authFailed ?: false
                         ProfileAccountUiState(
-                            account = it,
-                            logged = true,
-                            active = it.uri.toString() == activeAccountUri,
+                            account = account,
+                            authFailed = authFailed,
+                            active = account.account.uri.toString() == activeAccountUri,
                         )
                     }
                 }
-                .map { list -> list.groupBy { it.account.platform }.map { it.key to it.value } }
                 .collect { list ->
                     _uiState.update { it.copy(accountDataList = list) }
                 }
@@ -81,20 +85,18 @@ class ProfileHomeViewModel @Inject constructor(
         if (refreshAccountJob?.isActive == true) return
         refreshAccountJob = launchInViewModel {
             val refreshedList = statusProvider.accountManager.refreshAllAccountInfo()
+            val authFailedAccounts = refreshedList.filter {
+                it is AccountRefreshResult.Failure && it.error.isAuthenticationFailure
+            }
             _uiState.update { state ->
                 state.copy(
-                    accountDataList = state.accountDataList.map { group ->
-                        group.first to group.second.map { account ->
-                            val result =
-                                refreshedList.firstOrNull { it.account.uri == account.account.uri }
-                            val logged = when (result) {
-                                is AccountRefreshResult.Success -> true
-                                is AccountRefreshResult.Failure -> !result.error.isAuthenticationFailure
-                                null -> account.logged
+                    accountDataList = state.accountDataList
+                        .map { account ->
+                            val authFailed = authFailedAccounts.container {
+                                it.account.uri == account.account.account.uri
                             }
-                            account.copy(logged = logged)
+                            account.copy(authFailed = authFailed)
                         }
-                    }
                 )
             }
         }

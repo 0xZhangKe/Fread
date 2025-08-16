@@ -1,14 +1,13 @@
 package com.zhangke.fread.profile.screen.home
 
-import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.model.LoggedAccountDetail
 
 data class ProfileHomeUiState(
-    val accountDataList: List<Pair<BlogPlatform, List<ProfileAccountUiState>>>,
+    val accountDataList: List<ProfileAccountUiState>,
 )
 
 data class ProfileAccountUiState(
-    val account: LoggedAccount,
-    val logged: Boolean,
+    val account: LoggedAccountDetail,
+    val authFailed: Boolean,
     val active: Boolean,
 )

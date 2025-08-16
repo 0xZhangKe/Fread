@@ -1,19 +1,16 @@
 package com.zhangke.fread.profile.screen.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
@@ -23,7 +20,6 @@ import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -39,11 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -54,10 +46,8 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.resources.PlatformLogo
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
+import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_profile_tab
 import com.zhangke.fread.feature.profile.profile_account_not_login
@@ -65,10 +55,7 @@ import com.zhangke.fread.feature.profile.profile_page_logout_dialog_content
 import com.zhangke.fread.feature.profile.profile_page_title
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.isBluesky
-import com.zhangke.fread.status.ui.BlogAuthorAvatar
-import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -177,17 +164,19 @@ class ProfileTab() : PagerTab {
                     contentPadding = PaddingValues(bottom = 66.dp),
                 ) {
                     items(uiState.accountDataList) { item ->
-                        AccountGroupItem(
-                            accountList = item.second,
-                            onLogoutClick = onLogoutClick,
+                        AccountDetail(
+                            modifier = Modifier.fillMaxWidth(),
+                            accountDetail = item,
                             onAccountClick = onAccountClick,
+                            onLoginClick = onLoginClick,
+                            onLogoutClick = onLogoutClick,
                             onFavouritedClick = onFavouritedClick,
                             onBookmarkedClick = onBookmarkedClick,
                             onFollowedHashtagClick = onFollowedHashtagClick,
                             onPinnedFeedsClick = onPinnedFeedsClick,
-                            onLoginClick = onLoginClick,
                             onListsClick = onListsClick,
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
@@ -195,150 +184,53 @@ class ProfileTab() : PagerTab {
     }
 
     @Composable
-    private fun AccountGroupItem(
-        accountList: List<ProfileAccountUiState>,
-        onLogoutClick: (LoggedAccount) -> Unit,
+    private fun AccountDetail(
+        modifier: Modifier,
+        accountDetail: ProfileAccountUiState,
         onAccountClick: (LoggedAccount) -> Unit,
+        onLoginClick: (LoggedAccount) -> Unit,
         onFavouritedClick: (LoggedAccount) -> Unit,
         onBookmarkedClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
         onPinnedFeedsClick: (LoggedAccount) -> Unit,
-        onLoginClick: (LoggedAccount) -> Unit,
         onListsClick: (LoggedAccount) -> Unit,
-    ) {
-        Card(
-            modifier = Modifier.Companion
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                .fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.Companion
-                    .padding(start = 16.dp, top = 16.dp)
-            ) {
-                accountList.forEach { account ->
-                    LoggedAccountSection(
-                        accountUiState = account,
-                        onLogoutClick = onLogoutClick,
-                        onAccountClick = onAccountClick,
-                        onFavouritedClick = onFavouritedClick,
-                        onBookmarkedClick = onBookmarkedClick,
-                        onFollowedHashtagClick = onFollowedHashtagClick,
-                        onPinnedFeedsClick = onPinnedFeedsClick,
-                        onLoginClick = onLoginClick,
-                        onListsClick = onListsClick,
-                    )
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun LoggedAccountSection(
-        accountUiState: ProfileAccountUiState,
         onLogoutClick: (LoggedAccount) -> Unit,
-        onAccountClick: (LoggedAccount) -> Unit,
-        onFavouritedClick: (LoggedAccount) -> Unit,
-        onBookmarkedClick: (LoggedAccount) -> Unit,
-        onFollowedHashtagClick: (LoggedAccount) -> Unit,
-        onPinnedFeedsClick: (LoggedAccount) -> Unit,
-        onLoginClick: (LoggedAccount) -> Unit,
-        onListsClick: (LoggedAccount) -> Unit,
     ) {
-        val account = accountUiState.account
-        val browserLauncher = LocalActivityBrowserLauncher.current
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .noRippleClick { onAccountClick(account) }) {
-            BlogAuthorAvatar(
-                modifier = Modifier.size(48.dp)
-                    .clip(CircleShape),
-                imageUrl = account.avatar,
-            )
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1F)
-                            .padding(end = 8.dp)
-                            .align(Alignment.CenterVertically),
+        UserInfoCard(
+            modifier = modifier.padding(horizontal = 16.dp),
+            user = accountDetail.account.author,
+            showActiveState = accountDetail.active,
+            actionButton = if (accountDetail.authFailed) {
+                {
+                    TextButton(
+                        modifier = Modifier,
+                        onClick = { onLoginClick(accountDetail.account.account) },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error,
+                        ),
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            FreadRichText(
-                                modifier = Modifier.padding(start = 16.dp),
-                                maxLines = 1,
-                                content = account.userName,
-                                emojis = account.emojis,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSizeSp = 18F,
-                                fontWeight = FontWeight.SemiBold,
-                                onUrlClick = {
-                                    browserLauncher.launchWebTabInApp(it, account.locator)
-                                },
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            PlatformLogo(
-                                modifier = Modifier.size(14.dp),
-                                protocol = account.platform.protocol,
-                            )
-                        }
-                        Text(
-                            modifier = Modifier.padding(start = 16.dp, top = 2.dp),
-                            text = account.prettyHandle,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        Text(text = stringResource(Res.string.profile_account_not_login))
                     }
-                    if (!accountUiState.logged) {
-                        TextButton(
-                            modifier = Modifier.padding(end = 8.dp)
-                                .align(Alignment.CenterVertically),
-                            onClick = { onLoginClick(account) },
-                            colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error,
-                            ),
-                        ) {
-                            Text(text = stringResource(Res.string.profile_account_not_login))
-                        }
-                    }
-                    if (accountUiState.active) {
-                        Box(
-                            modifier = Modifier.padding(top = 8.dp)
-                                .size(6.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF22C55E))
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
                 }
-                FreadRichText(
-                    modifier = Modifier.padding(start = 16.dp, top = 4.dp),
-                    maxLines = 5,
-                    content = account.description.orEmpty(),
-                    emojis = account.emojis,
-                    fontSizeSp = 16F,
-                    onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, account.locator)
-                    },
-                )
+            } else {
+                null
+            },
+            onUserClick = { onAccountClick(accountDetail.account.account) },
+            bottomPanel = {
                 AccountInteractionPanel(
-                    modifier = Modifier.padding(end = 8.dp),
-                    account = account,
+                    modifier = Modifier.fillMaxWidth(),
+                    account = accountDetail.account.account,
                     onLikedClick = onFavouritedClick,
                     onBookmarkedClick = onBookmarkedClick,
+                    onListsClick = onListsClick,
                     onLogoutClick = onLogoutClick,
                     onFollowedHashtagClick = onFollowedHashtagClick,
                     onPinnedFeedsClick = onPinnedFeedsClick,
-                    onListsClick = onListsClick,
                 )
-            }
-        }
+            },
+        )
     }
+
 
     @Composable
     private fun AccountInteractionPanel(
@@ -416,7 +308,4 @@ class ProfileTab() : PagerTab {
             )
         }
     }
-
-    private val LoggedAccount.locator: PlatformLocator
-        get() = PlatformLocator(accountUri = uri, baseUrl = platform.baseUrl)
 }

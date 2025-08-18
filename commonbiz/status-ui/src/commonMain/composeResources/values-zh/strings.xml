@@ -77,4 +77,8 @@
     <string name="status_ui_update_dialog_release_note">%1$s 版本更新日志：\n%2$s </string>
 
     <string name="status_ui_switch_account_dialog_title">选择账号</string>
+
+    <string name="status_ui_likes">喜欢</string>
+    <string name="status_ui_bookmarks">收藏</string>
+    <string name="status_ui_edit_profile">修改个人资料</string>
 </resources>

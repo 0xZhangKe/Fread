@@ -27,8 +27,10 @@ import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -40,6 +42,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -99,10 +102,10 @@ import com.zhangke.fread.activitypub.app.activity_pub_user_menu_muted_user_list
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListTabStatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
@@ -122,15 +125,18 @@ import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
+import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
+import com.zhangke.fread.statusui.status_ui_edit_profile
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import com.zhangke.fread.statusui.Res as statusUiRes
 
 data class UserDetailScreen(
     val locator: PlatformLocator,
@@ -331,138 +337,179 @@ data class UserDetailScreen(
         ) { innerPaddings ->
             val accountUiState = uiState.accountUiState
             val account = accountUiState?.account
-            ScrollUpTopBarLayout(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPaddings),
-                topBarContent = { progress ->
-                    DetailTopBar(
-                        title = accountUiState?.userName ?: RichText.empty,
-                        progress = progress,
-                        onBackClick = onBackClick,
-                        actions = {
-                            ToolbarActions(
-                                uiState = uiState,
-                                onFavouritesClick = onFavouritesClick,
-                                onBlockClick = onBlockClick,
-                                onBookmarksClick = onBookmarksClick,
-                                onBlockDomainClick = onBlockDomainClick,
-                                onUnblockDomainClick = onUnblockDomainClick,
-                                onOpenInBrowserClick = onOpenInBrowserClick,
-                                onOpenOriginalInstanceClick = onOpenOriginalInstanceClick,
-                                onEditClick = onEditClick,
-                                onNewNoteSet = onNewNoteSet,
-                                onCopyLinkClick = onCopyLinkClick,
-                                onMuteUserClick = onMuteUserClick,
-                                onUnmuteUserClick = onUnmuteUserClick,
-                                onMuteUserListClick = onMuteUserListClick,
-                                onBlockedUserListClick = onBlockedUserListClick,
-                                onFollowedHashtagsListClick = onFollowedHashtagsListClick,
-                                onFilterClick = onFilterClick,
-                            )
-                        },
-                    )
-                },
-                headerContent = { progress ->
-                    DetailHeaderContent(
-                        progress = progress,
-                        loading = uiState.loading,
-                        banner = account?.header,
-                        avatar = account?.avatar,
-                        title = accountUiState?.userName,
-                        description = accountUiState?.description,
-                        privateNote = uiState.relationship?.note,
-                        acctLine = {
-                            UserHandleLine(
-                                modifier = Modifier,
-                                handle = account?.prettyAcct.orEmpty(),
-                                bot = account?.bot == true,
-                                followedBy = uiState.relationship?.followedBy == true
-                            )
-                        },
-                        followInfo = {
-                            UserFollowLine(
-                                modifier = Modifier,
-                                followersCount = account?.followersCount?.toLong(),
-                                followingCount = account?.followingCount?.toLong(),
-                                statusesCount = account?.statusesCount?.toLong(),
-                                onFollowerClick = onFollowerClick,
-                                onFollowingClick = onFollowingClick,
-                            )
-                        },
-                        relationship = if (uiState.isAccountOwner) null else uiState.relationships,
-                        onBannerClick = onBannerClick,
-                        onAvatarClick = onAvatarClick,
-                        onUnblockClick = onUnblockClick,
-                        onCancelFollowRequestClick = onCancelFollowRequestClick,
-                        onFollowAccountClick = onFollowAccountClick,
-                        onUnfollowAccountClick = onUnfollowAccountClick,
-                        onUrlClick = {
-                            browserLauncher.launchWebTabInApp(it, locator)
-                        },
-                        onMaybeHashtagClick = onMaybeHashtagClick,
-                        bottomArea = if (uiState.accountUiState?.account != null) {
-                            {
-                                UserAboutCard(
-                                    uiState.accountUiState.account,
-                                    uiState.accountUiState.emojis
-                                )
-                            }
-                        } else {
-                            null
-                        },
-                    )
-                },
-                contentCanScrollBackward = contentCanScrollBackward,
+            CompositionLocalProvider(
+                LocalSnackbarHostState provides snackBarHost
             ) {
-                if (uiState.userInsight != null) {
-                    val tabs: List<PagerTab> = remember(uiState) {
-                        listOf(
-                            UserTimelineTab(
-                                tabType = UserTimelineTabType.POSTS,
-                                locator = uiState.locator,
-                                userWebFinger = uiState.userInsight.webFinger,
-                                contentCanScrollBackward = contentCanScrollBackward,
-                                userId = userId,
-                            ),
-                            UserTimelineTab(
-                                tabType = UserTimelineTabType.REPLIES,
-                                locator = uiState.locator,
-                                userWebFinger = uiState.userInsight.webFinger,
-                                contentCanScrollBackward = contentCanScrollBackward,
-                                userId = userId,
-                            ),
-                            UserTimelineTab(
-                                tabType = UserTimelineTabType.MEDIA,
-                                locator = uiState.locator,
-                                userWebFinger = uiState.userInsight.webFinger,
-                                contentCanScrollBackward = contentCanScrollBackward,
-                                userId = userId,
-                            ),
-                            UserAboutTab(
-                                contentCanScrollBackward = contentCanScrollBackward,
-                                locator = uiState.locator,
-                                userWebFinger = uiState.userInsight.webFinger,
-                                userId = userId,
-                            ),
+                ScrollUpTopBarLayout(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPaddings),
+                    topBarContent = { progress ->
+                        DetailTopBar(
+                            title = accountUiState?.userName ?: RichText.empty,
+                            progress = progress,
+                            onBackClick = onBackClick,
+                            actions = {
+                                ToolbarActions(
+                                    uiState = uiState,
+                                    onFavouritesClick = onFavouritesClick,
+                                    onBlockClick = onBlockClick,
+                                    onBookmarksClick = onBookmarksClick,
+                                    onBlockDomainClick = onBlockDomainClick,
+                                    onUnblockDomainClick = onUnblockDomainClick,
+                                    onOpenInBrowserClick = onOpenInBrowserClick,
+                                    onOpenOriginalInstanceClick = onOpenOriginalInstanceClick,
+                                    onEditClick = onEditClick,
+                                    onNewNoteSet = onNewNoteSet,
+                                    onCopyLinkClick = onCopyLinkClick,
+                                    onMuteUserClick = onMuteUserClick,
+                                    onUnmuteUserClick = onUnmuteUserClick,
+                                    onMuteUserListClick = onMuteUserListClick,
+                                    onBlockedUserListClick = onBlockedUserListClick,
+                                    onFollowedHashtagsListClick = onFollowedHashtagsListClick,
+                                    onFilterClick = onFilterClick,
+                                )
+                            },
                         )
-                    }
-                    val nestedTabConnection = remember {
-                        NestedTabConnection()
-                    }
-                    CompositionLocalProvider(
-                        LocalSnackbarHostState provides snackBarHost,
-                        LocalNestedTabConnection provides nestedTabConnection,
-                    ) {
-                        val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
-                        HorizontalPagerWithTab(
-                            tabList = tabs,
-                            pagerUserScrollEnabled = !contentScrollInProgress,
+                    },
+                    headerContent = { progress ->
+                        DetailHeaderContent(
+                            progress = progress,
+                            loading = uiState.loading,
+                            banner = account?.header,
+                            avatar = account?.avatar,
+                            title = accountUiState?.userName,
+                            description = accountUiState?.description,
+                            privateNote = uiState.relationship?.note,
+                            acctLine = {
+                                UserHandleLine(
+                                    modifier = Modifier,
+                                    handle = account?.prettyAcct.orEmpty(),
+                                    bot = account?.bot == true,
+                                    followedBy = uiState.relationship?.followedBy == true
+                                )
+                            },
+                            followInfo = {
+                                UserFollowLine(
+                                    modifier = Modifier,
+                                    followersCount = account?.followersCount?.toLong(),
+                                    followingCount = account?.followingCount?.toLong(),
+                                    statusesCount = account?.statusesCount?.toLong(),
+                                    onFollowerClick = onFollowerClick,
+                                    onFollowingClick = onFollowingClick,
+                                )
+                            },
+                            action = {
+                                if (uiState.isAccountOwner) {
+                                    FilledTonalButton(
+                                        onClick = onEditClick,
+                                    ) {
+                                        Text(
+                                            text = stringResource(statusUiRes.string.status_ui_edit_profile)
+                                        )
+                                    }
+                                } else if (uiState.relationships != null) {
+                                    RelationshipStateButton(
+                                        modifier = Modifier,
+                                        relationship = uiState.relationships,
+                                        onFollowClick = onFollowAccountClick,
+                                        onUnfollowClick = onUnfollowAccountClick,
+                                        onCancelFollowRequestClick = onCancelFollowRequestClick,
+                                        onUnblockClick = onUnblockClick,
+                                    )
+                                }
+                            },
+                            onBannerClick = onBannerClick,
+                            onAvatarClick = onAvatarClick,
+                            onUrlClick = {
+                                browserLauncher.launchWebTabInApp(it, locator)
+                            },
+                            onMaybeHashtagClick = onMaybeHashtagClick,
+                            bottomArea = if (uiState.accountUiState?.account != null) {
+                                {
+                                    UserAboutCard(
+                                        uiState.accountUiState.account,
+                                        uiState.accountUiState.emojis
+                                    )
+                                }
+                            } else {
+                                null
+                            },
                         )
+                    },
+                    contentCanScrollBackward = contentCanScrollBackward,
+                ) {
+                    if (uiState.userInsight != null) {
+                        val tabs: List<PagerTab> = remember(
+                            uiState.userInsight,
+                            uiState.locator,
+                            uiState.isAccountOwner,
+                        ) {
+                            buildTabList(
+                                webFinger = uiState.userInsight.webFinger,
+                                locator = uiState.locator,
+                                isAccountOwner = uiState.isAccountOwner,
+                                contentCanScrollBackward = contentCanScrollBackward,
+                            )
+                        }
+                        val nestedTabConnection = remember {
+                            NestedTabConnection()
+                        }
+                        CompositionLocalProvider(
+                            LocalSnackbarHostState provides snackBarHost,
+                            LocalNestedTabConnection provides nestedTabConnection,
+                        ) {
+                            val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
+                            HorizontalPagerWithTab(
+                                tabList = tabs,
+                                pagerUserScrollEnabled = !contentScrollInProgress,
+                            )
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun buildTabList(
+        locator: PlatformLocator,
+        webFinger: WebFinger,
+        isAccountOwner: Boolean,
+        contentCanScrollBackward: MutableState<Boolean>,
+    ): List<PagerTab> {
+        val tabList = mutableListOf<PagerTab>()
+        tabList += UserTimelineTab(
+            tabType = UserTimelineTabType.POSTS,
+            locator = locator,
+            userWebFinger = webFinger,
+            contentCanScrollBackward = contentCanScrollBackward,
+            userId = userId,
+        )
+        tabList += UserTimelineTab(
+            tabType = UserTimelineTabType.REPLIES,
+            locator = locator,
+            userWebFinger = webFinger,
+            contentCanScrollBackward = contentCanScrollBackward,
+            userId = userId,
+        )
+        tabList += UserTimelineTab(
+            tabType = UserTimelineTabType.MEDIA,
+            locator = locator,
+            userWebFinger = webFinger,
+            contentCanScrollBackward = contentCanScrollBackward,
+            userId = userId,
+        )
+        if (isAccountOwner) {
+            tabList += StatusListTabStatusListScreen(
+                locator = locator,
+                type = StatusListType.FAVOURITES,
+            )
+            tabList += StatusListTabStatusListScreen(
+                locator = locator,
+                type = StatusListType.BOOKMARKS,
+            )
+        }
+        return tabList
     }
 
     @Composable
@@ -902,11 +949,17 @@ data class UserDetailScreen(
         emojis: List<Emoji>,
     ) {
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme
+                    .surfaceContainerHighest
+                    .copy(alpha = 0.3F),
+            ),
         ) {
             SelectionContainer {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     FieldLine(
                         key = stringResource(Res.string.activity_pub_user_detail_join_date),
@@ -929,7 +982,7 @@ data class UserDetailScreen(
     private fun FieldLine(key: String, value: String, emojis: List<Emoji>) {
         val browserLauncher = LocalActivityBrowserLauncher.current
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(

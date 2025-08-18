@@ -8,7 +8,7 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.richtext.RichText
 
-data class UserDetailUiState (
+data class UserDetailUiState(
     val locator: PlatformLocator,
     val loading: Boolean,
     val userInsight: UserUriInsights?,

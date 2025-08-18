@@ -2,7 +2,6 @@ package com.zhangke.fread.bluesky.internal.screen.user.detail
 
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.Relationships
-import com.zhangke.fread.status.ui.common.RelationshipUiState
 
 data class BskyUserDetailUiState(
     val loading: Boolean,

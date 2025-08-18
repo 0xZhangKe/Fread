@@ -78,4 +78,8 @@
     <string name="status_ui_update_dialog_release_note">Version %1$s Update Log:\n%2$s</string>
 
     <string name="status_ui_switch_account_dialog_title">Select Account</string>
+
+    <string name="status_ui_likes">Likes</string>
+    <string name="status_ui_bookmarks">Bookmarks</string>
+    <string name="status_ui_edit_profile">Edit profile</string>
 </resources>

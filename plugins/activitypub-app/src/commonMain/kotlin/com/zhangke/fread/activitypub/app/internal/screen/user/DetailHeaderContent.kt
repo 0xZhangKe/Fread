@@ -18,11 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.freadPlaceholder
-import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.common.ProgressedAvatar
 import com.zhangke.fread.status.ui.common.ProgressedBanner
-import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.richtext.SelectableRichText
 
 @Composable
@@ -40,16 +38,10 @@ fun DetailHeaderContent(
     onUrlClick: (String) -> Unit,
     onMaybeHashtagClick: (String) -> Unit,
     privateNote: String? = null,
-    relationship: Relationships? = null,
-    onUnblockClick: (() -> Unit)? = null,
-    onCancelFollowRequestClick: (() -> Unit)? = null,
-    onFollowAccountClick: (() -> Unit)? = null,
-    onUnfollowAccountClick: (() -> Unit)? = null,
+    action: (@Composable () -> Unit)? = null,
     bottomArea: (@Composable () -> Unit)? = null,
 ) {
-    ConstraintLayout(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
+    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
         val (bannerRef, avatarRef, relationBtnRef, nameRef) = createRefs()
         val (acctRef, privateNoteRef, noteRef, followRef) = createRefs()
         val bottomAreaRef = createRef()
@@ -80,7 +72,7 @@ fun DetailHeaderContent(
         )
 
         // relationship button
-        if (relationship == null) {
+        if (action == null) {
             Box(
                 modifier = Modifier.constrainAs(relationBtnRef) {
                     top.linkTo(bannerRef.bottom, 16.dp)
@@ -89,17 +81,14 @@ fun DetailHeaderContent(
                 }
             )
         } else {
-            RelationshipStateButton(
+            Box(
                 modifier = Modifier.constrainAs(relationBtnRef) {
                     top.linkTo(bannerRef.bottom, 8.dp)
                     end.linkTo(parent.end, 16.dp)
-                },
-                relationship = relationship,
-                onFollowClick = onFollowAccountClick ?: {},
-                onUnfollowClick = onUnfollowAccountClick ?: {},
-                onCancelFollowRequestClick = onCancelFollowRequestClick ?: {},
-                onUnblockClick = onUnblockClick ?: {},
-            )
+                }
+            ) {
+                action()
+            }
         }
 
         // title
@@ -202,7 +191,7 @@ fun DetailHeaderContent(
                 top.linkTo(followRef.bottom, 8.dp)
                 start.linkTo(followRef.start)
                 end.linkTo(parent.end, 16.dp)
-                bottom.linkTo(parent.bottom)
+                bottom.linkTo(parent.bottom, 8.dp)
                 width = Dimension.fillToConstraints
             },
         ) {

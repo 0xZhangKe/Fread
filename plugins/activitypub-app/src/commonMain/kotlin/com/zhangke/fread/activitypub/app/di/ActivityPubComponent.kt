@@ -29,8 +29,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutCon
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserViewModel
-import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
-import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineContainerViewModel
 import com.zhangke.fread.common.browser.BrowserInterceptor
@@ -169,10 +168,8 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideStatusListViewModel(creator: (PlatformLocator, StatusListType) -> StatusListViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return StatusListViewModel::class to StatusListViewModel.Factory { locator, type ->
-            creator(locator, type)
-        }
+    fun provideStatusListContainerViewModel(creator: () -> StatusListContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return StatusListContainerViewModel::class to creator
     }
 
     @IntoMap

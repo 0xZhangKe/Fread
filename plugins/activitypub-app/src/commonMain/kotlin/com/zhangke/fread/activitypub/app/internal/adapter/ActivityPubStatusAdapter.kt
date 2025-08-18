@@ -160,6 +160,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             ),
             bookmark = Blog.Bookmark(
                 support = true,
+                bookmarked = entity.bookmarked,
             ),
             reply = Blog.Reply(
                 support = true,

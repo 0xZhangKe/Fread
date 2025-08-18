@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Bookmarks
@@ -22,7 +24,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -63,6 +64,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.AlertConfirmDialog
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.HorizontalPagerWithTab
@@ -78,6 +80,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_created_list_title
 import com.zhangke.fread.activitypub.app.activity_pub_favourites_list_title
 import com.zhangke.fread.activitypub.app.activity_pub_filters_list_page_title
 import com.zhangke.fread.activitypub.app.activity_pub_followed_tags_screen_title
@@ -102,6 +105,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_user_menu_muted_user_list
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
+import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
@@ -132,11 +136,13 @@ import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
 import com.zhangke.fread.statusui.status_ui_edit_profile
+import com.zhangke.fread.statusui.status_ui_logout
+import com.zhangke.fread.statusui.status_ui_logout_dialog_content
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import com.zhangke.fread.statusui.Res as statusUiRes
+import com.zhangke.fread.statusui.Res as StatusUiRes
 
 data class UserDetailScreen(
     val locator: PlatformLocator,
@@ -286,7 +292,16 @@ data class UserDetailScreen(
             onFilterClick = {
                 navigator.push(FiltersListScreen(uiState.locator))
             },
+            onCreatedListClick = {
+                navigator.push(CreatedListsScreen(uiState.locator))
+            },
+            onLogoutClick = {
+                viewModel.onLogoutClick()
+            },
         )
+        ConsumeFlow(viewModel.finishPageFlow) {
+            navigator.pop()
+        }
     }
 
     @Composable
@@ -319,6 +334,8 @@ data class UserDetailScreen(
         onBlockedUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
+        onCreatedListClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
         val browserLauncher = LocalActivityBrowserLauncher.current
         val contentCanScrollBackward = remember {
@@ -359,7 +376,6 @@ data class UserDetailScreen(
                                     onUnblockDomainClick = onUnblockDomainClick,
                                     onOpenInBrowserClick = onOpenInBrowserClick,
                                     onOpenOriginalInstanceClick = onOpenOriginalInstanceClick,
-                                    onEditClick = onEditClick,
                                     onNewNoteSet = onNewNoteSet,
                                     onCopyLinkClick = onCopyLinkClick,
                                     onMuteUserClick = onMuteUserClick,
@@ -368,6 +384,8 @@ data class UserDetailScreen(
                                     onBlockedUserListClick = onBlockedUserListClick,
                                     onFollowedHashtagsListClick = onFollowedHashtagsListClick,
                                     onFilterClick = onFilterClick,
+                                    onCreatedListClick = onCreatedListClick,
+                                    onLogoutClick = onLogoutClick,
                                 )
                             },
                         )
@@ -405,7 +423,7 @@ data class UserDetailScreen(
                                         onClick = onEditClick,
                                     ) {
                                         Text(
-                                            text = stringResource(statusUiRes.string.status_ui_edit_profile)
+                                            text = stringResource(StatusUiRes.string.status_ui_edit_profile)
                                         )
                                     }
                                 } else if (uiState.relationships != null) {
@@ -523,7 +541,6 @@ data class UserDetailScreen(
         onOpenInBrowserClick: () -> Unit,
         onCopyLinkClick: () -> Unit,
         onOpenOriginalInstanceClick: () -> Unit,
-        onEditClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
         onMuteUserClick: () -> Unit,
         onUnmuteUserClick: () -> Unit,
@@ -531,15 +548,16 @@ data class UserDetailScreen(
         onBlockedUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
+        onCreatedListClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
         val accountUiState = uiState.accountUiState ?: return
         if (uiState.isAccountOwner) {
             SimpleIconButton(
-                onClick = onEditClick,
-                imageVector = Icons.Default.Settings,
-                contentDescription = "Edit Profile",
+                onClick = onCreatedListClick,
+                imageVector = Icons.AutoMirrored.Outlined.ListAlt,
+                contentDescription = stringResource(Res.string.activity_pub_created_list_title),
             )
-            Box(modifier = Modifier.width(8.dp))
         }
         var showMorePopup by remember {
             mutableStateOf(false)
@@ -600,6 +618,10 @@ data class UserDetailScreen(
                     onFilterClick = {
                         showMorePopup = false
                         onFilterClick()
+                    },
+                    onLogoutClick = {
+                        showMorePopup = false
+                        onLogoutClick()
                     },
                 )
             }
@@ -725,6 +747,7 @@ data class UserDetailScreen(
         onMuteUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
         ModalDropdownMenuItem(
             text = stringResource(Res.string.activity_pub_favourites_list_title),
@@ -756,6 +779,23 @@ data class UserDetailScreen(
             imageVector = Icons.Default.FilterAlt,
             onClick = onFilterClick,
         )
+        var showLogoutDialog by remember { mutableStateOf(false) }
+        ModalDropdownMenuItem(
+            text = stringResource(StatusUiRes.string.status_ui_logout),
+            imageVector = Icons.AutoMirrored.Filled.Logout,
+            onClick = { showLogoutDialog = true },
+        )
+        if (showLogoutDialog) {
+            FreadDialog(
+                onDismissRequest = { showLogoutDialog = false },
+                contentText = stringResource(StatusUiRes.string.status_ui_logout_dialog_content),
+                onPositiveClick = {
+                    showLogoutDialog = false
+                    onLogoutClick()
+                },
+                onNegativeClick = { showLogoutDialog = false },
+            )
+        }
     }
 
     @Composable

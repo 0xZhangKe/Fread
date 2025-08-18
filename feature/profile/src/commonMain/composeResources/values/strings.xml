@@ -2,8 +2,6 @@
 <resources>
     <string name="profile_page_title">Profile</string>
 
-    <string name="profile_page_logout_dialog_content">Are you sure you want to log out?</string>
-
     <string name="profile_setting_about_title">About</string>
     <string name="profile_setting_donate_desc">Buy me a coffee to support this project.</string>
     <string name="profile_setting_inline_video_auto_play">Inline Video Autoplay</string>

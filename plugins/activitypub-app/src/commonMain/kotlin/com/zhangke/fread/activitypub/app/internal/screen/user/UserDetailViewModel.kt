@@ -15,6 +15,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmoji
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.activitypub.app.internal.usecase.ActivityPubAccountLogoutUseCase
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.uri.FormalUri
@@ -30,6 +31,7 @@ class UserDetailViewModel(
     private val userUriTransformer: UserUriTransformer,
     private val clientManager: ActivityPubClientManager,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
+    private val accountLogout: ActivityPubAccountLogoutUseCase,
     val locator: PlatformLocator,
     val userUri: FormalUri?,
     val webFinger: WebFinger?,
@@ -52,6 +54,9 @@ class UserDetailViewModel(
 
     private val _messageFlow = MutableSharedFlow<TextString>()
     val messageFlow = _messageFlow.asSharedFlow()
+
+    private val _finishPageFlow = MutableSharedFlow<Unit>()
+    val finishPageFlow = _finishPageFlow.asSharedFlow()
 
     init {
         launchInViewModel {
@@ -209,6 +214,19 @@ class UserDetailViewModel(
 
     fun onUnmuteUserClick() {
         muteOrUnmute(false)
+    }
+
+    fun onLogoutClick() {
+        val account = uiState.value.accountUiState?.account ?: return
+        val uriInsights = uiState.value.userInsight ?: return
+        launchInViewModel {
+            accountLogout(
+                baseUrl = locator.baseUrl,
+                accountUri = uriInsights.uri,
+                userId = account.id,
+            )
+            _finishPageFlow.emit(Unit)
+        }
     }
 
     private fun muteOrUnmute(mute: Boolean) {

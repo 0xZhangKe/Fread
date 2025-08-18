@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.push.ActivityPubPushManager
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.activitypub.app.internal.usecase.ActivityPubAccountLogoutUseCase
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.account.AccountRefreshResult
@@ -40,6 +41,7 @@ class ActivityPubAccountManager @Inject constructor(
     private val activityPubPushManager: ActivityPubPushManager,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
+    private val accountLogout: ActivityPubAccountLogoutUseCase,
 ) : IAccountManager {
 
     init {
@@ -104,10 +106,7 @@ class ActivityPubAccountManager @Inject constructor(
         if (account !is ActivityPubLoggedAccount) {
             return false
         }
-        val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
-        activityPubPushManager.unsubscribe(role, account.userId)
-        accountRepo.deleteByUri(account.uri)
-        loggedAccountProvider.removeAccount(account.uri)
+        accountLogout(account)
         return true
     }
 

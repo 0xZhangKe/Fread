@@ -51,7 +51,6 @@ import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_profile_tab
 import com.zhangke.fread.feature.profile.profile_account_not_login
-import com.zhangke.fread.feature.profile.profile_page_logout_dialog_content
 import com.zhangke.fread.feature.profile.profile_page_title
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
@@ -243,7 +242,6 @@ class ProfileTab() : PagerTab {
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
         onPinnedFeedsClick: (LoggedAccount) -> Unit,
     ) {
-        var showLogoutDialog by remember { mutableStateOf(false) }
         val isBluesky = account.platform.protocol.isBluesky
         val iconSize = 20.dp
         Row(
@@ -285,26 +283,6 @@ class ProfileTab() : PagerTab {
                 },
                 imageVector = Icons.Default.Tag,
                 contentDescription = "Tags",
-            )
-            Spacer(modifier = Modifier.Companion.weight(1F))
-            SimpleIconButton(
-                iconModifier = Modifier.Companion.size(iconSize),
-                onClick = { showLogoutDialog = true },
-                imageVector = Icons.AutoMirrored.Filled.Logout,
-                contentDescription = "Logout",
-            )
-        }
-        if (showLogoutDialog) {
-            FreadDialog(
-                onDismissRequest = { showLogoutDialog = false },
-                contentText = stringResource(Res.string.profile_page_logout_dialog_content),
-                onPositiveClick = {
-                    showLogoutDialog = false
-                    onLogoutClick(account)
-                },
-                onNegativeClick = {
-                    showLogoutDialog = false
-                },
             )
         }
     }

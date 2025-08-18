@@ -82,4 +82,6 @@
     <string name="status_ui_likes">Likes</string>
     <string name="status_ui_bookmarks">Bookmarks</string>
     <string name="status_ui_edit_profile">Edit profile</string>
+    <string name="status_ui_logout">Log out</string>
+    <string name="status_ui_logout_dialog_content">Are you sure you want to log out?</string>
 </resources>

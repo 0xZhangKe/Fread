@@ -81,4 +81,6 @@
     <string name="status_ui_likes">喜欢</string>
     <string name="status_ui_bookmarks">收藏</string>
     <string name="status_ui_edit_profile">修改个人资料</string>
+    <string name="status_ui_logout">退出登录</string>
+    <string name="status_ui_logout_dialog_content">你确定要退出登录吗？</string>
 </resources>

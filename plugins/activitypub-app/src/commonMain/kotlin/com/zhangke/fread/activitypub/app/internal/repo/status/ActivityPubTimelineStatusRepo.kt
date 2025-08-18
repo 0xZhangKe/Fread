@@ -122,7 +122,15 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         status: Status,
         listId: String? = null,
     ) {
-        statusDao.insert(status.toDBEntity(locator, type, listId))
+        val localStatus = queryLocalStatus(
+            locator = locator,
+            type = type,
+            listId = listId,
+            statusId = status.id,
+        )
+        if (localStatus != null) {
+            statusDao.insert(status.toDBEntity(locator, type, listId))
+        }
         val leftTypes = ActivityPubStatusSourceType.entries.filter { it != type }
         leftTypes.mapNotNull {
             queryLocalStatus(

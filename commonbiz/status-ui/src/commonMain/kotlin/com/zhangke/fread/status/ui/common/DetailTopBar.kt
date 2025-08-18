@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.user
+package com.zhangke.fread.status.ui.common
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets

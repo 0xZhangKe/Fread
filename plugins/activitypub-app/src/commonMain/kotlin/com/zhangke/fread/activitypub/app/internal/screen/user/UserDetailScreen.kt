@@ -1,14 +1,11 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -36,8 +33,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -68,11 +63,9 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.HorizontalPagerWithTab
-import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.network.FormalBaseUrl
@@ -127,6 +120,7 @@ import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
+import com.zhangke.fread.status.ui.common.DetailPageScaffold
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
@@ -337,153 +331,122 @@ data class UserDetailScreen(
         onCreatedListClick: () -> Unit,
         onLogoutClick: () -> Unit,
     ) {
+        val accountUiState = uiState.accountUiState
+        val account = accountUiState?.account
         val browserLauncher = LocalActivityBrowserLauncher.current
-        val contentCanScrollBackward = remember {
-            mutableStateOf(false)
-        }
+        val contentCanScrollBackward = remember { mutableStateOf(false) }
         val snackBarHost = rememberSnackbarHostState()
         ConsumeSnackbarFlow(hostState = snackBarHost, messageTextFlow = messageFlow)
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(
-                    modifier = Modifier.navigationBarsPadding(),
-                    hostState = snackBarHost,
+        DetailPageScaffold(
+            modifier = Modifier.fillMaxSize(),
+            snackbarHostState = snackBarHost,
+            title = accountUiState?.userName ?: RichText.empty,
+            avatar = account?.avatar.orEmpty(),
+            banner = account?.header,
+            description = accountUiState?.description,
+            privateNote = uiState.relationship?.note,
+            loading = uiState.loading,
+            contentCanScrollBackward = contentCanScrollBackward,
+            onBannerClick = onBannerClick,
+            onAvatarClick = onAvatarClick,
+            onUrlClick = {
+                browserLauncher.launchWebTabInApp(it, locator)
+            },
+            onMaybeHashtagClick = onMaybeHashtagClick,
+            onBackClick = onBackClick,
+            topBarActions = {
+                ToolbarActions(
+                    uiState = uiState,
+                    onFavouritesClick = onFavouritesClick,
+                    onBlockClick = onBlockClick,
+                    onBookmarksClick = onBookmarksClick,
+                    onBlockDomainClick = onBlockDomainClick,
+                    onUnblockDomainClick = onUnblockDomainClick,
+                    onOpenInBrowserClick = onOpenInBrowserClick,
+                    onOpenOriginalInstanceClick = onOpenOriginalInstanceClick,
+                    onNewNoteSet = onNewNoteSet,
+                    onCopyLinkClick = onCopyLinkClick,
+                    onMuteUserClick = onMuteUserClick,
+                    onUnmuteUserClick = onUnmuteUserClick,
+                    onMuteUserListClick = onMuteUserListClick,
+                    onBlockedUserListClick = onBlockedUserListClick,
+                    onFollowedHashtagsListClick = onFollowedHashtagsListClick,
+                    onFilterClick = onFilterClick,
+                    onCreatedListClick = onCreatedListClick,
+                    onLogoutClick = onLogoutClick,
                 )
             },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        ) { innerPaddings ->
-            val accountUiState = uiState.accountUiState
-            val account = accountUiState?.account
-            CompositionLocalProvider(
-                LocalSnackbarHostState provides snackBarHost
-            ) {
-                ScrollUpTopBarLayout(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPaddings),
-                    topBarContent = { progress ->
-                        DetailTopBar(
-                            title = accountUiState?.userName ?: RichText.empty,
-                            progress = progress,
-                            onBackClick = onBackClick,
-                            actions = {
-                                ToolbarActions(
-                                    uiState = uiState,
-                                    onFavouritesClick = onFavouritesClick,
-                                    onBlockClick = onBlockClick,
-                                    onBookmarksClick = onBookmarksClick,
-                                    onBlockDomainClick = onBlockDomainClick,
-                                    onUnblockDomainClick = onUnblockDomainClick,
-                                    onOpenInBrowserClick = onOpenInBrowserClick,
-                                    onOpenOriginalInstanceClick = onOpenOriginalInstanceClick,
-                                    onNewNoteSet = onNewNoteSet,
-                                    onCopyLinkClick = onCopyLinkClick,
-                                    onMuteUserClick = onMuteUserClick,
-                                    onUnmuteUserClick = onUnmuteUserClick,
-                                    onMuteUserListClick = onMuteUserListClick,
-                                    onBlockedUserListClick = onBlockedUserListClick,
-                                    onFollowedHashtagsListClick = onFollowedHashtagsListClick,
-                                    onFilterClick = onFilterClick,
-                                    onCreatedListClick = onCreatedListClick,
-                                    onLogoutClick = onLogoutClick,
-                                )
-                            },
+            handleLine = {
+                UserHandleLine(
+                    modifier = Modifier,
+                    handle = account?.prettyAcct.orEmpty(),
+                    bot = account?.bot == true,
+                    followedBy = uiState.relationship?.followedBy == true
+                )
+            },
+            followInfoLine = {
+                UserFollowLine(
+                    modifier = Modifier,
+                    followersCount = account?.followersCount?.toLong(),
+                    followingCount = account?.followingCount?.toLong(),
+                    statusesCount = account?.statusesCount?.toLong(),
+                    onFollowerClick = onFollowerClick,
+                    onFollowingClick = onFollowingClick,
+                )
+            },
+            topDetailContentAction = {
+                if (uiState.isAccountOwner) {
+                    FilledTonalButton(
+                        onClick = onEditClick,
+                    ) {
+                        Text(
+                            text = stringResource(StatusUiRes.string.status_ui_edit_profile)
                         )
-                    },
-                    headerContent = { progress ->
-                        DetailHeaderContent(
-                            progress = progress,
-                            loading = uiState.loading,
-                            banner = account?.header,
-                            avatar = account?.avatar,
-                            title = accountUiState?.userName,
-                            description = accountUiState?.description,
-                            privateNote = uiState.relationship?.note,
-                            acctLine = {
-                                UserHandleLine(
-                                    modifier = Modifier,
-                                    handle = account?.prettyAcct.orEmpty(),
-                                    bot = account?.bot == true,
-                                    followedBy = uiState.relationship?.followedBy == true
-                                )
-                            },
-                            followInfo = {
-                                UserFollowLine(
-                                    modifier = Modifier,
-                                    followersCount = account?.followersCount?.toLong(),
-                                    followingCount = account?.followingCount?.toLong(),
-                                    statusesCount = account?.statusesCount?.toLong(),
-                                    onFollowerClick = onFollowerClick,
-                                    onFollowingClick = onFollowingClick,
-                                )
-                            },
-                            action = {
-                                if (uiState.isAccountOwner) {
-                                    FilledTonalButton(
-                                        onClick = onEditClick,
-                                    ) {
-                                        Text(
-                                            text = stringResource(StatusUiRes.string.status_ui_edit_profile)
-                                        )
-                                    }
-                                } else if (uiState.relationships != null) {
-                                    RelationshipStateButton(
-                                        modifier = Modifier,
-                                        relationship = uiState.relationships,
-                                        onFollowClick = onFollowAccountClick,
-                                        onUnfollowClick = onUnfollowAccountClick,
-                                        onCancelFollowRequestClick = onCancelFollowRequestClick,
-                                        onUnblockClick = onUnblockClick,
-                                    )
-                                }
-                            },
-                            onBannerClick = onBannerClick,
-                            onAvatarClick = onAvatarClick,
-                            onUrlClick = {
-                                browserLauncher.launchWebTabInApp(it, locator)
-                            },
-                            onMaybeHashtagClick = onMaybeHashtagClick,
-                            bottomArea = if (uiState.accountUiState?.account != null) {
-                                {
-                                    UserAboutCard(
-                                        uiState.accountUiState.account,
-                                        uiState.accountUiState.emojis
-                                    )
-                                }
-                            } else {
-                                null
-                            },
-                        )
-                    },
-                    contentCanScrollBackward = contentCanScrollBackward,
-                ) {
-                    if (uiState.userInsight != null) {
-                        val tabs: List<PagerTab> = remember(
-                            uiState.userInsight,
-                            uiState.locator,
-                            uiState.isAccountOwner,
-                        ) {
-                            buildTabList(
-                                webFinger = uiState.userInsight.webFinger,
-                                locator = uiState.locator,
-                                isAccountOwner = uiState.isAccountOwner,
-                                contentCanScrollBackward = contentCanScrollBackward,
-                            )
-                        }
-                        val nestedTabConnection = remember {
-                            NestedTabConnection()
-                        }
-                        CompositionLocalProvider(
-                            LocalSnackbarHostState provides snackBarHost,
-                            LocalNestedTabConnection provides nestedTabConnection,
-                        ) {
-                            val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
-                            HorizontalPagerWithTab(
-                                tabList = tabs,
-                                pagerUserScrollEnabled = !contentScrollInProgress,
-                            )
-                        }
                     }
+                } else if (uiState.relationships != null) {
+                    RelationshipStateButton(
+                        modifier = Modifier,
+                        relationship = uiState.relationships,
+                        onFollowClick = onFollowAccountClick,
+                        onUnfollowClick = onUnfollowAccountClick,
+                        onCancelFollowRequestClick = onCancelFollowRequestClick,
+                        onUnblockClick = onUnblockClick,
+                    )
+                }
+            },
+            bottomArea = if (uiState.accountUiState?.account != null) {
+                {
+                    UserAboutCard(
+                        uiState.accountUiState.account,
+                        uiState.accountUiState.emojis
+                    )
+                }
+            } else {
+                null
+            },
+        ) {
+            if (uiState.userInsight != null) {
+                val tabs: List<PagerTab> = remember(
+                    uiState.userInsight,
+                    uiState.locator,
+                    uiState.isAccountOwner,
+                ) {
+                    buildTabList(
+                        webFinger = uiState.userInsight.webFinger,
+                        locator = uiState.locator,
+                        isAccountOwner = uiState.isAccountOwner,
+                        contentCanScrollBackward = contentCanScrollBackward,
+                    )
+                }
+                val nestedTabConnection = remember { NestedTabConnection() }
+                CompositionLocalProvider(
+                    LocalNestedTabConnection provides nestedTabConnection,
+                ) {
+                    val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
+                    HorizontalPagerWithTab(
+                        tabList = tabs,
+                        pagerUserScrollEnabled = !contentScrollInProgress,
+                    )
                 }
             }
         }
@@ -559,9 +522,7 @@ data class UserDetailScreen(
                 contentDescription = stringResource(Res.string.activity_pub_created_list_title),
             )
         }
-        var showMorePopup by remember {
-            mutableStateOf(false)
-        }
+        var showMorePopup by remember { mutableStateOf(false) }
         SimpleIconButton(
             onClick = { showMorePopup = true },
             imageVector = Icons.Default.MoreVert,

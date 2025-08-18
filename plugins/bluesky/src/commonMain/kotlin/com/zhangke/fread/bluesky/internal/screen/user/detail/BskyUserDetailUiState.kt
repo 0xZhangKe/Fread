@@ -26,6 +26,11 @@ data class BskyUserDetailUiState(
 
     val blocked: Boolean get() = !blockUri.isNullOrEmpty()
 
+    val prettyHandle: String
+        get() = handle?.let {
+            if (it.startsWith("@")) it else "@$it"
+        }.orEmpty()
+
     companion object {
 
         fun default(did: String): BskyUserDetailUiState {

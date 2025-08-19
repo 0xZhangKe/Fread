@@ -31,12 +31,8 @@ fun ScrollUpTopBarLayout(
     immersiveToTopBar: Boolean = true,
     scrollableContent: @Composable BoxScope.() -> Unit,
 ) {
-    var topBarHeightPx: Int by rememberSaveable {
-        mutableIntStateOf(0)
-    }
-    var headerContentHeightPx: Int by rememberSaveable {
-        mutableIntStateOf(0)
-    }
+    var topBarHeightPx: Int by rememberSaveable { mutableIntStateOf(0) }
+    var headerContentHeightPx: Int by rememberSaveable { mutableIntStateOf(0) }
     val nestedScrollConnection = if (immersiveToTopBar){
         rememberCollapsableTopBarLayoutConnection(
             contentCanScrollBackward = contentCanScrollBackward,

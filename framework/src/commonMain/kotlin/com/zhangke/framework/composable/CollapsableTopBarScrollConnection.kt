@@ -35,7 +35,19 @@ class CollapsableTopBarScrollConnection(
     var progress: Float by mutableFloatStateOf(0F)
         private set
 
+    override fun onPostScroll(
+        consumed: Offset,
+        available: Offset,
+        source: NestedScrollSource
+    ): Offset {
+        return handleScroll(available)
+    }
+
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        return handleScroll(available)
+    }
+
+    private fun handleScroll(available: Offset): Offset {
         if (available.y <= 0 && topBarHeight <= minPx) return Offset.Zero
         if (available.y >= 0 && topBarHeight >= maxPx) return Offset.Zero
         val height = topBarHeight

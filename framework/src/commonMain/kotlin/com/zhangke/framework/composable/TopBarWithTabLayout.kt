@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -36,8 +37,8 @@ fun TopBarWithTabLayout(
     scrollableContent: @Composable BoxScope.() -> Unit,
 ) {
     val density = LocalDensity.current
-    var topBarHeightInPx: Int by remember { mutableIntStateOf(0) }
-    var tabHeightInPx: Int by remember { mutableIntStateOf(0) }
+    var topBarHeightInPx: Int by rememberSaveable { mutableIntStateOf(0) }
+    var tabHeightInPx: Int by rememberSaveable { mutableIntStateOf(0) }
     val nestedScrollConnection = rememberCollapsableTopBarScrollConnection(
         minPx = 0F,
         maxPx = (topBarHeightInPx + tabHeightInPx).toFloat(),

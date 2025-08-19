@@ -1,5 +1,6 @@
 package com.zhangke.framework.composable.collapsable
 
+import androidx.compose.animation.core.animate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -12,6 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.unit.Velocity
+import com.zhangke.framework.utils.Log
 
 @Composable
 fun rememberCollapsableTopBarLayoutConnection(
@@ -58,9 +61,42 @@ class CollapsableTopBarLayoutConnection(
     override var progress: Float by mutableFloatStateOf(0F)
         private set
 
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        val height = topBarHeight
+    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+        Log.d("F_TEST") { "onPostFling: consumed=$consumed, available=$available" }
+        return super<NestedScrollConnection>.onPostFling(consumed, available)
+    }
 
+    override suspend fun onPreFling(available: Velocity): Velocity {
+        Log.d("F_TEST") { "onPreFling, available=$available" }
+        val availableY = available.y
+        if (availableY == 0F) return Velocity.Zero
+        animate(
+            initialValue = topBarHeight,
+            targetValue = topBarHeight + availableY,
+            animationSpec = androidx.compose.animation.core.spring(),
+            block = { value, _ ->
+                topBarHeight = value
+            }
+        )
+        return super<NestedScrollConnection>.onPreFling(available)
+    }
+
+    override fun onPostScroll(
+        consumed: Offset,
+        available: Offset,
+        source: NestedScrollSource
+    ): Offset {
+        Log.d("F_TEST") { "onPostScroll: consumed=$consumed, available=$available" }
+        return handleScroll(available)
+    }
+
+    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        Log.d("F_TEST") { "onPreScroll: available=$available" }
+        return handleScroll(available)
+    }
+
+    private fun handleScroll(available: Offset): Offset {
+        val height = topBarHeight
         if (height == minPx) {
             if (available.y > 0F) {
                 return if (contentCanScrollBackward?.value == true) {
@@ -71,19 +107,15 @@ class CollapsableTopBarLayoutConnection(
                 }
             }
         }
-
         if (height + available.y > maxPx) {
             topBarHeight = maxPx
             return Offset(0f, maxPx - height)
         }
-
         if (height + available.y < minPx) {
             topBarHeight = minPx
             return Offset(0f, minPx - height)
         }
-
         topBarHeight += available.y
-
         return Offset(0f, available.y)
     }
 

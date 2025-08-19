@@ -2,6 +2,7 @@ package com.zhangke.fread.bluesky.internal.screen.user.detail
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.Block
@@ -24,7 +25,9 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.AlertConfirmDialog
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -62,6 +65,8 @@ import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.statusui.status_ui_edit_profile
+import com.zhangke.fread.statusui.status_ui_logout
+import com.zhangke.fread.statusui.status_ui_logout_dialog_content
 import org.jetbrains.compose.resources.stringResource
 import com.zhangke.fread.commonbiz.Res as CommonBizRes
 import com.zhangke.fread.statusui.Res as StatusUiRes
@@ -126,9 +131,11 @@ class BskyUserDetailScreen(
             onFollowingFeedsClick = {
                 navigator.push(BskyFollowingFeedsPage(contentId = null, locator = locator))
             },
+            onLogoutClick = viewModel::onLogoutClick,
         )
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
         LaunchedEffect(Unit) { viewModel.onPageResume() }
+        ConsumeFlow(viewModel.finishPageFlow) { navigator.pop() }
     }
 
     @Composable
@@ -153,6 +160,7 @@ class BskyUserDetailScreen(
         onMuteUserListClick: () -> Unit,
         onHashtagClick: (String) -> Unit,
         onFollowingFeedsClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember { mutableStateOf(false) }
         DetailPageScaffold(
@@ -185,6 +193,7 @@ class BskyUserDetailScreen(
                     onFollowingFeedsClick = onFollowingFeedsClick,
                     onBlockedUserListClick = onBlockedUserListClick,
                     onMuteUserListClick = onMuteUserListClick,
+                    onLogoutClick = onLogoutClick,
                 )
             },
             handleLine = {
@@ -260,6 +269,7 @@ private fun TopBarActions(
     onBlockedUserListClick: () -> Unit,
     onMuteUserListClick: () -> Unit,
     onFollowingFeedsClick: () -> Unit,
+    onLogoutClick: () -> Unit,
 ) {
     if (uiState.isOwner) {
         SimpleIconButton(
@@ -298,6 +308,7 @@ private fun TopBarActions(
             SelfAccountActions(
                 onBlockedUserListClick = onBlockedUserListClick,
                 onMuteUserListClick = onMuteUserListClick,
+                onLogoutClick = onLogoutClick,
             )
         } else {
             OtherAccountActions(
@@ -335,6 +346,7 @@ private fun TopBarActions(
 private fun SelfAccountActions(
     onBlockedUserListClick: () -> Unit,
     onMuteUserListClick: () -> Unit,
+    onLogoutClick: () -> Unit,
 ) {
     ModalDropdownMenuItem(
         text = stringResource(Res.string.bsky_user_detail_action_muted_list),
@@ -346,6 +358,23 @@ private fun SelfAccountActions(
         imageVector = Icons.Default.Block,
         onClick = onBlockedUserListClick,
     )
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    ModalDropdownMenuItem(
+        text = stringResource(StatusUiRes.string.status_ui_logout),
+        imageVector = Icons.AutoMirrored.Filled.Logout,
+        onClick = { showLogoutDialog = true },
+    )
+    if (showLogoutDialog) {
+        FreadDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            contentText = stringResource(StatusUiRes.string.status_ui_logout_dialog_content),
+            onPositiveClick = {
+                showLogoutDialog = false
+                onLogoutClick()
+            },
+            onNegativeClick = { showLogoutDialog = false },
+        )
+    }
 }
 
 @Composable

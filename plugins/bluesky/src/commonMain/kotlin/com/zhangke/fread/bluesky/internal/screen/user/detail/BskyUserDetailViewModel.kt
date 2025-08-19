@@ -12,6 +12,7 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.bluesky.internal.usecase.RefreshSessionUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
@@ -22,6 +23,7 @@ import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,6 +38,7 @@ class BskyUserDetailViewModel @Inject constructor(
     private val updateBlock: UpdateBlockUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
     private val refreshSession: RefreshSessionUseCase,
+    private val userUriTransformer: UserUriTransformer,
     @Assisted private val locator: PlatformLocator,
     @Assisted private val did: String,
 ) : ViewModel() {
@@ -53,6 +56,9 @@ class BskyUserDetailViewModel @Inject constructor(
 
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage
+
+    private val _finishPageFlow = MutableSharedFlow<Unit>()
+    val finishPageFlow = _finishPageFlow.asSharedFlow()
 
     private var loadJob: Job? = null
     private var sessionRefreshed = false
@@ -152,6 +158,13 @@ class BskyUserDetailViewModel @Inject constructor(
                 client.unmuteActorCatching(did)
             }
             result.handleAndRefresh()
+        }
+    }
+
+    fun onLogoutClick() {
+        launchInViewModel {
+            accountManager.logout(userUriTransformer.createUserUri(did))
+            _finishPageFlow.emit(Unit)
         }
     }
 

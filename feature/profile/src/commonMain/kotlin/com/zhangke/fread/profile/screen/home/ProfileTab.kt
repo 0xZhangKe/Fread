@@ -2,23 +2,16 @@ package com.zhangke.fread.profile.screen.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Tag
-import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -30,10 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
@@ -42,7 +32,6 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
-import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.SimpleIconButton
@@ -54,7 +43,6 @@ import com.zhangke.fread.feature.profile.profile_account_not_login
 import com.zhangke.fread.feature.profile.profile_page_title
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.isBluesky
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -90,26 +78,10 @@ class ProfileTab() : PagerTab {
             onSettingClick = {
                 navigator.push(SettingScreen())
             },
-            onLogoutClick = {
-                viewModel.onLogoutClick(it)
-            },
             onAccountClick = {
                 viewModel.onAccountClick(it)
             },
-            onFavouritedClick = {
-                viewModel.onFavouritedClick(it)
-            },
-            onBookmarkedClick = {
-                viewModel.onBookmarkedClick(it)
-            },
-            onFollowedHashtagClick = {
-                viewModel.onFollowedHashtagClick(it)
-            },
-            onPinnedFeedsClick = {
-                viewModel.onPinnedFeedsClick(it)
-            },
             onLoginClick = viewModel::onLoginClick,
-            onListsClick = viewModel::onListsClick,
         )
         ConsumeFlow(viewModel.openPageFlow) {
             navigator.push(it)
@@ -122,14 +94,8 @@ class ProfileTab() : PagerTab {
         uiState: ProfileHomeUiState,
         onAddAccountClick: () -> Unit,
         onSettingClick: () -> Unit,
-        onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
-        onFavouritedClick: (LoggedAccount) -> Unit,
-        onBookmarkedClick: (LoggedAccount) -> Unit,
-        onFollowedHashtagClick: (LoggedAccount) -> Unit,
-        onPinnedFeedsClick: (LoggedAccount) -> Unit,
         onLoginClick: (LoggedAccount) -> Unit,
-        onListsClick: (LoggedAccount) -> Unit,
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -168,12 +134,6 @@ class ProfileTab() : PagerTab {
                             accountDetail = item,
                             onAccountClick = onAccountClick,
                             onLoginClick = onLoginClick,
-                            onLogoutClick = onLogoutClick,
-                            onFavouritedClick = onFavouritedClick,
-                            onBookmarkedClick = onBookmarkedClick,
-                            onFollowedHashtagClick = onFollowedHashtagClick,
-                            onPinnedFeedsClick = onPinnedFeedsClick,
-                            onListsClick = onListsClick,
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -188,12 +148,6 @@ class ProfileTab() : PagerTab {
         accountDetail: ProfileAccountUiState,
         onAccountClick: (LoggedAccount) -> Unit,
         onLoginClick: (LoggedAccount) -> Unit,
-        onFavouritedClick: (LoggedAccount) -> Unit,
-        onBookmarkedClick: (LoggedAccount) -> Unit,
-        onFollowedHashtagClick: (LoggedAccount) -> Unit,
-        onPinnedFeedsClick: (LoggedAccount) -> Unit,
-        onListsClick: (LoggedAccount) -> Unit,
-        onLogoutClick: (LoggedAccount) -> Unit,
     ) {
         UserInfoCard(
             modifier = modifier.padding(horizontal = 16.dp),
@@ -215,75 +169,6 @@ class ProfileTab() : PagerTab {
                 null
             },
             onUserClick = { onAccountClick(accountDetail.account.account) },
-            bottomPanel = {
-                AccountInteractionPanel(
-                    modifier = Modifier.fillMaxWidth(),
-                    account = accountDetail.account.account,
-                    onLikedClick = onFavouritedClick,
-                    onBookmarkedClick = onBookmarkedClick,
-                    onListsClick = onListsClick,
-                    onLogoutClick = onLogoutClick,
-                    onFollowedHashtagClick = onFollowedHashtagClick,
-                    onPinnedFeedsClick = onPinnedFeedsClick,
-                )
-            },
         )
-    }
-
-
-    @Composable
-    private fun AccountInteractionPanel(
-        modifier: Modifier,
-        account: LoggedAccount,
-        onLikedClick: (LoggedAccount) -> Unit,
-        onBookmarkedClick: (LoggedAccount) -> Unit,
-        onListsClick: (LoggedAccount) -> Unit,
-        onLogoutClick: (LoggedAccount) -> Unit,
-        onFollowedHashtagClick: (LoggedAccount) -> Unit,
-        onPinnedFeedsClick: (LoggedAccount) -> Unit,
-    ) {
-        val isBluesky = account.platform.protocol.isBluesky
-        val iconSize = 20.dp
-        Row(
-            modifier = modifier.fillMaxWidth()
-                .padding(end = 8.dp),
-            verticalAlignment = Alignment.Companion.CenterVertically,
-        ) {
-            SimpleIconButton(
-                iconModifier = Modifier.Companion.size(iconSize),
-                onClick = { onLikedClick(account) },
-                imageVector = Icons.Outlined.FavoriteBorder,
-                contentDescription = "Liked",
-            )
-            if (!isBluesky) {
-                Spacer(modifier = Modifier.Companion.weight(1F))
-                SimpleIconButton(
-                    iconModifier = Modifier.Companion.size(iconSize),
-                    onClick = { onBookmarkedClick(account) },
-                    imageVector = Icons.Outlined.BookmarkBorder,
-                    contentDescription = "Bookmarks",
-                )
-                Spacer(modifier = Modifier.Companion.weight(1F))
-                SimpleIconButton(
-                    iconModifier = Modifier.Companion.size(iconSize),
-                    onClick = { onListsClick(account) },
-                    imageVector = Icons.AutoMirrored.Outlined.ListAlt,
-                    contentDescription = "Lists",
-                )
-            }
-            Spacer(modifier = Modifier.Companion.weight(1F))
-            SimpleIconButton(
-                iconModifier = Modifier.Companion.size(iconSize),
-                onClick = {
-                    if (isBluesky) {
-                        onPinnedFeedsClick(account)
-                    } else {
-                        onFollowedHashtagClick(account)
-                    }
-                },
-                imageVector = Icons.Default.Tag,
-                contentDescription = "Tags",
-            )
-        }
     }
 }

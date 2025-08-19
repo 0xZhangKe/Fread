@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -987,24 +988,31 @@ data class UserDetailScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                modifier = Modifier.weight(2F),
                 text = key,
                 maxLines = 1,
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelMedium,
             )
-            Spacer(modifier = Modifier.weight(1F))
-            Spacer(modifier = Modifier.width(16.dp))
-            FreadRichText(
-                content = value,
-                mentions = emptyList(),
-                tags = emptyList(),
-                onMentionClick = {},
-                onHashtagClick = {},
-                emojis = emojis,
-                onUrlClick = {
-                    browserLauncher.launchWebTabInApp(it, locator)
-                },
-            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier.weight(3F),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                FreadRichText(
+                    modifier = Modifier,
+                    content = value,
+                    mentions = emptyList(),
+                    tags = emptyList(),
+                    onMentionClick = {},
+                    onHashtagClick = {},
+                    emojis = emojis,
+                    maxLines = 3,
+                    onUrlClick = {
+                        browserLauncher.launchWebTabInApp(it, locator)
+                    },
+                )
+            }
         }
     }
 

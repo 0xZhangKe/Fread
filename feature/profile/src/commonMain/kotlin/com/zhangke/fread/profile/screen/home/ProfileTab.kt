@@ -1,174 +1,30 @@
 package com.zhangke.fread.profile.screen.home
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.composable.ConsumeFlow
-import com.zhangke.framework.composable.PagerTab
-import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
-import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_profile_tab
-import com.zhangke.fread.feature.profile.profile_account_not_login
-import com.zhangke.fread.feature.profile.profile_page_title
-import com.zhangke.fread.profile.screen.setting.SettingScreen
-import com.zhangke.fread.status.account.LoggedAccount
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 
-class ProfileTab() : PagerTab {
+class ProfileTab(private val tabIndex: UShort) : Tab {
 
-    override val options: PagerTabOptions
+    override val options: TabOptions
         @Composable get() {
             val icon = painterResource(Res.drawable.ic_profile_tab)
             return remember {
-                PagerTabOptions(
-                    title = "Profile", icon = icon
+                TabOptions(
+                    title = "Profile",
+                    icon = icon,
+                    index = tabIndex,
                 )
             }
         }
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        val viewModel = screen.getViewModel<ProfileHomeViewModel>()
-        val uiState by viewModel.uiState.collectAsState()
-        val moduleScreenVisitor = LocalModuleScreenVisitor.current
-        LaunchedEffect(Unit) {
-            viewModel.refreshAccountInfo()
-        }
-        val navigator = LocalNavigator.currentOrThrow
-        ProfileHomePageContent(
-            uiState = uiState,
-            onAddAccountClick = {
-                navigator.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
-            },
-            onSettingClick = {
-                navigator.push(SettingScreen())
-            },
-            onAccountClick = {
-                viewModel.onAccountClick(it)
-            },
-            onLoginClick = viewModel::onLoginClick,
-        )
-        ConsumeFlow(viewModel.openPageFlow) {
-            navigator.push(it)
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun ProfileHomePageContent(
-        uiState: ProfileHomeUiState,
-        onAddAccountClick: () -> Unit,
-        onSettingClick: () -> Unit,
-        onAccountClick: (LoggedAccount) -> Unit,
-        onLoginClick: (LoggedAccount) -> Unit,
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            modifier = Modifier,
-                            text = stringResource(Res.string.profile_page_title),
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    },
-                    actions = {
-                        SimpleIconButton(
-                            onClick = onAddAccountClick,
-                            imageVector = Icons.Default.PersonAdd,
-                            contentDescription = "Add Account",
-                        )
-                        SimpleIconButton(
-                            onClick = onSettingClick,
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                        )
-                    },
-                )
-            },
-        ) { innerPadding ->
-            Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(bottom = 66.dp),
-                ) {
-                    items(uiState.accountDataList) { item ->
-                        AccountDetail(
-                            modifier = Modifier.fillMaxWidth(),
-                            accountDetail = item,
-                            onAccountClick = onAccountClick,
-                            onLoginClick = onLoginClick,
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun AccountDetail(
-        modifier: Modifier,
-        accountDetail: ProfileAccountUiState,
-        onAccountClick: (LoggedAccount) -> Unit,
-        onLoginClick: (LoggedAccount) -> Unit,
-    ) {
-        UserInfoCard(
-            modifier = modifier.padding(horizontal = 16.dp),
-            user = accountDetail.account.author,
-            showActiveState = accountDetail.active,
-            actionButton = if (accountDetail.authFailed) {
-                {
-                    TextButton(
-                        modifier = Modifier,
-                        onClick = { onLoginClick(accountDetail.account.account) },
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = MaterialTheme.colorScheme.error,
-                        ),
-                    ) {
-                        Text(text = stringResource(Res.string.profile_account_not_login))
-                    }
-                }
-            } else {
-                null
-            },
-            onUserClick = { onAccountClick(accountDetail.account.account) },
-        )
+    override fun Content() {
+        Navigator(ProfileScreen())
     }
 }

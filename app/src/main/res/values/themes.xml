@@ -1,11 +1,3 @@
 <resources>
-    <!-- Base application theme. -->
-
-    <style name="FreadAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-<!--        <item name="android:textColorPrimary">#FF3880F2</item>-->
-<!--                <item name="android:textColor">#FF3880F2</item>-->
-<!--        <item name="android:radius">16.dp</item>-->
-<!--        <item name="android:windowBackground">@drawable/shape_alert_dialog_background</item>-->
-<!--        <item name="android:background">@color/white</item>-->
-    </style>
+    <style name="Fread" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>

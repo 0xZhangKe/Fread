@@ -14,8 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.explore.screens.search.bar.ExplorerSearchBar
 import com.zhangke.fread.status.account.LoggedAccount
@@ -27,12 +30,15 @@ class ExplorerScreen : BaseScreen() {
     @Composable
     override fun Content() {
         super.Content()
-        val viewModel = getViewModel<ExplorerHomeViewModel>()
-        val uiState by viewModel.uiState.collectAsState()
-        ExplorerHomeContent(
-            uiState = uiState,
-            onAccountSelected = viewModel::onAccountSelected,
-        )
+        val navigator = LocalNavigator.currentOrThrow.rootNavigator
+        CompositionLocalProvider(LocalNavigator provides navigator) {
+            val viewModel = getViewModel<ExplorerHomeViewModel>()
+            val uiState by viewModel.uiState.collectAsState()
+            ExplorerHomeContent(
+                uiState = uiState,
+                onAccountSelected = viewModel::onAccountSelected,
+            )
+        }
     }
 
     @Composable

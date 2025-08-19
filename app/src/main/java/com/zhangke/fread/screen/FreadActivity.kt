@@ -5,10 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -30,7 +30,7 @@ import com.zhangke.fread.di.create
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.launch
 
-class FreadActivity : ComponentActivity(), CallbackableActivity {
+class FreadActivity : AppCompatActivity(), CallbackableActivity {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -64,12 +64,8 @@ class FreadActivity : ComponentActivity(), CallbackableActivity {
 
         setContent {
             val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
-            FreadTheme(
-                darkTheme = dayNightMode.isNight,
-            ) {
-                val videoPlayerManager = remember {
-                    ExoPlayerManager()
-                }
+            FreadTheme(darkTheme = dayNightMode.isNight) {
+                val videoPlayerManager = remember { ExoPlayerManager() }
                 DisposableEffect(videoPlayerManager) {
                     onDispose {
                         videoPlayerManager.recycler()

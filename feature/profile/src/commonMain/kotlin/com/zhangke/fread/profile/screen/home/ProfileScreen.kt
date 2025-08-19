@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,6 +31,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
@@ -40,33 +42,35 @@ import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import org.jetbrains.compose.resources.stringResource
 
-class ProfileScreen: BaseScreen() {
+class ProfileScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
         super.Content()
-        val viewModel = getViewModel<ProfileHomeViewModel>()
-        val uiState by viewModel.uiState.collectAsState()
-        val moduleScreenVisitor = LocalModuleScreenVisitor.current
-        LaunchedEffect(Unit) {
-            viewModel.refreshAccountInfo()
-        }
-        val navigator = LocalNavigator.currentOrThrow
-        ProfileHomePageContent(
-            uiState = uiState,
-            onAddAccountClick = {
-                navigator.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
-            },
-            onSettingClick = {
-                navigator.push(SettingScreen())
-            },
-            onAccountClick = {
-                viewModel.onAccountClick(it)
-            },
-            onLoginClick = viewModel::onLoginClick,
-        )
-        ConsumeFlow(viewModel.openPageFlow) {
-            navigator.push(it)
+        val navigator = LocalNavigator.currentOrThrow.rootNavigator
+        CompositionLocalProvider(LocalNavigator provides navigator) {
+            val viewModel = getViewModel<ProfileHomeViewModel>()
+            val uiState by viewModel.uiState.collectAsState()
+            val moduleScreenVisitor = LocalModuleScreenVisitor.current
+            LaunchedEffect(Unit) {
+                viewModel.refreshAccountInfo()
+            }
+            ProfileHomePageContent(
+                uiState = uiState,
+                onAddAccountClick = {
+                    navigator.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
+                },
+                onSettingClick = {
+                    navigator.push(SettingScreen())
+                },
+                onAccountClick = {
+                    viewModel.onAccountClick(it)
+                },
+                onLoginClick = viewModel::onLoginClick,
+            )
+            ConsumeFlow(viewModel.openPageFlow) {
+                navigator.push(it)
+            }
         }
     }
 

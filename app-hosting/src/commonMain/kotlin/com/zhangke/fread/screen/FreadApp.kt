@@ -1,7 +1,6 @@
 package com.zhangke.fread.screen
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,9 +20,12 @@ import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
+import cafe.adriel.voyager.transitions.FadeTransition
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import com.zhangke.framework.voyager.LocalSharedTransitionScope
+import com.zhangke.framework.voyager.FreadScreenTransition
+import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.bubble.BubbleManager
 import com.zhangke.fread.common.bubble.LocalBubbleManager
@@ -111,8 +113,12 @@ internal fun FreadApp(
                 TransparentNavigator {
                     Navigator(
                         screen = remember { FreadScreen() },
+                        key = ROOT_NAVIGATOR_KEY,
                     ) { navigator ->
-                        CurrentScreen()
+                        FreadScreenTransition(
+                            navigator = navigator,
+                            disposeScreenAfterTransitionEnd = false,
+                        )
                         LaunchedEffect(Unit) {
                             GlobalScreenNavigation.openScreenFlow
                                 .debounce(300)

@@ -99,5 +99,6 @@ dependencies {
     implementation(libs.krouter.runtime)
 
     implementation(libs.bundles.androidx.media3)
+    implementation(libs.androidx.appcompat)
 //    ksp(libs.krouter.reducing.compiler)
 }

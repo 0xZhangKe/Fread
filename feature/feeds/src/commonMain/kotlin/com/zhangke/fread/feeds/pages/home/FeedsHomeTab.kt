@@ -27,6 +27,6 @@ class FeedsHomeTab(private val tabIndex: UShort) : Tab {
     @OptIn(ExperimentalSharedTransitionApi::class)
     @Composable
     override fun Content() {
-        Navigator(screen = FeedsContentHomeScreen())
+        Navigator(FeedsContentHomeScreen())
     }
 }

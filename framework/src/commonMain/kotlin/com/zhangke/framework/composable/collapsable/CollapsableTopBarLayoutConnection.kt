@@ -14,7 +14,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.unit.Velocity
-import com.zhangke.framework.utils.Log
 
 @Composable
 fun rememberCollapsableTopBarLayoutConnection(
@@ -91,12 +90,10 @@ class CollapsableTopBarLayoutConnection(
         available: Offset,
         source: NestedScrollSource
     ): Offset {
-        Log.d("F_TEST") { "onPostScroll: consumed=$consumed, available=$available" }
         return handleScroll(available)
     }
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        Log.d("F_TEST") { "onPreScroll: available=$available" }
         return handleScroll(available)
     }
 

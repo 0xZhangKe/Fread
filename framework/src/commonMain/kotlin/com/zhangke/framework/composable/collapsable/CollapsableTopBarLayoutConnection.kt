@@ -62,23 +62,28 @@ class CollapsableTopBarLayoutConnection(
         private set
 
     override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-        Log.d("F_TEST") { "onPostFling: consumed=$consumed, available=$available" }
-        return super<NestedScrollConnection>.onPostFling(consumed, available)
-    }
-
-    override suspend fun onPreFling(available: Velocity): Velocity {
-        Log.d("F_TEST") { "onPreFling, available=$available" }
-        val availableY = available.y
-        if (availableY == 0F) return Velocity.Zero
+        if (available.y == 0f) return Velocity.Zero
+        val targetHeight = when {
+            available.y > 0 -> maxPx
+            available.y < 0 -> minPx
+            else -> topBarHeight
+        }
+        if (topBarHeight == targetHeight) {
+            return available
+        }
+        val startHeight = topBarHeight
         animate(
-            initialValue = topBarHeight,
-            targetValue = topBarHeight + availableY,
-            animationSpec = androidx.compose.animation.core.spring(),
-            block = { value, _ ->
-                topBarHeight = value
-            }
-        )
-        return super<NestedScrollConnection>.onPreFling(available)
+            initialValue = startHeight,
+            targetValue = targetHeight
+        ) { value, _ ->
+            topBarHeight = value
+        }
+        val consumedY = targetHeight - startHeight
+        return if (available.y > 0 && consumedY > 0 || available.y < 0 && consumedY < 0) {
+            available
+        } else {
+            Velocity.Zero
+        }
     }
 
     override fun onPostScroll(

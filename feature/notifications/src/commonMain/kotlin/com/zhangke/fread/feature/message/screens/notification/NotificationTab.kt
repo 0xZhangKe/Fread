@@ -6,11 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
@@ -176,37 +172,14 @@ class NotificationTab(
         ) {
             SegmentedButton(
                 checked = !uiState.inOnlyMentionTab,
-                onCheckedChange = {
-                    onTabCheckedChange(false)
-                },
-                icon = {
-                    SegmentedButtonDefaults.Icon(active = !uiState.inOnlyMentionTab) {
-                        Icon(
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                        )
-                    }
-                },
+                onCheckedChange = { onTabCheckedChange(false) },
                 shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
             ) {
                 Text(text = stringResource(Res.string.notifications_tab_all))
             }
-
             SegmentedButton(
                 checked = uiState.inOnlyMentionTab,
-                onCheckedChange = {
-                    onTabCheckedChange(true)
-                },
-                icon = {
-                    SegmentedButtonDefaults.Icon(active = uiState.inOnlyMentionTab) {
-                        Icon(
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                        )
-                    }
-                },
+                onCheckedChange = { onTabCheckedChange(true) },
                 shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
             ) {
                 Text(text = stringResource(Res.string.notifications_tab_mention))

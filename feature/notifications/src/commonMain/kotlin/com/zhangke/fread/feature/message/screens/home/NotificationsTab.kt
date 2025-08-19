@@ -17,11 +17,13 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -115,32 +117,30 @@ class NotificationsTab() : PagerTab {
                     modifier = Modifier.Companion
                         .padding(paddings)
                         .fillMaxSize(),
-                    horizontalAlignment = Alignment.Companion.CenterHorizontally,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Image(
-                        modifier = Modifier.Companion
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        contentScale = ContentScale.Companion.Inside,
+                        contentScale = ContentScale.Inside,
                         painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.illustration_message),
                         contentDescription = null,
                     )
 
                     Text(
-                        modifier = Modifier.Companion.padding(
+                        modifier = Modifier.padding(
                             start = 16.dp,
                             top = 16.dp,
                             end = 16.dp
                         ),
                         text = stringResource(Res.string.notifications_account_empty_tip),
-                        textAlign = TextAlign.Companion.Center,
+                        textAlign = TextAlign.Center,
                     )
                 }
             } else {
                 Column(
-                    modifier = Modifier.Companion
-                        .padding(paddings)
+                    modifier = Modifier.padding(paddings)
                         .fillMaxSize(),
                 ) {
                     val pagerState = rememberPagerState {
@@ -156,7 +156,7 @@ class NotificationsTab() : PagerTab {
                         LocalSnackbarHostState provides snackbarHost,
                     ) {
                         HorizontalPager(
-                            modifier = Modifier.Companion.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             state = pagerState,
                             userScrollEnabled = false,
                         ) { pageIndex ->
@@ -173,70 +173,66 @@ class NotificationsTab() : PagerTab {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun NotificationTopBar(
         account: LoggedAccount,
         accountList: List<LoggedAccount>,
         onAccountSelected: (LoggedAccount) -> Unit,
     ) {
-        Row(
-            modifier = Modifier.Companion
-                .fillMaxWidth()
-                .statusBarsPadding(),
-            verticalAlignment = Alignment.Companion.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier.Companion.padding(16.dp),
-                text = stringResource(Res.string.notification_tab_title),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Spacer(modifier = Modifier.Companion.weight(1F))
-            Spacer(modifier = Modifier.Companion.width(8.dp))
-            var showSelectAccountPopup by remember {
-                mutableStateOf(false)
-            }
-            Box(modifier = Modifier.Companion.padding(end = 8.dp)) {
-                Row(
-                    modifier = Modifier.Companion.noRippleClick {
-                        showSelectAccountPopup = !showSelectAccountPopup
-                    },
-                    verticalAlignment = Alignment.Companion.CenterVertically,
-                ) {
-                    BlogAuthorAvatar(
-                        modifier = Modifier.Companion.size(32.dp),
-                        imageUrl = account.avatar,
-                    )
-                    Spacer(modifier = Modifier.Companion.width(6.dp))
-                    Column {
-                        Text(
-                            text = account.userName,
-                            style = MaterialTheme.typography.titleMedium
-                                .copy(fontWeight = FontWeight.Companion.SemiBold),
-                            maxLines = 1,
-                            overflow = TextOverflow.Companion.Ellipsis,
+        TopAppBar(
+            title = {
+                Text(
+                    text = stringResource(Res.string.notification_tab_title),
+                )
+            },
+            actions = {
+                var showSelectAccountPopup by remember {
+                    mutableStateOf(false)
+                }
+                Box(modifier = Modifier.padding(end = 8.dp)) {
+                    Row(
+                        modifier = Modifier.noRippleClick {
+                            showSelectAccountPopup = !showSelectAccountPopup
+                        },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        BlogAuthorAvatar(
+                            modifier = Modifier.size(32.dp),
+                            imageUrl = account.avatar,
                         )
-                        Text(
-                            text = account.prettyHandle,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Companion.Ellipsis,
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Column {
+                            Text(
+                                text = account.userName,
+                                style = MaterialTheme.typography.titleMedium
+                                    .copy(fontWeight = FontWeight.Companion.SemiBold),
+                                maxLines = 1,
+                                overflow = TextOverflow.Companion.Ellipsis,
+                            )
+                            Text(
+                                text = account.prettyHandle,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Companion.Ellipsis,
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Select Account",
                         )
                     }
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Select Account",
-                    )
+                    if (showSelectAccountPopup) {
+                        SelectAccountDialog(
+                            accountList = accountList,
+                            selectedAccounts = listOf(account),
+                            onDismissRequest = { showSelectAccountPopup = false },
+                            onAccountClicked = onAccountSelected,
+                        )
+                    }
                 }
-                if (showSelectAccountPopup) {
-                    SelectAccountDialog(
-                        accountList = accountList,
-                        selectedAccounts = listOf(account),
-                        onDismissRequest = { showSelectAccountPopup = false },
-                        onAccountClicked = onAccountSelected,
-                    )
-                }
-            }
-        }
+            },
+        )
     }
 }

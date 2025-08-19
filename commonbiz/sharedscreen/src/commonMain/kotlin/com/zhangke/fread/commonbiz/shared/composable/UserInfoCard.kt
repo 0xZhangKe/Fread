@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -137,17 +136,15 @@ fun BasicProfileCard(
         Card(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            val avatarContainerSize = 70.dp
-            val overLapHeight = 16.dp
+            val avatarContainerHeight = 74.dp
+            val overLapHeight = 22.dp
             val avatarSize = 68.dp
             VerticalIndentLayout(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                modifier = Modifier.fillMaxWidth(),
                 indentHeight = overLapHeight,
                 headerContent = {
                     Box(
-                        modifier = Modifier.fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .aspectRatio(BANNER_ASPECT),
+                        modifier = Modifier.fillMaxWidth().aspectRatio(BANNER_ASPECT),
                     ) {
                         Image(
                             modifier = Modifier.fillMaxSize(),
@@ -171,11 +168,12 @@ fun BasicProfileCard(
                 },
                 indentContent = {
                     Column(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
                     ) {
                         Box(
                             modifier = Modifier.fillMaxWidth()
-                                .height(avatarContainerSize)
+                                .height(avatarContainerHeight)
                                 .padding(start = 8.dp),
                         ) {
                             BlogAuthorAvatar(
@@ -191,7 +189,7 @@ fun BasicProfileCard(
                             )
                             Column(
                                 modifier = Modifier.padding(start = avatarSize, top = overLapHeight)
-                                    .padding(start = 8.dp, top = 2.dp)
+                                    .padding(start = 8.dp, top = 1.dp)
                             ) {
                                 Row(
                                     modifier = Modifier,

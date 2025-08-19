@@ -57,10 +57,12 @@
     <string name="status_ui_edit_content_config_hidden_list_title">Feeds Can Add to the Home Page</string>
 
 
+    <string name="status_ui_user_detail_relationship_mutuals">Mutuals</string>
     <string name="status_ui_user_detail_relationship_blocking">Blocked</string>
     <string name="status_ui_user_detail_relationship_following">Following</string>
     <string name="status_ui_user_detail_relationship_not_follow">Follow</string>
     <string name="status_ui_user_detail_relationship_requested">Pending</string>
+    <string name="status_ui_user_detail_relationship_follow_back">Follow back</string>
     <string name="status_ui_user_detail_request_by_tip">They are requesting to follow you</string>
     <string name="status_ui_relationship_btn_dialog_content_cancel_follow">Do you want to unfollow this user?</string>
     <string name="status_ui_relationship_btn_dialog_content_cancel_follow_request">Do you want to withdraw your follow request?</string>
@@ -70,8 +72,16 @@
     <string name="status_ui_user_detail_follower_info">Followers</string>
     <string name="status_ui_user_detail_following_info">Following</string>
 
+    <string name="status_ui_top_label_continued_thread">Continued thread</string>
+
     <string name="status_ui_update_dialog_title">Update</string>
     <string name="status_ui_update_dialog_release_note">Version %1$s Update Log:\n%2$s</string>
 
     <string name="status_ui_switch_account_dialog_title">Select Account</string>
+
+    <string name="status_ui_likes">Likes</string>
+    <string name="status_ui_bookmarks">Bookmarks</string>
+    <string name="status_ui_edit_profile">Edit profile</string>
+    <string name="status_ui_logout">Log out</string>
+    <string name="status_ui_logout_dialog_content">Are you sure you want to log out?</string>
 </resources>

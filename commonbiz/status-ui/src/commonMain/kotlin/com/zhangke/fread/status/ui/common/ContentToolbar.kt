@@ -1,12 +1,15 @@
 package com.zhangke.fread.status.ui.common
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -15,15 +18,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.composable.noDoubleClick
+import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.fread.status.account.LoggedAccount
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentToolbar(
     modifier: Modifier = Modifier,
     title: String,
+    account: LoggedAccount?,
+    showAccountInfo: Boolean,
     showNextIcon: Boolean,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
@@ -51,15 +58,25 @@ fun ContentToolbar(
         },
         scrollBehavior = scrollBehavior,
         title = {
-            Text(
-                modifier = Modifier.noDoubleClick {
-                    onTitleClick()
-                },
-                text = title,
-                fontSize = 18.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Column {
+                Text(
+                    modifier = Modifier.noRippleClick { onTitleClick() },
+                    text = title,
+                    fontSize = 18.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (account != null && showAccountInfo) {
+                    Text(
+                        modifier = Modifier.padding(top = 1.dp),
+                        text = account.prettyHandle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         },
         actions = {
             SimpleIconButton(

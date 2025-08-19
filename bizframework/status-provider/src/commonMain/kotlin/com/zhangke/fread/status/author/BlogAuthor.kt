@@ -4,6 +4,7 @@ import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.prettyHandle
 import com.zhangke.fread.status.model.Emoji
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.uri.FormalUri
@@ -20,11 +21,26 @@ data class BlogAuthor(
     val avatar: String?,
     val emojis: List<Emoji>,
     val userId: String? = null,
+    val bot: Boolean = false,
+    val banner: String? = null,
+    val followersCount: Long?,
+    val followingCount: Long?,
+    val statusesCount: Long?,
+    val relationships: Relationships? = null,
 ) : PlatformSerializable {
 
     val humanizedName: RichText by lazy {
         buildRichText(
             document = name,
+            mentions = emptyList(),
+            emojis = emojis,
+            hashTags = emptyList(),
+        )
+    }
+
+    val humanizedDescription: RichText by lazy {
+        buildRichText(
+            document = description,
             mentions = emptyList(),
             emojis = emojis,
             hashTags = emptyList(),

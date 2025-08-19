@@ -24,41 +24,41 @@ fun StatusBottomInteractionPanel(
     modifier: Modifier = Modifier,
     style: StatusStyle,
     blog: Blog,
-    logged: Boolean,
+    logged: Boolean?,
     onInteractive: (StatusActionType, Blog) -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         StatusActionIcon(
             modifier = Modifier,
             imageVector = forwardIcon(),
-            enabled = logged && blog.forward.support,
+            enabled = logged == true && blog.forward.support,
             style = style,
             contentDescription = forwardAlt(),
             text = blog.forward.forwardCount?.countToLabel(),
             highLight = blog.forward.forward == true,
+            contentAlignment = Alignment.CenterStart,
             onClick = { onInteractive(StatusActionType.FORWARD, blog) },
         )
         Spacer(modifier = Modifier.weight(1F))
         StatusActionIcon(
             modifier = Modifier,
             imageVector = replyIcon(),
-            enabled = logged && blog.reply.support,
+            enabled = logged == true && blog.reply.support,
             style = style,
             contentDescription = replyAlt(),
             text = blog.reply.repliesCount?.countToLabel(),
             highLight = false,
             onClick = { onInteractive(StatusActionType.REPLY, blog) },
         )
-        if (blog.quote.support){
+        if (blog.quote.support) {
             Spacer(modifier = Modifier.weight(1F))
             StatusActionIcon(
                 modifier = Modifier,
                 imageVector = quoteIcon(),
-                enabled = logged && blog.quote.support,
+                enabled = logged == true && blog.quote.support,
                 style = style,
                 contentDescription = quoteAlt(),
                 text = null,
@@ -70,7 +70,7 @@ fun StatusBottomInteractionPanel(
         StatusActionIcon(
             modifier = Modifier,
             imageVector = likeIcon(blog.like.liked == true),
-            enabled = logged && blog.like.support,
+            enabled = logged == true && blog.like.support,
             style = style,
             contentDescription = likeAlt(),
             text = blog.like.likedCount?.countToLabel(),
@@ -82,7 +82,7 @@ fun StatusBottomInteractionPanel(
             StatusActionIcon(
                 modifier = Modifier,
                 imageVector = bookmarkIcon(blog.bookmark.bookmarked == true),
-                enabled = logged,
+                enabled = logged == true,
                 style = style,
                 contentDescription = bookmarkAlt(blog.bookmark.bookmarked == true),
                 text = null,
@@ -99,6 +99,7 @@ fun StatusBottomInteractionPanel(
             contentDescription = shareAlt(),
             text = null,
             highLight = false,
+            contentAlignment = Alignment.CenterEnd,
             onClick = { onInteractive(StatusActionType.SHARE, blog) },
         )
     }
@@ -114,11 +115,13 @@ private fun StatusActionIcon(
     text: String? = null,
     highLight: Boolean,
     onClick: () -> Unit,
+    contentAlignment: Alignment = Alignment.Center,
 ) {
     StatusIconButton(
         modifier = modifier.height(style.bottomPanelStyle.iconSize),
         onClick = onClick,
         enabled = enabled,
+        contentAlignment = contentAlignment,
     ) {
         Row(
             modifier.padding(horizontal = 6.dp),

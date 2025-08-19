@@ -160,12 +160,14 @@ class ActivityPubStatusAdapter @Inject constructor(
             ),
             bookmark = Blog.Bookmark(
                 support = true,
+                bookmarked = entity.bookmarked,
             ),
             reply = Blog.Reply(
                 support = true,
                 repliesCount = entity.repliesCount.toLong(),
             ),
             supportEdit = true,
+            isReply = !entity.inReplyToId.isNullOrEmpty(),
             quote = Blog.Quote(support = false),
             platform = platform,
             mediaList = entity.mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),

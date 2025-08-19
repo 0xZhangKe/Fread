@@ -93,14 +93,19 @@ class ActivityPubTimelineViewModel(
                     showPagingLoadingPlaceholder = true,
                 )
             }
-            val localStatus = timelineRepo.getStatusFromLocal(
-                locator = locator,
-                type = type,
-                listId = listId,
-            ).map {
-                it.preParseStatus()
-                it
-            }
+            val localStatus =
+                if (type == ActivityPubStatusSourceType.TIMELINE_LOCAL || type == ActivityPubStatusSourceType.TIMELINE_PUBLIC) {
+                    emptyList()
+                } else {
+                    timelineRepo.getStatusFromLocal(
+                        locator = locator,
+                        type = type,
+                        listId = listId,
+                    ).map {
+                        it.preParseStatus()
+                        it
+                    }
+                }
             val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
             if (localStatus.isNotEmpty()) {
                 val latestReadStatus = statusReadStateRepo.getLatestReadId(locator, type, listId)

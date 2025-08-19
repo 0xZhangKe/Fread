@@ -1,22 +1,19 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Bookmarks
@@ -27,21 +24,22 @@ import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,20 +60,21 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.AlertConfirmDialog
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.HorizontalPagerWithTab
-import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_created_list_title
 import com.zhangke.fread.activitypub.app.activity_pub_favourites_list_title
 import com.zhangke.fread.activitypub.app.activity_pub_filters_list_page_title
 import com.zhangke.fread.activitypub.app.activity_pub_followed_tags_screen_title
@@ -87,6 +86,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_rol
 import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_title
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block_domain
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_join_date
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block_domain
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_edit_private_note
@@ -99,10 +99,11 @@ import com.zhangke.fread.activitypub.app.activity_pub_user_menu_muted_user_list
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
+import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListTabStatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
@@ -110,26 +111,33 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimel
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.formatDate
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
+import com.zhangke.fread.status.ui.common.DetailPageScaffold
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
-import com.zhangke.fread.status.ui.common.RelationshipUiState
+import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
-import com.zhangke.fread.statusui.status_ui_user_detail_follows_you
+import com.zhangke.fread.statusui.status_ui_edit_profile
+import com.zhangke.fread.statusui.status_ui_logout
+import com.zhangke.fread.statusui.status_ui_logout_dialog_content
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import com.zhangke.fread.statusui.Res as StatusUiRes
 
 data class UserDetailScreen(
     val locator: PlatformLocator,
@@ -168,8 +176,6 @@ data class UserDetailScreen(
             onBackClick = navigator::pop,
             onFollowAccountClick = viewModel::onFollowClick,
             onUnfollowAccountClick = viewModel::onUnfollowClick,
-            onAcceptClick = viewModel::onAcceptClick,
-            onRejectClick = viewModel::onRejectClick,
             onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
             onUnblockClick = viewModel::onUnblockClick,
             onBlockClick = viewModel::onBlockClick,
@@ -281,7 +287,16 @@ data class UserDetailScreen(
             onFilterClick = {
                 navigator.push(FiltersListScreen(uiState.locator))
             },
+            onCreatedListClick = {
+                navigator.push(CreatedListsScreen(uiState.locator))
+            },
+            onLogoutClick = {
+                viewModel.onLogoutClick()
+            },
         )
+        ConsumeFlow(viewModel.finishPageFlow) {
+            navigator.pop()
+        }
     }
 
     @Composable
@@ -299,8 +314,6 @@ data class UserDetailScreen(
         onFollowAccountClick: () -> Unit,
         onUnfollowAccountClick: () -> Unit,
         onCancelFollowRequestClick: () -> Unit,
-        onAcceptClick: () -> Unit,
-        onRejectClick: () -> Unit,
         onBlockClick: () -> Unit,
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
@@ -316,182 +329,169 @@ data class UserDetailScreen(
         onBlockedUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
+        onCreatedListClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
+        val accountUiState = uiState.accountUiState
+        val account = accountUiState?.account
         val browserLauncher = LocalActivityBrowserLauncher.current
-        val contentCanScrollBackward = remember {
-            mutableStateOf(false)
-        }
+        val contentCanScrollBackward = remember { mutableStateOf(false) }
         val snackBarHost = rememberSnackbarHostState()
         ConsumeSnackbarFlow(hostState = snackBarHost, messageTextFlow = messageFlow)
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(
-                    modifier = Modifier.navigationBarsPadding(),
-                    hostState = snackBarHost,
+        DetailPageScaffold(
+            modifier = Modifier.fillMaxSize(),
+            snackbarHostState = snackBarHost,
+            title = accountUiState?.userName ?: RichText.empty,
+            avatar = account?.avatar.orEmpty(),
+            banner = account?.header,
+            description = accountUiState?.description,
+            privateNote = uiState.relationship?.note,
+            loading = uiState.loading,
+            contentCanScrollBackward = contentCanScrollBackward,
+            onBannerClick = onBannerClick,
+            onAvatarClick = onAvatarClick,
+            onUrlClick = {
+                browserLauncher.launchWebTabInApp(it, locator)
+            },
+            onMaybeHashtagClick = onMaybeHashtagClick,
+            onBackClick = onBackClick,
+            topBarActions = {
+                ToolbarActions(
+                    uiState = uiState,
+                    onFavouritesClick = onFavouritesClick,
+                    onBlockClick = onBlockClick,
+                    onBookmarksClick = onBookmarksClick,
+                    onBlockDomainClick = onBlockDomainClick,
+                    onUnblockDomainClick = onUnblockDomainClick,
+                    onOpenInBrowserClick = onOpenInBrowserClick,
+                    onOpenOriginalInstanceClick = onOpenOriginalInstanceClick,
+                    onNewNoteSet = onNewNoteSet,
+                    onCopyLinkClick = onCopyLinkClick,
+                    onMuteUserClick = onMuteUserClick,
+                    onUnmuteUserClick = onUnmuteUserClick,
+                    onMuteUserListClick = onMuteUserListClick,
+                    onBlockedUserListClick = onBlockedUserListClick,
+                    onFollowedHashtagsListClick = onFollowedHashtagsListClick,
+                    onFilterClick = onFilterClick,
+                    onCreatedListClick = onCreatedListClick,
+                    onLogoutClick = onLogoutClick,
                 )
             },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        ) { innerPaddings ->
-            val accountUiState = uiState.accountUiState
-            val account = accountUiState?.account
-            ScrollUpTopBarLayout(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPaddings),
-                topBarContent = { progress ->
-                    DetailTopBar(
-                        title = accountUiState?.userName ?: RichText.empty,
-                        progress = progress,
-                        onBackClick = onBackClick,
-                        actions = {
-                            ToolbarActions(
-                                uiState = uiState,
-                                onFavouritesClick = onFavouritesClick,
-                                onBlockClick = onBlockClick,
-                                onBookmarksClick = onBookmarksClick,
-                                onBlockDomainClick = onBlockDomainClick,
-                                onUnblockDomainClick = onUnblockDomainClick,
-                                onOpenInBrowserClick = onOpenInBrowserClick,
-                                onOpenOriginalInstanceClick = onOpenOriginalInstanceClick,
-                                onEditClick = onEditClick,
-                                onNewNoteSet = onNewNoteSet,
-                                onCopyLinkClick = onCopyLinkClick,
-                                onMuteUserClick = onMuteUserClick,
-                                onUnmuteUserClick = onUnmuteUserClick,
-                                onMuteUserListClick = onMuteUserListClick,
-                                onBlockedUserListClick = onBlockedUserListClick,
-                                onFollowedHashtagsListClick = onFollowedHashtagsListClick,
-                                onFilterClick = onFilterClick,
-                            )
-                        },
-                    )
-                },
-                headerContent = { progress ->
-                    DetailHeaderContent(
-                        progress = progress,
-                        loading = uiState.loading,
-                        banner = account?.header,
-                        avatar = account?.avatar,
-                        title = accountUiState?.userName,
-                        description = accountUiState?.description,
-                        privateNote = uiState.relationship?.note,
-                        acctLine = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                if (account?.bot == true) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(end = 4.dp)
-                                            .size(16.dp),
-                                        imageVector = Icons.Outlined.SmartToy,
-                                        contentDescription = "Bot",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
-                                SelectionContainer {
-                                    Text(
-                                        modifier = Modifier,
-                                        text = account?.prettyAcct.orEmpty(),
-                                        maxLines = 1,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.labelMedium
-                                            .copy(fontWeight = FontWeight.Normal),
-                                    )
-                                }
-                                if (uiState.relationship?.followedBy == true) {
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(start = 4.dp)
-                                            .background(
-                                                color = MaterialTheme.colorScheme.surfaceContainer,
-                                                shape = RoundedCornerShape(2.dp),
-                                            )
-                                            .padding(horizontal = 4.dp),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_user_detail_follows_you),
-                                        style = MaterialTheme.typography.bodySmall
-                                            .copy(fontWeight = FontWeight.Normal),
-                                    )
-                                }
-                            }
-                        },
-                        followInfo = {
-                            UserFollowLine(
-                                modifier = Modifier,
-                                followersCount = account?.followersCount?.toLong(),
-                                followingCount = account?.followingCount?.toLong(),
-                                statusesCount = account?.statusesCount?.toLong(),
-                                onFollowerClick = onFollowerClick,
-                                onFollowingClick = onFollowingClick,
-                            )
-                        },
-                        relationship = if (uiState.isAccountOwner) null else uiState.relationship?.toUiState(),
-                        onBannerClick = onBannerClick,
-                        onAvatarClick = onAvatarClick,
-                        onUnblockClick = onUnblockClick,
-                        onCancelFollowRequestClick = onCancelFollowRequestClick,
-                        onAcceptClick = onAcceptClick,
-                        onRejectClick = onRejectClick,
-                        onFollowAccountClick = onFollowAccountClick,
-                        onUnfollowAccountClick = onUnfollowAccountClick,
-                        onUrlClick = {
-                            browserLauncher.launchWebTabInApp(it, locator)
-                        },
-                        onMaybeHashtagClick = onMaybeHashtagClick,
-                    )
-                },
-                contentCanScrollBackward = contentCanScrollBackward,
-            ) {
-                if (uiState.userInsight != null) {
-                    val tabs: List<PagerTab> = remember(uiState) {
-                        listOf(
-                            UserTimelineTab(
-                                tabType = UserTimelineTabType.POSTS,
-                                locator = uiState.locator,
-                                userWebFinger = uiState.userInsight.webFinger,
-                                contentCanScrollBackward = contentCanScrollBackward,
-                                userId = userId,
-                            ),
-                            UserTimelineTab(
-                                tabType = UserTimelineTabType.REPLIES,
-                                locator = uiState.locator,
-                                userWebFinger = uiState.userInsight.webFinger,
-                                contentCanScrollBackward = contentCanScrollBackward,
-                                userId = userId,
-                            ),
-                            UserTimelineTab(
-                                tabType = UserTimelineTabType.MEDIA,
-                                locator = uiState.locator,
-                                userWebFinger = uiState.userInsight.webFinger,
-                                contentCanScrollBackward = contentCanScrollBackward,
-                                userId = userId,
-                            ),
-                            UserAboutTab(
-                                contentCanScrollBackward = contentCanScrollBackward,
-                                locator = uiState.locator,
-                                userWebFinger = uiState.userInsight.webFinger,
-                                userId = userId,
-                            ),
-                        )
-                    }
-                    val nestedTabConnection = remember {
-                        NestedTabConnection()
-                    }
-                    CompositionLocalProvider(
-                        LocalSnackbarHostState provides snackBarHost,
-                        LocalNestedTabConnection provides nestedTabConnection,
+            handleLine = {
+                UserHandleLine(
+                    modifier = Modifier,
+                    handle = account?.prettyAcct.orEmpty(),
+                    bot = account?.bot == true,
+                    followedBy = uiState.relationship?.followedBy == true
+                )
+            },
+            followInfoLine = {
+                UserFollowLine(
+                    modifier = Modifier,
+                    followersCount = account?.followersCount?.toLong(),
+                    followingCount = account?.followingCount?.toLong(),
+                    statusesCount = account?.statusesCount?.toLong(),
+                    onFollowerClick = onFollowerClick,
+                    onFollowingClick = onFollowingClick,
+                )
+            },
+            topDetailContentAction = {
+                if (uiState.isAccountOwner) {
+                    FilledTonalButton(
+                        onClick = onEditClick,
                     ) {
-                        val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
-                        HorizontalPagerWithTab(
-                            tabList = tabs,
-                            pagerUserScrollEnabled = !contentScrollInProgress,
+                        Text(
+                            text = stringResource(StatusUiRes.string.status_ui_edit_profile)
                         )
                     }
+                } else if (uiState.relationships != null) {
+                    RelationshipStateButton(
+                        modifier = Modifier,
+                        relationship = uiState.relationships,
+                        onFollowClick = onFollowAccountClick,
+                        onUnfollowClick = onUnfollowAccountClick,
+                        onCancelFollowRequestClick = onCancelFollowRequestClick,
+                        onUnblockClick = onUnblockClick,
+                    )
+                }
+            },
+            bottomArea = if (uiState.accountUiState?.account != null) {
+                {
+                    UserAboutCard(
+                        uiState.accountUiState.account,
+                        uiState.accountUiState.emojis
+                    )
+                }
+            } else {
+                null
+            },
+        ) {
+            if (uiState.userInsight != null) {
+                val tabs: List<PagerTab> = remember(
+                    uiState.userInsight,
+                    uiState.locator,
+                    uiState.isAccountOwner,
+                ) {
+                    buildTabList(
+                        webFinger = uiState.userInsight.webFinger,
+                        locator = uiState.locator,
+                        isAccountOwner = uiState.isAccountOwner,
+                        contentCanScrollBackward = contentCanScrollBackward,
+                    )
+                }
+                val nestedTabConnection = remember { NestedTabConnection() }
+                CompositionLocalProvider(
+                    LocalNestedTabConnection provides nestedTabConnection,
+                ) {
+                    val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
+                    HorizontalPagerWithTab(
+                        tabList = tabs,
+                        pagerUserScrollEnabled = !contentScrollInProgress,
+                    )
                 }
             }
         }
+    }
+
+    private fun buildTabList(
+        locator: PlatformLocator,
+        webFinger: WebFinger,
+        isAccountOwner: Boolean,
+        contentCanScrollBackward: MutableState<Boolean>,
+    ): List<PagerTab> {
+        val tabList = mutableListOf<PagerTab>()
+        tabList += UserTimelineTab(
+            tabType = UserTimelineTabType.POSTS,
+            locator = locator,
+            userWebFinger = webFinger,
+            contentCanScrollBackward = contentCanScrollBackward,
+            userId = userId,
+        )
+        tabList += UserTimelineTab(
+            tabType = UserTimelineTabType.REPLIES,
+            locator = locator,
+            userWebFinger = webFinger,
+            contentCanScrollBackward = contentCanScrollBackward,
+            userId = userId,
+        )
+        tabList += UserTimelineTab(
+            tabType = UserTimelineTabType.MEDIA,
+            locator = locator,
+            userWebFinger = webFinger,
+            contentCanScrollBackward = contentCanScrollBackward,
+            userId = userId,
+        )
+        if (isAccountOwner) {
+            tabList += StatusListTabStatusListScreen(
+                locator = locator,
+                type = StatusListType.FAVOURITES,
+            )
+            tabList += StatusListTabStatusListScreen(
+                locator = locator,
+                type = StatusListType.BOOKMARKS,
+            )
+        }
+        return tabList
     }
 
     @Composable
@@ -505,7 +505,6 @@ data class UserDetailScreen(
         onOpenInBrowserClick: () -> Unit,
         onCopyLinkClick: () -> Unit,
         onOpenOriginalInstanceClick: () -> Unit,
-        onEditClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
         onMuteUserClick: () -> Unit,
         onUnmuteUserClick: () -> Unit,
@@ -513,19 +512,18 @@ data class UserDetailScreen(
         onBlockedUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
+        onCreatedListClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
         val accountUiState = uiState.accountUiState ?: return
         if (uiState.isAccountOwner) {
             SimpleIconButton(
-                onClick = onEditClick,
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Edit Profile",
+                onClick = onCreatedListClick,
+                imageVector = Icons.AutoMirrored.Outlined.ListAlt,
+                contentDescription = stringResource(Res.string.activity_pub_created_list_title),
             )
-            Box(modifier = Modifier.width(8.dp))
         }
-        var showMorePopup by remember {
-            mutableStateOf(false)
-        }
+        var showMorePopup by remember { mutableStateOf(false) }
         SimpleIconButton(
             onClick = { showMorePopup = true },
             imageVector = Icons.Default.MoreVert,
@@ -582,6 +580,10 @@ data class UserDetailScreen(
                     onFilterClick = {
                         showMorePopup = false
                         onFilterClick()
+                    },
+                    onLogoutClick = {
+                        showMorePopup = false
+                        onLogoutClick()
                     },
                 )
             }
@@ -707,6 +709,7 @@ data class UserDetailScreen(
         onMuteUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
         ModalDropdownMenuItem(
             text = stringResource(Res.string.activity_pub_favourites_list_title),
@@ -738,6 +741,23 @@ data class UserDetailScreen(
             imageVector = Icons.Default.FilterAlt,
             onClick = onFilterClick,
         )
+        var showLogoutDialog by remember { mutableStateOf(false) }
+        ModalDropdownMenuItem(
+            text = stringResource(StatusUiRes.string.status_ui_logout),
+            imageVector = Icons.AutoMirrored.Filled.Logout,
+            onClick = { showLogoutDialog = true },
+        )
+        if (showLogoutDialog) {
+            FreadDialog(
+                onDismissRequest = { showLogoutDialog = false },
+                contentText = stringResource(StatusUiRes.string.status_ui_logout_dialog_content),
+                onPositiveClick = {
+                    showLogoutDialog = false
+                    onLogoutClick()
+                },
+                onNegativeClick = { showLogoutDialog = false },
+            )
+        }
     }
 
     @Composable
@@ -925,6 +945,77 @@ data class UserDetailScreen(
         }
     }
 
+    @Composable
+    private fun UserAboutCard(
+        account: ActivityPubAccountEntity,
+        emojis: List<Emoji>,
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme
+                    .surfaceContainerHighest
+                    .copy(alpha = 0.3F),
+            ),
+        ) {
+            SelectionContainer {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    FieldLine(
+                        key = stringResource(Res.string.activity_pub_user_detail_join_date),
+                        value = DateParser.parseOrCurrent(account.createdAt).formatDate(),
+                        emojis = emojis,
+                    )
+                    for (field in account.fields) {
+                        FieldLine(
+                            key = field.name,
+                            value = field.value,
+                            emojis = emojis,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun FieldLine(key: String, value: String, emojis: List<Emoji>) {
+        val browserLauncher = LocalActivityBrowserLauncher.current
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.weight(2F),
+                text = key,
+                maxLines = 1,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier.weight(3F),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                FreadRichText(
+                    modifier = Modifier,
+                    content = value,
+                    mentions = emptyList(),
+                    tags = emptyList(),
+                    onMentionClick = {},
+                    onHashtagClick = {},
+                    emojis = emojis,
+                    maxLines = 3,
+                    onUrlClick = {
+                        browserLauncher.launchWebTabInApp(it, locator)
+                    },
+                )
+            }
+        }
+    }
+
     private val ActivityPubAccountEntity.prettyAcct: String
         get() {
             val acct = this.acct
@@ -934,17 +1025,4 @@ data class UserDetailScreen(
                 acct
             }
         }
-
-    private fun ActivityPubRelationshipEntity?.toUiState(): RelationshipUiState {
-        return when {
-            this == null -> RelationshipUiState.UNKNOWN
-            this.blockedBy -> RelationshipUiState.BLOCKED_BY
-            this.blocking -> RelationshipUiState.BLOCKING
-            this.requested -> RelationshipUiState.REQUESTED
-            this.requestedBy -> RelationshipUiState.REQUEST_BY
-            this.following -> RelationshipUiState.FOLLOWING
-            this.followedBy -> RelationshipUiState.FOLLOWED_BY
-            else -> RelationshipUiState.CAN_FOLLOW
-        }
-    }
 }

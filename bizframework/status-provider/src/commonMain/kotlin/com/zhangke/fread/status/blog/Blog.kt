@@ -55,6 +55,7 @@ data class Blog(
     val formattedEditAt: String? = null,
     val application: PostingApplication? = null,
     val filtered: List<BlogFiltered>? = null,
+    val isReply: Boolean = false,
 ) : PlatformSerializable {
 
     val humanizedSpoilerText: RichText by lazy {

@@ -53,6 +53,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 notificationsRepo.getNotifications(
                     limit = 50,
                     types = types,
+                    maxId = cursor,
                 )
             }
             val unreadCountDeferred = async {
@@ -68,8 +69,10 @@ class ActivityPubNotificationResolver @Inject constructor(
             unreadCount to notifications
         }
         return notificationsResult.map { notifications ->
+            val cursor = notifications.lastOrNull()?.id
             PagedStatusNotification(
-                cursor = notifications.lastOrNull()?.id,
+                cursor = cursor,
+                reachEnd = cursor == null,
                 notifications = notifications.mapIndexed { index, entity ->
                     val unread = if (isFirstPage) {
                         index < unreadCountResult
@@ -86,6 +89,31 @@ class ActivityPubNotificationResolver @Inject constructor(
                 }
             )
         }
+    }
+
+    override suspend fun getNotificationUserDetail(
+        account: LoggedAccount,
+        users: List<BlogAuthor>,
+    ): Result<List<BlogAuthor>>? {
+        if (account !is ActivityPubLoggedAccount) return null
+        val userIdList = users.mapNotNull {
+            if (it.relationships == null) it.userId else null
+        }
+        if (userIdList.isEmpty()) return Result.success(emptyList())
+        return clientManager.getClient(account.locator)
+            .accountRepo
+            .getRelationships(idList = userIdList)
+            .map { list ->
+                users.mapNotNull { user ->
+                    val relationship = list.firstOrNull { it.id == user.userId }
+                        ?.let { accountAdapter.convertRelationship(it) }
+                    if (relationship != null) {
+                        user.copy(relationships = relationship)
+                    } else {
+                        null
+                    }
+                }
+            }
     }
 
     private suspend fun convertNotification(
@@ -120,7 +148,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                         id = entity.id,
                         author = author,
                         locator = locator,
-                        blog = status!!.status.intrinsicBlog,
+                        blog = status.status.intrinsicBlog,
                         createAt = createAt,
                         unread = unread,
                     )
@@ -239,11 +267,15 @@ class ActivityPubNotificationResolver @Inject constructor(
         requestAuthor: BlogAuthor
     ): Result<Unit>? {
         if (account.platform.protocol.notActivityPub) return null
-        val activityPubAccount = account as? ActivityPubLoggedAccount ?: return null
+        if (account !is ActivityPubLoggedAccount) return null
+        val userId = requestAuthor.userId
+        if (userId.isNullOrEmpty()) {
+            return Result.failure(IllegalArgumentException("Request author userId is empty"))
+        }
         val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         return clientManager.getClient(role)
             .accountRepo
-            .rejectFollowRequest(activityPubAccount.userId)
+            .rejectFollowRequest(userId)
             .map { }
     }
 
@@ -252,11 +284,15 @@ class ActivityPubNotificationResolver @Inject constructor(
         requestAuthor: BlogAuthor
     ): Result<Unit>? {
         if (account.platform.protocol.notActivityPub) return null
-        val activityPubAccount = account as? ActivityPubLoggedAccount ?: return null
+        if (account !is ActivityPubLoggedAccount) return null
+        val userId = requestAuthor.userId
+        if (userId.isNullOrEmpty()) {
+            return Result.failure(IllegalArgumentException("Request author userId is empty"))
+        }
         val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         return clientManager.getClient(role)
             .accountRepo
-            .authorizeFollowRequest(activityPubAccount.userId)
+            .authorizeFollowRequest(userId)
             .map { }
     }
 

@@ -3,7 +3,6 @@ package com.zhangke.fread.feeds.pages.home
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentScreen
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
@@ -45,15 +45,15 @@ class ContentHomeViewModel @Inject constructor(
             _uiState.update { currentState ->
                 currentState.copy(
                     currentPageIndex = currentPageIndex,
-                    contentConfigList = allContent,
+                    contentAndTabList = convertContentsToWithTab(allContent),
                     loading = false,
                 )
             }
             activeAccountsSynchronizer.activeAccountUriFlow
                 .mapNotNull { it?.takeIf { it.isNotEmpty() } }
                 .collect { uri ->
-                    val activeIndex = _uiState.value.contentConfigList.indexOfFirst { config ->
-                        config.accountUri?.toString() == uri
+                    val activeIndex = _uiState.value.contentAndTabList.indexOfFirst { config ->
+                        config.first.accountUri?.toString() == uri
                     }
                     if (activeIndex >= 0 && activeIndex != _uiState.value.currentPageIndex) {
                         _switchPageFlow.emit(activeIndex)
@@ -63,28 +63,16 @@ class ContentHomeViewModel @Inject constructor(
         launchInViewModel {
             contentRepo.getAllContentFlow()
                 .drop(1)
+                .map { convertContentsToWithTab(it) }
                 .collect {
                     _uiState.update { currentState ->
                         currentState.copy(
                             currentPageIndex = currentState.currentPageIndex.coerceAtMost(it.size - 1),
-                            contentConfigList = it,
+                            contentAndTabList = it,
                         )
                     }
                 }
         }
-    }
-
-    fun getContentScreen(
-        contentConfig: FreadContent,
-        isLatestTab: Boolean,
-    ): PagerTab? {
-        if (contentConfig is MixedContent) {
-            return MixedContentScreen(
-                configId = contentConfig.id,
-                isLatestTab = isLatestTab,
-            )
-        }
-        return statusProvider.screenProvider.getContentScreen(contentConfig, isLatestTab)
     }
 
     fun onCurrentPageChanged(currentPage: Int) {
@@ -93,12 +81,29 @@ class ContentHomeViewModel @Inject constructor(
         _uiState.update { it.copy(currentPageIndex = currentPage) }
         launchInViewModel {
             _uiState.value
-                .contentConfigList
+                .contentAndTabList
                 .getOrNull(currentPage)
+                ?.first
                 ?.accountUri
                 ?.toString()
                 ?.let { activeAccountsSynchronizer.onAccountSelected(it) }
         }
+    }
+
+    private fun convertContentsToWithTab(contents: List<FreadContent>): List<Pair<FreadContent, PagerTab>> {
+        return contents.mapIndexed { index, content ->
+            content.convertToWithTab(index == contents.lastIndex)
+        }
+    }
+
+    private fun FreadContent.convertToWithTab(isLatestTab: Boolean): Pair<FreadContent, PagerTab> {
+        if (this is MixedContent) {
+            return this to MixedContentScreen(
+                configId = id,
+                isLatestTab = isLatestTab,
+            )
+        }
+        return this to statusProvider.screenProvider.getContentScreen(this, isLatestTab)
     }
 
     fun onSwitchPageFlowUsed() {

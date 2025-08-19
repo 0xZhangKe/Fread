@@ -9,6 +9,8 @@ import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
+import com.zhangke.fread.status.ui.style.StatusStyle
 
 @Composable
 fun FeedsStatusNode(
@@ -16,6 +18,8 @@ fun FeedsStatusNode(
     status: StatusUiState,
     indexInList: Int,
     composedStatusInteraction: ComposedStatusInteraction,
+    showDivider: Boolean = true,
+    style: StatusStyle = LocalStatusUiConfig.current.contentStyle,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -25,6 +29,8 @@ fun FeedsStatusNode(
         },
         status = status,
         indexInList = indexInList,
+        style = style,
+        showDivider = showDivider,
         composedStatusInteraction = composedStatusInteraction,
         onMediaClick = { event ->
             onStatusMediaClick(

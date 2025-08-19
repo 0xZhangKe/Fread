@@ -92,7 +92,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                                 author = author,
                             )
                         ),
-                        logged = false,
+                        logged = true,
                         isOwner = this.record.isOwner,
                     ),
                 )
@@ -114,7 +114,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                                 author = author,
                             )
                         ),
-                        logged = false,
+                        logged = true,
                         isOwner = this.record.isOwner,
                     ),
                 )

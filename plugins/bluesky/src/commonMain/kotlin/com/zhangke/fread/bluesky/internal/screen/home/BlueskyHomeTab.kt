@@ -166,6 +166,8 @@ class BlueskyHomeTab(
                                 ContentToolbar(
                                     title = uiState.content.name,
                                     showNextIcon = !isLatestContent,
+                                    account = uiState.account,
+                                    showAccountInfo = uiState.showAccountInTopBar,
                                     onMenuClick = {
                                         coroutineScope.launch {
                                             mainTabConnection.openDrawer()

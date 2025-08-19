@@ -15,6 +15,18 @@ class NotificationResolver(
         it.getNotifications(account, type, cursor)
     }
 
+    /**
+     * Just return updated user details for the given users.
+     */
+    suspend fun getNotificationUserDetail(
+        account: LoggedAccount,
+        users: List<BlogAuthor>,
+    ): Result<List<BlogAuthor>> {
+        return resolverList.firstNotNullOfOrNull { resolver ->
+            resolver.getNotificationUserDetail(account, users)
+        } ?: Result.success(emptyList())
+    }
+
     suspend fun rejectFollowRequest(
         account: LoggedAccount,
         requestAuthor: BlogAuthor,
@@ -55,6 +67,13 @@ interface INotificationResolver {
         type: NotificationRequestType = NotificationRequestType.ALL,
         cursor: String? = null,
     ): Result<PagedStatusNotification>?
+
+    suspend fun getNotificationUserDetail(
+        account: LoggedAccount,
+        users: List<BlogAuthor>,
+    ): Result<List<BlogAuthor>>? {
+        return null
+    }
 
     suspend fun rejectFollowRequest(
         account: LoggedAccount,

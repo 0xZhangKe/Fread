@@ -62,7 +62,7 @@ import com.zhangke.fread.statusui.status_ui_sensitive_by_filter
 fun BlogContent(
     modifier: Modifier,
     blog: Blog,
-    isOwner: Boolean,
+    isOwner: Boolean?,
     style: StatusStyle,
     indexOfFeeds: Int,
     onBlogClick: (Blog) -> Unit,

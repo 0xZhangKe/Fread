@@ -1,6 +1,9 @@
 package com.zhangke.fread.status.account
 
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.FreadContent
+import com.zhangke.fread.status.model.LoggedAccountDetail
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +20,15 @@ class AccountManager(
     fun getAllAccountFlow(): Flow<List<LoggedAccount>> {
         val flowList = accountManagerList.mapNotNull {
             it.getAllAccountFlow()
+        }
+        return combine(*flowList.toTypedArray()) {
+            it.flatMap { list -> list }
+        }
+    }
+
+    fun getAllAccountDetailFlow(): Flow<List<LoggedAccountDetail>> {
+        val flowList = accountManagerList.mapNotNull {
+            it.getAllAccountDetailFlow()
         }
         return combine(*flowList.toTypedArray()) {
             it.flatMap { list -> list }
@@ -55,6 +67,31 @@ class AccountManager(
             manager.subscribeNotification()
         }
     }
+
+    suspend fun getRelationships(
+        account: LoggedAccount,
+        accounts: List<BlogAuthor>,
+    ): Result<Map<FormalUri, Relationships>> {
+        val allResult = mutableMapOf<FormalUri, Relationships>()
+        for (manager in accountManagerList) {
+            manager.getRelationships(account, accounts).onSuccess { map -> allResult.putAll(map) }
+        }
+        return Result.success(allResult)
+    }
+
+    suspend fun unblockAccount(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit> {
+        return accountManagerList.firstNotNullOf { it.unblockAccount(account, user) }
+    }
+
+    suspend fun cancelFollowRequest(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit> {
+        return accountManagerList.firstNotNullOf { it.cancelFollowRequest(account, user) }
+    }
 }
 
 interface IAccountManager {
@@ -62,6 +99,10 @@ interface IAccountManager {
     suspend fun getAllLoggedAccount(): List<LoggedAccount>
 
     fun getAllAccountFlow(): Flow<List<LoggedAccount>>?
+
+    fun getAllAccountDetailFlow(): Flow<List<LoggedAccountDetail>>? {
+        return null
+    }
 
     suspend fun triggerLaunchAuth(platform: BlogPlatform)
 
@@ -73,6 +114,21 @@ interface IAccountManager {
         contentList: List<FreadContent>,
         account: LoggedAccount,
     ): List<FreadContent>
+
+    suspend fun getRelationships(
+        account: LoggedAccount,
+        accounts: List<BlogAuthor>,
+    ): Result<Map<FormalUri, Relationships>>
+
+    suspend fun unblockAccount(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit>?
+
+    suspend fun cancelFollowRequest(
+        account: LoggedAccount,
+        user: BlogAuthor,
+    ): Result<Unit>?
 
     fun subscribeNotification()
 }

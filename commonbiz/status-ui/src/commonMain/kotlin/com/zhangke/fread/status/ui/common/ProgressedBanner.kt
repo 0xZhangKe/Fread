@@ -2,6 +2,7 @@ package com.zhangke.fread.status.ui.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -16,12 +17,14 @@ import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.img_banner_background
 import org.jetbrains.compose.resources.painterResource
 
+private const val BANNER_ASPECT = 2.6F
+
 @Composable
 fun ProgressedBanner(
     modifier: Modifier,
     url: String?,
 ) {
-    Box(modifier = modifier.height(180.dp)) {
+    Box(modifier = modifier.aspectRatio(BANNER_ASPECT)) {
         Image(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(Res.drawable.img_banner_background),

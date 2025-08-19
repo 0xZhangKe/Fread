@@ -1,8 +1,10 @@
 package com.zhangke.fread.bluesky
 
+import app.bsky.actor.GetProfilesQueryParams
 import app.bsky.notification.ListNotificationsQueryParams
 import app.bsky.notification.UpdateSeenRequest
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
+import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyNotificationAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.GetCompletedNotificationUseCase
@@ -13,11 +15,13 @@ import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.PagedStatusNotification
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
+import sh.christian.ozone.api.Did
 
 class BlueskyNotificationResolver @Inject constructor(
     private val clientManager: BlueskyClientManager,
     private val getCompletedNotification: GetCompletedNotificationUseCase,
     private val notificationAdapter: BlueskyNotificationAdapter,
+    private val accountAdapter: BlueskyAccountAdapter,
 ) : INotificationResolver {
 
     override suspend fun getNotifications(
@@ -39,11 +43,34 @@ class BlueskyNotificationResolver @Inject constructor(
         ).map { paged ->
             PagedStatusNotification(
                 cursor = paged.cursor,
+                reachEnd = paged.cursor == null,
                 notifications = paged.notifications.map {
                     notificationAdapter.convert(it, account.locator, account.platform)
                 },
             )
         }
+    }
+
+    override suspend fun getNotificationUserDetail(
+        account: LoggedAccount,
+        users: List<BlogAuthor>,
+    ): Result<List<BlogAuthor>>? {
+        if (account !is BlueskyLoggedAccount) return null
+        val didList = users.filter { it.banner.isNullOrEmpty() }
+            .mapNotNull { it.webFinger.did }
+            .map { Did(it) }
+        if (didList.isEmpty()) return Result.success(emptyList())
+        return clientManager.getClient(account.locator)
+            .getProfilesCatching(GetProfilesQueryParams(actors = didList))
+            .map { result ->
+                result.profiles.map { profile ->
+                    accountAdapter.convertToBlogAuthor(
+                        did = profile.did.did,
+                        handle = profile.handle.handle,
+                        profileViewDetailed = profile,
+                    )
+                }
+            }
     }
 
     override suspend fun rejectFollowRequest(

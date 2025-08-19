@@ -56,8 +56,10 @@
     <string name="status_ui_edit_content_config_showing_list_title">显示在首页中的列表</string>
     <string name="status_ui_edit_content_config_hidden_list_title">可添加到首页的列表</string>
 
+    <string name="status_ui_user_detail_relationship_mutuals">互相关注</string>
     <string name="status_ui_user_detail_relationship_blocking">已屏蔽</string>
     <string name="status_ui_user_detail_relationship_following">已关注</string>
+    <string name="status_ui_user_detail_relationship_follow_back">回关</string>
     <string name="status_ui_user_detail_relationship_not_follow">关注</string>
     <string name="status_ui_user_detail_relationship_requested">请求中</string>
     <string name="status_ui_user_detail_request_by_tip">对方正在请求关注你</string>
@@ -69,8 +71,16 @@
     <string name="status_ui_user_detail_follower_info">关注者</string>
     <string name="status_ui_user_detail_following_info">正在关注</string>
 
+    <string name="status_ui_top_label_continued_thread">展开对话</string>
+
     <string name="status_ui_update_dialog_title">更新</string>
     <string name="status_ui_update_dialog_release_note">%1$s 版本更新日志：\n%2$s </string>
 
     <string name="status_ui_switch_account_dialog_title">选择账号</string>
+
+    <string name="status_ui_likes">喜欢</string>
+    <string name="status_ui_bookmarks">收藏</string>
+    <string name="status_ui_edit_profile">修改个人资料</string>
+    <string name="status_ui_logout">退出登录</string>
+    <string name="status_ui_logout_dialog_content">你确定要退出登录吗？</string>
 </resources>

@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.di
 import android.content.Context
 import androidx.room.Room
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
+import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountDatabase
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.fread.activitypub.app.internal.push.PushInfoDatabase
@@ -30,6 +31,18 @@ actual interface ActivityPubPlatformComponent {
 
     @ApplicationScope
     @Provides
+    fun provideActivityPubLoggedAccountDatabases(
+        context: ApplicationContext,
+    ): ActivityPubLoggedAccountDatabase {
+        return Room.databaseBuilder(
+            context = context,
+            klass = ActivityPubLoggedAccountDatabase::class.java,
+            name = ActivityPubLoggedAccountDatabase.DB_NAME,
+        ).build()
+    }
+
+    @ApplicationScope
+    @Provides
     fun provideActivityPubStatusDatabase(
         context: ApplicationContext,
     ): ActivityPubStatusDatabases {
@@ -37,7 +50,8 @@ actual interface ActivityPubPlatformComponent {
             context,
             ActivityPubStatusDatabases::class.java,
             ActivityPubStatusDatabases.DB_NAME,
-        ).build()
+        ).addMigrations(ActivityPubStatusDatabases.MIGRATION_1_2)
+            .build()
     }
 
     @ApplicationScope

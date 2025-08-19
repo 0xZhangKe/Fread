@@ -2,6 +2,8 @@ package com.zhangke.fread.bluesky.internal.client
 
 import app.bsky.actor.GetPreferencesResponse
 import app.bsky.actor.GetProfileQueryParams
+import app.bsky.actor.GetProfilesQueryParams
+import app.bsky.actor.GetProfilesResponse
 import app.bsky.actor.ProfileView
 import app.bsky.actor.ProfileViewDetailed
 import app.bsky.actor.PutPreferencesRequest
@@ -105,6 +107,10 @@ class BlueskyClient(
 
     suspend fun getProfileCatching(request: GetProfileQueryParams): Result<ProfileViewDetailed> {
         return runCatching { getProfile(request) }.toResult()
+    }
+
+    suspend fun getProfilesCatching(request: GetProfilesQueryParams): Result<GetProfilesResponse> {
+        return runCatching { getProfiles(request) }.toResult()
     }
 
     suspend fun getTimelineCatching(request: GetTimelineQueryParams): Result<GetTimelineResponse> {

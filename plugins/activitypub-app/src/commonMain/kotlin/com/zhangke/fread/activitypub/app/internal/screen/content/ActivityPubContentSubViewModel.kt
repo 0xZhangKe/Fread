@@ -23,7 +23,7 @@ class ActivityPubContentSubViewModel(
     val contentId: String,
 ) : SubViewModel() {
 
-    private val _uiState = MutableStateFlow(ActivityPubContentUiState.DEFAULT)
+    private val _uiState = MutableStateFlow(ActivityPubContentUiState.default())
     val uiState = _uiState.asStateFlow()
 
     private var updateUserListJob: Job? = null
@@ -65,7 +65,17 @@ class ActivityPubContentSubViewModel(
             accountManager.observeAccount(accountUri)
                 .distinctUntilChanged()
                 .collect { account ->
-                    _uiState.update { it.copy(account = account) }
+                    val accountCountInSamePlatform = if (account == null) {
+                        0
+                    } else {
+                        accountManager.getAllLoggedAccount().count { it.baseUrl == account.baseUrl }
+                    }
+                    _uiState.update {
+                        it.copy(
+                            account = account,
+                            showAccountInTopBar = accountCountInSamePlatform > 1
+                        )
+                    }
                     userCreatedListUpdated = false
                     updateUserCreateList()
                 }

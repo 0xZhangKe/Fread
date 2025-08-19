@@ -10,6 +10,8 @@ import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubUserTo
 import com.zhangke.fread.activitypub.app.internal.db.converter.EmojiListConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.FormalBaseUrlConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.PlatformEntityTypeConverter
+import com.zhangke.fread.activitypub.app.internal.db.old.OldActivityPubLoggedAccountEntity
+import com.zhangke.fread.activitypub.app.internal.db.old.OldActivityPubLoggerAccountDao
 import com.zhangke.fread.common.utils.WebFingerConverter
 
 private const val DB_VERSION = 1
@@ -24,7 +26,7 @@ private const val DB_VERSION = 1
 )
 @Database(
     entities = [
-        ActivityPubLoggedAccountEntity::class,
+        OldActivityPubLoggedAccountEntity::class,
         ActivityPubApplicationEntity::class,
         ActivityPubInstanceInfoEntity::class,
         WebFingerBaseurlToIdEntity::class,
@@ -35,7 +37,7 @@ private const val DB_VERSION = 1
 @ConstructedBy(ActivityPubDatabasesConstructor::class)
 abstract class ActivityPubDatabases : RoomDatabase() {
 
-    abstract fun getLoggedAccountDao(): ActivityPubLoggerAccountDao
+    abstract fun getLoggedAccountDao(): OldActivityPubLoggerAccountDao
 
     abstract fun getApplicationDao(): ActivityPubApplicationsDao
 

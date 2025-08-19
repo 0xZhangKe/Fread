@@ -9,6 +9,7 @@ data class BlueskyHomeUiState(
     val locator: PlatformLocator?,
     val content: BlueskyContent?,
     val account: BlueskyLoggedAccount?,
+    val showAccountInTopBar: Boolean,
     val errorMessage: String? = null,
 ) {
 
@@ -26,6 +27,7 @@ data class BlueskyHomeUiState(
                 locator = locator,
                 content = config,
                 account = account,
+                showAccountInTopBar = false,
                 errorMessage = errorMessage,
             )
         }

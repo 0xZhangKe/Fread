@@ -5,4 +5,6 @@ import kotlinx.datetime.Instant
 expect class InstantFormater() {
 
     fun formatToMediumDate(instant: Instant): String
+
+    fun formatToMediumDateWithoutTime(instant: Instant): String
 }

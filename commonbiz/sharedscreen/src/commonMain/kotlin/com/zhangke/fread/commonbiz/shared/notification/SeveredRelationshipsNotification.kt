@@ -33,6 +33,7 @@ fun SeveredRelationshipsNotification(
             modifier = Modifier,
             icon = Icons.Default.WarningAmber,
             avatar = notification.author.avatar,
+            createAt = notification.formattingDisplayTime,
             accountName = notification.author.humanizedName,
             interactionDesc = stringResource(Res.string.shared_notification_severed_desc),
             style = style,

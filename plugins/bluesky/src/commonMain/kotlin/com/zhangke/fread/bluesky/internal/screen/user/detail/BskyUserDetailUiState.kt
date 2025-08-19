@@ -1,7 +1,7 @@
 package com.zhangke.fread.bluesky.internal.screen.user.detail
 
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.status.ui.common.RelationshipUiState
+import com.zhangke.fread.status.model.Relationships
 
 data class BskyUserDetailUiState(
     val loading: Boolean,
@@ -17,7 +17,7 @@ data class BskyUserDetailUiState(
     val followersCount: Long?,
     val followsCount: Long?,
     val postsCount: Long?,
-    val relationship: RelationshipUiState,
+    val relationship: Relationships?,
     val followUri: String?,
     val blockUri: String?,
     val muted: Boolean,
@@ -25,6 +25,11 @@ data class BskyUserDetailUiState(
 ) {
 
     val blocked: Boolean get() = !blockUri.isNullOrEmpty()
+
+    val prettyHandle: String
+        get() = handle?.let {
+            if (it.startsWith("@")) it else "@$it"
+        }.orEmpty()
 
     companion object {
 
@@ -43,7 +48,7 @@ data class BskyUserDetailUiState(
                 followersCount = null,
                 followsCount = null,
                 postsCount = null,
-                relationship = RelationshipUiState.UNKNOWN,
+                relationship = null,
                 followUri = null,
                 blockUri = null,
                 muted = false,

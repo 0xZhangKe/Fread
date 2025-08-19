@@ -31,8 +31,19 @@ class MainDrawerViewModel @Inject constructor(
         viewModelScope.launch {
             contentRepo.getAllContentFlow()
                 .collect { list ->
-                    _uiState.update { it.copy(contentConfigList = list) }
+                    val contentList = mapToMainDrawerContent(list)
+                    _uiState.update { it.copy(contentConfigList = contentList) }
                 }
+        }
+    }
+
+    private suspend fun mapToMainDrawerContent(
+        contentList: List<FreadContent>,
+    ): List<MainDrawerContent> {
+        val allAccounts = statusProvider.accountManager.getAllLoggedAccount()
+        return contentList.map { content ->
+            val account = allAccounts.find { it.uri == content.accountUri }
+            MainDrawerContent(content, account)
         }
     }
 
@@ -40,7 +51,7 @@ class MainDrawerViewModel @Inject constructor(
         viewModelScope.launch {
             val configList = _uiState.value.contentConfigList
             if (configList.isEmpty()) return@launch
-            contentRepo.reorderConfig(configList[from], configList[to])
+            contentRepo.reorderConfig(configList[from].content, configList[to].content)
         }
     }
 

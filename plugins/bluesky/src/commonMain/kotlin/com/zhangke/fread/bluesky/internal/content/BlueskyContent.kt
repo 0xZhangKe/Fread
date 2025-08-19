@@ -16,6 +16,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.security.Md5
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.commonbiz.bluesky_logo
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.krouter.annotation.Service
@@ -60,7 +61,7 @@ data class BlueskyContent(
     }
 
     @Composable
-    override fun Subtitle() {
+    override fun Subtitle(account: LoggedAccount?) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 modifier = Modifier.size(14.dp),
@@ -71,10 +72,11 @@ data class BlueskyContent(
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .align(Alignment.Bottom),
-                text = baseUrl.host,
+                text = account?.prettyHandle ?: baseUrl.host,
                 style = MaterialTheme.typography.labelMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

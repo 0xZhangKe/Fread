@@ -1,8 +1,10 @@
 package com.zhangke.fread.activitypub.app.internal.repo.account
 
-import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
-import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggerAccountDao
+import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountDao
+import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountDatabase
+import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
+import com.zhangke.fread.activitypub.app.internal.db.old.OldActivityPubLoggerAccountDao
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
@@ -14,55 +16,74 @@ import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
 class ActivityPubLoggedAccountRepo @Inject constructor(
-    private val databases: ActivityPubDatabases,
-    private val adapter: ActivityPubLoggedAccountAdapter,
+    private val oldDatabases: ActivityPubDatabases,
+    private val accountDatabase: ActivityPubLoggedAccountDatabase,
 ) {
 
     private val _onNewAccountFlow = MutableSharedFlow<ActivityPubLoggedAccount>()
     val onNewAccountFlow: Flow<ActivityPubLoggedAccount> = _onNewAccountFlow
 
-    private val accountDao: ActivityPubLoggerAccountDao
-        get() = databases.getLoggedAccountDao()
+    private val oldAccountDao: OldActivityPubLoggerAccountDao
+        get() = oldDatabases.getLoggedAccountDao()
+
+    private val accountDao: ActivityPubLoggedAccountDao
+        get() = accountDatabase.getDao()
+
+    suspend fun initialize() {
+        LoggedAccountMigrateUtil.migrate(
+            oldDao = oldAccountDao,
+            accountDao = accountDao,
+        )
+    }
 
     fun getAllAccountFlow(): Flow<List<ActivityPubLoggedAccount>> {
         return accountDao.queryAllFlow().map { list ->
-            list.map { adapter.adapt(it) }
+            list.map { it.account }
         }
     }
 
     fun observeAccount(uri: String): Flow<ActivityPubLoggedAccount?> {
-        return accountDao.observeAccount(uri).map {
-            it?.let { adapter.adapt(it) }
-        }
+        return accountDao.observeAccount(uri)
+            .map { it?.account }
     }
 
     suspend fun queryAll(): List<ActivityPubLoggedAccount> =
-        accountDao.queryAll().map {
-            adapter.adapt(it)
-        }
-
-    suspend fun queryById(id: String): ActivityPubLoggedAccount? =
-        accountDao.queryById(id)?.let { adapter.adapt(it) }
+        accountDao.queryAll().map { it.account }
 
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccount? =
-        accountDao.queryByUri(uri)?.let { adapter.adapt(it) }
+        accountDao.queryByUri(uri)?.account
 
     suspend fun insert(
-        entry: ActivityPubLoggedAccount,
+        account: ActivityPubLoggedAccount,
         addedTimestamp: Long,
     ) {
-        val account = adapter.recovery(entry, addedTimestamp)
-        accountDao.insert(account)
-        _onNewAccountFlow.emit(entry)
+        val entity = buildAccountEntity(account, addedTimestamp)
+        accountDao.insert(entity)
+        _onNewAccountFlow.emit(account)
     }
 
     suspend fun update(account: ActivityPubLoggedAccount) {
-        val entity = accountDao.queryByUri(account.uri.toString())
-        val addedTimestamp = entity?.addedTimestamp ?: getCurrentTimeMillis()
-        accountDao.insert(adapter.recovery(account, addedTimestamp))
+        val addedTimestamp =
+            accountDao.queryByUri(account.uri.toString())?.addedTimestamp ?: getCurrentTimeMillis()
+        val entity = buildAccountEntity(account, addedTimestamp)
+        accountDao.insert(entity)
     }
 
-    suspend fun deleteByUri(uri: FormalUri) = accountDao.deleteByUri(uri.toString())
+    private fun buildAccountEntity(
+        account: ActivityPubLoggedAccount,
+        addedTimestamp: Long,
+    ): ActivityPubLoggedAccountEntity {
+        return ActivityPubLoggedAccountEntity(
+            uri = account.uri.toString(),
+            account = account,
+            addedTimestamp = addedTimestamp,
+        )
+    }
+
+    suspend fun deleteByUri(uri: FormalUri) {
+        accountDao.deleteByUri(uri.toString())
+        oldAccountDao.deleteByUri(uri.toString())
+    }
 
     suspend fun clear() = accountDao.nukeTable()
 }

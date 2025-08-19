@@ -97,11 +97,10 @@ internal class ActivityPubContentScreen(
         onTitleClick: (ActivityPubContent) -> Unit,
         onPostBlogClick: (ActivityPubLoggedAccount) -> Unit,
     ) {
-        val (locator, config, account, errorMessage) = uiState
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalNestedTabConnection.current
         val snackBarHostState = rememberSnackbarHostState()
-        val showFb = account != null
+        val showFb = uiState.account != null
         Scaffold(
             snackbarHost = {
                 SnackbarHost(
@@ -129,9 +128,7 @@ internal class ActivityPubContentScreen(
                         ),
                     ) {
                         FloatingActionButton(
-                            onClick = {
-                                onPostBlogClick(account)
-                            },
+                            onClick = { onPostBlogClick(uiState.account) },
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary,
                             shape = CircleShape,
@@ -153,9 +150,9 @@ internal class ActivityPubContentScreen(
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackBarHostState,
                 ) {
-                    if (locator != null && config != null) {
+                    if (uiState.locator != null && uiState.config != null) {
                         val tabList = remember(uiState) {
-                            createTabs(locator, config)
+                            createTabs(uiState.locator, uiState.config)
                         }
                         val pagerState = rememberPagerState(0) {
                             tabList.size
@@ -163,8 +160,10 @@ internal class ActivityPubContentScreen(
                         TopBarWithTabLayout(
                             topBarContent = {
                                 ContentToolbar(
-                                    title = config.name,
+                                    title = uiState.config.name,
                                     showNextIcon = !isLatestContent,
+                                    account = uiState.account,
+                                    showAccountInfo = uiState.showAccountInTopBar,
                                     onMenuClick = {
                                         coroutineScope.launch {
                                             mainTabConnection.openDrawer()
@@ -182,7 +181,7 @@ internal class ActivityPubContentScreen(
                                         }
                                     },
                                     onTitleClick = {
-                                        onTitleClick(config)
+                                        onTitleClick(uiState.config)
                                     },
                                     onDoubleClick = {
                                         coroutineScope.launch {
@@ -219,14 +218,14 @@ internal class ActivityPubContentScreen(
                                 tabList[pageIndex].TabContent(screen, null)
                             }
                         }
-                    } else if (!errorMessage.isNullOrBlank()) {
+                    } else if (!uiState.errorMessage.isNullOrBlank()) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             Text(
                                 modifier = Modifier
                                     .padding(start = 16.dp, top = 64.dp, end = 16.dp)
                                     .fillMaxWidth()
                                     .align(Alignment.TopCenter),
-                                text = errorMessage,
+                                text = uiState.errorMessage,
                                 textAlign = TextAlign.Center,
                             )
                         }

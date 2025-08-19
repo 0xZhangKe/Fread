@@ -10,6 +10,9 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.zhangke.fread.common.db.converts.FormalUriConverter
 import com.zhangke.fread.common.db.converts.StatusConverter
 import com.zhangke.fread.common.db.converts.StatusUiStateConverter
@@ -17,7 +20,7 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 
-private const val DB_VERSION = 1
+private const val DB_VERSION = 2
 private const val TABLE_NAME = "mixed_status"
 
 @Entity(tableName = TABLE_NAME, primaryKeys = ["sourceUri", "statusId"])
@@ -72,6 +75,13 @@ abstract class MixedStatusDatabases : RoomDatabase() {
     companion object {
 
         const val DB_NAME = "mixed_status_1.db"
+
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+
+            override fun migrate(connection: SQLiteConnection) {
+                connection.execSQL("DELETE FROM $TABLE_NAME")
+            }
+        }
     }
 }
 

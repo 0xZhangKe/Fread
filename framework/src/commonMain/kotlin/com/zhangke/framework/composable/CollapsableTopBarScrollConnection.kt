@@ -3,7 +3,9 @@ package com.zhangke.framework.composable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -14,7 +16,7 @@ fun rememberCollapsableTopBarScrollConnection(
     maxPx: Float,
     minPx: Float,
 ): CollapsableTopBarScrollConnection {
-    return remember(minPx, maxPx) {
+    return rememberSaveable(minPx, maxPx, saver = CollapsableTopBarScrollConnection.Saver) {
         CollapsableTopBarScrollConnection(maxPx, minPx)
     }
 }
@@ -58,5 +60,22 @@ class CollapsableTopBarScrollConnection(
         topBarHeight += available.y
 
         return Offset(0f, available.y)
+    }
+
+    companion object {
+
+        val Saver: Saver<CollapsableTopBarScrollConnection, *> = listSaver(
+            save = {
+                listOf(it.maxPx, it.minPx, it.topBarHeight)
+            },
+            restore = {
+                CollapsableTopBarScrollConnection(
+                    maxPx = it[0],
+                    minPx = it[1],
+                ).apply {
+                    topBarHeight = it[2]
+                }
+            },
+        )
     }
 }

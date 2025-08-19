@@ -33,7 +33,7 @@ import org.jetbrains.compose.resources.vectorResource
 fun StatusMoreInteractionIcon(
     modifier: Modifier,
     blog: Blog,
-    isOwner: Boolean,
+    isOwner: Boolean?,
     blogTranslationState: BlogTranslationUiState,
     style: StatusStyle,
     onActionClick: (StatusActionType, Blog) -> Unit,
@@ -65,7 +65,7 @@ fun StatusMoreInteractionIcon(
                 onTranslateClick = onTranslateClick,
             )
 
-            if (isOwner) {
+            if (isOwner == true) {
                 InteractionItem(
                     type = StatusActionType.PIN,
                     icon = pinIcon(blog.pinned),

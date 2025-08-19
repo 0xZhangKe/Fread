@@ -2,16 +2,23 @@ package com.zhangke.fread.status.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.label.ContinueThread
 import com.zhangke.fread.status.ui.label.ReblogTopLabel
+import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.label.StatusPinnedLabel
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -26,31 +33,51 @@ fun StatusUi(
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
     detailModel: Boolean = false,
-    threadsType: ThreadsType = ThreadsType.NONE,
+    showDivider: Boolean = true,
+    threadsType: ThreadsType = ThreadsType.UNSPECIFIED,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
     if (status.status.intrinsicBlog.filtered?.firstOrNull()?.action == BlogFiltered.FilterAction.HIDE) {
         Box(modifier = modifier.size(1.dp))
         return
     }
-    Surface(modifier = modifier) {
-        val rawStatus = status.status
+    val fixedThreadType =
+        if (threadsType == ThreadsType.UNSPECIFIED && status.status.intrinsicBlog.isReply) {
+            ThreadsType.CONTINUED_THREAD
+        } else {
+            threadsType
+        }
+    val rawStatus = status.status
+    var continueThreadHeight: Int? by remember { mutableStateOf(null) }
+    Box(modifier = modifier) {
         BlogUi(
             modifier = Modifier,
             blog = rawStatus.intrinsicBlog,
             isOwner = status.isOwner,
             logged = status.logged,
             blogTranslationState = status.blogTranslationState,
-            topLabel = getStatusTopLabel(status, style, composedStatusInteraction),
+            continueThreadLabelHeight = continueThreadHeight,
+            topLabels = getStatusTopLabel(
+                isReblog = rawStatus == Status.Reblog,
+                pinned = rawStatus.intrinsicBlog.pinned,
+                isReply = rawStatus.intrinsicBlog.isReply,
+                author = rawStatus.triggerAuthor,
+                style = style,
+                threadsType = fixedThreadType,
+                mentionOnly = rawStatus.intrinsicBlog.visibility == StatusVisibility.DIRECT,
+                onUserInfoClick = {
+                    composedStatusInteraction.onUserInfoClick(status.locator, it)
+                },
+                onContinueThreadHeightChanged = { continueThreadHeight = it }
+            ),
             indexInList = indexInList,
-            threadsType = threadsType,
+            threadsType = fixedThreadType,
             detailModel = detailModel,
-            following = status.following,
             style = if (detailModel) style else style.contentIndentStyle(),
             onInteractive = { type, _ ->
                 composedStatusInteraction.onStatusInteractive(status, type)
             },
-            showDivider = threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
+            showDivider = showDivider && threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
             onMediaClick = onMediaClick,
             onUserInfoClick = {
                 composedStatusInteraction.onUserInfoClick(status.locator, it)
@@ -103,29 +130,45 @@ fun StatusUi(
     }
 }
 
-private fun getStatusTopLabel(
-    statusUiState: StatusUiState,
+fun getStatusTopLabel(
     style: StatusStyle,
-    composedStatusInteraction: ComposedStatusInteraction,
-): (@Composable () -> Unit)? {
-    val rawStatus = statusUiState.status
-    if (rawStatus is Status.Reblog) {
-        return {
+    threadsType: ThreadsType,
+    isReblog: Boolean,
+    pinned: Boolean,
+    isReply: Boolean,
+    author: BlogAuthor,
+    mentionOnly: Boolean,
+    onUserInfoClick: (blogAuthor: BlogAuthor) -> Unit,
+    onContinueThreadHeightChanged: (height: Int) -> Unit,
+): List<@Composable () -> Unit> {
+    val labels = mutableListOf<@Composable () -> Unit>()
+    if (isReblog) {
+        labels += {
             ReblogTopLabel(
-                author = rawStatus.author,
+                author = author,
                 style = style,
-                onAuthorClick = {
-                    composedStatusInteraction.onUserInfoClick(statusUiState.locator, it)
-                },
+                onAuthorClick = onUserInfoClick,
+            )
+        }
+    } else if (threadsType == ThreadsType.CONTINUED_THREAD && isReply) {
+        labels += {
+            ContinueThread(style = style, onHeightChanged = onContinueThreadHeightChanged)
+        }
+    }
+    if (mentionOnly) {
+        labels += {
+            StatusMentionOnlyLabel(
+                modifier = Modifier,
+                style = style,
             )
         }
     }
-    if (rawStatus.intrinsicBlog.pinned) {
-        return {
+    if (pinned) {
+        labels += {
             StatusPinnedLabel(
                 style = style,
             )
         }
     }
-    return null
+    return labels
 }

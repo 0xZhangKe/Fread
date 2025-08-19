@@ -45,3 +45,24 @@ inline fun <T> Iterable<T>.updateIndex(index: Int, predicate: (T) -> T): List<T>
         }
     }
 }
+
+fun <T> MutableIterable<T>.removeFirstOrNull(block: (T) -> Boolean): T? {
+    val iterator = iterator()
+    while (iterator.hasNext()){
+        val item = iterator.next()
+        if (block(item)) {
+            iterator.remove()
+            return item
+        }
+    }
+    return null
+}
+
+fun <T> Collection<T>.getOrNull(block: (T) -> Boolean): T? {
+    for (item in this) {
+        if (block(item)) {
+            return item
+        }
+    }
+    return null
+}

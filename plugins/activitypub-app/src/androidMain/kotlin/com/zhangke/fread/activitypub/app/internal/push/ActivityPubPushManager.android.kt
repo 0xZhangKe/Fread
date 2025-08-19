@@ -26,7 +26,7 @@ actual class ActivityPubPushManager @Inject constructor(
 
     @OptIn(ExperimentalEncodingApi::class)
     actual suspend fun subscribe(locator: PlatformLocator, accountId: String) {
-        Log.d("F_TEST", "subscribe for ${locator.accountUri}, $accountId")
+        Log.d("PushManager", "subscribe for ${locator.accountUri}, $accountId")
         val pushManager = pushManager ?: return
         val deviceId = freadConfigManager.getDeviceId()
         val encodedAccountId = Base64.UrlSafe.encode(accountId.encodeToByteArray())
@@ -55,29 +55,29 @@ actual class ActivityPubPushManager @Inject constructor(
                 policy = "all",
             ),
         )
-        Log.d("F_TEST", "subscribe end point: $endpointUrl")
-        Log.d("F_TEST", "subscribe keys : $keys")
+        Log.d("PushManager", "subscribe end point: $endpointUrl")
+        Log.d("PushManager", "subscribe keys : $keys")
         clientManager.getClient(locator)
             .pushRepo
             .subscribePush(subscribeRequest)
             .onSuccess {
-                Log.d("F_TEST", "subscribe success: $it")
+                Log.d("PushManager", "subscribe success: $it")
                 registerRelay(pushManager, deviceId, accountId, encodedAccountId, keys)
             }.onFailure {
-                Log.d("F_TEST", "subscribe failed: $it")
+                Log.d("PushManager", "subscribe failed: $it")
             }
     }
 
     actual suspend fun unsubscribe(locator: PlatformLocator, accountId: String) {
-        Log.d("F_TEST", "unsubscribe for ${locator.accountUri}, $accountId")
+        Log.d("PushManager", "unsubscribe for ${locator.accountUri}, $accountId")
         val pushManager = pushManager ?: return
         clientManager.getClient(locator)
             .pushRepo
             .removeSubscription()
             .onSuccess {
-                Log.d("F_TEST", "unsubscribe success.")
+                Log.d("PushManager", "unsubscribe success.")
             }.onFailure {
-                Log.d("F_TEST", "unsubscribe failed: $it")
+                Log.d("PushManager", "unsubscribe failed: $it")
             }
         unregisterRelay(pushManager, freadConfigManager.getDeviceId(), accountId)
     }
@@ -92,7 +92,7 @@ actual class ActivityPubPushManager @Inject constructor(
         pushManager.registerToRelay(encodedAccountId, deviceId)
             .onSuccess {
                 Log.d(
-                    "F_TEST",
+                    "PushManager",
                     "registerRelay success, account id is $accountId, encoded: $encodedAccountId"
                 )
                 val pushInfo = PushInfo(
@@ -103,7 +103,7 @@ actual class ActivityPubPushManager @Inject constructor(
                 )
                 pushInfoRepo.insert(pushInfo)
             }.onFailure {
-                Log.d("F_TEST", "registerRelay failed: $it")
+                Log.d("PushManager", "registerRelay failed: $it")
             }
     }
 
@@ -113,13 +113,13 @@ actual class ActivityPubPushManager @Inject constructor(
         deviceId: String,
         accountId: String,
     ) {
-        Log.d("F_TEST", "unregisterRelay: $accountId")
+        Log.d("PushManager", "unregisterRelay: $accountId")
         val encodedAccountId = Base64.UrlSafe.encode(accountId.encodeToByteArray())
         pushManager.unregisterToRelay(encodedAccountId, deviceId)
             .onSuccess {
-                Log.d("F_TEST", "unregisterRelay success")
+                Log.d("PushManager", "unregisterRelay success")
             }.onFailure {
-                Log.d("F_TEST", "unregisterRelay failed: $it")
+                Log.d("PushManager", "unregisterRelay failed: $it")
             }
     }
 }

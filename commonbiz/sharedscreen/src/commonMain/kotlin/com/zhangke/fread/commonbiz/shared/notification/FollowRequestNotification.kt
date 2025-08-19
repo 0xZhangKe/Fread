@@ -35,16 +35,21 @@ fun FollowRequestNotification(
     notification: StatusNotification.FollowRequest,
     style: NotificationStyle,
     onUserInfoClick: (BlogAuthor) -> Unit,
-    onRejectClick: (StatusNotification.FollowRequest) -> Unit,
-    onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
+    onRejectClick: (BlogAuthor) -> Unit,
+    onAcceptClick: (BlogAuthor) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(style.containerPaddings)) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(style.containerPaddings)
+            .padding(bottom = 16.dp)
+    ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
                 onUserInfoClick(notification.author)
             },
             icon = Icons.Default.PersonAddAlt1,
-            avatar = null,
+            createAt = notification.formattingDisplayTime,
+            avatar = notification.author.avatar,
             accountName = null,
             interactionDesc = stringResource(Res.string.shared_notification_follow_request),
             style = style,
@@ -87,7 +92,7 @@ fun FollowRequestNotification(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
                 onClick = {
-                    onRejectClick(notification)
+                    onRejectClick(notification.author)
                 },
                 imageVector = Icons.Default.Clear,
                 contentDescription = "Reject",
@@ -100,7 +105,7 @@ fun FollowRequestNotification(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
                 onClick = {
-                    onAcceptClick(notification)
+                    onAcceptClick(notification.author)
                 },
                 imageVector = Icons.Default.Check,
                 contentDescription = "Accept",

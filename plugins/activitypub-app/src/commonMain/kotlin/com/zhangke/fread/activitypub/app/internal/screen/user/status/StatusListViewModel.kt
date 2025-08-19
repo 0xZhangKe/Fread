@@ -1,10 +1,9 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user.status
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.zhangke.activitypub.api.AccountsRepo
 import com.zhangke.activitypub.api.PagingResult
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
@@ -22,10 +21,8 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.preParseStatus
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-class StatusListViewModel @Inject constructor(
+class StatusListViewModel(
     private val clientManager: ActivityPubClientManager,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val statusProvider: StatusProvider,
@@ -34,9 +31,9 @@ class StatusListViewModel @Inject constructor(
     private val statusUiStateAdapter: StatusUiStateAdapter,
     private val refactorToNewStatus: RefactorToNewStatusUseCase,
     private val loggedAccountProvider: LoggedAccountProvider,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted val type: StatusListType,
-) : ViewModel(), IFeedsViewModelController by FeedsViewModelController(
+    private val locator: PlatformLocator,
+    val type: StatusListType,
+) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
     statusUiStateAdapter = statusUiStateAdapter,

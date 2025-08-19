@@ -32,8 +32,8 @@ class StatusScreenProvider(
         return providerList.firstNotNullOfOrNull { it.getQuoteBlogScreen(locator, blog) }
     }
 
-    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
-        return providerList.firstNotNullOfOrNull {
+    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab {
+        return providerList.firstNotNullOf {
             it.getContentScreen(content, isLatestTab)
         }
     }

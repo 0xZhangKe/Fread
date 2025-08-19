@@ -1,33 +1,32 @@
 package com.zhangke.fread.commonbiz.shared.notification
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.filled.Poll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.commonbiz.shared.composable.WholeBlogUi
+import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_favourited_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_poll_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_quote_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reblog_desc
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reply_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_update_desc
+import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.notification.StatusNotification
-import com.zhangke.fread.status.ui.BlogDivider
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.action.quoteIcon
-import com.zhangke.fread.status.ui.action.replyIcon
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.ic_status_forward
@@ -40,28 +39,34 @@ fun StatusNotificationUi(
     notification: StatusNotification,
     indexInList: Int,
     style: NotificationStyle = defaultNotificationStyle(),
-    onRejectClick: (StatusNotification.FollowRequest) -> Unit,
-    onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
+    onRejectClick: (BlogAuthor) -> Unit,
+    onAcceptClick: (BlogAuthor) -> Unit,
+    onUnblockClick: (PlatformLocator, BlogAuthor) -> Unit,
+    onCancelFollowRequestClick: (PlatformLocator, BlogAuthor) -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     Column(modifier = modifier) {
         Box(modifier = Modifier) {
             when (notification) {
                 is StatusNotification.Like -> {
-                    FavouriteNotification(
-                        notification = notification,
+                    NotificationWithWholeStatus(
+                        blog = notification.blog,
+                        locator = notification.locator,
+                        author = notification.author,
+                        createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
+                        icon = Icons.Default.Favorite,
+                        iconTint = MaterialTheme.colorScheme.tertiary,
+                        interactionDesc = stringResource(Res.string.shared_notification_favourited_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
                 is StatusNotification.Mention -> {
-                    WholeBlogUi(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { composedStatusInteraction.onStatusClick(notification.status) },
-                        statusUiState = notification.status,
+                    FeedsStatusNode(
+                        modifier = Modifier.fillMaxWidth(),
+                        status = notification.status,
                         indexInList = indexInList,
                         style = style.statusStyle,
                         showDivider = false,
@@ -70,34 +75,39 @@ fun StatusNotificationUi(
                 }
 
                 is StatusNotification.Reply -> {
-                    NotificationWithWholeStatus(
+                    FeedsStatusNode(
+                        modifier = Modifier.fillMaxWidth(),
                         status = notification.status,
-                        author = notification.status.status.triggerAuthor,
                         indexInList = indexInList,
-                        icon = replyIcon(),
-                        interactionDesc = stringResource(Res.string.shared_notification_reply_desc),
-                        style = style,
+                        style = style.statusStyle,
+                        showDivider = false,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
                 is StatusNotification.Repost -> {
-                    BlogInteractionNotification(
+                    NotificationWithWholeStatus(
                         blog = notification.blog,
                         locator = notification.locator,
                         author = notification.author,
+                        createAt = notification.formattingDisplayTime,
+                        indexInList = indexInList,
                         icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
                         interactionDesc = stringResource(Res.string.shared_notification_reblog_desc),
-                        indexInList = indexInList,
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
                 is StatusNotification.Poll -> {
-                    PollNotification(
-                        notification = notification,
+                    NotificationWithWholeStatus(
+                        blog = notification.blog,
+                        locator = notification.locator,
+                        createAt = notification.formattingDisplayTime,
+                        author = null,
                         indexInList = indexInList,
+                        icon = Icons.Default.Poll,
+                        interactionDesc = stringResource(Res.string.shared_notification_poll_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
@@ -110,13 +120,25 @@ fun StatusNotificationUi(
                         onUserInfoClick = {
                             composedStatusInteraction.onUserInfoClick(notification.locator, it)
                         },
+                        onFollowAccountClick = {
+                            composedStatusInteraction.onFollowClick(notification.locator, it)
+                        },
+                        onUnblockClick = { onUnblockClick(notification.locator, it) },
+                        onUnfollowAccountClick = {
+                            composedStatusInteraction.onUnfollowClick(notification.locator, it)
+                        },
+                        onCancelFollowRequestClick = {
+                            onCancelFollowRequestClick(notification.locator, it)
+                        },
                     )
                 }
 
                 is StatusNotification.Update -> {
                     NotificationWithWholeStatus(
-                        status = notification.status,
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
                         author = notification.status.status.triggerAuthor,
+                        createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = Icons.Default.Edit,
                         interactionDesc = stringResource(Res.string.shared_notification_update_desc),
@@ -139,8 +161,10 @@ fun StatusNotificationUi(
 
                 is StatusNotification.NewStatus -> {
                     NotificationWithWholeStatus(
-                        status = notification.status,
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
                         author = notification.status.status.triggerAuthor,
+                        createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = Icons.Default.NotificationsNone,
                         interactionDesc = stringResource(Res.string.shared_notification_new_status_desc),
@@ -151,8 +175,10 @@ fun StatusNotificationUi(
 
                 is StatusNotification.Quote -> {
                     NotificationWithWholeStatus(
-                        status = notification.status,
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
                         author = notification.status.status.triggerAuthor,
+                        createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = quoteIcon(),
                         interactionDesc = stringResource(Res.string.shared_notification_quote_desc),
@@ -176,13 +202,6 @@ fun StatusNotificationUi(
                 }
             }
         }
-        val layoutDirection = LocalLayoutDirection.current
-        BlogDivider(
-            modifier = Modifier.padding(
-                start = style.containerPaddings.calculateStartPadding(layoutDirection),
-                end = style.containerPaddings.calculateEndPadding(layoutDirection),
-            )
-        )
     }
 }
 

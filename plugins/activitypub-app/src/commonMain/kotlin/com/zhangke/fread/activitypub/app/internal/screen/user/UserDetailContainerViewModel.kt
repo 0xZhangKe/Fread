@@ -7,6 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEnti
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.activitypub.app.internal.usecase.ActivityPubAccountLogoutUseCase
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -17,6 +18,7 @@ class UserDetailContainerViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
+    private val accountLogout: ActivityPubAccountLogoutUseCase,
 ) : ContainerViewModel<UserDetailViewModel, UserDetailContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): UserDetailViewModel {
@@ -26,6 +28,7 @@ class UserDetailContainerViewModel @Inject constructor(
             clientManager = clientManager,
             emojiEntityAdapter = emojiEntityAdapter,
             accountEntityAdapter = accountEntityAdapter,
+            accountLogout = accountLogout,
             locator = params.locator,
             userUri = params.userUri,
             webFinger = params.webFinger,

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionScene
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
@@ -191,6 +192,7 @@ data class HashtagTimelineScreen(
         }
     }
 
+    @OptIn(ExperimentalMotionApi::class)
     @Composable
     private fun buildMotionScene() = MotionScene {
         val topBarRef = createRefFor("topBar")

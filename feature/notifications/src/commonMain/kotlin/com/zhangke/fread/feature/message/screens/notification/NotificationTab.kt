@@ -6,11 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
@@ -42,7 +38,8 @@ import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.notifications_tab_all
 import com.zhangke.fread.feature.notifications.notifications_tab_mention
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.notification.StatusNotification
+import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import kotlinx.coroutines.delay
@@ -76,6 +73,8 @@ class NotificationTab(
             onAcceptClick = viewModel::onAcceptClick,
             onRejectClick = viewModel::onRejectClick,
             onNotificationShown = viewModel::onNotificationShown,
+            onUnblockClick = viewModel::onUnblockClick,
+            onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.openScreenFlow) {
@@ -99,9 +98,11 @@ class NotificationTab(
         onSwitchTab: (Boolean) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
-        onRejectClick: (StatusNotification.FollowRequest) -> Unit,
-        onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
+        onUnblockClick: (PlatformLocator, BlogAuthor) -> Unit,
+        onRejectClick: (BlogAuthor) -> Unit,
+        onAcceptClick: (BlogAuthor) -> Unit,
         onNotificationShown: (StatusNotificationUiState) -> Unit,
+        onCancelFollowRequestClick: (PlatformLocator, BlogAuthor) -> Unit,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -126,9 +127,7 @@ class NotificationTab(
                         .applyNestedScrollConnection(nestedScrollConnection),
                     refreshing = uiState.refreshing,
                     loadState = uiState.loadMoreState,
-                    contentPadding = PaddingValues(
-                        bottom = 20.dp,
-                    )
+                    contentPadding = PaddingValues(bottom = 64.dp),
                 ) {
                     itemsIndexed(
                         items = uiState.dataList,
@@ -148,6 +147,8 @@ class NotificationTab(
                             indexInList = index,
                             onAcceptClick = onAcceptClick,
                             onRejectClick = onRejectClick,
+                            onUnblockClick = onUnblockClick,
+                            onCancelFollowRequestClick = onCancelFollowRequestClick,
                         )
                         if (notification.unreadState) {
                             LaunchedEffect(notification) {
@@ -171,37 +172,14 @@ class NotificationTab(
         ) {
             SegmentedButton(
                 checked = !uiState.inOnlyMentionTab,
-                onCheckedChange = {
-                    onTabCheckedChange(false)
-                },
-                icon = {
-                    SegmentedButtonDefaults.Icon(active = !uiState.inOnlyMentionTab) {
-                        Icon(
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                        )
-                    }
-                },
+                onCheckedChange = { onTabCheckedChange(false) },
                 shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
             ) {
                 Text(text = stringResource(Res.string.notifications_tab_all))
             }
-
             SegmentedButton(
                 checked = uiState.inOnlyMentionTab,
-                onCheckedChange = {
-                    onTabCheckedChange(true)
-                },
-                icon = {
-                    SegmentedButtonDefaults.Icon(active = uiState.inOnlyMentionTab) {
-                        Icon(
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                        )
-                    }
-                },
+                onCheckedChange = { onTabCheckedChange(true) },
                 shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
             ) {
                 Text(text = stringResource(Res.string.notifications_tab_mention))

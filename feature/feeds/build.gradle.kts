@@ -1,6 +1,7 @@
 plugins {
     id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -19,6 +20,9 @@ kotlin {
                 implementation(project(":commonbiz:status-ui"))
 
                 implementation(compose.components.resources)
+
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.arrow.core)
 

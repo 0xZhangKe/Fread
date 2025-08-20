@@ -24,6 +24,7 @@ import com.zhangke.fread.feeds.composable.StatusSourceNode
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.feeds.search_feeds_title_hint
 import com.zhangke.fread.status.source.StatusSource
+import kotlin.jvm.Transient
 import org.jetbrains.compose.resources.stringResource
 
 internal class SearchSourceForAddScreen : BaseScreen() {
@@ -34,6 +35,7 @@ internal class SearchSourceForAddScreen : BaseScreen() {
             "com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen"
     }
 
+    @Transient
     var onSourceSelected: ((StatusSource) -> Unit)? = null
 
     override val key: ScreenKey

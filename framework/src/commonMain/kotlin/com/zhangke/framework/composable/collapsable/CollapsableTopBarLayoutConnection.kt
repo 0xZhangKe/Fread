@@ -1,6 +1,8 @@
 package com.zhangke.framework.composable.collapsable
 
 import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.calculateTargetValue
+import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -62,15 +64,12 @@ class CollapsableTopBarLayoutConnection(
 
     override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
         if (available.y == 0f) return Velocity.Zero
-        val targetHeight = when {
-            available.y > 0 -> maxPx
-            available.y < 0 -> minPx
-            else -> topBarHeight
-        }
-        if (topBarHeight == targetHeight) {
-            return available
-        }
         val startHeight = topBarHeight
+        val targetHeight = exponentialDecay<Float>().calculateTargetValue(
+            initialValue = startHeight,
+            initialVelocity = available.y,
+        ).coerceAtLeast(minPx).coerceAtMost(maxPx)
+        if (topBarHeight == targetHeight) return available
         animate(
             initialValue = startHeight,
             targetValue = targetHeight

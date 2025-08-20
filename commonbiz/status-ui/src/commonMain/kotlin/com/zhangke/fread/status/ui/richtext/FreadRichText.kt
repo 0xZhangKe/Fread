@@ -15,6 +15,7 @@ import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
@@ -43,6 +44,7 @@ fun FreadRichText(
     fontSizeSp: Float = 14F,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
+    textAlign: TextAlign? = null,
 ) {
     val richText = remember(content, mentions) {
         buildRichText(
@@ -60,6 +62,7 @@ fun FreadRichText(
         maxLines = maxLines,
         fontStyle = fontStyle,
         fontWeight = fontWeight,
+        textAlign = textAlign,
         onMentionClick = onMentionClick,
         onHashtagClick = onHashtagClick,
         fontSizeSp = fontSizeSp,
@@ -75,6 +78,7 @@ fun FreadRichText(
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
     lineHeight: TextUnit = 1.5.em,
+    textAlign: TextAlign? = null,
     onMentionClick: (Mention) -> Unit = {},
     onMentionDidClick: (String) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
@@ -109,6 +113,7 @@ fun FreadRichText(
         fontStyle = fontStyle,
         lineHeight = lineHeight,
         fontWeight = fontWeight,
+        textAlign = textAlign,
         fontSize = fontSizeSp.sp,
         inlineContent = rememberInlineContent(richText.emojis),
     )

@@ -996,17 +996,14 @@ data class UserDetailScreen(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Box(
-                modifier = Modifier.weight(3F),
+                modifier = Modifier.weight(4F),
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 FreadRichText(
                     modifier = Modifier,
                     content = value,
-                    mentions = emptyList(),
-                    tags = emptyList(),
-                    onMentionClick = {},
-                    onHashtagClick = {},
                     emojis = emojis,
+                    textAlign = TextAlign.End,
                     maxLines = 3,
                     onUrlClick = {
                         browserLauncher.launchWebTabInApp(it, locator)

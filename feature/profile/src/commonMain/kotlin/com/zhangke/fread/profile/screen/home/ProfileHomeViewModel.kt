@@ -6,7 +6,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
-import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.LoggedAccount
@@ -26,7 +25,6 @@ import me.tatarka.inject.annotations.Inject
 
 class ProfileHomeViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val contentRepo: FreadContentRepo,
     private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
 ) : ViewModel() {
 
@@ -102,15 +100,6 @@ class ProfileHomeViewModel @Inject constructor(
         }
     }
 
-    fun onLogoutClick(account: LoggedAccount) {
-        viewModelScope.launch {
-            statusProvider.accountManager.logout(account)
-            statusProvider.accountManager
-                .selectContentWithAccount(contentRepo.getAllContent(), account)
-                .forEach { contentRepo.delete(it.id) }
-        }
-    }
-
     fun onAccountClick(account: LoggedAccount) {
         launchInViewModel {
             statusProvider.screenProvider
@@ -122,60 +111,9 @@ class ProfileHomeViewModel @Inject constructor(
         }
     }
 
-    fun onFavouritedClick(account: LoggedAccount) {
-        launchInViewModel {
-            statusProvider.screenProvider
-                .getFavouritedScreen(
-                    locator = account.platformLocator,
-                    protocol = account.platform.protocol,
-                )?.let { _openPageFlow.emit(it) }
-        }
-    }
-
-    fun onBookmarkedClick(account: LoggedAccount) {
-        launchInViewModel {
-            statusProvider.screenProvider
-                .getBookmarkedScreen(
-                    locator = account.platformLocator,
-                    protocol = account.platform.protocol,
-                )?.let { _openPageFlow.emit(it) }
-        }
-    }
-
-    fun onFollowedHashtagClick(account: LoggedAccount) {
-        launchInViewModel {
-            statusProvider.screenProvider
-                .getFollowedHashtagScreen(
-                    locator = PlatformLocator(
-                        baseUrl = account.platform.baseUrl,
-                        accountUri = account.uri,
-                    ),
-                    protocol = account.platform.protocol,
-                )?.let { _openPageFlow.emit(it) }
-        }
-    }
-
-    fun onPinnedFeedsClick(account: LoggedAccount) {
-        launchInViewModel {
-            statusProvider.screenProvider
-                .getEditContentConfigScreenScreen(account)
-                ?.let { _openPageFlow.emit(it) }
-        }
-    }
-
     fun onLoginClick(account: LoggedAccount) {
         launchInViewModel {
-            statusProvider.accountManager.triggerAuthBySource(account.platform)
-        }
-    }
-
-    fun onListsClick(account: LoggedAccount) {
-        launchInViewModel {
-            statusProvider.screenProvider
-                .getCreatedListScreen(
-                    locator = account.platformLocator,
-                    platform = account.platform,
-                )?.let { _openPageFlow.emit(it) }
+            statusProvider.accountManager.triggerAuthBySource(account.platform, account)
         }
     }
 

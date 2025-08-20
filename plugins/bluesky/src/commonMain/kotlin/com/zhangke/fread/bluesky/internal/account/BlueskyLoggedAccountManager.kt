@@ -29,7 +29,7 @@ class BlueskyLoggedAccountManager @Inject constructor(
 
     suspend fun login(
         baseUrl: FormalBaseUrl,
-        username: String,
+        identifier: String,
         password: String,
         factorToken: String? = null,
     ): Result<BlueskyLoggedAccount> {
@@ -37,7 +37,7 @@ class BlueskyLoggedAccountManager @Inject constructor(
         val sessionResult =
             noAccountClient.createSessionCatching(
                 CreateSessionRequest(
-                    identifier = username,
+                    identifier = identifier,
                     password = password,
                     authFactorToken = factorToken,
                 )

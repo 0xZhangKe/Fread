@@ -11,10 +11,10 @@ class LoginToBskyUseCase @Inject constructor(
 
     suspend operator fun invoke(
         baseUrl: FormalBaseUrl,
-        username: String,
+        identifier: String,
         password: String,
         factorToken: String? = null,
     ): Result<BlueskyLoggedAccount> {
-        return accountManager.login(baseUrl, username, password, factorToken)
+        return accountManager.login(baseUrl, identifier, password, factorToken)
     }
 }

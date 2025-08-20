@@ -97,7 +97,7 @@ class ActivityPubAccountManager @Inject constructor(
         }
     }
 
-    override suspend fun triggerLaunchAuth(platform: BlogPlatform) {
+    override suspend fun triggerLaunchAuth(platform: BlogPlatform, account: LoggedAccount?) {
         if (platform.protocol.notActivityPub) return
         oAuthor.startOauth(platform.baseUrl)
     }

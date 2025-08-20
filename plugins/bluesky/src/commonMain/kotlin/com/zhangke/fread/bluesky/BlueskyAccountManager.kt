@@ -46,12 +46,15 @@ class BlueskyAccountManager @Inject constructor(
             }
     }
 
-    override suspend fun triggerLaunchAuth(platform: BlogPlatform) {
+    override suspend fun triggerLaunchAuth(platform: BlogPlatform, account: LoggedAccount?) {
         if (platform.protocol.notBluesky) return
         GlobalScreenNavigation.navigate(
             AddBlueskyContentScreen(
                 baseUrl = platform.baseUrl,
-                loginMode = true
+                loginMode = true,
+                avatar = account?.avatar,
+                displayName = account?.userName,
+                handle = account?.prettyHandle,
             )
         )
     }

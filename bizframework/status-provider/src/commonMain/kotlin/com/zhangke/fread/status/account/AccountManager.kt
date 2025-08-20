@@ -35,9 +35,12 @@ class AccountManager(
         }
     }
 
-    suspend fun triggerAuthBySource(platform: BlogPlatform) {
+    suspend fun triggerAuthBySource(
+        platform: BlogPlatform,
+        account: LoggedAccount? = null,
+    ) {
         for (manager in accountManagerList) {
-            manager.triggerLaunchAuth(platform)
+            manager.triggerLaunchAuth(platform, account)
         }
     }
 
@@ -104,7 +107,7 @@ interface IAccountManager {
         return null
     }
 
-    suspend fun triggerLaunchAuth(platform: BlogPlatform)
+    suspend fun triggerLaunchAuth(platform: BlogPlatform, account: LoggedAccount?)
 
     suspend fun refreshAllAccountInfo(): List<AccountRefreshResult>
 

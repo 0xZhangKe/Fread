@@ -22,7 +22,7 @@ class RssAccountManager @Inject constructor() : IAccountManager {
         return null
     }
 
-    override suspend fun triggerLaunchAuth(platform: BlogPlatform) {
+    override suspend fun triggerLaunchAuth(platform: BlogPlatform, account: LoggedAccount?) {
         // no-op
     }
 

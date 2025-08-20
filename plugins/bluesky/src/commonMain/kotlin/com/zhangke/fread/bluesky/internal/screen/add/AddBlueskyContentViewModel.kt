@@ -27,6 +27,9 @@ class AddBlueskyContentViewModel @Inject constructor(
     private val contentRepo: FreadContentRepo,
     @Assisted private val baseUrl: FormalBaseUrl,
     @Assisted private val loginMode: Boolean,
+    @Assisted private val avatar: String?,
+    @Assisted private val displayName: String?,
+    @Assisted private val handle: String?,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
@@ -34,12 +37,19 @@ class AddBlueskyContentViewModel @Inject constructor(
         fun create(
             baseUrl: FormalBaseUrl,
             loginMode: Boolean,
+            avatar: String?,
+            displayName: String?,
+            handle: String?,
         ): AddBlueskyContentViewModel
     }
 
     private val _uiState = MutableStateFlow(
         AddBlueskyContentUiState.default(
             hosting = baseUrl.toString(),
+            loginMode = loginMode,
+            avatar = avatar,
+            displayName = displayName,
+            handle = handle,
         )
     )
     val uiState: StateFlow<AddBlueskyContentUiState> = _uiState.asStateFlow()
@@ -72,7 +82,12 @@ class AddBlueskyContentViewModel @Inject constructor(
         if (_uiState.value.logging) return
         if (loggingJob?.isActive == true) return
         val hosting = uiState.value.hosting.trim()
-        val username = uiState.value.username.trim()
+        val identifier =
+            if (uiState.value.loginToSpecAccount) {
+                uiState.value.handle!!.trim().removePrefix("@")
+            } else {
+                uiState.value.username.trim()
+            }
         val password = uiState.value.password.trim()
         val factorToken = uiState.value.factorToken.trim()
         loggingJob = launchInViewModel {
@@ -82,11 +97,11 @@ class AddBlueskyContentViewModel @Inject constructor(
                 return@launchInViewModel
             }
             _uiState.update { it.copy(logging = true) }
-            loginToBluesky(baseUrl, username, password, factorToken)
-                .onSuccess {
+            loginToBluesky(baseUrl, identifier, password, factorToken)
+                .onSuccess { account ->
                     _uiState.update { it.copy(logging = false) }
                     if (!loginMode) {
-                        saveBlueskyContent(it)
+                        saveBlueskyContent(account)
                     }
                     _finishPageFlow.emit(Unit)
                 }

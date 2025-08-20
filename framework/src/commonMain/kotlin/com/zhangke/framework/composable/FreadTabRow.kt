@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -45,7 +45,7 @@ fun FreadTabRow(
             FreadTabRowDefault.Indicator()
         },
     divider: @Composable () -> Unit = @Composable {
-        HorizontalDivider()
+        HorizontalDivider(thickness = 0.5.dp)
     },
     tabCount: Int,
     tabContent: @Composable (index: Int) -> Unit,
@@ -84,8 +84,8 @@ fun FreadTabRow(
                 ) {
                     Box(
                         modifier = Modifier
-                            .onGloballyPositioned {
-                                tabContentWidth[index] = it.size.width.pxToDp(density)
+                            .onSizeChanged {
+                                tabContentWidth[index] = it.width.pxToDp(density)
                             }
                             .padding(8.dp)
                     ) {
@@ -143,8 +143,8 @@ private fun FreadTabRow(
     }
     ScrollableTabRow(
         selectedTabIndex = selectedTabIndex,
-        modifier = modifier.onGloballyPositioned {
-            tabContainerWidth = it.size.width.pxToDp(density)
+        modifier = modifier.onSizeChanged {
+            tabContainerWidth = it.width.pxToDp(density)
         },
         containerColor = containerColor,
         edgePadding = tabEdgePadding,
@@ -170,7 +170,9 @@ object FreadTabRowDefault {
         modifier: Modifier = Modifier,
         height: Dp = IndicatorHeight,
         color: Color = MaterialTheme.colorScheme.primary,
-        shape: Shape = RoundedCornerShape(3.dp),
+        shape: Shape = RoundedCornerShape(
+            topStart = 3.dp, topEnd = 3.dp,
+        ),
     ) {
         Box(
             modifier

@@ -80,6 +80,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             content = buildTextFieldValue(initialContent),
             visibility = replyParams.replyingToBlog.visibility,
             replyToAuthorInfo = replyParams,
+            accountChangeable = false,
         )
     }
 

@@ -71,9 +71,7 @@ class PostStatusScreen(
             )
         }
         val loadableUiState by viewModel.uiState.collectAsState()
-        var showExitDialog by remember {
-            mutableStateOf(false)
-        }
+        var showExitDialog by remember { mutableStateOf(false) }
 
         val snackMessageState = rememberSnackbarHostState()
 

@@ -72,10 +72,6 @@ class NotificationScreen : BaseScreen() {
                 uiState = uiState,
                 onAccountSelected = viewModel::onAccountSelected,
             )
-            NotificationsHomeScreenContent(
-                uiState = uiState,
-                onAccountSelected = viewModel::onAccountSelected,
-            )
         }
     }
 

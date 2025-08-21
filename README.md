@@ -2,17 +2,27 @@
 
 Fread is a decentralized microblogging client that seamlessly integrates Mastodon, Bluesky, and RSS — all in one place. 
 
-<a href="https://f-droid.org/packages/com.zhangke.fread/">
-  <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" width="200" />
-</a>
-<div style="width: 50px;"></div>
-<a href="https://play.google.com/store/apps/details?id=com.zhangke.fread">
-  <img src="google-play-download.png" width="200" />
-</a>
-<div style="width: 50px;"></div>
-<a href="https://github.com/0xZhangKe/Fread/releases/latest">
-  <img src="ic_download_apk.png" width="200" />
-</a>
+<p align="center">
+  <a href="https://f-droid.org/packages/com.zhangke.fread/">
+    <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="60" style="vertical-align: middle;"/>
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://play.google.com/store/apps/details?id=com.zhangke.fread">
+    <img src="google-play-download.png" height="60" style="vertical-align: middle;"/>
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/0xZhangKe/Fread/releases/latest">
+    <img src="ic_download_apk.png" height="60" style="vertical-align: middle;"/>
+  </a>
+</p>
+
+or download it in [Release page](https://github.com/0xZhangKe/Fread/releases)
+
+ - 'fread-xxx-google-play-signed.apk': Signed by Google Play and includes push notifications. If you are used to updating through Google Play, you can choose this version.
+ - 'fread-xxx-fdroid.apk': The version available on F-Droid does not include push notifications, and its signature is inconsistent with Google Play. If you are used to using F-Droid, please use this version.
+ - 'fread-xxx-fdroid.apk': Test version, contains some logs, the functionality is the same as the Google Play version, but the signature is the same as F-Droid.
+
+Because Fread accidentally used Google Play managed signatures, there are currently two different signed versions of Fread distributed. These two versions cannot be upgraded to each other. Please choose with caution.
 
 ## Screenshots
 ![screenshot](/screenshot/screenshot.jpg)

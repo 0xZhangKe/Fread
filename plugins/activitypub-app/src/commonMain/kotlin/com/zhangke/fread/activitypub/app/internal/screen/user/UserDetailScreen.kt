@@ -485,10 +485,12 @@ data class UserDetailScreen(
             tabList += StatusListTabStatusListScreen(
                 locator = locator,
                 type = StatusListType.FAVOURITES,
+                contentCanScrollBackward = contentCanScrollBackward,
             )
             tabList += StatusListTabStatusListScreen(
                 locator = locator,
                 type = StatusListType.BOOKMARKS,
+                contentCanScrollBackward = contentCanScrollBackward,
             )
         }
         return tabList

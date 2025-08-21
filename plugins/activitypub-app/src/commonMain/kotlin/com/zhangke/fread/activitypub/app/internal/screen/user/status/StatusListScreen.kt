@@ -24,6 +24,7 @@ class StatusListScreen(
     private val tab = StatusListTabStatusListScreen(
         locator = locator,
         type = type,
+        contentCanScrollBackward = null,
     )
 
     @Composable

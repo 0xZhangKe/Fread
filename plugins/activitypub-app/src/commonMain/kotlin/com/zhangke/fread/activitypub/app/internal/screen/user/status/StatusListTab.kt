@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.screen.user.status
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 class StatusListTabStatusListScreen(
     private val locator: PlatformLocator,
     private val type: StatusListType,
+    private val contentCanScrollBackward: MutableState<Boolean>?,
 ) : BasePagerTab() {
 
     override val options: PagerTabOptions?
@@ -51,6 +53,7 @@ class StatusListTabStatusListScreen(
                 newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
                 onRefresh = viewModel::onRefresh,
                 onLoadMore = viewModel::onLoadMore,
+                contentCanScrollBackward = contentCanScrollBackward,
                 composedStatusInteraction = viewModel.composedStatusInteraction,
                 observeScrollToTopEvent = true,
                 onImmersiveEvent = {},

@@ -5,6 +5,7 @@ import com.zhangke.framework.utils.ImageCompressUtils
 import com.zhangke.framework.utils.MB
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.VideoUtils
+import com.zhangke.framework.utils.mapForErrorMessage
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.model.PlatformLocator
@@ -42,6 +43,6 @@ class UploadBlobUseCase @Inject constructor(
             }
             val blob = clientManager.getClient(locator).uploadBlobCatching(bytes).getOrThrow().blob
             blob to aspect
-        }
+        }.mapForErrorMessage("Upload blob failed")
     }
 }

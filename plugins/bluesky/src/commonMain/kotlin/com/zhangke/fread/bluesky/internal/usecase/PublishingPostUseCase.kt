@@ -30,6 +30,8 @@ import com.atproto.repo.ApplyWritesCreate
 import com.atproto.repo.ApplyWritesRequest
 import com.atproto.repo.ApplyWritesRequestWriteUnion
 import com.atproto.repo.StrongRef
+import com.zhangke.framework.utils.mapForErrorMessage
+import com.zhangke.framework.utils.mapForMessage
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.client.BskyCollections
@@ -107,7 +109,11 @@ class PublishingPostUseCase @Inject constructor(
     ): Result<PostReplyRef?> {
         val reply = replyBlog ?: return Result.success(null)
         val postView = getPostDetail(locator, reply.url).let {
-            if (it.isFailure) return Result.failure(it.exceptionOrNull()!!)
+            if (it.isFailure) {
+                return Result.failure(
+                    it.exceptionOrNull()!!.mapForMessage("Get reply post failed")
+                )
+            }
             it.getOrThrow()
         }
         val post: Post = postView.record.bskyJson()
@@ -122,7 +128,7 @@ class PublishingPostUseCase @Inject constructor(
         val client = clientManager.getClient(locator)
         val result = client.getPostThreadCatching(
             GetPostThreadQueryParams(uri = AtUri(uri), depth = 1)
-        )
+        ).mapForErrorMessage("Get post detail failed")
         if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
         val response = result.getOrThrow()
         val threadPostView = (response.thread as? GetPostThreadResponseThreadUnion.ThreadViewPost)

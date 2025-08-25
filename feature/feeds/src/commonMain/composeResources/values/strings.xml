@@ -51,4 +51,7 @@
     <string name="feeds_import_back_dialog_message">Are you sure you want to exit?</string>
 
     <string name="feeds_delete_confirm_content">Are you sure you want to delete?</string>
+
+    <string name="feeds_select_type_screen_title">Pick a format</string>
+    <string name="feeds_select_type_screen_content">What would you like to add?</string>
 </resources>

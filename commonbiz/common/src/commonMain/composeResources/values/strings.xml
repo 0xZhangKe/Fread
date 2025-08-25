@@ -29,6 +29,13 @@
 
     <string name="done">All done!</string>
 
+    <string name="bluesky_name">Bluesky</string>
+    <string name="bluesky_description">Bluesky is an open network. With one account, you can access both an easy-to-use social network and a shared identity across the entire social internet.</string>
+    <string name="mastodon_name">Mastodon</string>
+    <string name="mastodon_description">Mastodon is a decentralized, not-for-sale social media where users control their timeline, with each server being an independent entity.</string>
+    <string name="mixed_content_name">Mixed Content</string>
+    <string name="mixed_content_description">Mixed Feed brings all your content together. Add sources from Mastodon, Bluesky, RSS and more - Fread combines them into one chronological timeline.</string>
+
     <string name="status_provider_type_activity_pub">Mastodon</string>
 
     <string name="add_content_title">Add Content</string>

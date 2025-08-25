@@ -112,7 +112,7 @@ class ImageViewerScreen(
                 )
             }
             val pagerState = rememberPagerState(
-                initialPage = selectedIndex,
+                initialPage = selectedIndex.coerceAtLeast(0),
                 pageCount = imageList::size,
             )
             val animatedInHolder = remember {

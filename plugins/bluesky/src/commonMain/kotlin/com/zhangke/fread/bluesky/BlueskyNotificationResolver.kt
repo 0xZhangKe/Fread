@@ -39,6 +39,7 @@ class BlueskyNotificationResolver @Inject constructor(
                     emptyList()
                 },
                 cursor = cursor,
+                limit = 25,
             ),
         ).map { paged ->
             PagedStatusNotification(
@@ -61,7 +62,7 @@ class BlueskyNotificationResolver @Inject constructor(
             .map { Did(it) }
         if (didList.isEmpty()) return Result.success(emptyList())
         return clientManager.getClient(account.locator)
-            .getProfilesCatching(GetProfilesQueryParams(actors = didList))
+            .getProfilesCatching(GetProfilesQueryParams(actors = didList.take(25)))
             .map { result ->
                 result.profiles.map { profile ->
                     accountAdapter.convertToBlogAuthor(

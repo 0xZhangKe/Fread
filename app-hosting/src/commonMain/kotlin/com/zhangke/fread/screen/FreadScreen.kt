@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -66,7 +67,8 @@ class FreadScreen : BaseScreen() {
         val viewModel = getViewModel<MainViewModel>()
         val tabs = remember { createMainTabs() }
         val uiState by viewModel.uiState.collectAsState()
-        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+//        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val drawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
         val coroutineScope = rememberCoroutineScope()
         val nestedTabConnection = remember { NestedTabConnection() }
         var inFeedsTab by rememberSaveable { mutableStateOf(false) }

@@ -42,7 +42,7 @@ class FeedsContentHomeScreen : BaseScreen() {
             } else {
                 val mainTabConnection = LocalNestedTabConnection.current
                 val pagerState = rememberPagerState(
-                    initialPage = uiState.currentPageIndex,
+                    initialPage = uiState.currentPageIndex.coerceAtLeast(0),
                     pageCount = { uiState.contentAndTabList.size },
                 )
                 ConsumeFlow(mainTabConnection.switchToNextTabFlow) {

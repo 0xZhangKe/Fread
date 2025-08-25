@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -104,16 +105,19 @@ class EditMixedContentScreen(private val contentId: String) : BaseScreen() {
                 SnackbarHost(hostState = snackbarHostState)
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    onClick = onAddSourceClick,
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Default.Add),
-                        contentDescription = "Add Source",
-                    )
+                if (uiState.isSuccess) {
+                    FloatingActionButton(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        onClick = onAddSourceClick,
+                        shape = CircleShape,
+                    ) {
+                        Icon(
+                            painter = rememberVectorPainter(image = Icons.Default.Add),
+                            contentDescription = "Add Source",
+                        )
+                    }
                 }
-            }
+            },
         ) { paddings ->
             LoadableLayout(
                 modifier = Modifier

@@ -3,6 +3,7 @@ package com.zhangke.fread.feeds.pages.manager.edit
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.content.FreadContentRepo
@@ -62,8 +63,8 @@ class EditMixedContentViewModel @Inject constructor(
     }
 
     fun onAddSource(source: StatusSource) {
+        val sourceList = _uiState.value.successDataOrNull()?.sourceList?.toMutableList() ?: return
         launchInViewModel {
-            val sourceList = _uiState.value.requireSuccessData().sourceList.toMutableList()
             if (sourceList.any { it.source.uri == source.uri }) return@launchInViewModel
             sourceList += StatusSourceUiState(
                 source = source,

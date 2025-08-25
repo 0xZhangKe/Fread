@@ -13,7 +13,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -77,11 +76,6 @@ class FreadScreen : BaseScreen() {
                 drawerState.open()
             }
         }
-        BackHandler(drawerState.isOpen) {
-            coroutineScope.launch {
-                drawerState.close()
-            }
-        }
         CompositionLocalProvider(
             LocalNestedTabConnection provides nestedTabConnection,
         ) {
@@ -103,14 +97,16 @@ class FreadScreen : BaseScreen() {
                     }
                 },
             ) {
-                TabNavigator(
-                    tab = tabs.first()
-                ) {
+                TabNavigator(tab = tabs.first()) {
                     val tabNavigator = LocalTabNavigator.current
                     RegisterNotificationAction(tabs, tabNavigator)
                     inFeedsTab = tabNavigator.current.key == tabs.first().key
                     BackHandler(true) {
-                        if (inFeedsTab) {
+                        if (drawerState.isOpen) {
+                            coroutineScope.launch {
+                                drawerState.close()
+                            }
+                        } else if (inFeedsTab) {
                             activityHelper.goHome()
                         } else {
                             tabNavigator.current = tabs.first()

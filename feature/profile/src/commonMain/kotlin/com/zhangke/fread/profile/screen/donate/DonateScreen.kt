@@ -53,9 +53,7 @@ class DonateScreen : BaseScreen() {
     private fun DonateContent(
         onDonateClick: (DonateItem) -> Unit,
     ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
+        Surface(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp)

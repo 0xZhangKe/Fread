@@ -207,9 +207,7 @@ private fun MainDrawerContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
-                        .clickable {
-                            onDonateClick()
-                        },
+                        .clickable { onDonateClick() },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Spacer(modifier = Modifier.width(16.dp))

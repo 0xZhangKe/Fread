@@ -17,7 +17,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
+import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreen
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
 
@@ -36,7 +36,7 @@ class FeedsContentHomeScreen : BaseScreen() {
                     Box(modifier = Modifier.Companion.fillMaxSize())
                 } else {
                     EmptyContent(modifier = Modifier.Companion.fillMaxSize()) {
-                        navigator.push(PreAddFeedsScreen())
+                        navigator.push(SelectContentTypeScreen())
                     }
                 }
             } else {

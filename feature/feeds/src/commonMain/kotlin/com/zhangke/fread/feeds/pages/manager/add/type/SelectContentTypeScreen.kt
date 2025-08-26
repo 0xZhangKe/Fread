@@ -72,8 +72,7 @@ class SelectContentTypeScreen : BaseScreen() {
                     .verticalScroll(rememberScrollState()),
             ) {
                 MastodonContentCard(
-                    modifier = Modifier.padding(top = 46.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
                     onClick = viewModel::onMastodonClick,
                 )
                 BlueskyContentCard(
@@ -90,7 +89,7 @@ class SelectContentTypeScreen : BaseScreen() {
         }
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         ConsumeFlow(viewModel.finishPageFlow) { navigator.pop() }
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             viewModel.onPageResumed(this)
         }
     }
@@ -229,10 +228,10 @@ class SelectContentTypeScreen : BaseScreen() {
         logo: @Composable () -> Unit,
         description: @Composable () -> Unit,
     ) {
-        Box(modifier = modifier) {
+        Box(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
             Card(
                 modifier = Modifier.align(Alignment.Center)
-                    .fillMaxWidth(0.6F),
+                    .fillMaxWidth(),
                 onClick = onClick,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface,

@@ -53,4 +53,6 @@
     <string name="edit_profile_input_name_hint">Please enter your username</string>
     <string name="edit_profile_input_note_hint">Please enter bio</string>
     <string name="edit_profile_edit_confirm_message">Are you sure you want to exit editing?</string>
+
+    <string name="add_content_success_snackbar">Add Success</string>
 </resources>

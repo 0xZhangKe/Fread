@@ -53,4 +53,6 @@
     <string name="edit_profile_input_name_hint">请输入用户名</string>
     <string name="edit_profile_input_note_hint">请输入简介</string>
     <string name="edit_profile_edit_confirm_message">确定退出编辑吗？</string>
+
+    <string name="add_content_success_snackbar">添加成功</string>
 </resources>

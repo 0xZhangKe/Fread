@@ -61,8 +61,8 @@ class AddBlueskyContentViewModel @Inject constructor(
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage: SharedFlow<TextString> = _snackBarMessage
 
-    private val _finishPageFlow = MutableSharedFlow<Unit>()
-    val finishPageFlow: SharedFlow<Unit> = _finishPageFlow.asSharedFlow()
+    private val _loginSuccessFlow = MutableSharedFlow<Unit>()
+    val loginSuccessFlow: SharedFlow<Unit> = _loginSuccessFlow.asSharedFlow()
 
     private var loggingJob: Job? = null
 
@@ -119,7 +119,7 @@ class AddBlueskyContentViewModel @Inject constructor(
                     if (!loginMode) {
                         saveBlueskyContent(account)
                     }
-                    _finishPageFlow.emit(Unit)
+                    _loginSuccessFlow.emit(Unit)
                     onboardingComponent.onboardingSuccess()
                 }
                 .onFailure { t ->

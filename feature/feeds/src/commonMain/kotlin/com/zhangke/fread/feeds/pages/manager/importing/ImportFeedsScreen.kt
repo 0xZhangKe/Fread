@@ -51,8 +51,8 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalPlatformUriHelper
 import com.zhangke.fread.common.utils.LocalToastHelper
+import com.zhangke.fread.commonbiz.add_content_success_snackbar
 import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.add_content_success_snackbar
 import com.zhangke.fread.feeds.feeds_delete_confirm_content
 import com.zhangke.fread.feeds.feeds_import_back_dialog_message
 import com.zhangke.fread.feeds.feeds_import_button
@@ -61,6 +61,7 @@ import com.zhangke.fread.feeds.feeds_import_page_title
 import com.zhangke.fread.framework.alert
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import com.zhangke.fread.commonbiz.Res as CommonRes
 
 class ImportFeedsScreen : BaseScreen() {
 
@@ -114,7 +115,7 @@ class ImportFeedsScreen : BaseScreen() {
             retryImportClick = viewModel::retryImportClick,
         )
         ConsumeFlow(viewModel.saveSuccessFlow) {
-            toastHelper.showToast(getString(Res.string.add_content_success_snackbar))
+            toastHelper.showToast(getString(CommonRes.string.add_content_success_snackbar))
             navigator.pop()
         }
     }

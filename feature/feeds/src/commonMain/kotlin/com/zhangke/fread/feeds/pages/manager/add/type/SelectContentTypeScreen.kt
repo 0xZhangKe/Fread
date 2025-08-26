@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -89,6 +90,9 @@ class SelectContentTypeScreen : BaseScreen() {
         }
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         ConsumeFlow(viewModel.finishPageFlow) { navigator.pop() }
+        LaunchedEffect(Unit){
+            viewModel.onPageResumed(this)
+        }
     }
 
     @Composable

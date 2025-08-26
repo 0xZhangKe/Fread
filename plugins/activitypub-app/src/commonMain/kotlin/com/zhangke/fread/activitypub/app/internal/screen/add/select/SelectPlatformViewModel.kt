@@ -10,16 +10,20 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentScreen
+import com.zhangke.fread.common.onboarding.OnboardingComponent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class SelectPlatformViewModel @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
+    private val onboardingComponent: OnboardingComponent,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SelectPlatformUiState.default())
@@ -28,6 +32,9 @@ class SelectPlatformViewModel @Inject constructor(
     private val _openNewPageFlow = MutableSharedFlow<Screen>()
     val openNewPageFlow = _openNewPageFlow.asSharedFlow()
 
+    private val _finishPageFlow = MutableSharedFlow<Unit>()
+    val finishPageFlow = _finishPageFlow.asSharedFlow()
+
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage.asSharedFlow()
 
@@ -35,12 +42,21 @@ class SelectPlatformViewModel @Inject constructor(
     private var loadingPlatformForAddJob: Job? = null
 
     init {
+        onboardingComponent.clearState()
         launchInViewModel {
             platformRepo.getSuggestedPlatformSnapshotList()
                 .map { SearchPlatformResult.SearchedSnapshot(it) }
                 .let { snapshots ->
                     _uiState.update { it.copy(platformSnapshotList = snapshots) }
                 }
+        }
+    }
+
+    fun onPageResumed(uiScope: CoroutineScope) {
+        uiScope.launch {
+            onboardingComponent.onboardingFinishedFlow.collect {
+                _finishPageFlow.emit(Unit)
+            }
         }
     }
 

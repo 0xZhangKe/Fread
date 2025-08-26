@@ -22,6 +22,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadingDialog
@@ -63,10 +65,12 @@ class SelectPlatformScreen : BaseScreen() {
         )
         ConsumeOpenScreenFlow(viewModel.openNewPageFlow)
         ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
+        ConsumeFlow(viewModel.finishPageFlow) { navigator.pop() }
         LoadingDialog(
             loading = uiState.loadingPlatformForAdd,
             onDismissRequest = viewModel::onLoadingPlatformForAddCancel,
         )
+        LaunchedEffect(Unit) { viewModel.onPageResumed(this) }
     }
 
     @Composable

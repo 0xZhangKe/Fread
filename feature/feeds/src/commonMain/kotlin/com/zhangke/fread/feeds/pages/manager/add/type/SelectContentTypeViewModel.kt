@@ -7,8 +7,10 @@ import com.zhangke.fread.common.onboarding.OnboardingComponent
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.status.model.createBlueskyProtocol
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class SelectContentTypeViewModel @Inject constructor(
@@ -23,7 +25,11 @@ class SelectContentTypeViewModel @Inject constructor(
     val finishPageFlow = _finishPageFlow.asSharedFlow()
 
     init {
-        launchInViewModel {
+        onboardingComponent.clearState()
+    }
+
+    fun onPageResumed(uiScope: CoroutineScope) {
+        uiScope.launch {
             onboardingComponent.onboardingFinishedFlow.collect {
                 _finishPageFlow.emit(Unit)
             }

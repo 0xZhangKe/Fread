@@ -12,6 +12,7 @@ import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
 import com.zhangke.fread.bluesky.internal.utils.AtRequestException
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.onboarding.OnboardingComponent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ class AddBlueskyContentViewModel @Inject constructor(
     private val loginToBluesky: LoginToBskyUseCase,
     private val contentRepo: FreadContentRepo,
     private val platformRepo: BlueskyPlatformRepo,
+    private val onboardingComponent: OnboardingComponent,
     @Assisted private val baseUrl: FormalBaseUrl?,
     @Assisted private val loginMode: Boolean,
     @Assisted private val avatar: String?,
@@ -65,6 +67,7 @@ class AddBlueskyContentViewModel @Inject constructor(
     private var loggingJob: Job? = null
 
     init {
+        onboardingComponent.clearState()
         launchInViewModel {
             platformRepo.getAllPlatform()
                 .first()
@@ -117,6 +120,7 @@ class AddBlueskyContentViewModel @Inject constructor(
                         saveBlueskyContent(account)
                     }
                     _finishPageFlow.emit(Unit)
+                    onboardingComponent.onboardingSuccess()
                 }
                 .onFailure { t ->
                     _uiState.update { it.copy(logging = false) }

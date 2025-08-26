@@ -7,7 +7,7 @@ import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.author.BlogAuthor

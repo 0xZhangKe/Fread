@@ -61,7 +61,7 @@ import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import org.jetbrains.compose.resources.stringResource
 
 class AddBlueskyContentScreen(
-    private val baseUrl: FormalBaseUrl,
+    private val baseUrl: FormalBaseUrl? = null,
     private val loginMode: Boolean = false,
     private val avatar: String? = null,
     private val displayName: String? = null,

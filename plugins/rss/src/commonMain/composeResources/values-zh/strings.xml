@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="rss_protocol_name">RSS</string>
-
     <string name="rss_source_detail_screen_title">信息源属性</string>
     <string name="rss_source_detail_screen_custom_title">自定义标题</string>
     <string name="rss_source_detail_screen_url">订阅地址</string>

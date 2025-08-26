@@ -7,6 +7,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
 import com.zhangke.fread.bluesky.internal.utils.AtRequestException
 import com.zhangke.fread.common.content.FreadContentRepo
@@ -25,7 +26,8 @@ import me.tatarka.inject.annotations.Inject
 class AddBlueskyContentViewModel @Inject constructor(
     private val loginToBluesky: LoginToBskyUseCase,
     private val contentRepo: FreadContentRepo,
-    @Assisted private val baseUrl: FormalBaseUrl,
+    private val platformRepo: BlueskyPlatformRepo,
+    @Assisted private val baseUrl: FormalBaseUrl?,
     @Assisted private val loginMode: Boolean,
     @Assisted private val avatar: String?,
     @Assisted private val displayName: String?,
@@ -35,7 +37,7 @@ class AddBlueskyContentViewModel @Inject constructor(
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            baseUrl: FormalBaseUrl,
+            baseUrl: FormalBaseUrl?,
             loginMode: Boolean,
             avatar: String?,
             displayName: String?,
@@ -61,6 +63,17 @@ class AddBlueskyContentViewModel @Inject constructor(
     val finishPageFlow: SharedFlow<Unit> = _finishPageFlow.asSharedFlow()
 
     private var loggingJob: Job? = null
+
+    init {
+        launchInViewModel {
+            platformRepo.getAllPlatform()
+                .first()
+                .baseUrl
+                .let { baseUrl ->
+                    _uiState.update { it.copy(hosting = baseUrl.toString()) }
+                }
+        }
+    }
 
     fun onHostingChange(hosting: String) {
         _uiState.update { it.copy(hosting = hosting) }

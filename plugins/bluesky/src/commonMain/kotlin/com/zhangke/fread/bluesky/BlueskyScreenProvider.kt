@@ -7,6 +7,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
 import com.zhangke.fread.bluesky.internal.screen.explorer.ExplorerTab
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPage
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreen
@@ -179,5 +180,10 @@ class BlueskyScreenProvider @Inject constructor(
         platform: BlogPlatform
     ): Screen? {
         return null
+    }
+
+    override fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
+        if (protocol.notBluesky) return null
+        return AddBlueskyContentScreen()
     }
 }

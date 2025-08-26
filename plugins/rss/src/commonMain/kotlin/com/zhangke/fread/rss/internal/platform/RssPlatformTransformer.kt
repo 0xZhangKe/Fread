@@ -1,7 +1,7 @@
 package com.zhangke.fread.rss.internal.platform
 
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.rss.createRssProtocol
+import com.zhangke.fread.status.model.createRssProtocol
 import com.zhangke.fread.rss.internal.model.RssSource
 import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.status.platform.BlogPlatform

@@ -1,6 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.repo.account
 
-import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountDao
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.fread.activitypub.app.internal.db.old.OldActivityPubLoggedAccountEntity

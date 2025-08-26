@@ -17,11 +17,8 @@ import androidx.lifecycle.ViewModelProvider
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.LocalViewModelProviderFactory
 import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
-import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
-import cafe.adriel.voyager.transitions.FadeTransition
-import cafe.adriel.voyager.transitions.SlideTransition
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.zhangke.framework.voyager.FreadScreenTransition

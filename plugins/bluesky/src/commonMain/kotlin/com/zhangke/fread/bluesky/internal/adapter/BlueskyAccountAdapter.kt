@@ -10,7 +10,7 @@ import com.zhangke.framework.architect.json.Empty
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.prettyHandle
-import com.zhangke.fread.bluesky.createBlueskyProtocol
+import com.zhangke.fread.status.model.createBlueskyProtocol
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.bluesky.internal.utils.bskyJson

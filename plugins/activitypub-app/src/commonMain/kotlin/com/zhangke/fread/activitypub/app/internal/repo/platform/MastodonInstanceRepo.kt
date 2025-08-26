@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
 import com.zhangke.framework.architect.http.sharedHttpClient
-import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder

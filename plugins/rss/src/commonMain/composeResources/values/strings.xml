@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="rss_protocol_name">RSS</string>
     <string name="rss_source_detail_screen_title">Source Attribution</string>
     <string name="rss_source_detail_screen_custom_title">Custom Title</string>
     <string name="rss_source_detail_screen_url">Subscription Link</string>

@@ -16,6 +16,27 @@ data class StatusProviderProtocol(
     val name: String,
 ) : PlatformParcelable, PlatformSerializable
 
+fun createActivityPubProtocol(): StatusProviderProtocol {
+    return StatusProviderProtocol(
+        id = ACTIVITY_PUB_PROTOCOL_ID,
+        name = "Mastodon",
+    )
+}
+
+fun createBlueskyProtocol(): StatusProviderProtocol {
+    return StatusProviderProtocol(
+        id = BLUESKY_PROTOCOL_ID,
+        name = "Bluesky",
+    )
+}
+
+fun createRssProtocol(): StatusProviderProtocol {
+    return StatusProviderProtocol(
+        id = RSS_PROTOCOL_ID,
+        name = "RSS",
+    )
+}
+
 val StatusProviderProtocol.isActivityPub: Boolean
     get() = id == ACTIVITY_PUB_PROTOCOL_ID
 

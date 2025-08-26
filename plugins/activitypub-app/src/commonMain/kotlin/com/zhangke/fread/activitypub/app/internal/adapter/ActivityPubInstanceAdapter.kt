@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject

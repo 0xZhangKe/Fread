@@ -5,12 +5,9 @@ import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.activitypub.app.createActivityPubProtocol
-import com.zhangke.fread.activitypub.app.internal.db.old.OldActivityPubLoggedAccountEntity
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.reportToLogger
-import com.zhangke.fread.status.model.LoggedAccountDetail
 import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject
 

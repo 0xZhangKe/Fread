@@ -1,6 +1,7 @@
 package com.zhangke.fread.feeds.pages.manager.add.type
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,12 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.resources.blueskyDescription
@@ -38,6 +44,7 @@ import com.zhangke.fread.common.resources.mixedName
 import com.zhangke.fread.common.resources.rssLogo
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.feeds_select_type_screen_title
+import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
 import org.jetbrains.compose.resources.stringResource
 
 class SelectContentTypeScreen : BaseScreen() {
@@ -47,6 +54,7 @@ class SelectContentTypeScreen : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        val viewModel = getViewModel<SelectContentTypeViewModel>()
         Scaffold(
             topBar = {
                 Toolbar(
@@ -65,20 +73,22 @@ class SelectContentTypeScreen : BaseScreen() {
                 MastodonContentCard(
                     modifier = Modifier.padding(top = 46.dp)
                         .fillMaxWidth(),
-                    onClick = {},
+                    onClick = viewModel::onMastodonClick,
                 )
                 BlueskyContentCard(
                     modifier = Modifier.padding(top = 16.dp)
                         .fillMaxWidth(),
-                    onClick = {},
+                    onClick = viewModel::onBlueskyClick,
                 )
                 MixedContentCard(
                     modifier = Modifier.padding(top = 16.dp)
                         .fillMaxWidth(),
-                    onClick = {},
+                    onClick = { navigator.push(AddMixedFeedsScreen()) },
                 )
             }
         }
+        ConsumeOpenScreenFlow(viewModel.openScreenFlow)
+        ConsumeFlow(viewModel.finishPageFlow) { navigator.pop() }
     }
 
     @Composable
@@ -89,6 +99,7 @@ class SelectContentTypeScreen : BaseScreen() {
         TypeCardContainer(
             modifier = modifier,
             onClick = onClick,
+            cardFrontColor = Color(0xFF5C4DE3),
             logo = {
                 Image(
                     modifier = Modifier.width(160.dp),
@@ -114,6 +125,7 @@ class SelectContentTypeScreen : BaseScreen() {
         TypeCardContainer(
             modifier = modifier,
             onClick = onClick,
+            cardFrontColor = Color(0xFF0285FF),
             logo = {
                 Row(
                     modifier = Modifier,
@@ -150,6 +162,7 @@ class SelectContentTypeScreen : BaseScreen() {
         TypeCardContainer(
             modifier = modifier,
             onClick = onClick,
+            cardFrontColor = MaterialTheme.colorScheme.primary,
             logo = {
                 Row(
                     modifier = Modifier,
@@ -207,6 +220,7 @@ class SelectContentTypeScreen : BaseScreen() {
     @Composable
     private fun TypeCardContainer(
         modifier: Modifier,
+        cardFrontColor: Color,
         onClick: () -> Unit,
         logo: @Composable () -> Unit,
         description: @Composable () -> Unit,
@@ -216,9 +230,14 @@ class SelectContentTypeScreen : BaseScreen() {
                 modifier = Modifier.align(Alignment.Center)
                     .fillMaxWidth(0.6F),
                 onClick = onClick,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                ),
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    modifier = Modifier.background(cardFrontColor.copy(alpha = 0.2F))
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     logo()

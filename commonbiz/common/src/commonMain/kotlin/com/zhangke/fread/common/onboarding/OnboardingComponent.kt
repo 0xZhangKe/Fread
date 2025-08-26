@@ -1,6 +1,5 @@
 package com.zhangke.fread.common.onboarding
 
-import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -14,11 +13,9 @@ class OnboardingComponent @Inject constructor() {
 
     suspend fun onboardingSuccess() {
         _onboardingFinishedFlow.emit(Unit)
-        Log.d("F_TEST") { "onboardingSuccess" }
     }
 
     fun clearState() {
         _onboardingFinishedFlow.resetReplayCache()
-        Log.d("F_TEST") { "reset state" }
     }
 }

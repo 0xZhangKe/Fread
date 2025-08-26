@@ -82,13 +82,13 @@ private fun Project.configureKotlin() {
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
             val warningsAsErrors: String? by project
             allWarningsAsErrors = warningsAsErrors.toBoolean()
+            freeCompilerArgs.add("-Xcontext-parameters")
         }
     }
     kotlin {
         sourceSets.all {
             languageSettings {
                 languageVersion = KotlinVersion.KOTLIN_2_0.version
-                enableLanguageFeature("ContextReceivers")
                 enableLanguageFeature("ExplicitBackingFields")
                 optIn("kotlin.RequiresOptIn")
                 optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")

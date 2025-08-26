@@ -22,9 +22,9 @@ fun <T> ConsumeFlow(
     }
 }
 
-context(ViewModel)
+context(viewModel: ViewModel)
 fun <T> MutableSharedFlow<T>.emitInViewModel(element: T) {
-    launchInViewModel {
+    viewModel.launchInViewModel {
         emit(element)
     }
 }

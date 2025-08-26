@@ -16,6 +16,8 @@
 
 import com.zhangke.fread.configureKotlinAndroid
 import com.zhangke.fread.configurePrintApksTask
+import com.zhangke.fread.kotlin
+import com.zhangke.fread.kotlinCompile
 import com.zhangke.fread.kotlinMultiplatform
 import com.zhangke.fread.libraryComponentsExtension
 import com.zhangke.fread.libraryExtension
@@ -37,6 +39,9 @@ class KotlinMultiplatformLibraryConventionPlugin : Plugin<Project> {
                 configurePrintApksTask(this)
             }
             kotlinMultiplatform {
+                compilerOptions {
+                    freeCompilerArgs.add("-Xcontext-parameters")
+                }
                 androidTarget()
                 iosX64()
                 iosArm64()
@@ -48,6 +53,7 @@ class KotlinMultiplatformLibraryConventionPlugin : Plugin<Project> {
                                 compilerOptions {
                                     // https://youtrack.jetbrains.com/issue/KT-61573
                                     freeCompilerArgs.add("-Xexpect-actual-classes")
+                                    freeCompilerArgs.add("-Xcontext-parameters")
                                 }
                             }
                         }

@@ -17,8 +17,8 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.ISearchEngine
-import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
+import com.zhangke.fread.status.search.SearchedPlatform
 import com.zhangke.fread.status.source.StatusSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -114,47 +114,26 @@ class ActivityPubSearchEngine @Inject constructor(
         return onSearch(searchRepo, platform)
     }
 
-    override suspend fun searchSource(
-        locator: PlatformLocator,
-        query: String,
-    ): Result<List<StatusSource>> {
-        return searchUserSource(locator, query).map {
-            if (it == null) {
-                emptyList()
-            } else {
-                listOf(it)
-            }
-        }
-    }
-
     override suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
-        return searchSource(PlatformLocator(baseUrl = getDefaultBaseUrl()), query)
+        return searchUserSource(PlatformLocator(baseUrl = getDefaultBaseUrl()), query)
     }
 
-    override suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>> {
-        val locator = PlatformLocator(baseUrl = getDefaultBaseUrl())
-        return searchContent(locator = locator, query = query)
-    }
-
-    override suspend fun searchContent(
+    override suspend fun searchPlatform(
         locator: PlatformLocator,
-        query: String,
-    ): Flow<List<SearchContentResult>> {
+        query: String
+    ): Flow<List<SearchedPlatform>>? {
         return flow {
-            searchUserSource(locator, query).getOrNull()
-                ?.let { emit(listOf(SearchContentResult.Source(it))) }
             platformRepo.searchPlatformSnapshotFromLocal(query)
-                .map { SearchContentResult.SearchedPlatformSnapshot(it) }
-                .takeIf { it.isNotEmpty() }
-                ?.let { emit(it) }
+                .map { SearchedPlatform.Snapshot(it) }
+                .let { emit(it) }
             FormalBaseUrl.parse(query)
-                ?.let { platformRepo.getPlatform(it).getOrNull() }
-                ?.let { emit(listOf(SearchContentResult.Platform(it))) }
+                ?.let { platformRepo.getPlatform(it) }
+                ?.onSuccess {
+                    emit(listOf(SearchedPlatform.Platform(it)))
+                }
             platformRepo.searchPlatformFromServer(query)
-                .getOrNull()
-                ?.map { SearchContentResult.SearchedPlatformSnapshot(it) }
-                ?.takeIf { it.isNotEmpty() }
-                ?.let { emit(it) }
+                .map { list -> list.map { SearchedPlatform.Snapshot(it) } }
+                .onSuccess { emit(it) }
         }
     }
 }

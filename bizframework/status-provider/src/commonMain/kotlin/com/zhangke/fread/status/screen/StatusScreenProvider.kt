@@ -157,6 +157,12 @@ class StatusScreenProvider(
     fun getCreatedListScreen(locator: PlatformLocator, platform: BlogPlatform): Screen? {
         return providerList.firstNotNullOfOrNull { it.getCreatedListScreen(locator, platform) }
     }
+
+    fun getAddContentScreen(protocol: StatusProviderProtocol): Screen {
+        return providerList.firstNotNullOf {
+            it.getAddContentScreen(protocol)
+        }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -232,4 +238,8 @@ interface IStatusScreenProvider {
     fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab?
 
     fun getCreatedListScreen(locator: PlatformLocator, platform: BlogPlatform): Screen?
+
+    fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
+        return null
+    }
 }

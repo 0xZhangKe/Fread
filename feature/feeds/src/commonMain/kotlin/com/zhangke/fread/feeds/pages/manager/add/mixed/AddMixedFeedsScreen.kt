@@ -37,8 +37,9 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalToastHelper
+import com.zhangke.fread.commonbiz.add_content_success_snackbar
 import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.add_content_success_snackbar
+import com.zhangke.fread.commonbiz.Res as CommonRes
 import com.zhangke.fread.feeds.add_feeds_page_feeds_empty
 import com.zhangke.fread.feeds.add_feeds_page_feeds_name_hint
 import com.zhangke.fread.feeds.add_feeds_page_feeds_name_label
@@ -85,7 +86,7 @@ internal class AddMixedFeedsScreen(
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.addContentSuccessFlow) {
-            toastHelper.showToast(getString(Res.string.add_content_success_snackbar))
+            toastHelper.showToast(getString(CommonRes.string.add_content_success_snackbar))
             navigator.pop()
         }
     }
@@ -171,6 +172,7 @@ internal class AddMixedFeedsScreen(
                             RemovableStatusSource(
                                 modifier = Modifier.fillMaxWidth(),
                                 source = item,
+                                onClick = {},
                                 onRemoveClick = {
                                     onRemoveSourceClick(item)
                                 },

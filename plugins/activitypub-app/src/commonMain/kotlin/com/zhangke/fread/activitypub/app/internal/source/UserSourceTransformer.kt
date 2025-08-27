@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.source
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.prettyHandle
-import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer

@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
 import com.zhangke.framework.architect.json.globalJson
-import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.utils.MastodonHelper
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import kotlinx.coroutines.Dispatchers

@@ -8,6 +8,7 @@ import com.zhangke.fread.activitypub.app.ActivityPubUrlInterceptor
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.add.select.SelectPlatformViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.timeline.ActivityPubTimelineContainerViewModel
@@ -198,6 +199,12 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
         return AddActivityPubContentViewModel::class to AddActivityPubContentViewModel.Factory { role ->
             creator(role)
         }
+    }
+
+    @IntoMap
+    @Provides
+    fun provideSelectPlatformViewModel(creator: () -> SelectPlatformViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return SelectPlatformViewModel::class to creator
     }
 
     @IntoMap

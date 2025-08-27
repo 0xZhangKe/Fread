@@ -44,6 +44,7 @@ class SearchBarViewModel @Inject constructor(
                 it.copy(
                     locator = locator,
                     query = "",
+                    account = value,
                     resultList = emptyList(),
                 )
             }
@@ -64,6 +65,7 @@ class SearchBarViewModel @Inject constructor(
         SearchBarUiState(
             locator = locator,
             query = "",
+            account = null,
             resultList = emptyList(),
         )
     )

@@ -56,12 +56,16 @@ import com.zhangke.fread.bluesky.bsky_add_content_password
 import com.zhangke.fread.bluesky.bsky_add_content_title
 import com.zhangke.fread.bluesky.bsky_add_content_user_name
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.LocalToastHelper
+import com.zhangke.fread.commonbiz.add_content_success_snackbar
 import com.zhangke.fread.commonbiz.login
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import com.zhangke.fread.commonbiz.Res as CommonRes
 
 class AddBlueskyContentScreen(
-    private val baseUrl: FormalBaseUrl,
+    private val baseUrl: FormalBaseUrl? = null,
     private val loginMode: Boolean = false,
     private val avatar: String? = null,
     private val displayName: String? = null,
@@ -74,6 +78,7 @@ class AddBlueskyContentScreen(
     @Composable
     override fun Content() {
         super.Content()
+        val toastHelper = LocalToastHelper.current
         val navigator = LocalNavigator.currentOrThrow
         val snackBarHostState = rememberSnackbarHostState()
         val viewModel =
@@ -93,7 +98,8 @@ class AddBlueskyContentScreen(
         )
         LoadingDialog(loading = uiState.logging, onDismissRequest = viewModel::onCancelLogin)
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessage)
-        ConsumeFlow(viewModel.finishPageFlow) {
+        ConsumeFlow(viewModel.loginSuccessFlow) {
+            toastHelper.showToast(getString(CommonRes.string.add_content_success_snackbar))
             navigator.pop()
         }
     }

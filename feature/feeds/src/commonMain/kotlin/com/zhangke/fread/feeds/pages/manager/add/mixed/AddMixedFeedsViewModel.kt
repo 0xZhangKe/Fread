@@ -9,6 +9,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.onboarding.OnboardingComponent
 import com.zhangke.fread.commonbiz.add_feeds_page_empty_name_exist
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.add_feeds_page_empty_name_tips
@@ -32,6 +33,7 @@ import kotlin.uuid.Uuid
 class AddMixedFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val contentRepo: FreadContentRepo,
+    private val onboardingComponent: OnboardingComponent,
     @Assisted private val statusSource: StatusSource? = null
 ) : ViewModel() {
 
@@ -52,6 +54,7 @@ class AddMixedFeedsViewModel @Inject constructor(
     val addContentSuccessFlow: SharedFlow<Unit> get() = _addContentSuccessFlow
 
     init {
+        onboardingComponent.clearState()
         launchInViewModel {
             val initAccountList = statusProvider.accountManager.getAllLoggedAccount()
             statusProvider.accountManager
@@ -126,6 +129,7 @@ class AddMixedFeedsViewModel @Inject constructor(
             )
             contentRepo.insertContent(contentConfig)
             _addContentSuccessFlow.emit(Unit)
+            onboardingComponent.onboardingSuccess()
         }
     }
 

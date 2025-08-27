@@ -6,6 +6,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
+import com.zhangke.fread.activitypub.app.internal.screen.add.select.SelectPlatformScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
 import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
@@ -195,5 +196,10 @@ class ActivityPubScreenProvider @Inject constructor(
         return CreatedListsScreen(
             locator = locator,
         )
+    }
+
+    override fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
+        if (protocol.notActivityPub) return null
+        return SelectPlatformScreen()
     }
 }

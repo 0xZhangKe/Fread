@@ -14,11 +14,8 @@ import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.search.ISearchEngine
-import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 class RssSearchEngine @Inject constructor(
@@ -80,39 +77,6 @@ class RssSearchEngine @Inject constructor(
                 listOf(rssSourceTransformer.createSource(uriInsight, source))
             }
         )
-    }
-
-    override suspend fun searchSource(
-        locator: PlatformLocator,
-        query: String
-    ): Result<List<StatusSource>> {
-        return searchSourceNoToken(query)
-    }
-
-    override suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>> {
-        return flow {
-            val list = queryWithChannelByUrl(
-                query = query,
-                defaultResult = null,
-                block = { source, uriInsight ->
-                    rssSourceTransformer.createSource(uriInsight, source)
-                }
-            ).getOrNull().let {
-                if (it == null) {
-                    emptyList()
-                } else {
-                    listOf(SearchContentResult.Source(it))
-                }
-            }
-            emit(list)
-        }
-    }
-
-    override suspend fun searchContent(
-        locator: PlatformLocator,
-        query: String,
-    ): Flow<List<SearchContentResult>> {
-        return searchContentNoToken(query)
     }
 
     private suspend fun searchAuthorByUrl(query: String): Result<BlogAuthor?> {

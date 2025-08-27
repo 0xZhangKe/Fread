@@ -9,7 +9,7 @@ import com.zhangke.fread.feeds.FeedsScreenVisitor
 import com.zhangke.fread.feeds.pages.home.ContentHomeViewModel
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentViewModel
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsViewModel
-import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsViewModel
+import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeViewModel
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentViewModel
 import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsViewModel
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddViewModel
@@ -41,12 +41,6 @@ interface FeedsComponent {
 
     @IntoMap
     @Provides
-    fun providePreAddFeedsViewModel(creator: () -> PreAddFeedsViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return PreAddFeedsViewModel::class to creator
-    }
-
-    @IntoMap
-    @Provides
     fun provideEditMixedContentViewModel(creator: (String) -> EditMixedContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return EditMixedContentViewModel::class to EditMixedContentViewModel.Factory { configId ->
             creator(configId)
@@ -63,6 +57,12 @@ interface FeedsComponent {
     @Provides
     fun provideSearchSourceForAddViewModel(creator: () -> SearchSourceForAddViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return SearchSourceForAddViewModel::class to creator
+    }
+
+    @IntoMap
+    @Provides
+    fun provideSelectContentTypeViewModel(creator: () -> SelectContentTypeViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return SelectContentTypeViewModel::class to creator
     }
 
     @Provides

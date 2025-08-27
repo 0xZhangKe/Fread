@@ -37,8 +37,7 @@
 
     <string name="add_feeds_choose_auth_dialog_title">请选择要登录的服务器</string>
 
-    <string name="add_content_success_snackbar">添加成功</string>
-
+    <string name="search_feeds_title">搜索</string>
     <string name="search_feeds_title_hint">请输入感兴趣的内容</string>
 
     <string name="feeds_select_account_for_post_status">请选择一个账号</string>
@@ -52,4 +51,7 @@
     <string name="feeds_import_back_dialog_message">确定要退出吗？</string>
 
     <string name="feeds_delete_confirm_content">确定要删除吗？</string>
+
+    <string name="feeds_select_type_screen_title">请选择内容类型</string>
+    <string name="feeds_select_type_screen_content">请选择您要添加的内容类型</string>
 </resources>

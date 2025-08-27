@@ -19,8 +19,6 @@ import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.supervisorScope
 import me.tatarka.inject.annotations.Inject
 
@@ -99,16 +97,9 @@ class BlueskySearchEngine @Inject constructor(
     }
 
     override suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
-        return searchSource(getDefaultPlatformLocator(), query)
-    }
-
-    override suspend fun searchSource(
-        locator: PlatformLocator,
-        query: String,
-    ): Result<List<StatusSource>> {
-        val client = clientManager.getClient(locator)
+        val client = clientManager.getClient(getDefaultPlatformLocator())
         val identifier = getAtIdentifier(query)
-            ?: return client.searchActorsCatching(SearchActorsQueryParams(q = query))
+            ?: return client.searchActorsCatching(SearchActorsQueryParams(q = query, limit = 10))
                 .map { result ->
                     result.actors.map { accountAdapter.createSource(it) }
                 }
@@ -116,38 +107,10 @@ class BlueskySearchEngine @Inject constructor(
             .map { profile -> listOf(accountAdapter.createSource(profile)) }
     }
 
-    override suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>> {
-        val locator = getDefaultPlatformLocator()
-        return searchContent(locator, query)
-    }
-
     private suspend fun getDefaultPlatformLocator(): PlatformLocator {
         val baseUrl = accountManager.getAllAccount().firstOrNull()?.platform?.baseUrl
             ?: blueskyPlatformRepo.getAllPlatform().first().baseUrl
         return PlatformLocator(baseUrl = baseUrl)
-    }
-
-    override suspend fun searchContent(
-        locator: PlatformLocator,
-        query: String,
-    ): Flow<List<SearchContentResult>> {
-        return flow {
-            blueskyPlatformRepo.getAllPlatform()
-                .filter { it.compareWithQuery(query) }
-                .map { it.toContentResult() }
-                .let { emit(it) }
-            searchSource(locator, query = query)
-                .onSuccess { list ->
-                    emit(list.map { SearchContentResult.Source(it) })
-                }
-            clientManager.getClient(locator)
-                .searchActorsCatching(SearchActorsQueryParams(q = query))
-                .map { result ->
-                    result.actors.map { accountAdapter.createSource(it) }
-                }.onSuccess { list ->
-                    emit(list.map { SearchContentResult.Source(it) })
-                }
-        }
     }
 
     private fun BlogPlatform.compareWithQuery(query: String): Boolean {

@@ -7,8 +7,6 @@
 
     <string name="activity_pub_public_timeline">Public</string>
 
-    <string name="activity_pub_protocol_name">Mastodon</string>
-
     <string name="activity_pub_instance_detail_language_label">Language: %1$s</string>
     <string name="activity_pub_instance_detail_active_month_label">Active month: %1$s</string>
 
@@ -25,6 +23,9 @@
 
     <string name="input_media_desc_page_title">Image description text</string>
     <string name="input_media_desc_input_hint">Please input image description text</string>
+
+    <string name="activity_pub_select_platform_title">Choose a instance</string>
+    <string name="activity_pub_select_platform_text_hint">Enter instance name or URL</string>
 
     <string name="post_status_page_title">New Blog</string>
     <string name="post_screen_input_hint">Please input your blog</string>

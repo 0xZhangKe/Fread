@@ -7,8 +7,6 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.utils.collect
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 
 class SearchEngine(
     private val engineList: List<ISearchEngine>,
@@ -46,23 +44,11 @@ class SearchEngine(
         return engineList.map { it.searchSourceNoToken(query.trim()) }.collect()
     }
 
-    suspend fun searchSource(locator: PlatformLocator, query: String): Result<List<StatusSource>> {
-        return engineList.map { it.searchSource(locator, query.trim()) }.collect()
-    }
-
-    suspend fun searchContentNoToken(query: String): Flow<Pair<String, List<SearchContentResult>>> {
-        return engineList.map { it.searchContentNoToken(query) }
-            .merge()
-            .map { query to it }
-    }
-
-    suspend fun searchContent(
+    suspend fun searchPlatform(
         locator: PlatformLocator,
         query: String,
-    ): Flow<Pair<String, List<SearchContentResult>>> {
-        return engineList.map { it.searchContent(locator, query) }
-            .merge()
-            .map { query to it }
+    ): Flow<List<SearchedPlatform>> {
+        return engineList.firstNotNullOf { it.searchPlatform(locator, query) }
     }
 }
 
@@ -88,14 +74,12 @@ interface ISearchEngine {
         offset: Int?,
     ): Result<List<BlogAuthor>>
 
-    suspend fun searchSource(locator: PlatformLocator, query: String): Result<List<StatusSource>>
-
     suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>>
 
-    suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>>
-
-    suspend fun searchContent(
+    suspend fun searchPlatform(
         locator: PlatformLocator,
-        query: String
-    ): Flow<List<SearchContentResult>>
+        query: String,
+    ): Flow<List<SearchedPlatform>>? {
+        return null
+    }
 }

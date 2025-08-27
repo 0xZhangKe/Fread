@@ -22,9 +22,12 @@ import com.zhangke.fread.explore.screens.search.hashtag.SearchedHashtagTab
 import com.zhangke.fread.explore.screens.search.platform.SearchedPlatformTab
 import com.zhangke.fread.explore.screens.search.status.SearchedStatusTab
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.model.isActivityPub
 
 class SearchScreen(
     private val locator: PlatformLocator,
+    private val protocol: StatusProviderProtocol,
     private val query: String,
 ) : BaseScreen() {
 
@@ -52,15 +55,17 @@ class SearchScreen(
             },
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
-            }
+            },
         ) { paddingValues ->
-            val tabs = remember {
-                listOf(
-                    SearchedAuthorTab(locator, query),
-                    SearchedStatusTab(locator, query),
-                    SearchedPlatformTab(locator, query),
-                    SearchedHashtagTab(locator, query),
-                )
+            val tabs = remember(locator, protocol, query) {
+                buildList {
+                    add(SearchedAuthorTab(locator, query))
+                    add(SearchedStatusTab(locator, query))
+                    if (protocol.isActivityPub) {
+                        add(SearchedPlatformTab(locator, query))
+                    }
+                    add(SearchedHashtagTab(locator, query))
+                }
             }
             Column(
                 modifier = Modifier

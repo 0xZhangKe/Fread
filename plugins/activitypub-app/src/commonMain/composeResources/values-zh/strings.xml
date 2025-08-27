@@ -7,8 +7,6 @@
 
     <string name="activity_pub_public_timeline">跨站</string>
 
-    <string name="activity_pub_protocol_name">长毛象</string>
-
     <string name="activity_pub_instance_detail_language_label">语言: %1$s</string>
     <string name="activity_pub_instance_detail_active_month_label">月活: %1$s</string>
 
@@ -88,6 +86,9 @@
     <string name="activity_pub_filters_list_page_title">过滤器</string>
     <string name="activity_pub_filters_active">生效中</string>
     <string name="activity_pub_filters_expired">已失效</string>
+
+    <string name="activity_pub_select_platform_title">选择一个实例</string>
+    <string name="activity_pub_select_platform_text_hint">请输入实例名或者实例URL</string>
 
     <string name="activity_pub_filter_edit_title">编辑过滤器</string>
     <string name="activity_pub_filter_edit_input_title_label">标题</string>

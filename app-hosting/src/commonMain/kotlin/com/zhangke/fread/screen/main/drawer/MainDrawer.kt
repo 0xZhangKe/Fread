@@ -47,7 +47,7 @@ import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.feeds.pages.home.EmptyContent
-import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
+import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreen
 import com.zhangke.fread.hosting.Res
 import com.zhangke.fread.hosting.main_drawer_donate
 import com.zhangke.fread.hosting.main_drawer_settings
@@ -85,7 +85,7 @@ fun Screen.MainDrawer(
         },
         onAddContentClick = {
             onDismissRequest()
-            navigator.push(PreAddFeedsScreen())
+            navigator.push(SelectContentTypeScreen())
         },
         onMove = viewModel::onContentConfigMove,
         onEditClick = {

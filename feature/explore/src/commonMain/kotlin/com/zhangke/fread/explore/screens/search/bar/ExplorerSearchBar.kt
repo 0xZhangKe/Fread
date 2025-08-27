@@ -109,8 +109,10 @@ fun Screen.ExplorerSearchBar(
                 query = uiState.query,
                 onQueryChange = viewModel::onSearchQueryChanged,
                 onSearch = {
-                    uiState.locator?.let {
-                        navigator.push(SearchScreen(it, uiState.query))
+                    val locator = uiState.locator
+                    val protocol = uiState.account?.platform?.protocol
+                    if (locator != null && protocol != null) {
+                        navigator.push(SearchScreen(locator, protocol, uiState.query))
                     }
                 },
                 expanded = active,

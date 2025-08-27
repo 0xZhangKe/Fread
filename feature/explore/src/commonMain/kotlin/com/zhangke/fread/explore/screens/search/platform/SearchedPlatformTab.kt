@@ -18,8 +18,8 @@ import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.explore.Res
 import com.zhangke.fread.explore.explorer_search_tab_title_server
 import com.zhangke.fread.status.model.PlatformLocator
-import com.zhangke.fread.status.search.SearchContentResult
-import com.zhangke.fread.status.ui.source.SearchContentResultUi
+import com.zhangke.fread.status.search.SearchedPlatform
+import com.zhangke.fread.status.ui.source.SearchPlatformResultUi
 import org.jetbrains.compose.resources.stringResource
 
 internal class SearchedPlatformTab(
@@ -54,7 +54,7 @@ internal class SearchedPlatformTab(
     @Composable
     private fun SearchedSourcesContent(
         uiState: SearchedPlatformUiState,
-        onContentClick: (SearchContentResult) -> Unit,
+        onContentClick: (SearchedPlatform) -> Unit,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (uiState.searching && uiState.searchedList.isEmpty()) {
@@ -62,7 +62,7 @@ internal class SearchedPlatformTab(
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(uiState.searchedList) {
-                        SearchContentResultUi(content = it, onContentClick = onContentClick)
+                        SearchPlatformResultUi(searchedResult = it, onContentClick = onContentClick)
                     }
                 }
             }

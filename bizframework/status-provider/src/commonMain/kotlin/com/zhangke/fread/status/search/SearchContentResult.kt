@@ -9,7 +9,7 @@ sealed interface SearchContentResult {
 
     data class SearchedPlatformSnapshot(val platform: PlatformSnapshot) : SearchContentResult
 
-    data class Platform(val platform: BlogPlatform): SearchContentResult
+    data class Platform(val platform: BlogPlatform) : SearchContentResult
 
     data class Source(val source: StatusSource) : SearchContentResult
 
@@ -19,4 +19,11 @@ sealed interface SearchContentResult {
             is Source -> source.protocol
             is Platform -> platform.protocol
         }
+}
+
+sealed interface SearchedPlatform {
+
+    data class Snapshot(val snapshot: PlatformSnapshot) : SearchedPlatform
+
+    data class Platform(val platform: BlogPlatform) : SearchedPlatform
 }

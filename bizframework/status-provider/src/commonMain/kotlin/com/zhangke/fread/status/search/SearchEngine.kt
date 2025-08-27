@@ -7,8 +7,6 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.utils.collect
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 
 class SearchEngine(
     private val engineList: List<ISearchEngine>,
@@ -45,6 +43,13 @@ class SearchEngine(
     suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
         return engineList.map { it.searchSourceNoToken(query.trim()) }.collect()
     }
+
+    suspend fun searchPlatform(
+        locator: PlatformLocator,
+        query: String,
+    ): Flow<List<SearchedPlatform>> {
+        return engineList.firstNotNullOf { it.searchPlatform(locator, query) }
+    }
 }
 
 interface ISearchEngine {
@@ -70,4 +75,11 @@ interface ISearchEngine {
     ): Result<List<BlogAuthor>>
 
     suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>>
+
+    suspend fun searchPlatform(
+        locator: PlatformLocator,
+        query: String,
+    ): Flow<List<SearchedPlatform>>? {
+        return null
+    }
 }

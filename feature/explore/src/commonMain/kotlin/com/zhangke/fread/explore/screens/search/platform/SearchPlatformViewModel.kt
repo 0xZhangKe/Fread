@@ -8,13 +8,12 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
-import com.zhangke.fread.status.search.SearchContentResult
+import com.zhangke.fread.status.search.SearchedPlatform
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -37,31 +36,35 @@ open class SearchPlatformViewModel @Inject constructor(
 
     init {
         launchInViewModel {
-//            _uiState.update { it.copy(searching = true) }
-//            val list = mutableListOf<SearchContentResult>()
-//            statusProvider.searchEngine
-//                .searchContent(locator, query)
-//                .map { it.second }
-//                .collect { results ->
-//                    list += results.filter {
-//                        it !is SearchContentResult.Source
-//                    }
-//                }
-//            _uiState.update { it.copy(searching = false, searchedList = list) }
+            _uiState.update { it.copy(searching = true) }
+            statusProvider.searchEngine
+                .searchPlatform(locator, query.trim())
+                .collect { results ->
+                    _uiState.update {
+                        it.copy(
+                            searching = false,
+                            searchedList = it.searchedList + results,
+                        )
+                    }
+                }
         }
     }
 
-    fun onContentClick(result: SearchContentResult) {
-        val baseUrl = if (result is SearchContentResult.Platform) {
-            result.platform.baseUrl
-        } else if (result is SearchContentResult.SearchedPlatformSnapshot) {
-            FormalBaseUrl.parse(result.platform.domain) ?: return
-        } else {
-            return
+    fun onContentClick(result: SearchedPlatform) {
+        val baseUrl = when (result) {
+            is SearchedPlatform.Platform -> result.platform.baseUrl
+
+            is SearchedPlatform.Snapshot -> {
+                FormalBaseUrl.parse(result.snapshot.domain) ?: return
+            }
+        }
+        val protocol = when (result) {
+            is SearchedPlatform.Platform -> result.platform.protocol
+            is SearchedPlatform.Snapshot -> result.snapshot.protocol
         }
         statusProvider.screenProvider.getInstanceDetailScreen(
             baseUrl = baseUrl,
-            protocol = result.protocol,
+            protocol = protocol,
         )?.let { KRouter.route<Screen>(it) }
             ?.let { _openScreenFlow.emitInViewModel(it) }
     }

@@ -1,9 +1,9 @@
 package com.zhangke.fread.explore.screens.search.platform
 
-import com.zhangke.fread.status.search.SearchContentResult
+import com.zhangke.fread.status.search.SearchedPlatform
 
 data class SearchedPlatformUiState(
-    val searchedList: List<SearchContentResult>,
+    val searchedList: List<SearchedPlatform>,
     val searching: Boolean,
 ){
 

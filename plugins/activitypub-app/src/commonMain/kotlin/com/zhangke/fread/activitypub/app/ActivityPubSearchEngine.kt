@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app
 
 import com.zhangke.activitypub.api.SearchRepo
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubSearchAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -17,7 +18,10 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchResult
+import com.zhangke.fread.status.search.SearchedPlatform
 import com.zhangke.fread.status.source.StatusSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubSearchEngine @Inject constructor(
@@ -112,5 +116,24 @@ class ActivityPubSearchEngine @Inject constructor(
 
     override suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
         return searchUserSource(PlatformLocator(baseUrl = getDefaultBaseUrl()), query)
+    }
+
+    override suspend fun searchPlatform(
+        locator: PlatformLocator,
+        query: String
+    ): Flow<List<SearchedPlatform>>? {
+        return flow {
+            platformRepo.searchPlatformSnapshotFromLocal(query)
+                .map { SearchedPlatform.Snapshot(it) }
+                .let { emit(it) }
+            FormalBaseUrl.parse(query)
+                ?.let { platformRepo.getPlatform(it) }
+                ?.onSuccess {
+                    emit(listOf(SearchedPlatform.Platform(it)))
+                }
+            platformRepo.searchPlatformFromServer(query)
+                .map { list -> list.map { SearchedPlatform.Snapshot(it) } }
+                .onSuccess { emit(it) }
+        }
     }
 }

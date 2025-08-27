@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +29,6 @@ import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.add_content_title
 import com.zhangke.fread.commonbiz.content_add_success
 import com.zhangke.fread.commonbiz.emoji_celebrate
-import com.zhangke.fread.commonbiz.login
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.source.BlogPlatformCard
 import kotlinx.coroutines.delay
@@ -82,14 +80,9 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
                         .align(Alignment.CenterHorizontally)
                         .fillMaxWidth(),
                     platform = platform,
+                    onLoginClick = onLoginClick,
                 )
                 Spacer(modifier = Modifier.padding(top = 16.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = onLoginClick,
-                ) {
-                    Text(text = stringResource(Res.string.login))
-                }
             }
         }
     }
@@ -128,10 +121,12 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
     private fun PlatformPreview(
         modifier: Modifier,
         platform: BlogPlatform,
+        onLoginClick: () -> Unit,
     ) {
         BlogPlatformCard(
             modifier = modifier,
             platform = platform,
+            onLoginClick = onLoginClick,
         )
     }
 }

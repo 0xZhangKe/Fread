@@ -32,6 +32,9 @@
     <string name="profile_setting_font_size_large">Large</string>
     <string name="profile_setting_immersive_nav_bar">Immersive Navigation Bar</string>
     <string name="profile_setting_immersive_nav_bar_desc">The bottom navigation bar hides automatically when scrolling on the homepage.</string>
+    <string name="profile_setting_timeline_position">Default timeline position</string>
+    <string name="profile_setting_timeline_position_last_read">Where I left off</string>
+    <string name="profile_setting_timeline_position_newest">Latest posts</string>
 
     <string name="profile_about_version">Version:&#160;</string>
     <string name="profile_about_website">Website:&#160;</string>

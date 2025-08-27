@@ -2,8 +2,10 @@ package com.zhangke.fread.profile.screen.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
+import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.handler.TextHandler
 import com.zhangke.fread.common.update.AppUpdateManager
@@ -29,15 +31,23 @@ class SettingScreenModel @Inject constructor(
             contentSize = StatusContentSize.default(),
             alwaysShowSensitiveContent = false,
             haveNewAppVersion = false,
+            timelineDefaultPosition = TimelineDefaultPosition.NEWEST,
         )
     )
     val uiState = _uiState.asStateFlow()
 
     init {
+        launchInViewModel {
+            freadConfigManager.getTimelineDefaultPosition()
+                .let { position ->
+                    _uiState.update { it.copy(timelineDefaultPosition = position) }
+                }
+        }
         viewModelScope.launch {
-            dayNightHelper.dayNightModeFlow.collect {
-                _uiState.value = _uiState.value.copy(dayNightMode = it)
-            }
+            dayNightHelper.dayNightModeFlow
+                .collect { dayNightMode ->
+                    _uiState.update { it.copy(dayNightMode = dayNightMode) }
+                }
         }
         viewModelScope.launch {
             freadConfigManager.statusConfigFlow
@@ -83,6 +93,13 @@ class SettingScreenModel @Inject constructor(
     fun onImmersiveBarChanged(on: Boolean) {
         viewModelScope.launch {
             freadConfigManager.updateImmersiveNavBar(on)
+        }
+    }
+
+    fun onTimelineDefaultPositionChanged(position: TimelineDefaultPosition) {
+        viewModelScope.launch {
+            freadConfigManager.updateTimelineDefaultPosition(position)
+            _uiState.update { it.copy(timelineDefaultPosition = position) }
         }
     }
 

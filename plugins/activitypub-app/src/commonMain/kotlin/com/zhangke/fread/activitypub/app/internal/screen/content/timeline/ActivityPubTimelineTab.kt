@@ -30,7 +30,7 @@ import com.zhangke.fread.commonbiz.shared.composable.ObserveForFeedsConnection
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
-import com.zhangke.fread.status.ui.common.ObserveMinReadItem
+import com.zhangke.fread.status.ui.common.ObserveScrollStopedPosition
 
 internal class ActivityPubTimelineTab(
     private val locator: PlatformLocator,
@@ -67,7 +67,7 @@ internal class ActivityPubTimelineTab(
             onLoadPrevious = viewModel::onLoadPreviousPage,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onReadMinIndex = viewModel::updateMaxReadStatus,
+            onReadPositionIndexChanged = viewModel::updateMaxReadStatus,
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
@@ -82,7 +82,7 @@ internal class ActivityPubTimelineTab(
         onLoadPrevious: () -> Unit,
         onLoadMore: () -> Unit,
         onRefresh: () -> Unit,
-        onReadMinIndex: (ActivityPubTimelineItem) -> Unit,
+        onReadPositionIndexChanged: (ActivityPubTimelineItem) -> Unit,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (uiState.items.isEmpty()) {
@@ -100,10 +100,11 @@ internal class ActivityPubTimelineTab(
                         initialFirstVisibleItemIndex = uiState.initialShowIndex,
                     )
                     val lazyListState = state.lazyListState
-                    ObserveMinReadItem(lazyListState) {
-                        uiState.items.getOrNull(it)?.let { item ->
-                            onReadMinIndex(item)
-                        }
+                    ObserveScrollStopedPosition(lazyListState) {
+                        uiState.items.getOrNull(it)
+                            ?.let { item ->
+                                onReadPositionIndexChanged(item)
+                            }
                     }
                     ObserveForFeedsConnection(
                         listState = lazyListState,

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.filled.ViewTimeline
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.DropdownMenu
@@ -49,6 +50,7 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.common.config.StatusContentSize
+import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
@@ -72,6 +74,8 @@ import com.zhangke.fread.feature.profile.profile_setting_font_size
 import com.zhangke.fread.feature.profile.profile_setting_font_size_large
 import com.zhangke.fread.feature.profile.profile_setting_font_size_medium
 import com.zhangke.fread.feature.profile.profile_setting_font_size_small
+import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar
+import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar_desc
 import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play
 import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play_subtitle
 import com.zhangke.fread.feature.profile.profile_setting_language_en
@@ -84,8 +88,9 @@ import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_de
 import com.zhangke.fread.feature.profile.profile_setting_open_source_title
 import com.zhangke.fread.feature.profile.profile_setting_ratting
 import com.zhangke.fread.feature.profile.profile_setting_ratting_desc
-import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar
-import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar_desc
+import com.zhangke.fread.feature.profile.profile_setting_timeline_position
+import com.zhangke.fread.feature.profile.profile_setting_timeline_position_last_read
+import com.zhangke.fread.feature.profile.profile_setting_timeline_position_newest
 import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
@@ -142,6 +147,7 @@ class SettingScreen : BaseScreen() {
             },
             onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
             onImmersiveBarChanged = viewModel::onImmersiveBarChanged,
+            onTimelineDefaultPositionChanged = viewModel::onTimelineDefaultPositionChanged,
         )
     }
 
@@ -159,6 +165,7 @@ class SettingScreen : BaseScreen() {
         onDonateClick: () -> Unit,
         onContentSizeChanged: (StatusContentSize) -> Unit,
         onAlwaysShowSensitive: (Boolean) -> Unit,
+        onTimelineDefaultPositionChanged: (TimelineDefaultPosition) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -185,16 +192,20 @@ class SettingScreen : BaseScreen() {
                     immersive = uiState.immersiveNavBar,
                     onImmersiveBarChanged = onImmersiveBarChanged,
                 )
+                ContentSizeItem(
+                    contentSize = uiState.contentSize,
+                    onContentSizeChanged = onContentSizeChanged,
+                )
+                TimelinePositionItem(
+                    position = uiState.timelineDefaultPosition,
+                    onPositionChanged = onTimelineDefaultPositionChanged,
+                )
                 DarNightItem(
                     uiState = uiState,
                     onDayNightModeClick = onDayNightModeClick,
                 )
                 LanguageItem(
                     onLanguageClick = onLanguageClick,
-                )
-                ContentSizeItem(
-                    contentSize = uiState.contentSize,
-                    onContentSizeChanged = onContentSizeChanged,
                 )
                 FeedbackItem()
                 SettingItem(
@@ -307,6 +318,25 @@ class SettingScreen : BaseScreen() {
             onItemClick = {
                 onContentSizeChanged(StatusContentSize.entries[it])
             }
+        )
+    }
+
+    @Composable
+    private fun TimelinePositionItem(
+        position: TimelineDefaultPosition,
+        onPositionChanged: (TimelineDefaultPosition) -> Unit,
+    ) {
+        SettingItemWithPopup(
+            icon = Icons.Default.ViewTimeline,
+            title = stringResource(Res.string.profile_setting_timeline_position),
+            subtitle = position.displayName,
+            dropDownItemCount = TimelineDefaultPosition.entries.size,
+            dropDownItemText = {
+                TimelineDefaultPosition.entries[it].displayName
+            },
+            onItemClick = {
+                onPositionChanged(TimelineDefaultPosition.entries[it])
+            },
         )
     }
 
@@ -519,5 +549,12 @@ class SettingScreen : BaseScreen() {
             StatusContentSize.SMALL -> stringResource(Res.string.profile_setting_font_size_small)
             StatusContentSize.MEDIUM -> stringResource(Res.string.profile_setting_font_size_medium)
             StatusContentSize.LARGE -> stringResource(Res.string.profile_setting_font_size_large)
+        }
+
+    private val TimelineDefaultPosition.displayName: String
+        @Composable
+        get() = when (this) {
+            TimelineDefaultPosition.NEWEST -> stringResource(Res.string.profile_setting_timeline_position_newest)
+            TimelineDefaultPosition.LAST_READ -> stringResource(Res.string.profile_setting_timeline_position_last_read)
         }
 }

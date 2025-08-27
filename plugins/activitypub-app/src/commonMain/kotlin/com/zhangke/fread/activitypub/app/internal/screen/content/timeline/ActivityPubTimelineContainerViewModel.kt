@@ -8,6 +8,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceT
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
@@ -24,6 +25,7 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
     private val timelineRepo: ActivityPubTimelineStatusRepo,
     private val accountManager: ActivityPubAccountManager,
     private val statusReadStateRepo: ActivityPubStatusReadStateRepo,
+    private val freadConfigManager: FreadConfigManager,
 ) : ContainerViewModel<ActivityPubTimelineViewModel, ActivityPubTimelineContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubTimelineViewModel {
@@ -33,6 +35,7 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
             statusUiStateAdapter = statusUiStateAdapter,
             statusAdapter = statusAdapter,
             loggedAccountProvider = loggedAccountProvider,
+            freadConfigManager = freadConfigManager,
             refactorToNewStatus = refactorToNewStatus,
             statusReadStateRepo = statusReadStateRepo,
             accountManager = accountManager,

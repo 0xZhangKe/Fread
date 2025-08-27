@@ -32,6 +32,9 @@
     <string name="profile_setting_font_size_large">大</string>
     <string name="profile_setting_immersive_nav_bar">沉浸式导航栏</string>
     <string name="profile_setting_immersive_nav_bar_desc">打开后，首页滑动时会隐藏底部的导航栏。</string>
+    <string name="profile_setting_timeline_position">首页的时间线默认位置</string>
+    <string name="profile_setting_timeline_position_last_read">上次阅读位置</string>
+    <string name="profile_setting_timeline_position_newest">最新位置</string>
 
     <string name="profile_about_version">版本：</string>
     <string name="profile_about_website">官网：</string>

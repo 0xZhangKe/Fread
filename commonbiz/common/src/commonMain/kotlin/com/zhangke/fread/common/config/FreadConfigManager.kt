@@ -24,6 +24,7 @@ class FreadConfigManager @Inject constructor(
         private const val LOCAL_KEY_IGNORE_UPDATE_VERSION = "ignore_update_version"
         private const val LOCAL_KEY_BSKY_PUBLISH_LAN = "bsky_publish_lan"
         private const val LOCAL_KEY_LAST_SELECTED_ACCOUNT = "last_selected_account"
+        private const val LOCAL_KEY_TIMELINE_DEFAULT_POSITION = "timeline_default_position"
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
@@ -119,6 +120,16 @@ class FreadConfigManager @Inject constructor(
 
     suspend fun updateLastSelectedAccount(accountUri: String) {
         localConfigManager.putString(LOCAL_KEY_LAST_SELECTED_ACCOUNT, accountUri)
+    }
+
+    suspend fun getTimelineDefaultPosition(): TimelineDefaultPosition {
+        return localConfigManager.getString(LOCAL_KEY_TIMELINE_DEFAULT_POSITION)
+            ?.let { TimelineDefaultPosition.valueOf(it) }
+            ?: TimelineDefaultPosition.NEWEST
+    }
+
+    suspend fun updateTimelineDefaultPosition(position: TimelineDefaultPosition){
+        localConfigManager.putString(LOCAL_KEY_TIMELINE_DEFAULT_POSITION, position.name)
     }
 }
 

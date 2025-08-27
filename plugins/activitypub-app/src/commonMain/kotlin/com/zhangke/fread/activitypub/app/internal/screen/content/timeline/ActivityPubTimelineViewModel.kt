@@ -14,6 +14,8 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceT
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
@@ -39,6 +41,7 @@ class ActivityPubTimelineViewModel(
     private val statusReadStateRepo: ActivityPubStatusReadStateRepo,
     private val accountManager: ActivityPubAccountManager,
     private val loggedAccountProvider: LoggedAccountProvider,
+    private val freadConfigManager: FreadConfigManager,
     private val locator: PlatformLocator,
     private val type: ActivityPubStatusSourceType,
     private val listId: String?,
@@ -57,8 +60,6 @@ class ActivityPubTimelineViewModel(
     private var loadMoreJob: Job? = null
     private var loadPreviousJob: Job? = null
 
-    private var latestAccount: ActivityPubLoggedAccount? = null
-
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
@@ -67,18 +68,6 @@ class ActivityPubTimelineViewModel(
             }
         )
         initFeeds()
-        launchInViewModel {
-            if (locator.accountUri != null) {
-                accountManager.observeAccount(locator.accountUri!!)
-                    .collect {
-                        if (latestAccount != null && latestAccount?.uri == it?.uri) {
-                            return@collect
-                        }
-                        latestAccount = it
-                        initFeeds()
-                    }
-            }
-        }
     }
 
     private fun initFeeds() {
@@ -93,32 +82,8 @@ class ActivityPubTimelineViewModel(
                     showPagingLoadingPlaceholder = true,
                 )
             }
-            val localStatus =
-                if (type == ActivityPubStatusSourceType.TIMELINE_LOCAL || type == ActivityPubStatusSourceType.TIMELINE_PUBLIC) {
-                    emptyList()
-                } else {
-                    timelineRepo.getStatusFromLocal(
-                        locator = locator,
-                        type = type,
-                        listId = listId,
-                    ).map {
-                        it.preParseStatus()
-                        it
-                    }
-                }
             val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
-            if (localStatus.isNotEmpty()) {
-                val latestReadStatus = statusReadStateRepo.getLatestReadId(locator, type, listId)
-                val initialIndex = localStatus.indexOfFirst { it.id == latestReadStatus }
-                _uiState.update {
-                    it.copy(
-                        items = localStatus.toTimelineItems(account),
-                        initialShowIndex = if (initialIndex in localStatus.indices) initialIndex else 0,
-                        showPagingLoadingPlaceholder = false,
-                    )
-                }
-            }
-            val minId = localStatus.firstOrNull()?.id
+            val minId = maybeLoadLocalFeeds(account)
             if (minId.isNullOrEmpty()) {
                 timelineRepo.getFresherStatus(
                     locator = locator,
@@ -160,6 +125,40 @@ class ActivityPubTimelineViewModel(
                 it.copy(showPagingLoadingPlaceholder = false)
             }
         }
+    }
+
+    /**
+     * @return minId
+     */
+    private suspend fun maybeLoadLocalFeeds(
+        account: ActivityPubLoggedAccount?,
+    ): String? {
+        if (freadConfigManager.getTimelineDefaultPosition() == TimelineDefaultPosition.NEWEST) return null
+        val localStatus =
+            if (type == ActivityPubStatusSourceType.TIMELINE_LOCAL || type == ActivityPubStatusSourceType.TIMELINE_PUBLIC) {
+                emptyList()
+            } else {
+                timelineRepo.getStatusFromLocal(
+                    locator = locator,
+                    type = type,
+                    listId = listId,
+                ).map {
+                    it.preParseStatus()
+                    it
+                }
+            }
+        if (localStatus.isNotEmpty()) {
+            val latestReadStatus = statusReadStateRepo.getLatestReadId(locator, type, listId)
+            val initialIndex = localStatus.indexOfFirst { it.id == latestReadStatus }
+            _uiState.update {
+                it.copy(
+                    items = localStatus.toTimelineItems(account),
+                    initialShowIndex = if (initialIndex in localStatus.indices) initialIndex else 0,
+                    showPagingLoadingPlaceholder = false,
+                )
+            }
+        }
+        return localStatus.firstOrNull()?.id
     }
 
     fun onRefresh() {

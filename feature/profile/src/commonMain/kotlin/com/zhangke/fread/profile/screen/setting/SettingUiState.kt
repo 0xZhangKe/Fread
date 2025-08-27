@@ -1,6 +1,7 @@
 package com.zhangke.fread.profile.screen.setting
 
 import com.zhangke.fread.common.config.StatusContentSize
+import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.daynight.DayNightMode
 
 data class SettingUiState(
@@ -11,4 +12,5 @@ data class SettingUiState(
     val settingInfo: String,
     val contentSize: StatusContentSize,
     val haveNewAppVersion: Boolean,
+    val timelineDefaultPosition: TimelineDefaultPosition,
 )

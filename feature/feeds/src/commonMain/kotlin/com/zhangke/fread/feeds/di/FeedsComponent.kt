@@ -9,7 +9,6 @@ import com.zhangke.fread.feeds.FeedsScreenVisitor
 import com.zhangke.fread.feeds.pages.home.ContentHomeViewModel
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentViewModel
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsViewModel
-import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsViewModel
 import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeViewModel
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentViewModel
 import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsViewModel
@@ -38,12 +37,6 @@ interface FeedsComponent {
         return AddMixedFeedsViewModel::class to AddMixedFeedsViewModel.Factory { statusSource ->
             creator(statusSource)
         }
-    }
-
-    @IntoMap
-    @Provides
-    fun providePreAddFeedsViewModel(creator: () -> PreAddFeedsViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return PreAddFeedsViewModel::class to creator
     }
 
     @IntoMap

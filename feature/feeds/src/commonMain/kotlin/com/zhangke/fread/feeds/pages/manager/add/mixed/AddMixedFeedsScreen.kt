@@ -172,6 +172,7 @@ internal class AddMixedFeedsScreen(
                             RemovableStatusSource(
                                 modifier = Modifier.fillMaxWidth(),
                                 source = item,
+                                onClick = {},
                                 onRemoveClick = {
                                     onRemoveSourceClick(item)
                                 },

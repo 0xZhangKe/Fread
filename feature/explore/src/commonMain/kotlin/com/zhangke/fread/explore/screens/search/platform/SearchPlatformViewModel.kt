@@ -37,17 +37,17 @@ open class SearchPlatformViewModel @Inject constructor(
 
     init {
         launchInViewModel {
-            _uiState.update { it.copy(searching = true) }
-            val list = mutableListOf<SearchContentResult>()
-            statusProvider.searchEngine
-                .searchContent(locator, query)
-                .map { it.second }
-                .collect { results ->
-                    list += results.filter {
-                        it !is SearchContentResult.Source
-                    }
-                }
-            _uiState.update { it.copy(searching = false, searchedList = list) }
+//            _uiState.update { it.copy(searching = true) }
+//            val list = mutableListOf<SearchContentResult>()
+//            statusProvider.searchEngine
+//                .searchContent(locator, query)
+//                .map { it.second }
+//                .collect { results ->
+//                    list += results.filter {
+//                        it !is SearchContentResult.Source
+//                    }
+//                }
+//            _uiState.update { it.copy(searching = false, searchedList = list) }
         }
     }
 

@@ -1,31 +1,48 @@
 package com.zhangke.fread.feeds.pages.manager.search
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.internal.BackHandler
-import com.zhangke.framework.composable.LoadableLayout
-import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.composable.SearchToolbar
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.composable.StatusSourceNode
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
+import com.zhangke.fread.feeds.search_feeds_title
 import com.zhangke.fread.feeds.search_feeds_title_hint
 import com.zhangke.fread.status.source.StatusSource
-import kotlin.jvm.Transient
 import org.jetbrains.compose.resources.stringResource
+import kotlin.jvm.Transient
 
 internal class SearchSourceForAddScreen : BaseScreen() {
 
@@ -47,8 +64,10 @@ internal class SearchSourceForAddScreen : BaseScreen() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: SearchSourceForAddViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
+        val snackBarHostState = rememberSnackbarHostState()
         SearchSourceForAdd(
-            loadableState = uiState,
+            uiState = uiState,
+            snackBarHostState = snackBarHostState,
             onBackClick = navigator::pop,
             onQueryChanged = viewModel::onQueryChanged,
             onSearchClick = viewModel::onSearchClick,
@@ -57,49 +76,84 @@ internal class SearchSourceForAddScreen : BaseScreen() {
                 navigator.pop()
             },
         )
+        ConsumeSnackbarFlow(snackBarHostState, viewModel.snackbarMessageFlow)
     }
 
     @OptIn(InternalVoyagerApi::class)
     @Composable
     internal fun SearchSourceForAdd(
-        loadableState: LoadableState<List<StatusSourceUiState>>,
+        uiState: SearchForAddUiState,
+        snackBarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onQueryChanged: (String) -> Unit,
-        onSearchClick: (query: String) -> Unit,
+        onSearchClick: () -> Unit,
         onAddClick: (StatusSourceUiState) -> Unit,
     ) {
-        BackHandler(true) {
-            onBackClick()
-        }
-        SearchToolbar(
-            onBackClick = onBackClick,
-            placeholderText = stringResource(com.zhangke.fread.feeds.Res.string.search_feeds_title_hint),
-            onQueryChange = onQueryChanged,
-            onSearch = {
-                onSearchClick(it)
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                Toolbar(
+                    title = stringResource(Res.string.search_feeds_title),
+                    onBackClick = onBackClick,
+                )
             },
-            content = {
-                LoadableLayout(
+            snackbarHost = {
+                SnackbarHost(snackBarHostState)
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.fillMaxSize()
+                    .padding(innerPadding),
+            ) {
+                OutlinedTextField(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    state = loadableState
-                ) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 15.dp),
-                    ) {
-                        items(it) { item ->
-                            StatusSourceNode(
-                                modifier = Modifier.clickable {
-                                    onAddClick(item)
-                                },
-                                source = item,
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 18.dp, end = 16.dp),
+                    value = uiState.query,
+                    onValueChange = onQueryChanged,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Search
+                    ),
+                    placeholder = {
+                        Text(
+                            text = stringResource(Res.string.search_feeds_title_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    },
+                    keyboardActions = KeyboardActions(
+                        onSearch = { onSearchClick() }
+                    ),
+                    trailingIcon = {
+                        if (uiState.searching) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        } else {
+                            SimpleIconButton(
+                                onClick = onSearchClick,
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
                             )
                         }
+                    },
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp),
+                ) {
+                    items(uiState.searchedList) { item ->
+                        StatusSourceNode(
+                            modifier = Modifier,
+                            onClick = { onAddClick(item) },
+                            source = item,
+                        )
                     }
                 }
-            },
-        )
+            }
+        }
     }
 }

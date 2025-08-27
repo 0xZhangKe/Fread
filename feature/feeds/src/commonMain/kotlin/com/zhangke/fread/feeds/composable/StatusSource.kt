@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.resources.logo
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.feeds_delete_confirm_content
 import com.zhangke.fread.status.source.StatusSource
@@ -33,11 +34,13 @@ data class StatusSourceUiState(
 internal fun RemovableStatusSource(
     modifier: Modifier = Modifier,
     source: StatusSourceUiState,
+    onClick: () -> Unit,
     onRemoveClick: () -> Unit,
 ) {
     StatusSourceNode(
         modifier = modifier,
         source = source,
+        onClick = onClick,
         onRemoveClick = onRemoveClick,
     )
 }
@@ -46,6 +49,7 @@ internal fun RemovableStatusSource(
 internal fun StatusSourceNode(
     modifier: Modifier = Modifier,
     source: StatusSourceUiState,
+    onClick: () -> Unit,
     onAddClick: (() -> Unit)? = null,
     onRemoveClick: (() -> Unit)? = null,
 ) {
@@ -56,6 +60,8 @@ internal fun StatusSourceNode(
         title = source.source.name,
         handle = source.source.handle,
         description = source.source.description,
+        logo = rememberVectorPainter(source.source.protocol.logo),
+        onClick = onClick,
         onUrlClick = { browserLauncher.launchWebTabInApp(it) },
         actions = {
             if (source.addEnabled) {

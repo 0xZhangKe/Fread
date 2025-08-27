@@ -45,25 +45,6 @@ class SearchEngine(
     suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
         return engineList.map { it.searchSourceNoToken(query.trim()) }.collect()
     }
-
-    suspend fun searchSource(locator: PlatformLocator, query: String): Result<List<StatusSource>> {
-        return engineList.map { it.searchSource(locator, query.trim()) }.collect()
-    }
-
-    suspend fun searchContentNoToken(query: String): Flow<Pair<String, List<SearchContentResult>>> {
-        return engineList.map { it.searchContentNoToken(query) }
-            .merge()
-            .map { query to it }
-    }
-
-    suspend fun searchContent(
-        locator: PlatformLocator,
-        query: String,
-    ): Flow<Pair<String, List<SearchContentResult>>> {
-        return engineList.map { it.searchContent(locator, query) }
-            .merge()
-            .map { query to it }
-    }
 }
 
 interface ISearchEngine {
@@ -88,14 +69,5 @@ interface ISearchEngine {
         offset: Int?,
     ): Result<List<BlogAuthor>>
 
-    suspend fun searchSource(locator: PlatformLocator, query: String): Result<List<StatusSource>>
-
     suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>>
-
-    suspend fun searchContentNoToken(query: String): Flow<List<SearchContentResult>>
-
-    suspend fun searchContent(
-        locator: PlatformLocator,
-        query: String
-    ): Flow<List<SearchContentResult>>
 }

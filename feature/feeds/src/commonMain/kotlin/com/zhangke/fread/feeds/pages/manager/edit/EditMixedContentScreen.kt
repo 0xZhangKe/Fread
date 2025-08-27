@@ -129,6 +129,7 @@ class EditMixedContentScreen(private val contentId: String) : BaseScreen() {
                     items(uiState.sourceList) { item ->
                         RemovableStatusSource(
                             modifier = Modifier.fillMaxWidth(),
+                            onClick = {},
                             source = item,
                             onRemoveClick = {
                                 onRemoveSourceClick(item)

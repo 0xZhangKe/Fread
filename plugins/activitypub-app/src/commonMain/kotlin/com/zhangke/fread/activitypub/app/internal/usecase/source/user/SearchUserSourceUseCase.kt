@@ -3,7 +3,9 @@ package com.zhangke.fread.activitypub.app.internal.usecase.source.user
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.toPlatformUri
+import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.user.UserRepo
+import com.zhangke.fread.activitypub.app.internal.source.UserSourceTransformer
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.source.StatusSource
@@ -11,14 +13,20 @@ import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 
 class SearchUserSourceUseCase @Inject constructor(
+    private val clientManager: ActivityPubClientManager,
     private val userRepo: UserRepo,
     private val userUriTransformer: UserUriTransformer,
+    private val userSourceTransformer: UserSourceTransformer,
 ) {
 
-    suspend operator fun invoke(locator: PlatformLocator, query: String): Result<StatusSource?> {
-        searchAsUserUri(locator, query).getOrNull()?.let { return Result.success(it) }
-        searchAsWebFinger(locator, query).getOrNull()?.let { return Result.success(it) }
-        return searchAsUrl(locator, query)
+    suspend operator fun invoke(
+        locator: PlatformLocator,
+        query: String,
+    ): Result<List<StatusSource>> {
+        searchAsUserUri(locator, query).getOrNull()?.let { return Result.success(listOf(it)) }
+        searchAsWebFinger(locator, query).getOrNull()?.let { return Result.success(listOf(it)) }
+        searchAsUrl(locator, query).getOrNull()?.let { return Result.success(listOf(it)) }
+        return searchUser(locator, query)
     }
 
     private suspend fun searchAsUserUri(
@@ -72,5 +80,16 @@ class SearchUserSourceUseCase @Inject constructor(
             locator = locator,
             acct = acct,
         )
+    }
+
+    private suspend fun searchUser(
+        locator: PlatformLocator,
+        query: String
+    ): Result<List<StatusSource>> {
+        return clientManager.getClient(locator)
+            .searchRepo.queryAccount(query = query)
+            .map { list ->
+                list.map { userSourceTransformer.createByUserEntity(it) }
+            }
     }
 }

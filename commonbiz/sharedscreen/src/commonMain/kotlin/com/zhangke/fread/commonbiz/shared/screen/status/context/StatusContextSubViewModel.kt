@@ -15,6 +15,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.updateFollowingState
 import com.zhangke.fread.status.status.model.DescendantStatus
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
@@ -112,15 +113,21 @@ class StatusContextSubViewModel(
                 val status = statusContext.status?.let {
                     statusUpdater.update(it)
                     it.copy(
-                        following = anchorAuthorFollowing ?: it.following,
                         blogTranslationState = blogTranslationUiState ?: it.blogTranslationState
                     )
+                    if (anchorAuthorFollowing != null) {
+                        it.updateFollowingState(anchorAuthorFollowing!!)
+                    } else {
+                        it
+                    }
                 } ?: loadStatus() ?: anchorStatus
-                statusContext.copy(
-                    status = status.copy(
-                        following = anchorAuthorFollowing ?: status.following,
+                if (anchorAuthorFollowing != null) {
+                    statusContext.copy(
+                        status = status.updateFollowingState(anchorAuthorFollowing!!)
                     )
-                )
+                } else {
+                    statusContext
+                }
             }
             .onSuccess { statusContext ->
                 _uiState.update { state ->
@@ -145,10 +152,12 @@ class StatusContextSubViewModel(
         return statusProvider.statusResolver
             .getStatus(locator, anchorStatus.status.intrinsicBlog, anchorStatus.status.platform)
             .map {
-                it.copy(
-                    following = anchorAuthorFollowing ?: it.following,
-                    blogTranslationState = blogTranslationUiState ?: it.blogTranslationState,
-                )
+                it.copy(blogTranslationState = blogTranslationUiState ?: it.blogTranslationState)
+                if (anchorAuthorFollowing != null) {
+                    it.updateFollowingState(anchorAuthorFollowing!!)
+                } else {
+                    it
+                }
             }
             .onSuccess { statusUpdater.update(it) }
             .getOrNull()
@@ -229,8 +238,10 @@ class StatusContextSubViewModel(
         _uiState.update { state ->
             state.copy(
                 contextStatus = state.contextStatus.map { item ->
-                    if (item.type == StatusInContextType.ANCHOR) {
-                        item.copy(status = item.status.copy(following = anchorAuthorFollowing))
+                    if (item.type == StatusInContextType.ANCHOR && anchorAuthorFollowing != null) {
+                        item.copy(
+                            status = item.status.updateFollowingState(anchorAuthorFollowing!!)
+                        )
                     } else {
                         item
                     }

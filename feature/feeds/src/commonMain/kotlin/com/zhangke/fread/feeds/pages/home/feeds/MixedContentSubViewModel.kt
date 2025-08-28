@@ -16,8 +16,10 @@ import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.status.author.updateFollowingState
 import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.updateBlogAuthor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,7 +81,9 @@ class MixedContentSubViewModel(
                             state.copy(
                                 dataList = state.dataList.map { status ->
                                     if (status.status.intrinsicBlog.author.uri == interaction.userUri) {
-                                        status.copy(following = interaction.following).also {
+                                        status.updateBlogAuthor {
+                                            it.updateFollowingState(interaction.following)
+                                        }.also {
                                             updatedStatus = it
                                         }
                                     } else {

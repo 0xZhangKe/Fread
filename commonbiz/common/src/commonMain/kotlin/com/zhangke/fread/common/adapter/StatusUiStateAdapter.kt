@@ -11,7 +11,6 @@ class StatusUiStateAdapter @Inject constructor() {
     fun toStatusUiState(
         statusUiStatus: StatusUiState,
         status: Status,
-        following: Boolean? = null,
         blogTranslationState: BlogTranslationUiState? = null,
     ): StatusUiState {
         return StatusUiState(
@@ -25,7 +24,6 @@ class StatusUiStateAdapter @Inject constructor() {
                 showingTranslation = false,
                 blogTranslation = null,
             ),
-            following = following ?: statusUiStatus.following,
         )
     }
 
@@ -45,7 +43,6 @@ class StatusUiStateAdapter @Inject constructor() {
                 showingTranslation = false,
                 blogTranslation = null,
             ),
-            following = false,
         )
     }
 }

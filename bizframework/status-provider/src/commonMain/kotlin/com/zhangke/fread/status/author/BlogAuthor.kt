@@ -49,3 +49,8 @@ data class BlogAuthor(
 
     val prettyHandle: String = handle.prettyHandle()
 }
+
+fun BlogAuthor.updateFollowingState(following: Boolean): BlogAuthor {
+    val relationships = this.relationships ?: Relationships.default()
+    return this.copy(relationships = relationships.copy(following = following))
+}

@@ -2,10 +2,7 @@ package com.zhangke.framework.utils
 
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
-import io.ktor.http.decodeURLQueryComponent
-import io.ktor.http.encodeURLPath
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 /**
  * Supported:
@@ -72,16 +69,6 @@ class WebFinger private constructor(
             return WebFinger(NAME_DID, did)
         }
 
-        fun decodeFromUrlString(text: String): WebFinger? {
-            return try {
-                text.decodeURLQueryComponent().let {
-                    Json.decodeFromString(serializer(), it)
-                }
-            } catch (e: Throwable) {
-                null
-            }
-        }
-
         private fun createAsAcct(content: String, baseUrl: FormalBaseUrl? = null): WebFinger? {
             val fixedAcct = content.removePrefix("acct:").removePrefix("@")
             val name: String
@@ -117,11 +104,7 @@ class WebFinger private constructor(
         }
 
         private fun hostValidate(host: String): Boolean {
-            return RegexFactory.domainRegex.matches(host)
+            return DomainValidator.validate(host)
         }
     }
-}
-
-fun WebFinger.encodeToUrlString(): String {
-    return Json.encodeToString(WebFinger.serializer(), this).encodeURLPath()
 }

@@ -32,6 +32,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -747,6 +748,10 @@ data class UserDetailScreen(
         ModalDropdownMenuItem(
             text = stringResource(StatusUiRes.string.status_ui_logout),
             imageVector = Icons.AutoMirrored.Filled.Logout,
+            colors = MenuDefaults.itemColors(
+                textColor = MaterialTheme.colorScheme.error,
+                leadingIconColor = MaterialTheme.colorScheme.error,
+            ),
             onClick = { showLogoutDialog = true },
         )
         if (showLogoutDialog) {

@@ -101,7 +101,12 @@ class MixedContentSubViewModel(
             _uiState.update { it.copy(initializing = true) }
             val mixedContent = contentRepo.getContent(configId) as? MixedContent
             if (mixedContent == null) {
-                _uiState.update { it.copy(pageError = IllegalStateException("Content($configId) does not exists!")) }
+                _uiState.update {
+                    it.copy(
+                        pageError = IllegalStateException("Content($configId) does not exists!"),
+                        initializing = false,
+                    )
+                }
             } else {
                 _uiState.update { it.copy(content = mixedContent) }
                 launch { mixedRepo.refresh(mixedContent) }

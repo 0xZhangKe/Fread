@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -362,6 +364,10 @@ private fun SelfAccountActions(
     ModalDropdownMenuItem(
         text = stringResource(StatusUiRes.string.status_ui_logout),
         imageVector = Icons.AutoMirrored.Filled.Logout,
+        colors = MenuDefaults.itemColors(
+            textColor = MaterialTheme.colorScheme.error,
+            leadingIconColor = MaterialTheme.colorScheme.error,
+        ),
         onClick = { showLogoutDialog = true },
     )
     if (showLogoutDialog) {

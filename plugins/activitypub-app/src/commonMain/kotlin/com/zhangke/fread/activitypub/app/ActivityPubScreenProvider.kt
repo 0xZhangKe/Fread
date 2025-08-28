@@ -11,17 +11,12 @@ import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubCont
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
 import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
-import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
-import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsScreen
+import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
-import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
-import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.PlatformLocator
@@ -75,10 +70,6 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         if (content !is ActivityPubContent) return null
         return EditContentConfigScreen(content.id)
-    }
-
-    override suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
-        return null
     }
 
     override fun getUserDetailScreen(
@@ -145,57 +136,18 @@ class ActivityPubScreenProvider @Inject constructor(
         )
     }
 
-    override fun getBookmarkedScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol
-    ): Screen? {
-        if (protocol.notActivityPub) return null
-        return StatusListScreen(
-            locator = locator,
-            type = StatusListType.BOOKMARKS,
-        )
-    }
-
-    override fun getFavouritedScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol
-    ): Screen? {
-        if (protocol.notActivityPub) return null
-        return StatusListScreen(
-            locator = locator,
-            type = StatusListType.FAVOURITES,
-        )
-    }
-
-    override fun getFollowedHashtagScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol
-    ): Screen? {
-        if (protocol.notActivityPub) return null
-        return TagListScreen(locator)
-    }
-
     override fun getInstanceDetailScreen(
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol,
-        baseUrl: FormalBaseUrl
-    ): String? {
+        baseUrl: FormalBaseUrl,
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return PlatformDetailRoute.buildRoute(baseUrl)
+        return InstanceDetailScreen(locator = locator, baseUrl = baseUrl)
     }
 
     override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
         if (platform.protocol.notActivityPub) return null
         return ExplorerContainerTab(locator = locator, platform = platform)
-    }
-
-    override fun getCreatedListScreen(
-        locator: PlatformLocator,
-        platform: BlogPlatform
-    ): Screen? {
-        if (platform.protocol.notActivityPub) return null
-        return CreatedListsScreen(
-            locator = locator,
-        )
     }
 
     override fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {

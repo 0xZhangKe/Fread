@@ -9,7 +9,6 @@ import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.search.SearchedPlatform
-import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -65,7 +64,7 @@ open class SearchPlatformViewModel @Inject constructor(
         statusProvider.screenProvider.getInstanceDetailScreen(
             baseUrl = baseUrl,
             protocol = protocol,
-        )?.let { KRouter.route<Screen>(it) }
-            ?.let { _openScreenFlow.emitInViewModel(it) }
+            locator = locator,
+        )?.let { _openScreenFlow.emitInViewModel(it) }
     }
 }

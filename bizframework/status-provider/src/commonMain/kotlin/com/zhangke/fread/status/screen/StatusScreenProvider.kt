@@ -44,12 +44,6 @@ class StatusScreenProvider(
         }
     }
 
-    suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
-        return providerList.firstNotNullOfOrNull {
-            it.getEditContentConfigScreenScreen(account)
-        }
-    }
-
     fun getUserDetailScreen(
         locator: PlatformLocator,
         uri: FormalUri,
@@ -122,40 +116,18 @@ class StatusScreenProvider(
         }
     }
 
-    fun getBookmarkedScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol,
-    ): Screen? {
-        return providerList.firstNotNullOfOrNull { it.getBookmarkedScreen(locator, protocol) }
-    }
-
-    fun getFavouritedScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol,
-    ): Screen? {
-        return providerList.firstNotNullOfOrNull { it.getFavouritedScreen(locator, protocol) }
-    }
-
-    fun getFollowedHashtagScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol,
-    ): Screen? {
-        return providerList.firstNotNullOfOrNull { it.getFollowedHashtagScreen(locator, protocol) }
-    }
-
     fun getInstanceDetailScreen(
-        baseUrl: FormalBaseUrl,
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol,
-    ): String? {
-        return providerList.firstNotNullOfOrNull { it.getInstanceDetailScreen(protocol, baseUrl) }
+        baseUrl: FormalBaseUrl,
+    ): Screen? {
+        return providerList.firstNotNullOfOrNull {
+            it.getInstanceDetailScreen(locator, protocol, baseUrl)
+        }
     }
 
     fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
         return providerList.firstNotNullOfOrNull { it.getExplorerTab(locator, platform) }
-    }
-
-    fun getCreatedListScreen(locator: PlatformLocator, platform: BlogPlatform): Screen? {
-        return providerList.firstNotNullOfOrNull { it.getCreatedListScreen(locator, platform) }
     }
 
     fun getAddContentScreen(protocol: StatusProviderProtocol): Screen {
@@ -176,8 +148,6 @@ interface IStatusScreenProvider {
     fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab?
 
     fun getEditContentConfigScreenScreen(content: FreadContent): Screen?
-
-    suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen?
 
     fun getUserDetailScreen(locator: PlatformLocator, uri: FormalUri, userId: String?): Screen?
 
@@ -215,29 +185,15 @@ interface IStatusScreenProvider {
         protocol: StatusProviderProtocol,
     ): Screen?
 
-    fun getBookmarkedScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol,
-    ): Screen?
-
-    fun getFavouritedScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol,
-    ): Screen?
-
-    fun getFollowedHashtagScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol,
-    ): Screen?
-
     fun getInstanceDetailScreen(
+        locator: PlatformLocator,
         protocol: StatusProviderProtocol,
         baseUrl: FormalBaseUrl,
-    ): String?
+    ): Screen? {
+        return null
+    }
 
     fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab?
-
-    fun getCreatedListScreen(locator: PlatformLocator, platform: BlogPlatform): Screen?
 
     fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
         return null

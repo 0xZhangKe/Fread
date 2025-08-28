@@ -2,12 +2,10 @@ package com.zhangke.fread.rss
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.rss.internal.screen.source.RssSourceScreen
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
-import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.PlatformLocator
@@ -38,10 +36,6 @@ class RssScreenProvider @Inject constructor(
     }
 
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
-        return null
-    }
-
-    override suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
         return null
     }
 
@@ -100,42 +94,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getBookmarkedScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol
-    ): Screen? {
-        return null
-    }
-
-    override fun getFavouritedScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol
-    ): Screen? {
-        return null
-    }
-
-    override fun getFollowedHashtagScreen(
-        locator: PlatformLocator,
-        protocol: StatusProviderProtocol
-    ): Screen? {
-        return null
-    }
-
-    override fun getInstanceDetailScreen(
-        protocol: StatusProviderProtocol,
-        baseUrl: FormalBaseUrl
-    ): String? {
-        return null
-    }
-
     override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
-        return null
-    }
-
-    override fun getCreatedListScreen(
-        locator: PlatformLocator,
-        platform: BlogPlatform
-    ): Screen? {
         return null
     }
 }

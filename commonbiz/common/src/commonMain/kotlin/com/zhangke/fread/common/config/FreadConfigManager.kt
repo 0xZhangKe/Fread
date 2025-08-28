@@ -2,6 +2,7 @@ package com.zhangke.fread.common.config
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.utils.RandomIdGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -25,16 +26,21 @@ class FreadConfigManager @Inject constructor(
         private const val LOCAL_KEY_BSKY_PUBLISH_LAN = "bsky_publish_lan"
         private const val LOCAL_KEY_LAST_SELECTED_ACCOUNT = "last_selected_account"
         private const val LOCAL_KEY_TIMELINE_DEFAULT_POSITION = "timeline_default_position"
+        private const val LOCAL_KEY_THEME_TYPE = "theme_type"
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
     val statusConfigFlow get(): StateFlow<StatusConfig> = _statusConfigFlow
+
+    private val _themeTypeeFlow = MutableStateFlow(ThemeType.DEFAULT)
+    val themeTypeFlow get() = _themeTypeeFlow
 
     var autoPlayInlineVideo: Boolean = false
         private set
 
     suspend fun initConfig() {
         _statusConfigFlow.value = readLocalStatusConfig()
+        _themeTypeeFlow.value = getThemeType()
         autoPlayInlineVideo =
             localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
     }
@@ -128,8 +134,19 @@ class FreadConfigManager @Inject constructor(
             ?: TimelineDefaultPosition.NEWEST
     }
 
-    suspend fun updateTimelineDefaultPosition(position: TimelineDefaultPosition){
+    suspend fun updateTimelineDefaultPosition(position: TimelineDefaultPosition) {
         localConfigManager.putString(LOCAL_KEY_TIMELINE_DEFAULT_POSITION, position.name)
+    }
+
+    suspend fun getThemeType(): ThemeType {
+        return localConfigManager.getString(LOCAL_KEY_THEME_TYPE)
+            ?.let { ThemeType.valueOf(it) }
+            ?: ThemeType.DEFAULT
+    }
+
+    suspend fun updateThemeType(type: ThemeType) {
+        _themeTypeeFlow.value = type
+        localConfigManager.putString(LOCAL_KEY_THEME_TYPE, type.name)
     }
 }
 

@@ -8,6 +8,7 @@ import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.handler.TextHandler
+import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.update.AppUpdateManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +33,7 @@ class SettingScreenModel @Inject constructor(
             alwaysShowSensitiveContent = false,
             haveNewAppVersion = false,
             timelineDefaultPosition = TimelineDefaultPosition.NEWEST,
+            themeType = ThemeType.DEFAULT,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -41,6 +43,10 @@ class SettingScreenModel @Inject constructor(
             freadConfigManager.getTimelineDefaultPosition()
                 .let { position ->
                     _uiState.update { it.copy(timelineDefaultPosition = position) }
+                }
+            freadConfigManager.getThemeType()
+                .let { type ->
+                    _uiState.update { it.copy(themeType = type) }
                 }
         }
         viewModelScope.launch {
@@ -75,6 +81,13 @@ class SettingScreenModel @Inject constructor(
         viewModelScope.launch {
             freadConfigManager.updateAutoPlayInlineVideo(on)
             _uiState.value = _uiState.value.copy(autoPlayInlineVideo = on)
+        }
+    }
+
+    fun onThemeTypeChanged(type: ThemeType) {
+        viewModelScope.launch {
+            freadConfigManager.updateThemeType(type)
+            _uiState.update { it.copy(themeType = type) }
         }
     }
 

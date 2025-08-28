@@ -9,6 +9,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -22,6 +25,7 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.fread.common.action.ComposableActions
 import com.zhangke.fread.common.action.RouteAction
+import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.utils.ActivityResultCallback
 import com.zhangke.fread.common.utils.CallbackableActivity
 import com.zhangke.fread.di.AndroidActivityComponent
@@ -56,6 +60,8 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
 
         enableEdgeToEdge()
 
+        val freadConfigManager = component.freadConfigManager
+
         super.onCreate(savedInstanceState)
 
         initNotification()
@@ -63,8 +69,13 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
         intent?.let(::handleIntent)
 
         setContent {
+            val themeType by freadConfigManager.themeTypeFlow.collectAsState()
             val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
-            FreadTheme(darkTheme = dayNightMode.isNight) {
+            val darkTheme = dayNightMode.isNight
+            FreadTheme(
+                darkTheme = darkTheme,
+                dynamicColors = getDynamicColorScheme(darkTheme, themeType),
+            ) {
                 val videoPlayerManager = remember { ExoPlayerManager() }
                 DisposableEffect(videoPlayerManager) {
                     onDispose {
@@ -77,6 +88,22 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
                     activityComponent.freadContent()
                 }
             }
+        }
+    }
+
+    private fun getDynamicColorScheme(
+        dark: Boolean,
+        themeType: ThemeType,
+    ): ColorScheme? {
+        if (themeType != ThemeType.SYSTEM_DYNAMIC) return null
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (dark) {
+                dynamicDarkColorScheme(this)
+            } else {
+                dynamicLightColorScheme(this)
+            }
+        } else {
+            null
         }
     }
 

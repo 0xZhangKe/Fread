@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProvider
 import cafe.adriel.voyager.hilt.KotlinInjectViewModelProviderFactory
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.module.ModuleStartup
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
@@ -25,6 +26,8 @@ interface CommonComponent : CommonPlatformComponent {
     val startupManager: StartupManager
 
     val statusProvider: StatusProvider
+
+    val freadConfigManager: FreadConfigManager
 
     @IntoSet
     @Provides

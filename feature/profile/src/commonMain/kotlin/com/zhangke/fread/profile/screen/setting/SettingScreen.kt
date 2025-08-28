@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.ViewTimeline
@@ -57,6 +58,7 @@ import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.commonbiz.donate
 import com.zhangke.fread.commonbiz.settings
 import com.zhangke.fread.feature.profile.Res
@@ -65,32 +67,22 @@ import com.zhangke.fread.feature.profile.ic_ratting
 import com.zhangke.fread.feature.profile.profile_setting_about_title
 import com.zhangke.fread.feature.profile.profile_setting_always_show_sensitive_content
 import com.zhangke.fread.feature.profile.profile_setting_always_show_sensitive_content_subtitle
-import com.zhangke.fread.feature.profile.profile_setting_dark_mode_dark
-import com.zhangke.fread.feature.profile.profile_setting_dark_mode_follow_system
-import com.zhangke.fread.feature.profile.profile_setting_dark_mode_light
 import com.zhangke.fread.feature.profile.profile_setting_dark_mode_title
 import com.zhangke.fread.feature.profile.profile_setting_donate_desc
 import com.zhangke.fread.feature.profile.profile_setting_font_size
-import com.zhangke.fread.feature.profile.profile_setting_font_size_large
-import com.zhangke.fread.feature.profile.profile_setting_font_size_medium
-import com.zhangke.fread.feature.profile.profile_setting_font_size_small
 import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar
 import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar_desc
 import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play
 import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play_subtitle
-import com.zhangke.fread.feature.profile.profile_setting_language_en
-import com.zhangke.fread.feature.profile.profile_setting_language_system
 import com.zhangke.fread.feature.profile.profile_setting_language_title
-import com.zhangke.fread.feature.profile.profile_setting_language_zh
 import com.zhangke.fread.feature.profile.profile_setting_open_source_desc
 import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback
 import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_desc
 import com.zhangke.fread.feature.profile.profile_setting_open_source_title
 import com.zhangke.fread.feature.profile.profile_setting_ratting
 import com.zhangke.fread.feature.profile.profile_setting_ratting_desc
+import com.zhangke.fread.feature.profile.profile_setting_theme_title
 import com.zhangke.fread.feature.profile.profile_setting_timeline_position
-import com.zhangke.fread.feature.profile.profile_setting_timeline_position_last_read
-import com.zhangke.fread.feature.profile.profile_setting_timeline_position_newest
 import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
@@ -130,6 +122,7 @@ class SettingScreen : BaseScreen() {
             onDayNightModeClick = {
                 activityDayNightHelper.setMode(it)
             },
+            onThemeTypeChanged = viewModel::onThemeTypeChanged,
             onLanguageClick = {
                 activityLanguageHelper.setLanguage(it)
             },
@@ -158,6 +151,7 @@ class SettingScreen : BaseScreen() {
         onSwitchAutoPlayClick: (on: Boolean) -> Unit,
         onOpenSourceClick: () -> Unit,
         onDayNightModeClick: (DayNightMode) -> Unit,
+        onThemeTypeChanged: (ThemeType) -> Unit,
         onLanguageClick: (LanguageSettingType) -> Unit,
         onImmersiveBarChanged: (on: Boolean) -> Unit,
         onRatingClick: () -> Unit,
@@ -200,9 +194,13 @@ class SettingScreen : BaseScreen() {
                     position = uiState.timelineDefaultPosition,
                     onPositionChanged = onTimelineDefaultPositionChanged,
                 )
-                DarNightItem(
+                DayNightItem(
                     uiState = uiState,
                     onDayNightModeClick = onDayNightModeClick,
+                )
+                ThemeTypeItem(
+                    themeType = uiState.themeType,
+                    onThemeTypeChanged = onThemeTypeChanged,
                 )
                 LanguageItem(
                     onLanguageClick = onLanguageClick,
@@ -288,7 +286,7 @@ class SettingScreen : BaseScreen() {
     }
 
     @Composable
-    private fun DarNightItem(
+    private fun DayNightItem(
         uiState: SettingUiState,
         onDayNightModeClick: (DayNightMode) -> Unit,
     ) {
@@ -301,6 +299,23 @@ class SettingScreen : BaseScreen() {
             onItemClick = { index ->
                 onDayNightModeClick(DayNightMode.entries[index])
             },
+        )
+    }
+
+    @Composable
+    private fun ThemeTypeItem(
+        themeType: ThemeType,
+        onThemeTypeChanged: (ThemeType) -> Unit,
+    ) {
+        SettingItemWithPopup(
+            icon = Icons.Default.Palette,
+            title = stringResource(Res.string.profile_setting_theme_title),
+            subtitle = themeType.displayName,
+            dropDownItemCount = ThemeType.entries.size,
+            dropDownItemText = { ThemeType.entries[it].displayName },
+            onItemClick = {
+                onThemeTypeChanged(ThemeType.entries[it])
+            }
         )
     }
 
@@ -522,39 +537,4 @@ class SettingScreen : BaseScreen() {
             }
         }
     }
-
-    private val LanguageSettingType.typeName: String
-        @Composable
-        get() {
-            return when (this) {
-                LanguageSettingType.CN -> stringResource(Res.string.profile_setting_language_zh)
-                LanguageSettingType.EN -> stringResource(Res.string.profile_setting_language_en)
-                LanguageSettingType.SYSTEM -> stringResource(Res.string.profile_setting_language_system)
-            }
-        }
-
-    private val DayNightMode.modeName: String
-        @Composable
-        get() {
-            return when (this) {
-                DayNightMode.NIGHT -> stringResource(Res.string.profile_setting_dark_mode_dark)
-                DayNightMode.DAY -> stringResource(Res.string.profile_setting_dark_mode_light)
-                DayNightMode.FOLLOW_SYSTEM -> stringResource(Res.string.profile_setting_dark_mode_follow_system)
-            }
-        }
-
-    private val StatusContentSize.sizeName: String
-        @Composable
-        get() = when (this) {
-            StatusContentSize.SMALL -> stringResource(Res.string.profile_setting_font_size_small)
-            StatusContentSize.MEDIUM -> stringResource(Res.string.profile_setting_font_size_medium)
-            StatusContentSize.LARGE -> stringResource(Res.string.profile_setting_font_size_large)
-        }
-
-    private val TimelineDefaultPosition.displayName: String
-        @Composable
-        get() = when (this) {
-            TimelineDefaultPosition.NEWEST -> stringResource(Res.string.profile_setting_timeline_position_newest)
-            TimelineDefaultPosition.LAST_READ -> stringResource(Res.string.profile_setting_timeline_position_last_read)
-        }
 }

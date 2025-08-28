@@ -35,6 +35,9 @@
     <string name="profile_setting_timeline_position">首页的时间线默认位置</string>
     <string name="profile_setting_timeline_position_last_read">上次阅读位置</string>
     <string name="profile_setting_timeline_position_newest">最新位置</string>
+    <string name="profile_setting_theme_title">主题色</string>
+    <string name="profile_setting_theme_default">默认</string>
+    <string name="profile_setting_theme_system">系统</string>
 
     <string name="profile_about_version">版本：</string>
     <string name="profile_about_website">官网：</string>

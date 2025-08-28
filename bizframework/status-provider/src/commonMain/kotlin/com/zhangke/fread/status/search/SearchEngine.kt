@@ -4,6 +4,7 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.utils.collect
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +43,7 @@ class SearchEngine(
 
     suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
         return engineList.map { it.searchSourceNoToken(query.trim()) }.collect()
+            .map { list -> list.sortedBy { if (it.protocol.isRss) 0 else 1 } }
     }
 
     suspend fun searchPlatform(

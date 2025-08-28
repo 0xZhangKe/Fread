@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -21,6 +22,7 @@ import com.zhangke.framework.utils.asBitmapOrNull
 import com.zhangke.framework.utils.maybe
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.common.action.OpenNotificationPageAction
+import com.zhangke.fread.commonbiz.R
 import me.tatarka.inject.annotations.Inject
 import kotlin.random.Random
 
@@ -40,9 +42,10 @@ class PushNotificationManager @Inject constructor(
         val bitmap = downloadIcon(context, message.icon)
         val loggedAccountCount = accountRepo.queryAll().size
         val notificationIconColor =
-            context.getColor(com.zhangke.fread.commonbiz.R.color.color_logo_background)
+            context.getColor(R.color.color_logo_background)
         val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(com.zhangke.fread.commonbiz.R.drawable.ic_fread_logo_small_circle)
+            .setSmallIcon(R.drawable.ic_fread_logo_small_circle)
+            .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_fread_logo))
             .setLights(notificationIconColor, 500, 1000)
             .setColor(notificationIconColor)
             .maybe(bitmap != null) {
@@ -74,7 +77,10 @@ class PushNotificationManager @Inject constructor(
         return context.imageLoader.executeSafety(request).asBitmapOrNull()
     }
 
-    private fun buildNotificationIntent(context: Context, message: ActivityPubPushMessage): PendingIntent {
+    private fun buildNotificationIntent(
+        context: Context,
+        message: ActivityPubPushMessage
+    ): PendingIntent {
         val openNavigationUri = OpenNotificationPageAction.buildOpenNotificationPageRoute()
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)!!
         intent.data = openNavigationUri.toUri()

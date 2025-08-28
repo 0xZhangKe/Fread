@@ -44,7 +44,7 @@ class PushNotificationManager @Inject constructor(
         val notificationIconColor =
             context.getColor(R.color.color_logo_background)
         val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_fread_logo_small_circle)
+            .setSmallIcon(R.drawable.ic_logo_skeleton)
             .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_fread_logo))
             .setLights(notificationIconColor, 500, 1000)
             .setColor(notificationIconColor)

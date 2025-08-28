@@ -94,6 +94,11 @@ fun Screen.ExplorerSearchBar(
             }
         }
     }
+    LaunchedEffect(active) {
+        if (!active) {
+            viewModel.onSearchQueryChanged("")
+        }
+    }
     SearchBar(
         modifier = Modifier
             .fillMaxWidth()

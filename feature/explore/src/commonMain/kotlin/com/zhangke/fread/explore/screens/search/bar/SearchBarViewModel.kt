@@ -79,12 +79,13 @@ class SearchBarViewModel @Inject constructor(
     }
 
     fun onSearchQueryChanged(query: String) {
-        val locator = locator ?: return
-        if (query == _uiState.value.query) return
         if (query.isEmpty()) {
+            searchJob?.cancel()
             _uiState.update { it.copy(query = "", resultList = emptyList()) }
             return
         }
+        val locator = locator ?: return
+        if (query == _uiState.value.query) return
         _uiState.update { it.copy(query = query) }
         searchJob?.cancel()
         searchJob = launchInViewModel {

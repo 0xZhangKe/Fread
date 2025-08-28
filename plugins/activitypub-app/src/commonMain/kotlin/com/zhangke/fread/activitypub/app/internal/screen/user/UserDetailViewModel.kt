@@ -44,10 +44,10 @@ class UserDetailViewModel(
             loading = false,
             userInsight = null,
             accountUiState = null,
-            relationship = null,
             domainBlocked = false,
             isAccountOwner = false,
             relationships = null,
+            personalNote = null,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -113,9 +113,12 @@ class UserDetailViewModel(
             return
         }
         val relationshipEntity = relationshipEntityResult.getOrThrow().firstOrNull() ?: return
-        _uiState.value = _uiState.value.copy(
-            relationships = accountEntityAdapter.convertRelationship(relationshipEntity),
-        )
+        _uiState.update { state ->
+            state.copy(
+                personalNote = relationshipEntity.note,
+                relationships = accountEntityAdapter.convertRelationship(relationshipEntity),
+            )
+        }
     }
 
     private suspend fun loadDomainBlockState(
@@ -194,14 +197,19 @@ class UserDetailViewModel(
     }
 
     fun onNewNoteSet(newNote: String) {
-        val privateNote = uiState.value.relationship?.note
+        val privateNote = uiState.value.personalNote
         if (newNote == privateNote) return
         val accountId = uiState.value.accountUiState?.account?.id ?: return
         launchInViewModel {
             val accountRepo = clientManager.getClient(locator).accountRepo
             accountRepo.updateNote(accountId, newNote)
                 .onSuccess { relationship ->
-                    _uiState.update { it.copy(relationship = relationship) }
+                    _uiState.update {
+                        it.copy(
+                            personalNote = relationship.note,
+                            relationships = accountEntityAdapter.convertRelationship(relationship),
+                        )
+                    }
                 }.onFailure {
                     _messageFlow.emitTextMessageFromThrowable(it)
                 }
@@ -237,11 +245,12 @@ class UserDetailViewModel(
                 accountRepo.mute(accountId)
             } else {
                 accountRepo.unmute(accountId)
-            }.onSuccess { relationship ->
-                _uiState.update { it.copy(relationship = relationship) }
-            }.onFailure {
-                _messageFlow.emitTextMessageFromThrowable(it)
-            }
+            }.map { accountEntityAdapter.convertRelationship(it) }
+                .onSuccess { relationship ->
+                    _uiState.update { it.copy(relationships = relationship) }
+                }.onFailure {
+                    _messageFlow.emitTextMessageFromThrowable(it)
+                }
         }
     }
 
@@ -258,7 +267,9 @@ class UserDetailViewModel(
                     }
                 }.onSuccess { relationship ->
                     _uiState.update {
-                        it.copy(relationship = relationship)
+                        it.copy(
+                            relationships = accountEntityAdapter.convertRelationship(relationship),
+                        )
                     }
                 }
         }

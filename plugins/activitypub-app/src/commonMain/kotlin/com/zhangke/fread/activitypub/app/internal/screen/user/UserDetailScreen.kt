@@ -59,7 +59,6 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
-import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -117,6 +116,7 @@ import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
@@ -346,7 +346,7 @@ data class UserDetailScreen(
             avatar = account?.avatar.orEmpty(),
             banner = account?.header,
             description = accountUiState?.description,
-            privateNote = uiState.relationship?.note,
+            privateNote = uiState.personalNote,
             loading = uiState.loading,
             contentCanScrollBackward = contentCanScrollBackward,
             onBannerClick = onBannerClick,
@@ -383,7 +383,7 @@ data class UserDetailScreen(
                     modifier = Modifier,
                     handle = account?.prettyAcct.orEmpty(),
                     bot = account?.bot == true,
-                    followedBy = uiState.relationship?.followedBy == true
+                    followedBy = uiState.relationships?.followedBy == true
                 )
             },
             followInfoLine = {
@@ -590,7 +590,7 @@ data class UserDetailScreen(
                     },
                 )
             }
-            val relationship = uiState.relationship
+            val relationship = uiState.relationships
             if (!isAccountOwner && relationship != null) {
                 OtherAccountActions(
                     uiState = uiState,
@@ -771,7 +771,7 @@ data class UserDetailScreen(
     private fun OtherAccountActions(
         uiState: UserDetailUiState,
         account: UserDetailAccountUiState,
-        relationship: ActivityPubRelationshipEntity,
+        relationship: Relationships,
         onNewNoteSet: (String) -> Unit,
         onUnmuteClick: () -> Unit,
         onDismissMorePopupRequest: () -> Unit,
@@ -781,7 +781,7 @@ data class UserDetailScreen(
         onShowMuteDialogClick: () -> Unit,
     ) {
         EditPrivateNoteItem(
-            note = uiState.relationship?.note.orEmpty(),
+            note = uiState.personalNote.orEmpty(),
             onDismissRequest = onDismissMorePopupRequest,
             onNewNoteSet = onNewNoteSet,
         )

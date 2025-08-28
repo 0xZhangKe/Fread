@@ -35,6 +35,9 @@
     <string name="profile_setting_timeline_position">Default timeline position</string>
     <string name="profile_setting_timeline_position_last_read">Where I left off</string>
     <string name="profile_setting_timeline_position_newest">Latest posts</string>
+    <string name="profile_setting_theme_title">Theme color</string>
+    <string name="profile_setting_theme_default">Default</string>
+    <string name="profile_setting_theme_system">Follow system</string>
 
     <string name="profile_about_version">Version:&#160;</string>
     <string name="profile_about_website">Website:&#160;</string>

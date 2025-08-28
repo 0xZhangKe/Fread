@@ -9,6 +9,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -64,7 +67,11 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
 
         setContent {
             val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
-            FreadTheme(darkTheme = dayNightMode.isNight) {
+            val darkTheme = dayNightMode.isNight
+            FreadTheme(
+                darkTheme = darkTheme,
+                dynamicColors = getDynamicColorScheme(darkTheme),
+            ) {
                 val videoPlayerManager = remember { ExoPlayerManager() }
                 DisposableEffect(videoPlayerManager) {
                     onDispose {
@@ -77,6 +84,18 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
                     activityComponent.freadContent()
                 }
             }
+        }
+    }
+
+    private fun getDynamicColorScheme(dark: Boolean): ColorScheme? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (dark) {
+                dynamicDarkColorScheme(this)
+            } else {
+                dynamicLightColorScheme(this)
+            }
+        } else {
+            null
         }
     }
 

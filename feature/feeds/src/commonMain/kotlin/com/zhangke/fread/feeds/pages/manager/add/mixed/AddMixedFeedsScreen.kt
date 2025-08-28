@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -39,17 +40,20 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.commonbiz.add_content_success_snackbar
 import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.commonbiz.Res as CommonRes
 import com.zhangke.fread.feeds.add_feeds_page_feeds_empty
 import com.zhangke.fread.feeds.add_feeds_page_feeds_name_hint
 import com.zhangke.fread.feeds.add_feeds_page_feeds_name_label
 import com.zhangke.fread.feeds.add_feeds_page_title
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
+import com.zhangke.fread.feeds.ic_import
+import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsScreen
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.fread.status.source.StatusSource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
+import com.zhangke.fread.commonbiz.Res as CommonRes
 
 /**
  * 添加混合 Feeds 页面
@@ -76,6 +80,9 @@ internal class AddMixedFeedsScreen(
                     onSourceSelected = { viewModel.onAddSource(it) }
                 })
             },
+            onImportClick = {
+                navigator.push(ImportFeedsScreen())
+            },
             onConfirmClick = {
                 viewModel.onConfirmClick()
             },
@@ -97,6 +104,7 @@ internal class AddMixedFeedsScreen(
         snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onAddSourceClick: () -> Unit,
+        onImportClick: () -> Unit,
         onConfirmClick: () -> Unit,
         onNameInputValueChanged: (String) -> Unit,
         onRemoveSourceClick: (item: StatusSourceUiState) -> Unit,
@@ -107,6 +115,12 @@ internal class AddMixedFeedsScreen(
                     title = stringResource(Res.string.add_feeds_page_title),
                     onBackClick = onBackClick,
                     actions = {
+                        SimpleIconButton(
+                            modifier = Modifier.rotate(180F),
+                            onClick = onImportClick,
+                            imageVector = vectorResource(Res.drawable.ic_import),
+                            contentDescription = "Import",
+                        )
                         SimpleIconButton(
                             onClick = onConfirmClick,
                             imageVector = Icons.Default.Check,

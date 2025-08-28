@@ -52,7 +52,7 @@ androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 material = "1.12.0"
 
-rssparser = "6.0.8"
+rssparser = "6.0.12"
 
 ktml = "0.0.6"
 

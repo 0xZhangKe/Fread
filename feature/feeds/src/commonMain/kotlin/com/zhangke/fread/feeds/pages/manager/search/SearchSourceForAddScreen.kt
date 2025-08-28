@@ -1,6 +1,5 @@
 package com.zhangke.fread.feeds.pages.manager.search
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,8 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
@@ -34,10 +37,13 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.composable.StatusSourceNode
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
+import com.zhangke.fread.feeds.pre_add_feeds_input_label_1
+import com.zhangke.fread.feeds.pre_add_feeds_input_label_2
 import com.zhangke.fread.feeds.search_feeds_title
 import com.zhangke.fread.feeds.search_feeds_title_hint
 import com.zhangke.fread.status.source.StatusSource
@@ -118,7 +124,7 @@ internal class SearchSourceForAddScreen : BaseScreen() {
                     placeholder = {
                         Text(
                             text = stringResource(Res.string.search_feeds_title_hint),
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.labelMedium,
                         )
                     },
                     keyboardActions = KeyboardActions(
@@ -140,6 +146,13 @@ internal class SearchSourceForAddScreen : BaseScreen() {
                         }
                     },
                 )
+                Text(
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 12.dp, end = 16.dp),
+                    text = buildInputLabelText(),
+                    lineHeight = 1.5.em,
+                    style = MaterialTheme.typography.labelMedium,
+                )
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -154,6 +167,24 @@ internal class SearchSourceForAddScreen : BaseScreen() {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun buildInputLabelText(): AnnotatedString {
+        return buildAnnotatedString {
+            append(
+                HighlightTextBuildUtil.buildHighlightText(
+                    text = stringResource(Res.string.pre_add_feeds_input_label_1),
+                    fontWeight = FontWeight.Bold,
+                )
+            )
+            append(
+                HighlightTextBuildUtil.buildHighlightText(
+                    text = stringResource(Res.string.pre_add_feeds_input_label_2),
+                    fontWeight = FontWeight.Bold,
+                )
+            )
         }
     }
 }

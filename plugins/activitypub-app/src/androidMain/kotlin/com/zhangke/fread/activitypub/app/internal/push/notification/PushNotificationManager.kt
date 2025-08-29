@@ -23,6 +23,7 @@ import com.zhangke.framework.utils.maybe
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.common.action.OpenNotificationPageAction
 import com.zhangke.fread.commonbiz.R
+import com.zhangke.fread.commonbiz.ic_fread_logo
 import me.tatarka.inject.annotations.Inject
 import kotlin.random.Random
 

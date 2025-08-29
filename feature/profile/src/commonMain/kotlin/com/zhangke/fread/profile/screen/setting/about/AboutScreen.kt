@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.LocalContentColor
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -128,13 +130,14 @@ class AboutScreen : BaseScreen() {
                         .padding(innerPadding)
                         .padding(horizontal = 16.dp),
                 ) {
+                    Spacer(modifier = Modifier.height(32.dp))
                     Image(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(top = 32.dp)
-                            .size(80.dp),
+                            .width(88.dp),
                         painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.ic_fread_logo),
                         contentDescription = "Logo",
+                        contentScale = ContentScale.Crop,
                     )
                     Text(
                         modifier = Modifier

@@ -1,4 +1,7 @@
-# Fread
+<div align="center">
+  <img src="/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp">
+  <h1>Fread</h1>
+</div>
 
 Fread is a decentralized microblogging client that seamlessly integrates Mastodon, Bluesky, and RSS — all in one place. 
 

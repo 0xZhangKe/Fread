@@ -23,7 +23,6 @@ actual class AppPlatformUpdater {
         get() {
             val apkSignatureSha1 = appContext.getApkSignatureSha1()
             return apkSignatureSha1 == F_DROID_SIGN_PUB_KEY
-            return true
         }
 
     actual fun getAppVersionCode(): Long {

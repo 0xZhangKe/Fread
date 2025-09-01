@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -45,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Grid
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.utils.transparentColors
+import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.commonbiz.save
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_alt_label
@@ -239,7 +238,7 @@ private fun PublishPostImageAltDialog(
                 onValueChange = { inputtedValue = it },
                 minLines = 1,
                 placeholder = { Text(stringResource(Res.string.shared_publish_media_alt_dialog_input_hint)) },
-                colors = TextFieldDefaults.transparentColors.copy(
+                colors = TextFieldDefaults.transparentIndicatorColors.copy(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                 ),

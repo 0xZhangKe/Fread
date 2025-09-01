@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -100,6 +101,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfo
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsScreen
+import com.zhangke.fread.activitypub.app.internal.screen.search.SearchStatusScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
@@ -170,6 +172,16 @@ data class UserDetailScreen(
                         type = StatusListType.FAVOURITES
                     )
                 )
+            },
+            onSearchClick = {
+                uiState.accountUiState?.account?.id?.let { userId ->
+                    navigator.push(
+                        SearchStatusScreen(
+                            locator = uiState.locator,
+                            userId = userId,
+                        )
+                    )
+                }
             },
             onBookmarksClick = {
                 navigator.push(StatusListScreen(locator = locator, type = StatusListType.BOOKMARKS))
@@ -305,6 +317,7 @@ data class UserDetailScreen(
         uiState: UserDetailUiState,
         messageFlow: SharedFlow<TextString>,
         onBackClick: () -> Unit,
+        onSearchClick: () -> Unit,
         onFavouritesClick: () -> Unit,
         onBookmarksClick: () -> Unit,
         onBannerClick: () -> Unit,
@@ -361,6 +374,7 @@ data class UserDetailScreen(
                     uiState = uiState,
                     onFavouritesClick = onFavouritesClick,
                     onBlockClick = onBlockClick,
+                    onSearchClick = onSearchClick,
                     onBookmarksClick = onBookmarksClick,
                     onBlockDomainClick = onBlockDomainClick,
                     onUnblockDomainClick = onUnblockDomainClick,
@@ -500,6 +514,7 @@ data class UserDetailScreen(
     @Composable
     private fun ToolbarActions(
         uiState: UserDetailUiState,
+        onSearchClick: () -> Unit,
         onFavouritesClick: () -> Unit,
         onBookmarksClick: () -> Unit,
         onBlockClick: () -> Unit,
@@ -519,6 +534,11 @@ data class UserDetailScreen(
         onLogoutClick: () -> Unit,
     ) {
         val accountUiState = uiState.accountUiState ?: return
+        SimpleIconButton(
+            onClick = onSearchClick,
+            imageVector = Icons.Default.Search,
+            contentDescription = "Search"
+        )
         if (uiState.isAccountOwner) {
             SimpleIconButton(
                 onClick = onCreatedListClick,

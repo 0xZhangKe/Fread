@@ -32,10 +32,22 @@ object TextFieldUtils {
     }
 }
 
-val TextFieldDefaults.transparentColors: TextFieldColors
+val TextFieldDefaults.transparentIndicatorColors: TextFieldColors
     @Composable get() = colors(
         focusedIndicatorColor = Color.Transparent,
         unfocusedIndicatorColor = Color.Transparent,
         disabledIndicatorColor = Color.Transparent,
         errorIndicatorColor = Color.Transparent,
+    )
+
+val TextFieldDefaults.transparentIndicatorAndContainerColors: TextFieldColors
+    @Composable get() = colors(
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        errorIndicatorColor = Color.Transparent,
+        errorContainerColor = Color.Transparent,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
     )

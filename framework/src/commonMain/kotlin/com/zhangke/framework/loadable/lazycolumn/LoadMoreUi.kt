@@ -79,6 +79,28 @@ fun LoadMoreUi(
 }
 
 @Composable
+fun ObserveLoadMore(
+    lazyListState: LazyListState,
+    onLoadMore: () -> Unit,
+    loadMoreRemainCountThreshold: Int = 3,
+) {
+    val listLayoutInfo by remember { derivedStateOf { lazyListState.layoutInfo } }
+    val directional = rememberDirectionalLazyListState(lazyListState).scrollDirection
+    val totalItemsCount = listLayoutInfo.totalItemsCount
+    var inLoadingMoreZone by remember { mutableStateOf(false) }
+    val currentLastVisibleIndex = listLayoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+    val remainToBottomCount = totalItemsCount - currentLastVisibleIndex - 1
+    inLoadingMoreZone = totalItemsCount > 0 &&
+            remainToBottomCount <= loadMoreRemainCountThreshold &&
+            totalItemsCount > loadMoreRemainCountThreshold
+    LaunchedEffect(inLoadingMoreZone, directional) {
+        if (inLoadingMoreZone) {
+            onLoadMore()
+        }
+    }
+}
+
+@Composable
 fun ObserveLazyListLoadEvent(
     lazyListState: LazyListState,
     loadPreviousPageRemainCountThreshold: Int,

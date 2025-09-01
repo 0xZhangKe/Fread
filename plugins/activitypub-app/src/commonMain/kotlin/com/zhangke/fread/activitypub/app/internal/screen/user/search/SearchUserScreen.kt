@@ -39,7 +39,7 @@ import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.utils.transparentColors
+import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_search_user_placeholder
 import com.zhangke.fread.activitypub.app.internal.screen.list.AccountItem
@@ -111,7 +111,7 @@ class SearchUserScreen(
                             keyboardOptions = KeyboardOptions.Default.copy(
                                 imeAction = ImeAction.Search
                             ),
-                            colors = TextFieldDefaults.transparentColors.copy(
+                            colors = TextFieldDefaults.transparentIndicatorColors.copy(
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedContainerColor = Color.Transparent,
                             ),

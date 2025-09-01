@@ -22,6 +22,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.instance.tags.ServerTre
 import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.list.add.AddListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.search.SearchStatusViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusViewModel
@@ -220,6 +221,14 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
     fun provideSearchUserViewModel(creator: (PlatformLocator, Boolean) -> SearchUserViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return SearchUserViewModel::class to SearchUserViewModel.Factory { role, onlyFollowing ->
             creator(role, onlyFollowing)
+        }
+    }
+
+    @IntoMap
+    @Provides
+    fun provideSearchStatusViewModel(creator: (PlatformLocator, String) -> SearchStatusViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return SearchStatusViewModel::class to SearchStatusViewModel.Factory { role, userId ->
+            creator(role, userId)
         }
     }
 

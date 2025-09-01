@@ -13,7 +13,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
-import com.zhangke.framework.utils.transparentColors
+import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
 import kotlinx.coroutines.delay
 
@@ -45,7 +45,7 @@ fun InputBlogTextField(
             enableMentions = mentionHighlightEnabled,
         ),
         value = textFieldValue,
-        colors = TextFieldDefaults.transparentColors,
+        colors = TextFieldDefaults.transparentIndicatorColors,
         textStyle = MaterialTheme.typography.bodyLarge,
         onValueChange = {
             onContentChanged(it)

@@ -10,6 +10,7 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFe
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostViewModel
+import com.zhangke.fread.bluesky.internal.screen.search.SearchStatusViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
@@ -90,6 +91,14 @@ interface BlueskyComponent : BlueskyPlatformComponent {
     fun providePublishPostViewModel(creator: (PlatformLocator, String?, String?) -> PublishPostViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return PublishPostViewModel::class to PublishPostViewModel.Factory { role, reply, quote ->
             creator(role, reply, quote)
+        }
+    }
+
+    @IntoMap
+    @Provides
+    fun provideBskySearchStatusViewModel(creator: (PlatformLocator, String) -> SearchStatusViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return SearchStatusViewModel::class to SearchStatusViewModel.Factory { locator, did ->
+            creator(locator, did)
         }
     }
 

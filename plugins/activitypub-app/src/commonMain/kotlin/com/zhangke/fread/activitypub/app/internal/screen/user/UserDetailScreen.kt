@@ -114,6 +114,7 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.formatDate
+import com.zhangke.fread.commonbiz.search
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.status.model.Emoji
@@ -537,7 +538,7 @@ data class UserDetailScreen(
         SimpleIconButton(
             onClick = onSearchClick,
             imageVector = Icons.Default.Search,
-            contentDescription = "Search"
+            contentDescription = stringResource(com.zhangke.fread.commonbiz.Res.string.search),
         )
         if (uiState.isAccountOwner) {
             SimpleIconButton(

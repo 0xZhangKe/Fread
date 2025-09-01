@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.search
+package com.zhangke.fread.commonbiz.shared.screen.search
 
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.status.model.StatusUiState

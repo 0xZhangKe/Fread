@@ -226,7 +226,7 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideSearchStatusViewModel(creator: (PlatformLocator, String) -> SearchStatusViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideActivityPubSearchStatusViewModel(creator: (PlatformLocator, String) -> SearchStatusViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return SearchStatusViewModel::class to SearchStatusViewModel.Factory { role, userId ->
             creator(role, userId)
         }

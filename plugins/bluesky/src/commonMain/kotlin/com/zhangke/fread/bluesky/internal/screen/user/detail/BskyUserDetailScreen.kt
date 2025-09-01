@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +48,7 @@ import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPage
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreen
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
+import com.zhangke.fread.bluesky.internal.screen.search.SearchStatusScreen
 import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
@@ -54,6 +56,7 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.feeds
+import com.zhangke.fread.commonbiz.search
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.buildRichText
@@ -97,6 +100,9 @@ class BskyUserDetailScreen(
             uiState = uiState,
             snackbarHostState = snackBarState,
             onBackClick = navigator::pop,
+            onSearchClick = {
+                navigator.push(SearchStatusScreen(locator = locator, did = did))
+            },
             onBannerClick = { openFullImageScreen(transparentNavigator, uiState.banner) },
             onAvatarClick = { openFullImageScreen(transparentNavigator, uiState.avatar) },
             onFollowClick = viewModel::onFollowClick,
@@ -145,6 +151,7 @@ class BskyUserDetailScreen(
         uiState: BskyUserDetailUiState,
         snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
+        onSearchClick: () -> Unit,
         onBannerClick: () -> Unit,
         onAvatarClick: () -> Unit,
         onFollowClick: () -> Unit,
@@ -189,6 +196,7 @@ class BskyUserDetailScreen(
                     uiState = uiState,
                     onBlockClick = onBlockClick,
                     onMuteClick = onMuteClick,
+                    onSearchClick = onSearchClick,
                     onUnmuteClick = onUnmuteClick,
                     onOpenInBrowserClick = onOpenInBrowserClick,
                     onCopyLinkClick = onCopyLinkClick,
@@ -263,6 +271,7 @@ class BskyUserDetailScreen(
 @Composable
 private fun TopBarActions(
     uiState: BskyUserDetailUiState,
+    onSearchClick: () -> Unit,
     onBlockClick: () -> Unit,
     onMuteClick: () -> Unit,
     onUnmuteClick: () -> Unit,
@@ -273,6 +282,11 @@ private fun TopBarActions(
     onFollowingFeedsClick: () -> Unit,
     onLogoutClick: () -> Unit,
 ) {
+    SimpleIconButton(
+        onClick = onSearchClick,
+        imageVector = Icons.Default.Search,
+        contentDescription = stringResource(CommonBizRes.string.search),
+    )
     if (uiState.isOwner) {
         SimpleIconButton(
             onClick = onFollowingFeedsClick,

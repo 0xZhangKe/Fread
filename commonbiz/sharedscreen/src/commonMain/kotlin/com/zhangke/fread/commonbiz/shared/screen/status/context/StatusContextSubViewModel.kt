@@ -169,10 +169,9 @@ class StatusContextSubViewModel(
         val contextStatus = mutableListOf<StatusInContext>()
         contextStatus += statusContext.ancestors.sortedBy { it.status.createAt.epochMillis }
             .map { StatusInContext(it, StatusInContextType.ANCESTOR) }
-        contextStatus += StatusInContext(
-            statusContext.status!!,
-            StatusInContextType.ANCHOR,
-        )
+        statusContext.status?.let {
+            contextStatus += StatusInContext(it, StatusInContextType.ANCHOR)
+        }
         for (descendant in statusContext.descendants) {
             contextStatus.addAll(descendant.expandToContextStatus(null))
         }

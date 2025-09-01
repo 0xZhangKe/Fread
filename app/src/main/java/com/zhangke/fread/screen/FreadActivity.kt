@@ -9,20 +9,27 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Card
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
-import com.zhangke.framework.composable.video.ExoPlayerManager
-import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.fread.common.action.ComposableActions
 import com.zhangke.fread.common.action.RouteAction
 import com.zhangke.fread.common.theme.ThemeType
@@ -31,6 +38,7 @@ import com.zhangke.fread.common.utils.CallbackableActivity
 import com.zhangke.fread.di.AndroidActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
+import com.zhangke.fread.status.ui.like.LikeIcon
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.launch
 
@@ -76,17 +84,36 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
                 darkTheme = darkTheme,
                 dynamicColors = getDynamicColorScheme(darkTheme, themeType),
             ) {
-                val videoPlayerManager = remember { ExoPlayerManager() }
-                DisposableEffect(videoPlayerManager) {
-                    onDispose {
-                        videoPlayerManager.recycler()
+                Box(modifier = Modifier.fillMaxSize()) {
+                    var like by remember { mutableStateOf(false) }
+                    Card(
+                        modifier = Modifier
+                            .clickable { like = !like }
+                            .align(Alignment.Center)
+                            .size(80.dp),
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            LikeIcon(
+                                modifier = Modifier.align(Alignment.Center),
+                                liked = like,
+                                contentDescription = "",
+                            )
+                        }
                     }
                 }
-                CompositionLocalProvider(
-                    LocalExoPlayerManager provides videoPlayerManager,
-                ) {
-                    activityComponent.freadContent()
-                }
+
+
+//                val videoPlayerManager = remember { ExoPlayerManager() }
+//                DisposableEffect(videoPlayerManager) {
+//                    onDispose {
+//                        videoPlayerManager.recycler()
+//                    }
+//                }
+//                CompositionLocalProvider(
+//                    LocalExoPlayerManager provides videoPlayerManager,
+//                ) {
+//                    activityComponent.freadContent()
+//                }
             }
         }
     }

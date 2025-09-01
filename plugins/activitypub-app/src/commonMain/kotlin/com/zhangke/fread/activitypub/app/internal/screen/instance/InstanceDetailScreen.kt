@@ -83,8 +83,14 @@ class InstanceDetailScreen(
                     navigationResult.popWithResult(false)
                 }
             },
-            onUserClick = { role, webFinger ->
-                navigator.push(UserDetailScreen(locator = locator, webFinger = webFinger))
+            onUserClick = { role, webFinger, userId ->
+                navigator.push(
+                    UserDetailScreen(
+                        locator = locator,
+                        webFinger = webFinger,
+                        userId = userId,
+                    )
+                )
             }
         )
     }
@@ -93,7 +99,7 @@ class InstanceDetailScreen(
     private fun InstanceDetailContent(
         uiState: InstanceDetailUiState,
         onBackClick: () -> Unit,
-        onUserClick: (PlatformLocator, WebFinger) -> Unit,
+        onUserClick: (PlatformLocator, WebFinger, String?) -> Unit,
     ) {
         val browserLauncher = LocalActivityBrowserLauncher.current
         val contentCanScrollBackward = remember { mutableStateOf(false) }
@@ -182,7 +188,7 @@ class InstanceDetailScreen(
     @Composable
     private fun InstanceModLine(
         uiState: InstanceDetailUiState,
-        onUserClick: (PlatformLocator, WebFinger) -> Unit,
+        onUserClick: (PlatformLocator, WebFinger, String?) -> Unit,
     ) {
         val instance = uiState.instance
         val loading = uiState.loading
@@ -220,7 +226,7 @@ class InstanceDetailScreen(
                             val account = uiState.modAccount ?: return@noRippleClick
                             val role =
                                 PlatformLocator(accountUri = account.uri, baseUrl = baseUrl)
-                            onUserClick(role, account.webFinger)
+                            onUserClick(role, account.webFinger, account.userId)
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

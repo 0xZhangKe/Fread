@@ -133,6 +133,7 @@ class UserListScreen(
                                         UserDetailScreen(
                                             locator = uiState.locator,
                                             webFinger = item.author.webFinger,
+                                            userId = item.author.userId,
                                         )
                                     )
                                 },

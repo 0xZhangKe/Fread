@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.source.user
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.toPlatformUri
@@ -25,7 +26,7 @@ class SearchUserSourceUseCase @Inject constructor(
     ): Result<List<StatusSource>> {
         searchAsUserUri(locator, query).getOrNull()?.let { return Result.success(listOf(it)) }
         searchAsWebFinger(locator, query).getOrNull()?.let { return Result.success(listOf(it)) }
-        searchAsUrl(locator, query).getOrNull()?.let { return Result.success(listOf(it)) }
+        searchAsUrl(query).getOrNull()?.let { return Result.success(listOf(it)) }
         return searchUser(locator, query)
     }
 
@@ -61,14 +62,12 @@ class SearchUserSourceUseCase @Inject constructor(
      * https://m.cmx.im/@webb@androiddev.social
      * https://androiddev.social/@webb
      */
-    private suspend fun searchAsUrl(
-        locator: PlatformLocator,
-        query: String
-    ): Result<StatusSource?> {
+    private suspend fun searchAsUrl(query: String): Result<StatusSource?> {
         WebFinger.create(query) ?: return Result.success(null)
         // FIXME: fix no scheme query
         val uri = query.toPlatformUri()
-        val scheme = if (uri.scheme.isNullOrEmpty()) HttpScheme.HTTPS else uri.scheme!!
+        val baseUrl = FormalBaseUrl.parse(query) ?: return Result.success(null)
+        val scheme = if (uri.scheme.isNullOrEmpty()) HttpScheme.HTTPS else "${uri.scheme}://"
         if (!HttpScheme.validate(scheme)) return Result.success(null)
         val host = uri.host
         if (host.isNullOrEmpty()) return Result.success(null)
@@ -76,6 +75,7 @@ class SearchUserSourceUseCase @Inject constructor(
             ?.removePrefix("/")
             ?.removeSuffix("/")
         if (acct.isNullOrEmpty()) return Result.success(null)
+        val locator = PlatformLocator(baseUrl = baseUrl)
         return userRepo.lookupUserSource(
             locator = locator,
             acct = acct,

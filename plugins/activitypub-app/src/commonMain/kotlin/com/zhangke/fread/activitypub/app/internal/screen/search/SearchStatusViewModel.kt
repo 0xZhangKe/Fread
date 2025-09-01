@@ -56,6 +56,9 @@ class SearchStatusViewModel @Inject constructor(
         if (!loadMore) {
             this.maxId = null
         }
+        if (loadMore && maxId == null) {
+            return Result.success(emptyList())
+        }
         val platformResult = loadPlatform()
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)

@@ -47,6 +47,9 @@ class SearchStatusViewModel @Inject constructor(
         if (!loadMore) {
             cursor = null
         }
+        if (loadMore && cursor == null) {
+            return Result.success(emptyList())
+        }
         val client = clientManager.getClient(locator)
         val account = client.loggedAccountProvider()
         val platform = platformRepo.getPlatform(client.baseUrl)
@@ -56,9 +59,7 @@ class SearchStatusViewModel @Inject constructor(
             cursor = cursor,
         )
         return client.searchPostsCatching(params)
-            .onSuccess {
-                cursor = it.cursor
-            }
+            .onSuccess { cursor = it.cursor }
             .map { result ->
                 result.posts.map {
                     statusAdapter.convertToUiState(

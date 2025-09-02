@@ -103,4 +103,6 @@ dependencies {
 //    ksp(libs.krouter.reducing.compiler)
 
     implementation(libs.genai.image.description)
+    implementation(libs.guava)
+    implementation(libs.guava.listenable.future)
 }

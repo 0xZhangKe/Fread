@@ -9,8 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.activitypub.app.internal.usecase.GetDefaultBaseUrlUseCase
-import com.zhangke.fread.activitypub.app.internal.usecase.source.user.SearchUserSourceUseCase
+import com.zhangke.fread.activitypub.app.internal.usecase.source.user.SearchUserSourceNoTokenUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
@@ -25,7 +24,7 @@ import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubSearchEngine @Inject constructor(
-    private val searchUserSource: SearchUserSourceUseCase,
+    private val searchUserSource: SearchUserSourceNoTokenUseCase,
     private val clientManager: ActivityPubClientManager,
     private val platformRepo: ActivityPubPlatformRepo,
     private val searchAdapter: ActivityPubSearchAdapter,
@@ -33,7 +32,6 @@ class ActivityPubSearchEngine @Inject constructor(
     private val hashtagAdapter: ActivityPubTagAdapter,
     private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val loggedAccountProvider: LoggedAccountProvider,
-    private val getDefaultBaseUrl: GetDefaultBaseUrlUseCase,
 ) : ISearchEngine {
 
     override suspend fun search(
@@ -115,7 +113,7 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     override suspend fun searchSourceNoToken(query: String): Result<List<StatusSource>> {
-        return searchUserSource(PlatformLocator(baseUrl = getDefaultBaseUrl()), query)
+        return searchUserSource(query)
     }
 
     override suspend fun searchPlatform(

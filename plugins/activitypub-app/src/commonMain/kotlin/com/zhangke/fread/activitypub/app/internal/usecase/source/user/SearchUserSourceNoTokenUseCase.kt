@@ -8,22 +8,24 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.user.UserRepo
 import com.zhangke.fread.activitypub.app.internal.source.UserSourceTransformer
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.activitypub.app.internal.usecase.GetDefaultBaseUrlUseCase
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 
-class SearchUserSourceUseCase @Inject constructor(
+class SearchUserSourceNoTokenUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val userRepo: UserRepo,
     private val userUriTransformer: UserUriTransformer,
     private val userSourceTransformer: UserSourceTransformer,
+    private val getDefaultBaseUrl: GetDefaultBaseUrlUseCase,
 ) {
 
     suspend operator fun invoke(
-        locator: PlatformLocator,
         query: String,
     ): Result<List<StatusSource>> {
+        val locator = PlatformLocator(baseUrl = getDefaultBaseUrl())
         searchAsUserUri(locator, query).getOrNull()?.let { return Result.success(listOf(it)) }
         searchAsWebFinger(locator, query).getOrNull()?.let { return Result.success(listOf(it)) }
         searchAsUrl(query).getOrNull()?.let { return Result.success(listOf(it)) }

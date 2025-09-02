@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -41,12 +42,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Grid
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.commonbiz.save
 import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.image.GenerateImageAltScreen
+import com.zhangke.fread.commonbiz.shared.screen.post_status_image_generate_alt
 import com.zhangke.fread.commonbiz.shared.screen.shared_alt_label
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_media_alt_dialog_input_hint
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_media_alt_dialog_input_tip
@@ -59,6 +64,7 @@ fun PublishPostMediaAttachment(
     modifier: Modifier,
     medias: List<PublishPostMedia>,
     mediaAltMaxCharacters: Int,
+    enabledGenerateImageDescription: Boolean,
     onAltChanged: (PublishPostMedia, String) -> Unit,
     onDeleteClick: (PublishPostMedia) -> Unit,
 ) {
@@ -73,6 +79,7 @@ fun PublishPostMediaAttachment(
                 modifier = Modifier.fillMaxWidth().aspectRatio(1F),
                 image = media,
                 isVideo = media.isVideo,
+                enabledGenerateImageDescription = enabledGenerateImageDescription,
                 mediaAltMaxCharacters = mediaAltMaxCharacters,
                 onAltChanged = onAltChanged,
                 onDeleteClick = onDeleteClick,
@@ -87,6 +94,7 @@ private fun PublishPostMediaAttachmentImage(
     image: PublishPostMedia,
     isVideo: Boolean,
     mediaAltMaxCharacters: Int,
+    enabledGenerateImageDescription: Boolean,
     onAltChanged: (PublishPostMedia, String) -> Unit,
     onDeleteClick: (PublishPostMedia) -> Unit,
 ) {
@@ -95,7 +103,7 @@ private fun PublishPostMediaAttachmentImage(
     var showAltDialog by remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         AutoSizeImage(
-            url = image.uri.toString(),
+            url = image.uri,
             modifier = Modifier.fillMaxSize()
                 .clip(RoundedCornerShape(6.dp))
                 .border(
@@ -172,7 +180,8 @@ private fun PublishPostMediaAttachmentImage(
     }
     if (showAltDialog) {
         PublishPostImageAltDialog(
-            imageUri = image.uri.toString(),
+            imageUri = image.uri,
+            enabledGenerateImageDescription = enabledGenerateImageDescription,
             onDismissRequest = { showAltDialog = false },
             alt = image.alt.orEmpty(),
             maxCharacters = mediaAltMaxCharacters,
@@ -185,6 +194,7 @@ private fun PublishPostMediaAttachmentImage(
 @Composable
 private fun PublishPostImageAltDialog(
     imageUri: String,
+    enabledGenerateImageDescription: Boolean,
     onDismissRequest: () -> Unit,
     alt: String,
     maxCharacters: Int,
@@ -243,6 +253,15 @@ private fun PublishPostImageAltDialog(
                     unfocusedContainerColor = Color.Transparent,
                 ),
             )
+
+            if (enabledGenerateImageDescription) {
+                GenerateImageDescriptionButton(
+                    modifier = Modifier,
+                    imageUri = imageUri,
+                    onAltChanged = onAltChanged,
+                )
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth()
                     .padding(top = 16.dp),
@@ -264,6 +283,25 @@ private fun PublishPostImageAltDialog(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun GenerateImageDescriptionButton(
+    modifier: Modifier,
+    imageUri: String,
+    onAltChanged: (String) -> Unit,
+) {
+    val navigator = LocalNavigator.currentOrThrow
+    TextButton(
+        modifier = modifier,
+        onClick = {
+            navigator.push(GenerateImageAltScreen(imageUri))
+        },
+    ) {
+        Text(
+            text = stringResource(Res.string.post_status_image_generate_alt),
+        )
     }
 }
 

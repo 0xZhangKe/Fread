@@ -131,6 +131,7 @@ class PublishPostScreen(
                         mediaAltMaxCharacters = uiState.mediaAltMaxCharacters,
                         onAltChanged = onMediaAltChanged,
                         onDeleteClick = onMediaDeleteClick,
+                        enabledGenerateImageDescription = uiState.enabledGenerateImageDescription,
                     )
                 }
                 if (uiState.quoteBlog != null) {

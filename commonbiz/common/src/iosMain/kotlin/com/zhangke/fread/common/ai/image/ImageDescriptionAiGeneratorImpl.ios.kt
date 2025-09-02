@@ -13,7 +13,7 @@ actual class ImageDescriptionAiGeneratorImpl {
         }
     }
 
-    actual fun startDownload(): Flow<ImageAiModelDownloadState>{
+    actual fun startDownload(): Flow<ImageAiModelDownloadState> {
         return flow {
             emit(ImageAiModelDownloadState.Failure(UnsupportedOperationException("Image description model download is not supported on iOS.")))
         }

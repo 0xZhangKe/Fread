@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusA
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
+import com.zhangke.fread.common.ai.image.ImageDescriptionAiGenerator
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
@@ -23,6 +24,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class GenerateInitPostStatusUiStateUseCase @Inject constructor(
     private val accountManager: ActivityPubAccountManager,
+    private val imageDescriptionAiGenerator: ImageDescriptionAiGenerator,
 ) {
 
     suspend operator fun invoke(
@@ -81,6 +83,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             visibility = replyParams.replyingToBlog.visibility,
             replyToAuthorInfo = replyParams,
             accountChangeable = false,
+            enableImageDescription = imageDescriptionAiGenerator.available(),
         )
     }
 
@@ -102,6 +105,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             visibilityChangeable = false,
             accountChangeable = false,
             attachment = blog.generateAttachment(),
+            enableImageDescription = imageDescriptionAiGenerator.available(),
         )
     }
 

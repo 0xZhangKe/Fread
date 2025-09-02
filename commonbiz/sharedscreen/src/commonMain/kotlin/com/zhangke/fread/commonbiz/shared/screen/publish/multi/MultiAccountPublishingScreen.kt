@@ -238,6 +238,7 @@ class MultiAccountPublishingScreen(
                     mediaAltMaxCharacters = uiState.globalRules.mediaAltMaxCharacters,
                     onAltChanged = onMediaAltChanged,
                     onDeleteClick = onDeleteMediaClick,
+                    enabledGenerateImageDescription = uiState.enabledGenerateImageDescription,
                 )
             }
         }

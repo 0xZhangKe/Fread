@@ -101,4 +101,6 @@ dependencies {
     implementation(libs.bundles.androidx.media3)
     implementation(libs.androidx.appcompat)
 //    ksp(libs.krouter.reducing.compiler)
+
+    implementation(libs.genai.image.description)
 }

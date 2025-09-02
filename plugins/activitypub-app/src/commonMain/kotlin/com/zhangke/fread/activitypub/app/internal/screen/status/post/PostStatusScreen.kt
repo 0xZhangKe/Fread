@@ -286,6 +286,7 @@ class PostStatusScreen(
                     mediaAltMaxCharacters = uiState.rules.altMaxCharacters,
                     onAltChanged = onDescriptionInputted,
                     onDeleteClick = onDeleteClick,
+                    enabledGenerateImageDescription = uiState.enableImageDescription,
                 )
             }
 
@@ -297,6 +298,7 @@ class PostStatusScreen(
                     mediaAltMaxCharacters = uiState.rules.altMaxCharacters,
                     onAltChanged = onDescriptionInputted,
                     onDeleteClick = onDeleteClick,
+                    enabledGenerateImageDescription = uiState.enableImageDescription,
                 )
             }
 

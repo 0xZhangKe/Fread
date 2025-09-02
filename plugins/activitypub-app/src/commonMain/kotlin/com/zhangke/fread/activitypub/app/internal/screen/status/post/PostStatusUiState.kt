@@ -29,6 +29,7 @@ data class PostStatusUiState(
     val rules: PostBlogRules,
     val publishing: Boolean,
     val mentionState: LoadableState<List<ActivityPubAccountEntity>>,
+    val enableImageDescription: Boolean,
 ) {
 
     val allowedInputCount: Int get() = rules.maxCharacters - content.text.length
@@ -57,6 +58,7 @@ data class PostStatusUiState(
             accountChangeable: Boolean = true,
             visibilityChangeable: Boolean = true,
             attachment: PostStatusAttachment? = null,
+            enableImageDescription: Boolean = false,
         ): PostStatusUiState {
             return PostStatusUiState(
                 account = account,
@@ -73,6 +75,7 @@ data class PostStatusUiState(
                 accountChangeable = accountChangeable,
                 visibilityChangeable = visibilityChangeable,
                 publishing = false,
+                enableImageDescription = enableImageDescription,
                 mentionState = LoadableState.idle(),
             )
         }

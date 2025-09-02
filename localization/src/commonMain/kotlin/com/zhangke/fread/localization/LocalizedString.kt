@@ -602,7 +602,6 @@ object LocalizedString {
     val activity_pub_add_list_back_reminder = localizedString.activity_pub_add_list_back_reminder
     val activity_pub_search_user_placeholder = localizedString.activity_pub_search_user_placeholder
     val activity_pub_list_delete_confirm = localizedString.activity_pub_list_delete_confirm
-
     val mixed_content_subtitle_1 = localizedString.mixed_content_subtitle_1
     val mixed_content_subtitle_2 = localizedString.mixed_content_subtitle_2
     val date_time_ago = localizedString.date_time_ago
@@ -610,7 +609,6 @@ object LocalizedString {
     val date_time_hour = localizedString.date_time_hour
     val date_time_minute = localizedString.date_time_minute
     val date_time_second = localizedString.date_time_second
-
     val authentication_page_normal_title = localizedString.authentication_page_normal_title
     val authentication_page_failed_title = localizedString.authentication_page_failed_title
     val main_drawer_title = localizedString.main_drawer_title
@@ -624,6 +622,11 @@ object LocalizedString {
         localizedString.main_request_notification_dialog_reject_button
     val main_request_notification_dialog_allow_button =
         localizedString.main_request_notification_dialog_allow_button
-    val main_request_notification_dialog_content =
-        localizedString.main_request_notification_dialog_content
+    val main_request_notification_dialog_content = localizedString.main_request_notification_dialog_content
+    val post_status_image_generate_alt = localizedString.post_status_image_generate_alt
+    val post_status_image_generate_alt_hint = localizedString.post_status_image_generate_alt_hint
+    val post_status_image_generate_alt_generate = localizedString.post_status_image_generate_alt_generate
+    val post_status_image_generate_alt_downloading_alert = localizedString.post_status_image_generate_alt_downloading_alert
+    val post_status_image_generate_alt_downloadable_content = localizedString.post_status_image_generate_alt_downloadable_content
+    val post_status_image_generate_alt_generating_failed = localizedString.post_status_image_generate_alt_generating_failed
 }

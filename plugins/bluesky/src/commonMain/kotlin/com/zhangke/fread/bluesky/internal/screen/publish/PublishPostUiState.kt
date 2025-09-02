@@ -23,6 +23,7 @@ data class PublishPostUiState(
     val replyBlog: Blog?,
     val quoteBlog: Blog?,
     val list: List<StatusList>,
+    val enabledGenerateImageDescription: Boolean,
 ) {
 
     val remainingImageCount: Int
@@ -64,6 +65,7 @@ data class PublishPostUiState(
                 maxLanguageCount = 3,
                 publishing = false,
                 list = emptyList(),
+                enabledGenerateImageDescription = false,
             )
         }
     }

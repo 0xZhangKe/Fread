@@ -235,4 +235,10 @@
     <string name="main_request_notification_dialog_reject_button">Reject</string>
     <string name="main_request_notification_dialog_allow_button">Allow</string>
     <string name="main_request_notification_dialog_content">To receive interaction messages, please allow notification permissions.</string>
+    <string name="post_status_image_generate_alt">Generate alt text for the image</string>
+    <string name="post_status_image_generate_alt_hint">This feature is powered by Google GenAI. The actual model may vary depending on your device manufacturer. Generated content may not be accurate and is currently available in English only.</string>
+    <string name="post_status_image_generate_alt_generate">Start Generating</string>
+    <string name="post_status_image_generate_alt_downloading_alert">The model is downloading. Try again in a bit.</string>
+    <string name="post_status_image_generate_alt_downloadable_content">The large language model hasn’t been downloaded yet. Do you want to download it now? This might use data, so check your network charges.</string>
+    <string name="post_status_image_generate_alt_generating_failed">Oops! Something went wrong during generation: %1$s</string>
 </resources>

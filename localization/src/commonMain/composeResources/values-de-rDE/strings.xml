@@ -235,4 +235,10 @@
     <string name="main_request_notification_dialog_reject_button">Ablehnen</string>
     <string name="main_request_notification_dialog_allow_button">Zulassen</string>
     <string name="main_request_notification_dialog_content">Um Interaktions-Benachrichtigungen zu erhalten, bitte Berechtigung für Benachrichtigungen erteilen.</string>
+    <string name="post_status_image_generate_alt">Alternativtext für das Bild generieren</string>
+    <string name="post_status_image_generate_alt_hint">Diese Funktion wird von Google GenAI unterstützt. Das tatsächliche Modell kann je nach Gerätehersteller variieren. Die erzeugten Inhalte sind möglicherweise nicht genau und derzeit nur auf Englisch verfügbar.</string>
+    <string name="post_status_image_generate_alt_generate">Generierung starten</string>
+    <string name="post_status_image_generate_alt_downloading_alert">Das Modell wird heruntergeladen. Bitte später erneut versuchen.</string>
+    <string name="post_status_image_generate_alt_downloadable_content">Das Sprachmodell wurde noch nicht heruntergeladen. Möchten Sie es jetzt herunterladen? Dies kann Datenvolumen verbrauchen, prüfen Sie daher Ihre Netzgebühren.</string>
+    <string name="post_status_image_generate_alt_generating_failed">Ups! Bei der Generierung ist ein Fehler aufgetreten: %1$s</string>
 </resources>

@@ -235,4 +235,10 @@
     <string name="main_request_notification_dialog_reject_button">拒绝</string>
     <string name="main_request_notification_dialog_allow_button">允许</string>
     <string name="main_request_notification_dialog_content">为了接收互动消息，请允许通知权限。</string>
+    <string name="post_status_image_generate_alt">根据图片生成替代文本</string>
+    <string name="post_status_image_generate_alt_hint">本功能由 Google GenAI 支持，实际模型取决于手机厂商，生成的内容不保证准确性，并且目前只支持英文。</string>
+    <string name="post_status_image_generate_alt_generate">开始生成</string>
+    <string name="post_status_image_generate_alt_downloading_alert">当前正在下载模型，请稍后重试。</string>
+    <string name="post_status_image_generate_alt_downloadable_content">系统当前尚未下载大语言模型，是否开始下载？这将会消耗一定的流量，请注意网络资费。</string>
+    <string name="post_status_image_generate_alt_generating_failed">生成失败：%1$s</string>
 </resources>

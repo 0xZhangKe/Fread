@@ -235,4 +235,10 @@
     <string name="main_request_notification_dialog_reject_button">拒絕</string>
     <string name="main_request_notification_dialog_allow_button">允許</string>
     <string name="main_request_notification_dialog_content">為接收互動訊息，請允許通知權限。</string>
+    <string name="post_status_image_generate_alt">根據圖片產生替代文字</string>
+    <string name="post_status_image_generate_alt_hint">此功能由 Google GenAI 支援，實際模型取決於手機廠商，生成的內容不保證準確性，並且目前只支援英文。</string>
+    <string name="post_status_image_generate_alt_generate">開始產生</string>
+    <string name="post_status_image_generate_alt_downloading_alert">目前正在下載模型，請稍後再試。</string>
+    <string name="post_status_image_generate_alt_downloadable_content">系統尚未下載大型語言模型，是否要開始下載？這將會消耗一定流量，請注意網絡資費。</string>
+    <string name="post_status_image_generate_alt_generating_failed">產生失敗：%1$s</string>
 </resources>

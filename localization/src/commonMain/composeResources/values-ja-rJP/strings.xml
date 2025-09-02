@@ -235,4 +235,10 @@
     <string name="main_request_notification_dialog_reject_button">拒否</string>
     <string name="main_request_notification_dialog_allow_button">許可</string>
     <string name="main_request_notification_dialog_content">交流に関する通知を受け取るには、通知を許可してください。</string>
+    <string name="post_status_image_generate_alt">画像から代替テキストを生成</string>
+    <string name="post_status_image_generate_alt_hint">この機能は Google GenAI によって提供されています。実際に使用されるモデルは端末メーカーに依存し、生成される内容の正確性は保証されません。現在は英語のみ対応しています。</string>
+    <string name="post_status_image_generate_alt_generate">生成を開始</string>
+    <string name="post_status_image_generate_alt_downloading_alert">モデルをダウンロード中です。しばらくしてから再試行してください。</string>
+    <string name="post_status_image_generate_alt_downloadable_content">システムに大規模言語モデルがまだダウンロードされていません。今すぐダウンロードしますか？一定の通信量を消費しますのでご注意ください。</string>
+    <string name="post_status_image_generate_alt_generating_failed">生成に失敗しました：%1$s</string>
 </resources>

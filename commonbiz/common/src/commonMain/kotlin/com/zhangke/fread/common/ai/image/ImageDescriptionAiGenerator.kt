@@ -1,15 +1,22 @@
 package com.zhangke.fread.common.ai.image
 
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-object ImageDescriptionAiGenerator {
+class ImageDescriptionAiGenerator @Inject constructor() {
 
-    private val generator = ImageDescriptionAiGeneratorImpl()
+    fun available(): Boolean {
+        return ImageDescriptionAiGeneratorChecker().available()
+    }
 
     fun startGenerate(
         imageUri: String,
     ): Flow<ImageDescriptionGenerateState> {
-        return generator.startGenerate(imageUri)
+        return ImageDescriptionAiGeneratorImpl().startGenerate(imageUri)
+    }
+
+    fun startDownload(): Flow<ImageAiModelDownloadState> {
+        return ImageDescriptionAiGeneratorImpl().startDownload()
     }
 }
 

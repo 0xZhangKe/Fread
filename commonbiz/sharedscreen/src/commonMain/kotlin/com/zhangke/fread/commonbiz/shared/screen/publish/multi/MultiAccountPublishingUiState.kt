@@ -26,6 +26,7 @@ data class MultiAccountPublishingUiState(
     val interactionSetting: PostInteractionSetting,
     val sensitive: Boolean,
     val warningContent: TextFieldValue,
+    val enabledGenerateImageDescription: Boolean,
 ) {
 
     val mediaAvailableCount: Int
@@ -55,6 +56,7 @@ data class MultiAccountPublishingUiState(
                 interactionSetting = PostInteractionSetting.default(),
                 sensitive = false,
                 warningContent = TextFieldValue(""),
+                enabledGenerateImageDescription = false,
             )
         }
 

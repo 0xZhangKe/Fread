@@ -10,6 +10,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.framework.utils.languageCode
+import com.zhangke.fread.common.ai.image.ImageDescriptionAiGenerator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.repo.SelectedAccountPublishingRepo
@@ -39,6 +40,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
     private val platformUriHelper: PlatformUriHelper,
     private val publishPostOnMultiAccount: PublishPostOnMultiAccountUseCase,
     private val selectedAccountPublishingRepo: SelectedAccountPublishingRepo,
+    private val imageDescriptionAiGenerator: ImageDescriptionAiGenerator,
     @Assisted private val defaultAddAccountList: List<String>,
 ) : ViewModel() {
 
@@ -57,6 +59,9 @@ class MultiAccountPublishingViewModel @Inject constructor(
     val publishSuccessFlow: SharedFlow<Unit> get() = _publishSuccessFlow
 
     init {
+        _uiState.update {
+            it.copy(enabledGenerateImageDescription = imageDescriptionAiGenerator.available())
+        }
         launchInViewModel {
             val allAccounts = statusProvider.accountManager.getAllLoggedAccount()
             val addedAccounts = getInitialAccount(allAccounts)

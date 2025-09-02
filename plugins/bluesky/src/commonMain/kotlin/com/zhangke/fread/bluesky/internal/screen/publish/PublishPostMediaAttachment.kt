@@ -9,6 +9,7 @@ fun PublishPostMediaAttachment(
     modifier: Modifier,
     media: PublishPostMediaAttachment,
     mediaAltMaxCharacters: Int,
+    enabledGenerateImageDescription: Boolean,
     onAltChanged: (PublishPostMedia, String) -> Unit,
     onDeleteClick: (PublishPostMedia) -> Unit,
 ) {
@@ -16,6 +17,7 @@ fun PublishPostMediaAttachment(
         modifier = modifier,
         medias = media.medias,
         mediaAltMaxCharacters = mediaAltMaxCharacters,
+        enabledGenerateImageDescription = enabledGenerateImageDescription,
         onAltChanged = onAltChanged,
         onDeleteClick = onDeleteClick,
     )

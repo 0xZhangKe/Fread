@@ -235,4 +235,10 @@
     <string name="main_request_notification_dialog_reject_button">Refuser</string>
     <string name="main_request_notification_dialog_allow_button">Autoriser</string>
     <string name="main_request_notification_dialog_content">Pour recevoir les messages d’interaction, veuillez autoriser les notifications.</string>
+    <string name="post_status_image_generate_alt">Générer un texte alternatif pour l’image</string>
+    <string name="post_status_image_generate_alt_hint">Cette fonctionnalité est propulsée par Google GenAI. Le modèle utilisé peut varier selon le fabricant de votre appareil. Le contenu généré peut être inexact et n’est actuellement disponible qu’en anglais.</string>
+    <string name="post_status_image_generate_alt_generate">Commencer la génération</string>
+    <string name="post_status_image_generate_alt_downloading_alert">Le modèle est en cours de téléchargement. Réessayez dans un instant.</string>
+    <string name="post_status_image_generate_alt_downloadable_content">Le grand modèle de langage n’a pas encore été téléchargé. Voulez-vous le télécharger maintenant ? Cela peut utiliser des données, vérifiez donc vos frais de réseau.</string>
+    <string name="post_status_image_generate_alt_generating_failed">Oups ! Une erreur s’est produite lors de la génération : %1$s</string>
 </resources>

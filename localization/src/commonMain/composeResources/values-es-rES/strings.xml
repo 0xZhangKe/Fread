@@ -235,4 +235,10 @@
     <string name="main_request_notification_dialog_reject_button">Rechazar</string>
     <string name="main_request_notification_dialog_allow_button">Permitir</string>
     <string name="main_request_notification_dialog_content">Para recibir mensajes de interacción, permite las notificaciones.</string>
+    <string name="post_status_image_generate_alt">Generar texto alternativo para la imagen</string>
+    <string name="post_status_image_generate_alt_hint">Esta función es compatible con Google GenAI. El modelo real puede variar según el fabricante de tu dispositivo. El contenido generado puede no ser preciso y actualmente solo está disponible en inglés.</string>
+    <string name="post_status_image_generate_alt_generate">Comenzar a generar</string>
+    <string name="post_status_image_generate_alt_downloading_alert">El modelo se está descargando. Inténtalo de nuevo en un momento.</string>
+    <string name="post_status_image_generate_alt_downloadable_content">El modelo de lenguaje grande aún no se ha descargado. ¿Quieres descargarlo ahora? Esto puede usar datos, así que revisa tus tarifas de red.</string>
+    <string name="post_status_image_generate_alt_generating_failed">¡Ups! Algo salió mal durante la generación: %1$s</string>
 </resources>

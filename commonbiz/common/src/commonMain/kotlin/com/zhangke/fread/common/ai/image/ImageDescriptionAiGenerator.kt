@@ -31,6 +31,8 @@ expect class ImageDescriptionAiGeneratorImpl() {
 
 sealed interface ImageDescriptionGenerateState {
 
+    data object Idle : ImageDescriptionGenerateState
+
     data object Downloadable : ImageDescriptionGenerateState
 
     data class Generating(val description: String) : ImageDescriptionGenerateState
@@ -43,6 +45,8 @@ sealed interface ImageDescriptionGenerateState {
 }
 
 sealed interface ImageAiModelDownloadState {
+
+    data object Idle : ImageAiModelDownloadState
 
     data object Started : ImageAiModelDownloadState
 

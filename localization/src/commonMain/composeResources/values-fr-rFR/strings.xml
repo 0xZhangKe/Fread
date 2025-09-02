@@ -241,4 +241,7 @@
     <string name="post_status_image_generate_alt_downloading_alert">Le modèle est en cours de téléchargement. Réessayez dans un instant.</string>
     <string name="post_status_image_generate_alt_downloadable_content">Le grand modèle de langage n’a pas encore été téléchargé. Voulez-vous le télécharger maintenant ? Cela peut utiliser des données, vérifiez donc vos frais de réseau.</string>
     <string name="post_status_image_generate_alt_generating_failed">Oups ! Une erreur s’est produite lors de la génération : %1$s</string>
+    <string name="post_status_image_generate_alt_downloading">Téléchargement...</string>
+    <string name="post_status_image_generate_alt_downloading_success">Échec du téléchargement : %1$s</string>
+    <string name="post_status_image_generate_alt_downloading_failure">Téléchargement réussi</string>
 </resources>

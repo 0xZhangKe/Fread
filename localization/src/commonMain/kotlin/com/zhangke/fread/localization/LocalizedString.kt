@@ -629,4 +629,7 @@ object LocalizedString {
     val post_status_image_generate_alt_downloading_alert = localizedString.post_status_image_generate_alt_downloading_alert
     val post_status_image_generate_alt_downloadable_content = localizedString.post_status_image_generate_alt_downloadable_content
     val post_status_image_generate_alt_generating_failed = localizedString.post_status_image_generate_alt_generating_failed
+    val post_status_image_generate_alt_downloading = localizedString.post_status_image_generate_alt_downloading
+    val post_status_image_generate_alt_downloading_success = localizedString.post_status_image_generate_alt_downloading_success
+    val post_status_image_generate_alt_downloading_failure = localizedString.post_status_image_generate_alt_downloading_failure
 }

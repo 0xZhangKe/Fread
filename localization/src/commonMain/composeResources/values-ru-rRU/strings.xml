@@ -241,4 +241,7 @@
     <string name="post_status_image_generate_alt_downloading_alert">Модель загружается. Попробуйте снова чуть позже.</string>
     <string name="post_status_image_generate_alt_downloadable_content">Большая языковая модель ещё не загружена. Хотите скачать её сейчас? Это может использовать мобильный трафик, проверьте свои расходы на связь.</string>
     <string name="post_status_image_generate_alt_generating_failed">Упс! Произошла ошибка во время генерации: %1$s</string>
+    <string name="post_status_image_generate_alt_downloading">Загрузка...</string>
+    <string name="post_status_image_generate_alt_downloading_success">Не удалось загрузить: %1$s</string>
+    <string name="post_status_image_generate_alt_downloading_failure">Загрузка успешно завершена</string>
 </resources>

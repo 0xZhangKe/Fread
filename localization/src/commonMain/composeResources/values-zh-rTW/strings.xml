@@ -241,4 +241,7 @@
     <string name="post_status_image_generate_alt_downloading_alert">目前正在下載模型，請稍後再試。</string>
     <string name="post_status_image_generate_alt_downloadable_content">系統尚未下載大型語言模型，是否要開始下載？這將會消耗一定流量，請注意網路資費。</string>
     <string name="post_status_image_generate_alt_generating_failed">產生失敗：%1$s</string>
+    <string name="post_status_image_generate_alt_downloading">下載中...</string>
+    <string name="post_status_image_generate_alt_downloading_success">下載失敗：%1$s</string>
+    <string name="post_status_image_generate_alt_downloading_failure">下載成功</string>
 </resources>

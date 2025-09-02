@@ -241,4 +241,7 @@
     <string name="post_status_image_generate_alt_downloading_alert">Das Modell wird heruntergeladen. Bitte später erneut versuchen.</string>
     <string name="post_status_image_generate_alt_downloadable_content">Das Sprachmodell wurde noch nicht heruntergeladen. Möchten Sie es jetzt herunterladen? Dies kann Datenvolumen verbrauchen, prüfen Sie daher Ihre Netzgebühren.</string>
     <string name="post_status_image_generate_alt_generating_failed">Ups! Bei der Generierung ist ein Fehler aufgetreten: %1$s</string>
+    <string name="post_status_image_generate_alt_downloading">Wird heruntergeladen...</string>
+    <string name="post_status_image_generate_alt_downloading_success">Download fehlgeschlagen: %1$s</string>
+    <string name="post_status_image_generate_alt_downloading_failure">Download erfolgreich</string>
 </resources>

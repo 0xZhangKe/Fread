@@ -241,4 +241,7 @@
     <string name="post_status_image_generate_alt_downloading_alert">モデルをダウンロード中です。しばらくしてから再試行してください。</string>
     <string name="post_status_image_generate_alt_downloadable_content">システムに大規模言語モデルがまだダウンロードされていません。今すぐダウンロードしますか？一定の通信量を消費しますのでご注意ください。</string>
     <string name="post_status_image_generate_alt_generating_failed">生成に失敗しました：%1$s</string>
+    <string name="post_status_image_generate_alt_downloading">ダウンロード中...</string>
+    <string name="post_status_image_generate_alt_downloading_success">ダウンロードに失敗しました：%1$s</string>
+    <string name="post_status_image_generate_alt_downloading_failure">ダウンロード成功</string>
 </resources>

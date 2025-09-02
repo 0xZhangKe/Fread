@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,7 +72,8 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
                 modifier = Modifier.fillMaxSize()
                     .padding(innerPadding)
                     .padding(top = 32.dp)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
             ) {
                 ContentAddingState(Modifier.align(Alignment.CenterHorizontally).fillMaxWidth())
                 Spacer(modifier = Modifier.height(16.dp))

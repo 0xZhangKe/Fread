@@ -241,4 +241,7 @@
     <string name="post_status_image_generate_alt_downloading_alert">El modelo se está descargando. Inténtalo de nuevo en un momento.</string>
     <string name="post_status_image_generate_alt_downloadable_content">El modelo de lenguaje grande aún no se ha descargado. ¿Quieres descargarlo ahora? Esto puede usar datos, así que revisa tus tarifas de red.</string>
     <string name="post_status_image_generate_alt_generating_failed">¡Ups! Algo salió mal durante la generación: %1$s</string>
+    <string name="post_status_image_generate_alt_downloading">Descargando...</string>
+    <string name="post_status_image_generate_alt_downloading_success">Error en la descarga: %1$s</string>
+    <string name="post_status_image_generate_alt_downloading_failure">Descarga completada con éxito</string>
 </resources>

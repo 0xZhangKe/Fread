@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     id("fread.project.framework.kmp")
     id("com.google.devtools.ksp")
@@ -76,6 +78,10 @@ kotlin {
                 implementation(libs.androidx.browser)
 
                 implementation(libs.multiplatformsettings.datastore)
+
+                implementation(libs.genai.image.description)
+                implementation(libs.guava)
+                implementation(libs.guava.listenable.future)
             }
         }
         iosMain {

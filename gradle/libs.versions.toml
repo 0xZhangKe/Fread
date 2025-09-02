@@ -220,6 +220,9 @@ bluesky = { module = "sh.christian.ozone:bluesky", version.ref = "bluesky" }
 
 genai-image-description = { group = "com.google.mlkit", name = "genai-image-description", version.ref = "genaiImageDescription" }
 
+guava = { group = "com.google.guava", name = "guava", version = "33.3.1-android" }
+guava_listenable_future = { group = "com.google.guava", name = "listenablefuture", version = "1.0" }
+
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

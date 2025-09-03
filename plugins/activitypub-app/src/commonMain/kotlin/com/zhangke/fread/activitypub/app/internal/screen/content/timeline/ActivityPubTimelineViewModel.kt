@@ -82,8 +82,7 @@ class ActivityPubTimelineViewModel(
                     showPagingLoadingPlaceholder = true,
                 )
             }
-            val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
-            val minId = maybeLoadLocalFeeds(account)
+            val minId = maybeLoadLocalFeeds()
             if (minId.isNullOrEmpty()) {
                 timelineRepo.getFresherStatus(
                     locator = locator,
@@ -97,9 +96,10 @@ class ActivityPubTimelineViewModel(
                     minId = minId,
                     listId = listId,
                 )
-            }.map {
-                it.preParseStatusList()
-                it.toTimelineItems(account)
+            }.map { status ->
+                status.preParseStatusList()
+                val account = getAccount()
+                status.toTimelineItems(account)
             }.onFailure { t ->
                 if (_uiState.value.items.isEmpty()) {
                     _uiState.update {
@@ -130,9 +130,7 @@ class ActivityPubTimelineViewModel(
     /**
      * @return minId
      */
-    private suspend fun maybeLoadLocalFeeds(
-        account: ActivityPubLoggedAccount?,
-    ): String? {
+    private suspend fun maybeLoadLocalFeeds(): String? {
         if (freadConfigManager.getTimelineDefaultPosition() == TimelineDefaultPosition.NEWEST) return null
         val localStatus =
             if (type == ActivityPubStatusSourceType.TIMELINE_LOCAL || type == ActivityPubStatusSourceType.TIMELINE_PUBLIC) {
@@ -150,6 +148,7 @@ class ActivityPubTimelineViewModel(
         if (localStatus.isNotEmpty()) {
             val latestReadStatus = statusReadStateRepo.getLatestReadId(locator, type, listId)
             val initialIndex = localStatus.indexOfFirst { it.id == latestReadStatus }
+            val account = getAccount()
             _uiState.update {
                 it.copy(
                     items = localStatus.toTimelineItems(account),
@@ -331,5 +330,9 @@ class ActivityPubTimelineViewModel(
                 ),
             )
         }
+    }
+
+    private fun getAccount(): ActivityPubLoggedAccount? {
+        return locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
     }
 }

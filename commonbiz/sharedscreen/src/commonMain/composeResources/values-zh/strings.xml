@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shared_select_language_title">选择语言</string>
+    <string name="shared_status_context_screen_title">详情</string>
+
+    <string name="shared_alt_label">替代文本</string>
+
+    <string name="login_dialog_input_hint">请输入要登录的服务器</string>
+    <string name="login_dialog_title">请选择要登录的服务器</string>
+    <string name="login_dialog_input_tip">请输入服务器地址</string>
+    <string name="login_dialog_input_title">请输入服务器地址</string>
+    <string name="login_dialog_input_label">服务器地址</string>
+
+    <string name="login_dialog_target_title">请登录</string>
+    <string name="profile_description">Fread 支持添加多个账号，添加进来的账号可以用来发帖、点赞、转发、评论等操作，还可以查看已添加账号创建的列表。</string>
+
+    <string name="list_content_empty_placeholder">暂无内容</string>
+    <string name="shared_notification_unknown_desc">未知通知</string>
+
+    <string name="shared_notification_favourited_desc">喜欢了你的动态</string>
+    <string name="shared_notification_reblog_desc">转发了你的动态</string>
+    <string name="shared_notification_poll_desc">查看投票结果</string>
+    <string name="shared_notification_poll_count">%1$s 票 · 已结束</string>
+    <string name="shared_notification_follow_desc">关注了你</string>
+    <string name="shared_notification_update_desc">编辑了一条帖子</string>
+    <string name="shared_notification_follow_request">你收到一条关注请求</string>
+    <string name="shared_notification_new_status_desc">发布了新帖子</string>
+    <string name="shared_notification_severed_desc">和你中断了关系</string>
+    <string name="shared_notification_quote_desc">引用了你的帖子</string>
+    <string name="shared_notification_reply_desc">回复了你的帖子</string>
+
+    <string name="shared_user_list_title_following">正在关注的用户</string>
+    <string name="shared_user_list_title_followers">关注你的用户</string>
+    <string name="shared_user_list_title_mutes">隐藏的用户</string>
+    <string name="shared_user_list_title_blocks">屏蔽的用户</string>
+    <string name="shared_user_list_title_likes">点赞的用户</string>
+    <string name="shared_user_list_title_reblog">转发的用户</string>
+    <string name="shared_user_list_action_mute">隐藏</string>
+    <string name="shared_user_list_action_block">屏蔽</string>
+    <string name="shared_user_list_action_muted">已隐藏</string>
+    <string name="shared_user_list_action_blocked">已屏蔽</string>
+    <string name="shared_user_list_action_mute_dialog_message">您确定要隐藏该用户吗？</string>
+    <string name="shared_user_list_action_block_dialog_message">您确定要屏蔽该用户吗？</string>
+
+    <string name="shared_publish_blog_title">发帖</string>
+    <string name="shared_publish_blog_text_hint">写下你的想法</string>
+    <string name="shared_publish_reply_input_hint">回复给 [[%1$s]]</string>
+
+    <string name="shared_publish_interaction_no_limit">任何人都可以参与互动</string>
+    <string name="shared_publish_interaction_limited">已限制互动</string>
+    <string name="shared_publish_interaction_dialog_title">帖子互动选项</string>
+    <string name="shared_publish_interaction_dialog_subtitle">自定义哪些人可以参与这个帖子的互动。</string>
+    <string name="shared_publish_interaction_dialog_quote_title">引用选项</string>
+    <string name="shared_publish_interaction_dialog_quote_allow">允许引用帖子</string>
+    <string name="shared_publish_interaction_dialog_reply_title">回复选项</string>
+    <string name="shared_publish_interaction_dialog_reply_subtitle">允许这些人参与回复：</string>
+    <string name="shared_publish_interaction_dialog_reply_all">所有人</string>
+    <string name="shared_publish_interaction_dialog_reply_nobody">仅限自己</string>
+    <string name="shared_publish_interaction_dialog_reply_combine_title">或者组合选择这些选项：</string>
+    <string name="shared_publish_interaction_dialog_mentioned">被提及的用户</string>
+    <string name="shared_publish_interaction_dialog_following">你关注的用户</string>
+    <string name="shared_publish_interaction_dialog_follower">你的关注者</string>
+    <string name="shared_publish_interaction_dialog_in_list">"%1$s"中的用户</string>
+
+    <string name="shared_publish_media_alt_dialog_title">添加替代文本</string>
+    <string name="shared_publish_media_alt_dialog_input_tip">扩充描述替代文本</string>
+    <string name="shared_publish_media_alt_dialog_input_hint">替代文本</string>
+
+    <string name="shared_feeds_not_login_title">登录信息已失效，请重新登陆</string>
+    <string name="shared_feeds_go_to_login">登录</string>
+
+    <string name="shared_publish_select_account_title">请选择账号</string>
+
+    <string name="post_status_scope_public">公开</string>
+    <string name="post_status_scope_unlisted">公开，但不在探索功能出现</string>
+    <string name="post_status_scope_follower_only">仅关注者可见</string>
+    <string name="post_status_scope_mentioned_only">仅提及用户可见</string>
+    <string name="post_status_content_warning">警告文本</string>
+    <string name="post_status_exit_dialog_content">退出后已编辑的内容不会被保存，确定退出吗？</string>
+    <string name="post_status_content_is_empty">请输入内容</string>
+    <string name="post_status_success">发送成功</string>
+    <string name="post_status_failed">发送失败：%1$s</string>
+    <string name="post_status_part_failed">部分账号发布失败，已从发布队列移除成功的账号，请重新尝试：%1$s</string>
+
+    <string name="post_status_image_generate_alt">根据图片生成替代文本</string>
+    <string name="post_status_image_generate_alt_hint">本功能由 Google GenAI 支持，实际模型取决于手机厂商，生成的内容不保证准确性，并且目前只支持英文。</string>
+    <string name="post_status_image_generate_alt_generate">开始生成</string>
+    <string name="post_status_image_generate_alt_downloading_alert">当前正在下载模型，请稍后重试。</string>
+    <string name="post_status_image_generate_alt_downloading">下载中...</string>
+    <string name="post_status_image_generate_alt_downloading_success">下载失败：%1$s</string>
+    <string name="post_status_image_generate_alt_downloading_failure">下载成功</string>
+    <string name="post_status_image_generate_alt_downloadable_content">系统当前尚未下载大语言模型，是否开始下载？这将会消耗一定的流量，请注意网络资费。</string>
+    <string name="post_status_image_generate_alt_generating_failed">生成失败：%1$s</string>
+    <string name="post_status_image_generate_alt_generator_unavailable">当前 Gen AI 不可用</string>
+</resources>

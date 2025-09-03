@@ -51,6 +51,7 @@ class GenerateImageAltScreen(private val imageUri: String) : BaseScreen() {
             uiState = uiState,
             onBackClick = { navigator.pop() },
             onGenerateClick = viewModel::onGenerateClick,
+            onGenerateFailedClick = viewModel::onGenerateFailedClick,
             onDownloadClick = viewModel::onDownloadClick,
             onDownloadCancel = viewModel::onDownloadCancelClick,
             onDoNotDownloadClick = viewModel::onDoNotDownloadClick,
@@ -65,6 +66,7 @@ class GenerateImageAltScreen(private val imageUri: String) : BaseScreen() {
         onBackClick: () -> Unit,
         onGenerateClick: () -> Unit,
         onDoNotDownloadClick: () -> Unit,
+        onGenerateFailedClick: () -> Unit,
         onDownloadCancel: () -> Unit,
         onDownloadClick: () -> Unit,
         onDownloadFailureClick: () -> Unit,
@@ -84,7 +86,7 @@ class GenerateImageAltScreen(private val imageUri: String) : BaseScreen() {
                     .verticalScroll(rememberScrollState()),
             ) {
                 Card(
-                    modifier = Modifier.padding(top = 24.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 24.dp, end = 16.dp)
                         .fillMaxWidth()
                         .aspectRatio(1.7F),
                 ) {
@@ -148,6 +150,31 @@ class GenerateImageAltScreen(private val imageUri: String) : BaseScreen() {
                         contentText = stringResource(LocalizedString.post_status_image_generate_alt_downloadable_content),
                         onNegativeClick = onDoNotDownloadClick,
                         onPositiveClick = onDownloadClick,
+                    )
+                }
+                if (uiState.generatingState is ImageDescriptionGenerateState.Unavailable) {
+                    FreadDialog(
+                        onDismissRequest = {},
+                        properties = DialogProperties(
+                            dismissOnBackPress = false,
+                            dismissOnClickOutside = false,
+                        ),
+                        contentText = stringResource(Res.string.post_status_image_generate_alt_generator_unavailable),
+                        onPositiveClick = onGenerateFailedClick,
+                    )
+                }
+                if (uiState.generatingState is ImageDescriptionGenerateState.Failure) {
+                    FreadDialog(
+                        onDismissRequest = {},
+                        properties = DialogProperties(
+                            dismissOnBackPress = false,
+                            dismissOnClickOutside = false,
+                        ),
+                        contentText = stringResource(
+                            Res.string.post_status_image_generate_alt_generating_failed,
+                            uiState.generatingState.error.message.orEmpty(),
+                        ),
+                        onPositiveClick = onGenerateFailedClick,
                     )
                 }
                 if (uiState.downloadState is ImageAiModelDownloadState.Success) {

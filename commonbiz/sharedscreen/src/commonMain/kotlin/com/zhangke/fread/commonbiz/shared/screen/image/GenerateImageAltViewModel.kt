@@ -13,7 +13,6 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 class GenerateImageAltViewModel @Inject constructor(
-    private val imageDescriptionAiGenerator: ImageDescriptionAiGenerator,
     @Assisted private val imageUri: String,
 ) : ViewModel() {
 
@@ -30,7 +29,7 @@ class GenerateImageAltViewModel @Inject constructor(
     fun onGenerateClick() {
         if (!_uiState.value.generateEnable) return
         launchInViewModel {
-            imageDescriptionAiGenerator.startGenerate(imageUri)
+            ImageDescriptionAiGenerator().startGenerate(imageUri)
                 .collect { state ->
                     _uiState.update {
                         val wholeText = buildString {
@@ -52,6 +51,10 @@ class GenerateImageAltViewModel @Inject constructor(
         _uiState.update { it.copy(generatingState = ImageDescriptionGenerateState.Idle) }
     }
 
+    fun onGenerateFailedClick() {
+        _uiState.update { it.copy(generatingState = ImageDescriptionGenerateState.Idle) }
+    }
+
     fun onDownloadClick() {
         _uiState.update { it.copy(generatingState = ImageDescriptionGenerateState.Idle) }
         val downloadState = _uiState.value.downloadState
@@ -62,7 +65,7 @@ class GenerateImageAltViewModel @Inject constructor(
         }
         if (downloadJob?.isActive == true) return
         downloadJob = launchInViewModel {
-            imageDescriptionAiGenerator.startDownload()
+            ImageDescriptionAiGenerator().startDownload()
                 .collect { state ->
                     _uiState.update { it.copy(downloadState = state) }
                 }

@@ -14,7 +14,7 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PublishingPostUseCase
-import com.zhangke.fread.common.ai.image.ImageDescriptionAiGenerator
+import com.zhangke.fread.common.ai.image.imageAltGeneratorAvailable
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
@@ -44,7 +44,6 @@ class PublishPostViewModel @Inject constructor(
     private val platformUriHelper: PlatformUriHelper,
     private val configManager: FreadConfigManager,
     private val publishingPost: PublishingPostUseCase,
-    private val imageDescriptionAiGenerator: ImageDescriptionAiGenerator,
     @Assisted private val locator: PlatformLocator,
     @Assisted replyBlogJsonString: String?,
     @Assisted quoteBlogJsonString: String?,
@@ -71,7 +70,7 @@ class PublishPostViewModel @Inject constructor(
     private var publishJob: Job? = null
 
     init {
-        _uiState.update { it.copy(enabledGenerateImageDescription = imageDescriptionAiGenerator.available()) }
+        _uiState.update { it.copy(enabledGenerateImageDescription = imageAltGeneratorAvailable()) }
         launchInViewModel(Dispatchers.IO) {
             val reply: Blog? = replyBlogJsonString?.let {
                 globalJson.fromJson<Blog>(it)

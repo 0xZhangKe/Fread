@@ -101,6 +101,7 @@ class RssBlogDetailScreen(
                     },
                     blogTranslationState = BlogTranslationUiState(support = false),
                     editedAt = blog.editedAt?.instant,
+                    showOpenBlogWithOtherAccountBtn = false,
                     allowToShowFollowButton = false,
                     onTranslateClick = {},
                 )

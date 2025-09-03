@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.status.model.StatusUiState
@@ -21,6 +22,7 @@ fun FeedsStatusNode(
     showDivider: Boolean = true,
     style: StatusStyle = LocalStatusUiConfig.current.contentStyle,
 ) {
+    val bottomNavigator = LocalBottomSheetNavigator.current
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
@@ -38,6 +40,9 @@ fun FeedsStatusNode(
                 navigator = navigator,
                 event = event,
             )
+        },
+        onOpenBlogWithOtherAccountClick = {
+            onOpenBlogWithOtherAccountClick(bottomNavigator, it)
         },
     )
 }

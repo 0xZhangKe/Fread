@@ -33,6 +33,7 @@
     <string name="status_ui_interaction_open_original_instance">Open the other instance</string>
     <string name="status_ui_interaction_copy_url">Copy Link</string>
     <string name="status_ui_interaction_translate">Translate</string>
+    <string name="status_ui_interaction_open_blog_by_other_account">Open with another account</string>
 
     <string name="status_ui_visibility_mentioned_only">Mentioned Only</string>
 

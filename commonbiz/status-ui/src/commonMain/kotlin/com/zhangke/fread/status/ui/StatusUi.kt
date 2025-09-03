@@ -35,6 +35,7 @@ fun StatusUi(
     detailModel: Boolean = false,
     showDivider: Boolean = true,
     threadsType: ThreadsType = ThreadsType.UNSPECIFIED,
+    onOpenBlogWithOtherAccountClick: (StatusUiState) -> Unit = {},
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
     if (status.status.intrinsicBlog.filtered?.firstOrNull()?.action == BlogFiltered.FilterAction.HIDE) {
@@ -125,6 +126,9 @@ fun StatusUi(
                     protocol = status.status.platform.protocol,
                     hashtag = it,
                 )
+            },
+            onOpenBlogWithOtherAccountClick = {
+                onOpenBlogWithOtherAccountClick(status)
             },
         )
     }

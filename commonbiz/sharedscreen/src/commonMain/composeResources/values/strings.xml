@@ -81,4 +81,8 @@
     <string name="post_status_exit_dialog_content">Unsaved changes will be lost. Are you sure you want to exit?</string>
     <string name="post_status_content_is_empty">Please enter content</string>
     <string name="post_status_part_failed">Some accounts couldn’t be published. Successfully posted accounts have been removed. Please try again with the remaining ones：%1$s</string>
+
+    <string name="select_account_open_status_title">Select an account</string>
+    <string name="select_account_open_status_empty">No other accounts</string>
+    <string name="select_account_open_status_search_in">Search in %1$s</string>
 </resources>

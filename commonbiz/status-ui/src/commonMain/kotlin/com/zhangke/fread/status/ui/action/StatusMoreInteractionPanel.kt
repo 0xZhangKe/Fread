@@ -38,6 +38,8 @@ fun StatusMoreInteractionIcon(
     style: StatusStyle,
     onActionClick: (StatusActionType, Blog) -> Unit,
     onTranslateClick: () -> Unit,
+    onOpenBlogWithOtherAccountClick: (Blog) -> Unit,
+    showOpenBlogWithOtherAccountBtn: Boolean = true,
 ) {
     var showMorePopup by remember {
         mutableStateOf(false)
@@ -63,6 +65,8 @@ fun StatusMoreInteractionIcon(
                 blogTranslationState = blogTranslationState,
                 onDismissRequest = { showMorePopup = false },
                 onTranslateClick = onTranslateClick,
+                onOpenBlogWithOtherAccountClick = onOpenBlogWithOtherAccountClick,
+                showOpenBlogWithOtherAccountBtn = showOpenBlogWithOtherAccountBtn,
             )
 
             if (isOwner == true) {
@@ -149,6 +153,8 @@ private fun AdditionalMoreOptions(
     blogTranslationState: BlogTranslationUiState,
     onDismissRequest: () -> Unit,
     onTranslateClick: () -> Unit,
+    onOpenBlogWithOtherAccountClick: (Blog) -> Unit,
+    showOpenBlogWithOtherAccountBtn: Boolean,
 ) {
     val textHandler = LocalActivityTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
@@ -159,6 +165,12 @@ private fun AdditionalMoreOptions(
     DropDownCopyLinkItem {
         onDismissRequest()
         textHandler.copyText(blog.link)
+    }
+    if (showOpenBlogWithOtherAccountBtn) {
+        DropDownOpenStatusByOtherAccountItem {
+            onDismissRequest()
+            onOpenBlogWithOtherAccountClick(blog)
+        }
     }
     if (blogTranslationState.support) {
         ModalDropdownMenuItem(

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
@@ -29,6 +30,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.security.Md5
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.commonbiz.shared.composable.onOpenBlogWithOtherAccountClick
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.commonbiz.shared.screen.shared_status_context_screen_title
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -156,6 +158,7 @@ data class StatusContextScreen(
         onMediaClick: OnBlogMediaClick,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
+        val bottomNavigator = LocalBottomSheetNavigator.current
         when (statusInContext.type) {
             StatusInContextType.ANCESTOR -> StatusUi(
                 modifier = modifier.clickable {
@@ -170,6 +173,9 @@ data class StatusContextScreen(
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                },
             )
 
             StatusInContextType.ANCHOR -> StatusUi(
@@ -180,6 +186,9 @@ data class StatusContextScreen(
                 onMediaClick = onMediaClick,
                 detailModel = true,
                 composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                },
             )
 
             StatusInContextType.DESCENDANT -> StatusUi(
@@ -191,6 +200,9 @@ data class StatusContextScreen(
                 onMediaClick = onMediaClick,
                 threadsType = ThreadsType.NONE,
                 composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                },
             )
 
             StatusInContextType.DESCENDANT_ANCHOR -> StatusUi(
@@ -202,6 +214,9 @@ data class StatusContextScreen(
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                },
             )
 
             StatusInContextType.DESCENDANT_WITH_ANCESTOR_DESCENDANT -> StatusUi(
@@ -213,6 +228,9 @@ data class StatusContextScreen(
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                },
             )
 
             StatusInContextType.DESCENDANT_WITH_ANCESTOR -> StatusUi(
@@ -224,6 +242,9 @@ data class StatusContextScreen(
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                },
             )
         }
     }

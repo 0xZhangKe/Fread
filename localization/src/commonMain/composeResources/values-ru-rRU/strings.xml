@@ -244,4 +244,5 @@
     <string name="post_status_image_generate_alt_downloading">Загрузка...</string>
     <string name="post_status_image_generate_alt_downloading_success">Не удалось загрузить: %1$s</string>
     <string name="post_status_image_generate_alt_downloading_failure">Загрузка успешно завершена</string>
+    <string name="post_status_image_generate_alt_generator_unavailable">Gen AI недоступен</string>
 </resources>

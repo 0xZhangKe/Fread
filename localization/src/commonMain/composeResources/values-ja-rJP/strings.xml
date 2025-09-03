@@ -244,4 +244,5 @@
     <string name="post_status_image_generate_alt_downloading">ダウンロード中...</string>
     <string name="post_status_image_generate_alt_downloading_success">ダウンロードに失敗しました：%1$s</string>
     <string name="post_status_image_generate_alt_downloading_failure">ダウンロード成功</string>
+    <string name="post_status_image_generate_alt_generator_unavailable">Gen AI を利用できません</string>
 </resources>

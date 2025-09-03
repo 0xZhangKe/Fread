@@ -16,7 +16,6 @@ class GenerateImageAltViewModel @Inject constructor(
     @Assisted private val imageUri: String,
 ) : ViewModel() {
 
-
     fun interface Factory : ViewModelFactory {
         fun create(imageUri: String): GenerateImageAltViewModel
     }

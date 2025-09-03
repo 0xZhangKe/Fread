@@ -244,4 +244,5 @@
     <string name="post_status_image_generate_alt_downloading">下載中...</string>
     <string name="post_status_image_generate_alt_downloading_success">下載失敗：%1$s</string>
     <string name="post_status_image_generate_alt_downloading_failure">下載成功</string>
+    <string name="post_status_image_generate_alt_generator_unavailable">Gen AI 無法使用</string>
 </resources>

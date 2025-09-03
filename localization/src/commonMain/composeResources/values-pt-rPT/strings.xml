@@ -244,4 +244,5 @@
     <string name="post_status_image_generate_alt_downloading">Baixando...</string>
     <string name="post_status_image_generate_alt_downloading_success">Falha no download: %1$s</string>
     <string name="post_status_image_generate_alt_downloading_failure">Download concluído com sucesso</string>
+    <string name="post_status_image_generate_alt_generator_unavailable">Gen AI indisponível</string>
 </resources>

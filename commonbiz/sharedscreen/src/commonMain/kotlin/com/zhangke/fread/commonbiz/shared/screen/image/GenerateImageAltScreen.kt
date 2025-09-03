@@ -159,7 +159,7 @@ class GenerateImageAltScreen(private val imageUri: String) : BaseScreen() {
                             dismissOnBackPress = false,
                             dismissOnClickOutside = false,
                         ),
-                        contentText = stringResource(Res.string.post_status_image_generate_alt_generator_unavailable),
+                        contentText = stringResource(LocalizedString.post_status_image_generate_alt_generator_unavailable),
                         onPositiveClick = onGenerateFailedClick,
                     )
                 }
@@ -171,7 +171,7 @@ class GenerateImageAltScreen(private val imageUri: String) : BaseScreen() {
                             dismissOnClickOutside = false,
                         ),
                         contentText = stringResource(
-                            Res.string.post_status_image_generate_alt_generating_failed,
+                            LocalizedString.post_status_image_generate_alt_generating_failed,
                             uiState.generatingState.error.message.orEmpty(),
                         ),
                         onPositiveClick = onGenerateFailedClick,

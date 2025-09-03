@@ -4,3 +4,7 @@ expect class ImageDescriptionAiGeneratorChecker() {
 
     fun available(): Boolean
 }
+
+fun imageAltGeneratorAvailable(): Boolean {
+    return ImageDescriptionAiGeneratorChecker().available()
+}

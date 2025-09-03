@@ -38,6 +38,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
                 allLoggedAccount = allLoggedAccount,
                 visibility = StatusVisibility.PUBLIC,
                 replyToAuthorInfo = null,
+                enableImageDescription = imageAltGeneratorAvailable(),
             )
 
             is PostStatusScreenParams.ReplyStatusParams -> buildReplyUiState(

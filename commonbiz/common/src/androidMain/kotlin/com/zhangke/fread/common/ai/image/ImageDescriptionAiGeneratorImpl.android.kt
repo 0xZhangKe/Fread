@@ -3,6 +3,7 @@ package com.zhangke.fread.common.ai.image
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -30,8 +31,10 @@ actual class ImageDescriptionAiGeneratorImpl {
     actual fun startGenerate(
         imageUri: String,
     ): Flow<ImageDescriptionGenerateState> {
+        Log.d("F_TEST", "startGenerate: $imageUri")
         return callbackFlow {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+                Log.d("F_TEST", "sdk too low: ${Build.VERSION.SDK_INT}")
                 send(ImageDescriptionGenerateState.Failure(RuntimeException("Image description requires Android Pie or higher.")))
                 close()
                 return@callbackFlow
@@ -46,24 +49,29 @@ actual class ImageDescriptionAiGeneratorImpl {
             }
             val featureStatus = featureStatusResult.getOrThrow()
             if (featureStatus == FeatureStatus.UNAVAILABLE) {
+                Log.d("F_TEST", "UNAVAILABLE")
                 send(ImageDescriptionGenerateState.Unavailable)
                 close()
                 return@callbackFlow
             }
             if (featureStatus == FeatureStatus.DOWNLOADABLE) {
+                Log.d("F_TEST", "DOWNLOADABLE")
                 send(ImageDescriptionGenerateState.Downloadable)
                 close()
                 return@callbackFlow
             }
             if (featureStatus == FeatureStatus.DOWNLOADING) {
+                Log.d("F_TEST", "DOWNLOADING")
                 send(ImageDescriptionGenerateState.Failure(RuntimeException("Model is downloading, please wait.")))
                 close()
                 return@callbackFlow
             }
             try {
+                Log.d("F_TEST", "load bitmap")
                 val bitmap = loadBitmap(imageUri)
                 val imageDescriptionRequest = ImageDescriptionRequest.builder(bitmap).build()
                 val callback = StreamingCallback { text ->
+                    Log.d("F_TEST", "callback: $text")
                     trySend(ImageDescriptionGenerateState.Generating(text))
                 }
                 val inferenceFuture = imageDescriber.runInference(imageDescriptionRequest, callback)
@@ -71,18 +79,22 @@ actual class ImageDescriptionAiGeneratorImpl {
                     inferenceFuture,
                     object : FutureCallback<ImageDescriptionResult> {
                         override fun onSuccess(result: ImageDescriptionResult?) {
+                            Log.d("F_TEST", "runInference on success: $result")
                             trySend(ImageDescriptionGenerateState.GenerateFinished)
                             close()
                         }
 
                         override fun onFailure(t: Throwable) {
+                            Log.d("F_TEST", "runInference on failed: $t")
                             trySend(ImageDescriptionGenerateState.Failure(t))
                             close()
                         }
                     },
                     ContextCompat.getMainExecutor(appContext),
                 )
+                Log.d("F_TEST", "generate finished")
             } catch (t: Throwable) {
+                Log.d("F_TEST", "catched error: $t")
                 send(ImageDescriptionGenerateState.Failure(t))
                 close()
             }
@@ -133,10 +145,12 @@ actual class ImageDescriptionAiGeneratorImpl {
                 this,
                 object : FutureCallback<Int> {
                     override fun onSuccess(featureStatus: Int) {
-                        continuation.resume(Result.success(featureStatus.toInt()))
+                        Log.d("F_TEST", "checkFeatureStatus onSuccess: $featureStatus")
+                        continuation.resume(Result.success(featureStatus))
                     }
 
                     override fun onFailure(t: Throwable) {
+                        Log.d("F_TEST", "checkFeatureStatus failure: $t")
                         continuation.resume(Result.failure(t))
                     }
                 },

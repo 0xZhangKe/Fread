@@ -91,4 +91,5 @@
     <string name="post_status_image_generate_alt_downloading_failure">下载成功</string>
     <string name="post_status_image_generate_alt_downloadable_content">系统当前尚未下载大语言模型，是否开始下载？这将会消耗一定的流量，请注意网络资费。</string>
     <string name="post_status_image_generate_alt_generating_failed">生成失败：%1$s</string>
+    <string name="post_status_image_generate_alt_generator_unavailable">当前 Gen AI 不可用</string>
 </resources>

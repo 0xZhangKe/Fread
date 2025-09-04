@@ -59,7 +59,7 @@ fun StatusUi(
             blogTranslationState = status.blogTranslationState,
             continueThreadLabelHeight = continueThreadHeight,
             topLabels = getStatusTopLabel(
-                isReblog = rawStatus == Status.Reblog,
+                isReblog = rawStatus is Status.Reblog,
                 pinned = rawStatus.intrinsicBlog.pinned,
                 isReply = rawStatus.intrinsicBlog.isReply,
                 author = rawStatus.triggerAuthor,

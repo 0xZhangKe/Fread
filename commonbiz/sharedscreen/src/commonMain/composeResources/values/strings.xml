@@ -85,4 +85,5 @@
     <string name="select_account_open_status_title">Select an account</string>
     <string name="select_account_open_status_empty">No other accounts</string>
     <string name="select_account_open_status_search_in">Search in %1$s</string>
+    <string name="select_account_open_status_search_failed">Search Failed</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
@@ -14,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -33,12 +35,17 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.onOpenBlogWithOtherAccountClick
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.commonbiz.shared.screen.shared_status_context_screen_title
+import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.threads.ThreadsType
+import kotlinx.serialization.serializer
 import org.jetbrains.compose.resources.stringResource
 
 data class StatusContextScreen(
@@ -47,6 +54,27 @@ data class StatusContextScreen(
     val serializedBlog: String? = null,
     val blogTranslationUiState: BlogTranslationUiState? = null,
 ) : BaseScreen() {
+
+    companion object {
+
+        fun create(
+            statusUiState: StatusUiState,
+        ): StatusContextScreen {
+            return StatusContextScreen(
+                locator = statusUiState.locator,
+                serializedStatus = globalJson.encodeToString(serializer(), statusUiState),
+                blogTranslationUiState = statusUiState.blogTranslationState,
+            )
+        }
+
+        fun create(locator: PlatformLocator, blog: Blog): StatusContextScreen {
+            return StatusContextScreen(
+                locator = locator,
+                serializedBlog = globalJson.encodeToString(serializer(), blog),
+                blogTranslationUiState = null,
+            )
+        }
+    }
 
     override val key: ScreenKey =
         locator.toString() + serializedStatus?.let(Md5::md5) + serializedBlog?.let(Md5::md5)
@@ -76,6 +104,7 @@ data class StatusContextScreen(
                 )
             },
             onBackClick = navigator::pop,
+            onAccountClick = viewModel::onAccountClick,
             composedStatusInteraction = viewModel.composedStatusInteraction,
         )
         LaunchedEffect(Unit) {
@@ -91,6 +120,7 @@ data class StatusContextScreen(
         snackbarHostState: SnackbarHostState,
         onScrolledToAnchor: () -> Unit,
         onBackClick: () -> Unit = {},
+        onAccountClick: (LoggedAccount) -> Unit,
         onMediaClick: OnBlogMediaClick,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
@@ -102,6 +132,16 @@ data class StatusContextScreen(
                 Toolbar(
                     title = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_status_context_screen_title),
                     onBackClick = onBackClick,
+                    actions = {
+                        if (uiState.currentAccount != null) {
+                            BlogAuthorAvatar(
+                                modifier = Modifier.padding(end = 8.dp)
+                                    .size(28.dp),
+                                imageUrl = uiState.currentAccount.avatar,
+                                onClick = { onAccountClick(uiState.currentAccount) },
+                            )
+                        }
+                    }
                 )
             },
             content = { contentPaddings ->

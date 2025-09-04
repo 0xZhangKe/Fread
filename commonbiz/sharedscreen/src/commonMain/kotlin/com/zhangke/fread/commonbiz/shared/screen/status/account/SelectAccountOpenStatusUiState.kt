@@ -6,6 +6,8 @@ data class SelectAccountOpenStatusUiState(
     val loadingAccounts: Boolean,
     val accountList: List<LoggedAccount>,
     val searching: Boolean,
+    val searchingAccount: LoggedAccount?,
+    val searchFailed: Boolean,
 ){
 
     companion object{
@@ -15,6 +17,8 @@ data class SelectAccountOpenStatusUiState(
                 loadingAccounts = loadingAccounts,
                 accountList = emptyList(),
                 searching = false,
+                searchingAccount = null,
+                searchFailed = false,
             )
         }
     }

@@ -2,6 +2,7 @@ package com.zhangke.fread.status.account
 
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.model.Emoji
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.uri.FormalUri
@@ -28,4 +29,8 @@ interface LoggedAccount {
             document = description.orEmpty(),
             emojis = emojis,
         )
+
+    val locator: PlatformLocator
+        get() = PlatformLocator(baseUrl = platform.baseUrl, accountUri = uri)
+
 }

@@ -85,4 +85,5 @@
     <string name="select_account_open_status_title">请选择账号</string>
     <string name="select_account_open_status_empty">暂无其它账号</string>
     <string name="select_account_open_status_search_in">在 %1$s 内查找</string>
+    <string name="select_account_open_status_search_failed">查找失败</string>
 </resources>

@@ -119,7 +119,6 @@ internal fun FreadApp(
                         LaunchedEffect(Unit) {
                             GlobalScreenNavigation.openScreenFlow
                                 .debounce(300)
-                                .distinctUntilChanged()
                                 .collect { screen ->
                                     navigator.push(screen)
                                 }

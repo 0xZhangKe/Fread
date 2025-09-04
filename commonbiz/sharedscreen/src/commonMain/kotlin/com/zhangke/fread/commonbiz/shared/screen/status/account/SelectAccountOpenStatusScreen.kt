@@ -30,12 +30,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_empty
+import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_search_failed
 import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_search_in
 import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_title
+import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator
@@ -67,6 +72,7 @@ class SelectAccountOpenStatusScreen(
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel =
             getViewModel<SelectAccountOpenStatusViewModel, SelectAccountOpenStatusViewModel.Factory> {
                 it.create(
@@ -80,8 +86,13 @@ class SelectAccountOpenStatusScreen(
         SelectAccountOpenStatusContent(
             uiState = uiState,
             onAccountClick = viewModel::onAccountClick,
-            onCancelClick = viewModel::onCancelSearchClick
+            onCancelClick = viewModel::onCancelSearchClick,
+            onSearchFailedClick = viewModel::onSearchFailedClick,
         )
+        ConsumeFlow(viewModel.searchedStatusFlow) {
+            bottomSheetNavigator.hide()
+            GlobalScreenNavigation.navigate(StatusContextScreen.create(it))
+        }
     }
 
     @Composable
@@ -89,6 +100,7 @@ class SelectAccountOpenStatusScreen(
         uiState: SelectAccountOpenStatusUiState,
         onAccountClick: (LoggedAccount) -> Unit,
         onCancelClick: () -> Unit,
+        onSearchFailedClick: () -> Unit,
     ) {
         Surface(modifier = Modifier.fillMaxWidth()) {
             Column(
@@ -133,7 +145,9 @@ class SelectAccountOpenStatusScreen(
                             )
                         } else {
                             SearchContent(
+                                uiState = uiState,
                                 onCancelClick = onCancelClick,
+                                onSearchFailedClick = onSearchFailedClick,
                             )
                         }
                     }
@@ -147,38 +161,56 @@ class SelectAccountOpenStatusScreen(
         uiState: SelectAccountOpenStatusUiState,
         onAccountClick: (LoggedAccount) -> Unit,
     ) {
-        for (account in uiState.accountList) {
-            BasicAccountUi(
-                modifier = Modifier.fillMaxWidth()
-                    .clickable { onAccountClick(account) },
-                account = account,
-            )
-            HorizontalDivider(
-                thickness = 0.5.dp,
-            )
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            for (account in uiState.accountList) {
+                BasicAccountUi(
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable { onAccountClick(account) },
+                    account = account,
+                )
+                HorizontalDivider(thickness = 0.5.dp)
+            }
         }
     }
 
     @Composable
     private fun SearchContent(
+        uiState: SelectAccountOpenStatusUiState,
         onCancelClick: () -> Unit,
+        onSearchFailedClick: () -> Unit,
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(Res.string.select_account_open_status_search_in),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            CircularProgressIndicator(
-                modifier = Modifier.size(48.dp)
-            )
+            if (uiState.searchFailed) {
+                Text(
+                    text = stringResource(Res.string.select_account_open_status_search_failed),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            } else {
+                Text(
+                    text = stringResource(
+                        Res.string.select_account_open_status_search_in,
+                        uiState.searchingAccount?.platform?.name.orEmpty(),
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(48.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = onCancelClick,
+                onClick = if (uiState.searchFailed) {
+                    onSearchFailedClick
+                } else {
+                    onCancelClick
+                },
             ) {
                 Text(
                     text = stringResource(com.zhangke.fread.framework.Res.string.cancel)

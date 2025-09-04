@@ -7,6 +7,9 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.model.StatusUiState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Assisted
@@ -35,6 +38,11 @@ class SelectAccountOpenStatusViewModel @Inject constructor(
     )
     val uiState = _uiState
 
+    private val _searchedStatusFlow = MutableSharedFlow<StatusUiState>()
+    val searchedStatusFlow = _searchedStatusFlow
+
+    private var searchJob: Job? = null
+
     init {
         launchInViewModel {
             val availableAccounts = statusProvider.accountManager
@@ -51,10 +59,49 @@ class SelectAccountOpenStatusViewModel @Inject constructor(
     }
 
     fun onAccountClick(account: LoggedAccount) {
-        _uiState.update { it.copy(searching = true) }
+        searchJob?.cancel()
+        _uiState.update {
+            it.copy(
+                searching = true,
+                searchingAccount = account,
+                searchFailed = false,
+            )
+        }
+        searchJob = launchInViewModel {
+            statusProvider.searchEngine
+                .searchStatusByUrl(
+                    protocol = account.platform.protocol,
+                    locator = account.locator,
+                    url = blogUrl,
+                ).onSuccess { status ->
+                    if (status != null) {
+                        _searchedStatusFlow.emit(status)
+                    } else {
+                        _uiState.update { it.copy(searchFailed = true) }
+                    }
+                }.onFailure {
+                    _uiState.update { it.copy(searchFailed = true) }
+                }
+        }
+    }
+
+    fun onSearchFailedClick() {
+        _uiState.update {
+            it.copy(
+                searchFailed = false,
+                searching = false,
+                searchingAccount = null,
+            )
+        }
     }
 
     fun onCancelSearchClick() {
-        _uiState.update { it.copy(searching = false) }
+        searchJob?.cancel()
+        _uiState.update {
+            it.copy(
+                searching = false,
+                searchingAccount = null,
+            )
+        }
     }
 }

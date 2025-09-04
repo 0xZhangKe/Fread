@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_unknown_desc
@@ -33,6 +34,8 @@ fun UnknownNotification(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             text = notification.message,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

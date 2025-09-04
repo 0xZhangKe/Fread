@@ -119,10 +119,11 @@ class GetCompletedNotificationUseCase @Inject constructor(
             }
 
             else -> {
-                CompletedBskyNotification.Record.OnlyMessage(
-                    message = "Unknown(${(reason as? ListNotificationsReason.Unknown)?.rawValue}): ${this.record}",
-                    createAt = Instant(this.indexedAt),
-                )
+                return null
+//                CompletedBskyNotification.Record.OnlyMessage(
+//                    message = "Unknown(${(reason as? ListNotificationsReason.Unknown)?.rawValue}): ${this.record}",
+//                    createAt = Instant(this.indexedAt),
+//                )
             }
         }
         return CompletedBskyNotification(

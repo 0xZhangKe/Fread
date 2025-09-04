@@ -193,13 +193,7 @@ class InteractiveHandler(
                     serializedBlog = globalJson.encodeToString(status.status.intrinsicBlog),
                 )
             } else {
-                StatusContextScreen(
-                    locator = status.locator,
-                    serializedStatus = refactorToNewStatus(status).let {
-                        globalJson.encodeToString(serializer(), it)
-                    },
-                    blogTranslationUiState = status.blogTranslationState,
-                )
+                StatusContextScreen.create(refactorToNewStatus(status))
             }
             mutableOpenScreenFlow.emit(screen)
         }
@@ -212,10 +206,9 @@ class InteractiveHandler(
                     serializedBlog = globalJson.encodeToString(serializer(), blog),
                 )
             } else {
-                StatusContextScreen(
+                StatusContextScreen.create(
                     locator = locator,
-                    serializedBlog = globalJson.encodeToString(serializer(), blog),
-                    blogTranslationUiState = null,
+                    blog = blog,
                 )
             }
             mutableOpenScreenFlow.emit(screen)

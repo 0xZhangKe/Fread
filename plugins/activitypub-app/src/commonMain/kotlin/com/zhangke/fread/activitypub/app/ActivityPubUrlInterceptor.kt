@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app
 
-import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.network.SimpleUri
@@ -19,7 +18,6 @@ import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScr
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
-import kotlinx.serialization.serializer
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubUrlInterceptor @Inject constructor(
@@ -36,12 +34,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
         val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
         val status = parseStatus(locator, uri, account)
         if (status != null) {
-            GlobalScreenNavigation.navigate(
-                StatusContextScreen(
-                    locator = locator,
-                    serializedStatus = globalJson.encodeToString(serializer(), status),
-                )
-            )
+            GlobalScreenNavigation.navigate(StatusContextScreen.create(status))
             return true
         }
         val webFinger = parseActivityPubUser(locator, uri)

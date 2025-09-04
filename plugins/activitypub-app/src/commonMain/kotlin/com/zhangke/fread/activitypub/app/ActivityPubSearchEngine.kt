@@ -13,7 +13,9 @@ import com.zhangke.fread.activitypub.app.internal.usecase.source.user.SearchUser
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchResult
@@ -133,5 +135,27 @@ class ActivityPubSearchEngine @Inject constructor(
                 .map { list -> list.map { SearchedPlatform.Snapshot(it) } }
                 .onSuccess { emit(it) }
         }
+    }
+
+    override suspend fun searchStatusByUrl(
+        protocol: StatusProviderProtocol,
+        locator: PlatformLocator,
+        url: String
+    ): Result<StatusUiState?>? {
+        if (protocol.notActivityPub) return null
+        val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
+        return doSearch(locator) { searchRepo, blogPlatform ->
+            searchRepo.queryStatus(query = url, resolve = true)
+                .map { statusEntities ->
+                    statusEntities.firstOrNull()?.let {
+                        statusAdapter.toStatusUiState(
+                            entity = it,
+                            platform = blogPlatform,
+                            locator = locator,
+                            loggedAccount = account,
+                        )
+                    }
+                }.map { listOf(it) }
+        }.map { it.firstOrNull() }
     }
 }

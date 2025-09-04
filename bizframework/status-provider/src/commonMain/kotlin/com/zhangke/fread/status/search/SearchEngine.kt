@@ -3,6 +3,7 @@ package com.zhangke.fread.status.search
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.source.StatusSource
@@ -52,6 +53,14 @@ class SearchEngine(
     ): Flow<List<SearchedPlatform>> {
         return engineList.firstNotNullOf { it.searchPlatform(locator, query) }
     }
+
+    suspend fun searchStatusByUrl(
+        protocol: StatusProviderProtocol,
+        locator: PlatformLocator,
+        url: String,
+    ): Result<StatusUiState?> {
+        return engineList.firstNotNullOf { it.searchStatusByUrl(protocol, locator, url) }
+    }
 }
 
 interface ISearchEngine {
@@ -83,5 +92,13 @@ interface ISearchEngine {
         query: String,
     ): Flow<List<SearchedPlatform>>? {
         return null
+    }
+
+    suspend fun searchStatusByUrl(
+        protocol: StatusProviderProtocol,
+        locator: PlatformLocator,
+        url: String,
+    ): Result<StatusUiState?>? {
+        return Result.success(null)
     }
 }

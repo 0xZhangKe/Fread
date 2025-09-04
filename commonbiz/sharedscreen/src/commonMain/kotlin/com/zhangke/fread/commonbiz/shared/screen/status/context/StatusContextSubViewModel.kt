@@ -1,5 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.screen.status.context
 
+import com.zhangke.framework.composable.emitInViewModel
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
@@ -11,6 +12,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
@@ -46,6 +48,7 @@ class StatusContextSubViewModel(
             loading = false,
             needScrollToAnchor = true,
             errorMessage = null,
+            currentAccount = null,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -90,6 +93,16 @@ class StatusContextSubViewModel(
                 }
             },
         )
+        launchInViewModel {
+            statusProvider.accountManager
+                .getAllLoggedAccount()
+                .firstOrNull { it.locator == locator }
+                ?.let { account ->
+                    _uiState.update { state ->
+                        state.copy(currentAccount = account)
+                    }
+                }
+        }
     }
 
     fun onPageResume() {
@@ -103,6 +116,15 @@ class StatusContextSubViewModel(
         _uiState.update { state ->
             state.copy(needScrollToAnchor = false)
         }
+    }
+
+    fun onAccountClick(account: LoggedAccount) {
+        statusProvider.screenProvider
+            .getUserDetailScreen(
+                locator = locator,
+                uri = account.uri,
+                userId = account.id,
+            )?.let { mutableOpenScreenFlow.emitInViewModel(it) }
     }
 
     private suspend fun loadStatusContext() {

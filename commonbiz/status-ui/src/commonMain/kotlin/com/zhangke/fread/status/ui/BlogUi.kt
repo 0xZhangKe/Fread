@@ -60,6 +60,7 @@ fun BlogUi(
     showBottomPanel: Boolean = true,
     showMoreOperationIcon: Boolean = true,
     threadsType: ThreadsType = ThreadsType.NONE,
+    onOpenBlogWithOtherAccountClick: (Blog) -> Unit = {},
 ) {
     val textHandler = LocalActivityTextHandler.current
     var infoToTopSpacing: Float? by remember { mutableStateOf(null) }
@@ -115,6 +116,8 @@ fun BlogUi(
             reblogAuthor = reblogAuthor,
             editedAt = blog.editedAt?.instant,
             onTranslateClick = onTranslateClick,
+            onOpenBlogWithOtherAccountClick = onOpenBlogWithOtherAccountClick,
+            showOpenBlogWithOtherAccountBtn = true,
         )
         BlogContent(
             modifier = Modifier

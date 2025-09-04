@@ -4,9 +4,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudQueue
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.PersonSearch
 import androidx.compose.runtime.Composable
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_interaction_copy_url
+import com.zhangke.fread.statusui.status_ui_interaction_open_blog_by_other_account
 import com.zhangke.fread.statusui.status_ui_interaction_open_in_browser
 import com.zhangke.fread.statusui.status_ui_interaction_open_original_instance
 import org.jetbrains.compose.resources.stringResource
@@ -36,6 +38,15 @@ fun DropDownOpenOriginalInstanceItem(onClick: () -> Unit) {
     ModalDropdownMenuItem(
         text = stringResource(Res.string.status_ui_interaction_open_original_instance),
         imageVector = Icons.Default.CloudQueue,
+        onClick = onClick,
+    )
+}
+
+@Composable
+fun DropDownOpenStatusByOtherAccountItem(onClick: () -> Unit) {
+    ModalDropdownMenuItem(
+        text = stringResource(Res.string.status_ui_interaction_open_blog_by_other_account),
+        imageVector = Icons.Default.PersonSearch,
         onClick = onClick,
     )
 }

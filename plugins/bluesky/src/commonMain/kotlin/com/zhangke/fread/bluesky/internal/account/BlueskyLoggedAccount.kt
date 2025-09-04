@@ -3,7 +3,6 @@ package com.zhangke.fread.bluesky.internal.account
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -23,9 +22,6 @@ data class BlueskyLoggedAccount(
     val active: Boolean?,
     val createAt: Instant? = null,
 ) : LoggedAccount {
-
-    val locator: PlatformLocator
-        get() = PlatformLocator(baseUrl = platform.baseUrl, accountUri = uri)
 
     override val uri = user.uri
 

@@ -43,9 +43,8 @@ import com.zhangke.fread.common.resources.mastodonLogo
 import com.zhangke.fread.common.resources.mixedDescription
 import com.zhangke.fread.common.resources.mixedName
 import com.zhangke.fread.common.resources.rssLogo
-import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.feeds_select_type_screen_title
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 class SelectContentTypeScreen : BaseScreen() {
@@ -59,7 +58,7 @@ class SelectContentTypeScreen : BaseScreen() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.feeds_select_type_screen_title),
+                    title = stringResource(LocalizedString.feedsSelectTypeScreenTitle),
                     onBackClick = navigator::pop,
                 )
             },

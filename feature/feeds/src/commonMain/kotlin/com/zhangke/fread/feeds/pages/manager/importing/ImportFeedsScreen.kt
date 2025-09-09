@@ -51,12 +51,6 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalPlatformUriHelper
 import com.zhangke.fread.common.utils.LocalToastHelper
-import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.feeds_delete_confirm_content
-import com.zhangke.fread.feeds.feeds_import_back_dialog_message
-import com.zhangke.fread.feeds.feeds_import_button
-import com.zhangke.fread.feeds.feeds_import_page_hint
-import com.zhangke.fread.feeds.feeds_import_page_title
 import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -88,7 +82,7 @@ class ImportFeedsScreen : BaseScreen() {
                     showBackDialog = false
                 },
                 title = stringResource(LocalizedString.alert),
-                contentText = stringResource(Res.string.feeds_import_back_dialog_message),
+                contentText = stringResource(LocalizedString.feedsImportBackDialogMessage),
                 onNegativeClick = {
                     showBackDialog = false
                 },
@@ -133,7 +127,7 @@ class ImportFeedsScreen : BaseScreen() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.feeds_import_page_title),
+                    title = stringResource(LocalizedString.feedsImportPageTitle),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(
@@ -177,7 +171,7 @@ class ImportFeedsScreen : BaseScreen() {
                                 Text(
                                     modifier = Modifier.align(Alignment.Center),
                                     text = prettyFileUri
-                                        ?: stringResource(Res.string.feeds_import_page_hint),
+                                        ?: stringResource(LocalizedString.feedsImportPageHint),
                                     overflow = TextOverflow.Clip,
                                     maxLines = 1,
                                     fontSize = 12.sp,
@@ -191,7 +185,7 @@ class ImportFeedsScreen : BaseScreen() {
                         enabled = uiState.selectedFileUri != null,
                     ) {
                         Text(
-                            text = stringResource(Res.string.feeds_import_button)
+                            text = stringResource(LocalizedString.feedsImportButton)
                         )
                     }
                 }
@@ -286,7 +280,7 @@ class ImportFeedsScreen : BaseScreen() {
             if (showDeleteDialog) {
                 FreadDialog(
                     onDismissRequest = { showDeleteDialog = false },
-                    contentText = stringResource(com.zhangke.fread.feeds.Res.string.feeds_delete_confirm_content),
+                    contentText = stringResource(LocalizedString.feedsDeleteConfirmContent),
                     onNegativeClick = { showDeleteDialog = false },
                     onPositiveClick = {
                         showDeleteDialog = false
@@ -369,7 +363,7 @@ class ImportFeedsScreen : BaseScreen() {
             if (showDeleteDialog) {
                 FreadDialog(
                     onDismissRequest = { showDeleteDialog = false },
-                    contentText = stringResource(com.zhangke.fread.feeds.Res.string.feeds_delete_confirm_content),
+                    contentText = stringResource(LocalizedString.feedsDeleteConfirmContent),
                     onNegativeClick = { showDeleteDialog = false },
                     onPositiveClick = {
                         showDeleteDialog = false

@@ -40,13 +40,10 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
-import com.zhangke.fread.feeds.feeds_mixed_config_edit_delete_content_dialog_message
-import com.zhangke.fread.feeds.feeds_mixed_config_edit_new_name_dialog_label
-import com.zhangke.fread.feeds.feeds_mixed_config_edit_new_name_dialog_title
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 class EditMixedContentScreen(private val contentId: String) : BaseScreen() {
@@ -189,7 +186,7 @@ private fun EditFeedsScreenTopBar(
             mutableStateOf(configName)
         }
         FreadDialog(
-            title = stringResource(Res.string.feeds_mixed_config_edit_new_name_dialog_title),
+            title = stringResource(LocalizedString.feedsMixedConfigEditNewNameDialogTitle),
             onDismissRequest = { showEditNameDialog = false },
             onNegativeClick = { showEditNameDialog = false },
             onPositiveClick = {
@@ -206,7 +203,7 @@ private fun EditFeedsScreenTopBar(
                         inputtedText = it
                     },
                     label = {
-                        Text(text = stringResource(Res.string.feeds_mixed_config_edit_new_name_dialog_label))
+                        Text(text = stringResource(LocalizedString.feedsMixedConfigEditNewNameDialogLabel))
                     }
                 )
             },
@@ -214,7 +211,7 @@ private fun EditFeedsScreenTopBar(
     }
     if (showDeleteConfirmDialog) {
         AlertConfirmDialog(
-            content = stringResource(Res.string.feeds_mixed_config_edit_delete_content_dialog_message),
+            content = stringResource(LocalizedString.feedsMixedConfigEditDeleteContentDialogMessage),
             onDismissRequest = { showDeleteConfirmDialog = false },
             onConfirm = onDeleteClick,
         )

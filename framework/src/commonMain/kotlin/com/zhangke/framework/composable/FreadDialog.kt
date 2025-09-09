@@ -27,10 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.fread.localization.Res
-import com.zhangke.fread.localization.alert
-import com.zhangke.fread.localization.cancel
-import com.zhangke.fread.localization.ok
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -74,7 +71,7 @@ fun FreadDialog(
         properties = properties,
         header = {
             Text(
-                text = title.ifNullOrEmpty { stringResource(Res.string.alert) },
+                text = title.ifNullOrEmpty { stringResource(LocalizedString.alert) },
             )
         },
         content = content,
@@ -83,7 +80,7 @@ fun FreadDialog(
         } else {
             {
                 TextButton(onClick = { onNegativeClick?.invoke() }) {
-                    Text(text = negativeButtonText.ifNullOrEmpty { stringResource(Res.string.cancel) })
+                    Text(text = negativeButtonText.ifNullOrEmpty { stringResource(LocalizedString.cancel) })
                 }
             }
         },
@@ -92,7 +89,7 @@ fun FreadDialog(
         } else {
             {
                 TextButton(onClick = { onPositiveClick?.invoke() }) {
-                    Text(text = positiveButtonText.ifNullOrEmpty { stringResource(Res.string.ok) })
+                    Text(text = positiveButtonText.ifNullOrEmpty { stringResource(LocalizedString.ok) })
                 }
             }
         }

@@ -53,8 +53,7 @@ import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreen
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.feeds
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
 import com.zhangke.fread.statusui.status_ui_edit_content_delete_dialog_content
@@ -132,7 +131,7 @@ class BskyFollowingFeedsPage(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.feeds),
+                    title = stringResource(LocalizedString.feeds),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(

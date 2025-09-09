@@ -59,8 +59,6 @@ import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.theme.ThemeType
-import com.zhangke.fread.commonbiz.donate
-import com.zhangke.fread.commonbiz.settings
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_code
 import com.zhangke.fread.feature.profile.ic_ratting
@@ -83,6 +81,7 @@ import com.zhangke.fread.feature.profile.profile_setting_ratting
 import com.zhangke.fread.feature.profile.profile_setting_ratting_desc
 import com.zhangke.fread.feature.profile.profile_setting_theme_title
 import com.zhangke.fread.feature.profile.profile_setting_timeline_position
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
@@ -164,7 +163,7 @@ class SettingScreen : BaseScreen() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(com.zhangke.fread.commonbiz.Res.string.settings),
+                    title = stringResource(LocalizedString.settings),
                     onBackClick = onBackClick,
                 )
             },
@@ -228,7 +227,7 @@ class SettingScreen : BaseScreen() {
                 )
                 SettingItem(
                     icon = Icons.Outlined.Coffee,
-                    title = stringResource(com.zhangke.fread.commonbiz.Res.string.donate),
+                    title = stringResource(LocalizedString.donate),
                     subtitle = stringResource(Res.string.profile_setting_donate_desc),
                     onClick = onDonateClick,
                 )

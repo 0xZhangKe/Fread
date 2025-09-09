@@ -12,8 +12,7 @@ import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
-import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.edit_profile_name_empty
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -141,7 +140,7 @@ class EditAccountInfoViewModel @Inject constructor(
         val originalAccountInfo = originalAccountInfo ?: return@launchInViewModel
         val currentUiState = _uiState.value
         if (currentUiState.name.isBlank()) {
-            _snackBarMessageFlow.emit(textOf(Res.string.edit_profile_name_empty))
+            _snackBarMessageFlow.emit(textOf(LocalizedString.editProfileNameEmpty))
             return@launchInViewModel
         }
         val newName = currentUiState.name.takeIf { it != originalAccountInfo.nameOfUiState }

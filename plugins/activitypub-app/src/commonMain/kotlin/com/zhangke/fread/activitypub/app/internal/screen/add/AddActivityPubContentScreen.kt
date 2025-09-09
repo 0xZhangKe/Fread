@@ -26,9 +26,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.add_content_title
-import com.zhangke.fread.commonbiz.content_add_success
 import com.zhangke.fread.commonbiz.emoji_celebrate
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.source.BlogPlatformCard
 import kotlinx.coroutines.delay
@@ -62,7 +61,7 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.add_content_title),
+                    title = stringResource(LocalizedString.addContentTitle),
                     onBackClick = onBackClick,
                 )
             },
@@ -111,7 +110,7 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
                 contentDescription = null,
             )
             Text(
-                text = stringResource(Res.string.content_add_success),
+                text = stringResource(LocalizedString.contentAddSuccess),
                 modifier = Modifier.padding(top = 8.dp),
             )
         }

@@ -114,9 +114,8 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.formatDate
-import com.zhangke.fread.commonbiz.search
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
-import com.zhangke.fread.localization.cancel
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.Relationships
@@ -538,7 +537,7 @@ data class UserDetailScreen(
         SimpleIconButton(
             onClick = onSearchClick,
             imageVector = Icons.Default.Search,
-            contentDescription = stringResource(com.zhangke.fread.commonbiz.Res.string.search),
+            contentDescription = stringResource(LocalizedString.search),
         )
         if (uiState.isAccountOwner) {
             SimpleIconButton(
@@ -943,7 +942,7 @@ data class UserDetailScreen(
                         }
                     },
                 ) {
-                    Text(text = stringResource(com.zhangke.fread.localization.Res.string.cancel))
+                    Text(text = stringResource(LocalizedString.cancel))
                 }
             }
         }

@@ -41,7 +41,7 @@ import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_sear
 import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_search_in
 import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_title
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
-import com.zhangke.fread.localization.cancel
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol
@@ -213,7 +213,7 @@ class SelectAccountOpenStatusScreen(
                 },
             ) {
                 Text(
-                    text = stringResource(com.zhangke.fread.localization.Res.string.cancel)
+                    text = stringResource(LocalizedString.cancel)
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))

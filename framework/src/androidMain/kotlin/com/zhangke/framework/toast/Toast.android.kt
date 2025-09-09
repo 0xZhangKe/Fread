@@ -3,10 +3,7 @@ package com.zhangke.framework.toast
 import android.os.Build
 import android.widget.Toast
 import com.zhangke.framework.utils.appContext
-import com.zhangke.fread.localization.Res
-import com.zhangke.fread.localization.image_save_failed
-import com.zhangke.fread.localization.image_save_success
-import com.zhangke.fread.localization.image_saving
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.getString
 
 actual fun toast(message: String?) {
@@ -21,7 +18,8 @@ fun toast(message: String?, length: Int) {
 private var savingToast: Toast? = null
 
 suspend fun showFileSavingToast() {
-    val toast = Toast.makeText(appContext, getString(Res.string.image_saving), Toast.LENGTH_SHORT)
+    val toast =
+        Toast.makeText(appContext, getString(LocalizedString.imageSaving), Toast.LENGTH_SHORT)
     toast.show()
     savingToast = toast
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -40,11 +38,13 @@ suspend fun showFileSavingToast() {
 suspend fun showFileSaveSuccessToast() {
     savingToast?.cancel()
     savingToast = null
-    Toast.makeText(appContext, getString(Res.string.image_save_success), Toast.LENGTH_SHORT).show()
+    Toast.makeText(appContext, getString(LocalizedString.imageSaveSuccess), Toast.LENGTH_SHORT)
+        .show()
 }
 
 suspend fun showFileSaveFailedToast() {
     savingToast?.cancel()
     savingToast = null
-    Toast.makeText(appContext, getString(Res.string.image_save_failed), Toast.LENGTH_SHORT).show()
+    Toast.makeText(appContext, getString(LocalizedString.imageSaveFailed), Toast.LENGTH_SHORT)
+        .show()
 }

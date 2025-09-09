@@ -45,12 +45,12 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Grid
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.transparentIndicatorColors
-import com.zhangke.fread.commonbiz.save
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_alt_label
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_media_alt_dialog_input_hint
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_media_alt_dialog_input_tip
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_media_alt_dialog_title
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
 import org.jetbrains.compose.resources.stringResource
 
@@ -260,7 +260,7 @@ private fun PublishPostImageAltDialog(
                         onDismissRequest()
                     },
                 ) {
-                    Text(text = stringResource(com.zhangke.fread.commonbiz.Res.string.save))
+                    Text(text = stringResource(LocalizedString.save))
                 }
             }
         }

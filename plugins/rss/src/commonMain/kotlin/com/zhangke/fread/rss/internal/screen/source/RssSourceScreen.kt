@@ -40,9 +40,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.UrlEncoder
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.localization.alert
-import com.zhangke.fread.localization.cancel
-import com.zhangke.fread.localization.ok
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.rss.Res
 import com.zhangke.fread.rss.rss_source_detail_screen_add_date
 import com.zhangke.fread.rss.rss_source_detail_screen_custom_title
@@ -52,8 +50,6 @@ import com.zhangke.fread.rss.rss_source_detail_screen_title
 import com.zhangke.fread.rss.rss_source_detail_screen_url
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.Flow
 import org.jetbrains.compose.resources.stringResource
 
@@ -193,18 +189,18 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
                 mutableStateOf(displayName)
             }
             FreadDialog(
-                title = stringResource(com.zhangke.fread.localization.Res.string.alert),
+                title = stringResource(LocalizedString.alert),
                 onDismissRequest = {
                     showEditDisplayNameDialog = false
                 },
-                positiveButtonText = stringResource(com.zhangke.fread.localization.Res.string.ok),
+                positiveButtonText = stringResource(LocalizedString.ok),
                 onPositiveClick = {
                     showEditDisplayNameDialog = false
                     if (newDisplayName != displayName) {
                         onDisplayNameChanged(newDisplayName)
                     }
                 },
-                negativeButtonText = stringResource(com.zhangke.fread.localization.Res.string.cancel),
+                negativeButtonText = stringResource(LocalizedString.cancel),
                 onNegativeClick = {
                     showEditDisplayNameDialog = false
                 },

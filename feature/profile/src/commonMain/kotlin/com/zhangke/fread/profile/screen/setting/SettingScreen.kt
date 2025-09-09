@@ -62,25 +62,6 @@ import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_code
 import com.zhangke.fread.feature.profile.ic_ratting
-import com.zhangke.fread.feature.profile.profile_setting_about_title
-import com.zhangke.fread.feature.profile.profile_setting_always_show_sensitive_content
-import com.zhangke.fread.feature.profile.profile_setting_always_show_sensitive_content_subtitle
-import com.zhangke.fread.feature.profile.profile_setting_dark_mode_title
-import com.zhangke.fread.feature.profile.profile_setting_donate_desc
-import com.zhangke.fread.feature.profile.profile_setting_font_size
-import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar
-import com.zhangke.fread.feature.profile.profile_setting_immersive_nav_bar_desc
-import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play
-import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play_subtitle
-import com.zhangke.fread.feature.profile.profile_setting_language_title
-import com.zhangke.fread.feature.profile.profile_setting_open_source_desc
-import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback
-import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_desc
-import com.zhangke.fread.feature.profile.profile_setting_open_source_title
-import com.zhangke.fread.feature.profile.profile_setting_ratting
-import com.zhangke.fread.feature.profile.profile_setting_ratting_desc
-import com.zhangke.fread.feature.profile.profile_setting_theme_title
-import com.zhangke.fread.feature.profile.profile_setting_timeline_position
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
@@ -207,8 +188,8 @@ class SettingScreen : BaseScreen() {
                 FeedbackItem()
                 SettingItem(
                     icon = vectorResource(Res.drawable.ic_code),
-                    title = stringResource(Res.string.profile_setting_open_source_title),
-                    subtitle = stringResource(Res.string.profile_setting_open_source_desc),
+                    title = stringResource(LocalizedString.profileSettingOpenSourceTitle),
+                    subtitle = stringResource(LocalizedString.profileSettingOpenSourceDesc),
                     onClick = onOpenSourceClick,
                 )
                 SettingItem(
@@ -218,22 +199,22 @@ class SettingScreen : BaseScreen() {
                                 .size(24.dp)
                                 .padding(2.dp),
                             imageVector = vectorResource(Res.drawable.ic_ratting),
-                            contentDescription = stringResource(Res.string.profile_setting_ratting),
+                            contentDescription = stringResource(LocalizedString.profileSettingRatting),
                         )
                     },
-                    title = stringResource(Res.string.profile_setting_ratting),
-                    subtitle = stringResource(Res.string.profile_setting_ratting_desc),
+                    title = stringResource(LocalizedString.profileSettingRatting),
+                    subtitle = stringResource(LocalizedString.profileSettingRattingDesc),
                     onClick = onRatingClick,
                 )
                 SettingItem(
                     icon = Icons.Outlined.Coffee,
                     title = stringResource(LocalizedString.donate),
-                    subtitle = stringResource(Res.string.profile_setting_donate_desc),
+                    subtitle = stringResource(LocalizedString.profileSettingDonateDesc),
                     onClick = onDonateClick,
                 )
                 SettingItem(
                     icon = Icons.Outlined.Info,
-                    title = stringResource(Res.string.profile_setting_about_title),
+                    title = stringResource(LocalizedString.profileSettingAboutTitle),
                     subtitle = uiState.settingInfo,
                     redDot = uiState.haveNewAppVersion,
                     onClick = onAboutClick,
@@ -249,8 +230,8 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithSwitch(
             icon = Icons.Default.PlayCircleOutline,
-            title = stringResource(Res.string.profile_setting_inline_video_auto_play),
-            subtitle = stringResource(Res.string.profile_setting_inline_video_auto_play_subtitle),
+            title = stringResource(LocalizedString.profileSettingInlineVideoAutoPlay),
+            subtitle = stringResource(LocalizedString.profileSettingInlineVideoAutoPlaySubtitle),
             checked = autoPlay,
             onCheckedChangeRequest = onSwitchClick,
         )
@@ -263,8 +244,8 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithSwitch(
             icon = Icons.Default.PlayCircleOutline,
-            title = stringResource(Res.string.profile_setting_always_show_sensitive_content),
-            subtitle = stringResource(Res.string.profile_setting_always_show_sensitive_content_subtitle),
+            title = stringResource(LocalizedString.profileSettingAlwaysShowSensitiveContent),
+            subtitle = stringResource(LocalizedString.profileSettingAlwaysShowSensitiveContentSubtitle),
             checked = alwaysShowing,
             onCheckedChangeRequest = onAlwaysChanged,
         )
@@ -277,8 +258,8 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithSwitch(
             icon = Icons.Default.PlayCircleOutline,
-            title = stringResource(Res.string.profile_setting_immersive_nav_bar),
-            subtitle = stringResource(Res.string.profile_setting_immersive_nav_bar_desc),
+            title = stringResource(LocalizedString.profileSettingImmersiveNavBar),
+            subtitle = stringResource(LocalizedString.profileSettingImmersiveNavBarDesc),
             checked = immersive,
             onCheckedChangeRequest = onImmersiveBarChanged,
         )
@@ -291,7 +272,7 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithPopup(
             icon = Icons.Default.Contrast,
-            title = stringResource(Res.string.profile_setting_dark_mode_title),
+            title = stringResource(LocalizedString.profileSettingDarkModeTitle),
             subtitle = uiState.dayNightMode.modeName,
             dropDownItemCount = DayNightMode.entries.size,
             dropDownItemText = { DayNightMode.entries[it].modeName },
@@ -308,7 +289,7 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithPopup(
             icon = Icons.Default.Palette,
-            title = stringResource(Res.string.profile_setting_theme_title),
+            title = stringResource(LocalizedString.profileSettingThemeTitle),
             subtitle = themeType.displayName,
             dropDownItemCount = ThemeType.entries.size,
             dropDownItemText = { ThemeType.entries[it].displayName },
@@ -325,7 +306,7 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithPopup(
             icon = Icons.Default.TextFields,
-            title = stringResource(Res.string.profile_setting_font_size),
+            title = stringResource(LocalizedString.profileSettingFontSize),
             subtitle = contentSize.sizeName,
             dropDownItemCount = StatusContentSize.entries.size,
             dropDownItemText = { StatusContentSize.entries[it].sizeName },
@@ -342,7 +323,7 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithPopup(
             icon = Icons.Default.ViewTimeline,
-            title = stringResource(Res.string.profile_setting_timeline_position),
+            title = stringResource(LocalizedString.profileSettingTimelinePosition),
             subtitle = position.displayName,
             dropDownItemCount = TimelineDefaultPosition.entries.size,
             dropDownItemText = {
@@ -361,7 +342,7 @@ class SettingScreen : BaseScreen() {
         val activityLanguageHelper = LocalActivityLanguageHelper.current
         SettingItemWithPopup(
             icon = Icons.Default.Language,
-            title = stringResource(Res.string.profile_setting_language_title),
+            title = stringResource(LocalizedString.profileSettingLanguageTitle),
             subtitle = activityLanguageHelper.currentType.typeName,
             dropDownItemCount = LanguageSettingType.entries.size,
             dropDownItemText = { LanguageSettingType.entries[it].typeName },
@@ -378,8 +359,8 @@ class SettingScreen : BaseScreen() {
         }
         SettingItem(
             icon = Icons.AutoMirrored.Outlined.Chat,
-            title = stringResource(Res.string.profile_setting_open_source_feedback),
-            subtitle = stringResource(Res.string.profile_setting_open_source_feedback_desc),
+            title = stringResource(LocalizedString.profileSettingOpenSourceFeedback),
+            subtitle = stringResource(LocalizedString.profileSettingOpenSourceFeedbackDesc),
             onClick = {
                 showFeedbackBottomSheet = true
             },

@@ -21,8 +21,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.feature.profile.Res
-import com.zhangke.fread.feature.profile.profile_setting_open_source_title
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 class OpenSourceScreen : BaseScreen() {
@@ -35,7 +34,7 @@ class OpenSourceScreen : BaseScreen() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.profile_setting_open_source_title),
+                    title = stringResource(LocalizedString.profileSettingOpenSourceTitle),
                     onBackClick = navigator::pop,
                 )
             }

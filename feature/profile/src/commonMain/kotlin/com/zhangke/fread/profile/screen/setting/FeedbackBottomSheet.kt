@@ -27,12 +27,10 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_github_logo
 import com.zhangke.fread.feature.profile.ic_telegram
-import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_email
-import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_github
-import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_telegram
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -75,7 +73,7 @@ fun FeedbackBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(Res.string.profile_setting_open_source_feedback_telegram),
+                    text = stringResource(LocalizedString.profileSettingOpenSourceFeedbackTelegram),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -96,7 +94,7 @@ fun FeedbackBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(Res.string.profile_setting_open_source_feedback_github),
+                    text = stringResource(LocalizedString.profileSettingOpenSourceFeedbackGithub),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -117,7 +115,7 @@ fun FeedbackBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(Res.string.profile_setting_open_source_feedback_email),
+                    text = stringResource(LocalizedString.profileSettingOpenSourceFeedbackEmail),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }

@@ -335,4 +335,57 @@
     <string name="notifications_account_empty_tip">No logged-in account currently</string>
     <string name="notifications_tab_all">All</string>
     <string name="notifications_tab_mention">Mentions</string>
+    <string name="profile_page_title">Profile</string>
+
+    <string name="profile_setting_about_title">About</string>
+    <string name="profile_setting_donate_desc">Buy me a coffee to support this project.</string>
+    <string name="profile_setting_inline_video_auto_play">Inline Video Autoplay</string>
+    <string name="profile_setting_inline_video_auto_play_subtitle">If enabled, videos in the Feeds will autoplay.</string>
+    <string name="profile_setting_always_show_sensitive_content">Sensitive content is displayed by default</string>
+    <string name="profile_setting_always_show_sensitive_content_subtitle">If enabled, sensitive content will be displayed by default.</string>
+    <string name="profile_setting_dark_mode_title">Dark Mode</string>
+    <string name="profile_setting_dark_mode_dark">Dark Mode</string>
+    <string name="profile_setting_dark_mode_light">Light Mode</string>
+    <string name="profile_setting_dark_mode_follow_system">Follow System</string>
+    <string name="profile_setting_open_source_title">Open Source</string>
+    <string name="profile_setting_open_source_desc">Open Source Licenses of Dependencies Used in This Project</string>
+    <string name="profile_setting_open_source_feedback">Give us feedback</string>
+    <string name="profile_setting_open_source_feedback_desc">Join the Telegram group or through other methods</string>
+    <string name="profile_setting_open_source_feedback_telegram">oin the Telegram group</string>
+    <string name="profile_setting_open_source_feedback_github">Create GitHub issue</string>
+    <string name="profile_setting_open_source_feedback_email">Send email</string>
+    <string name="profile_setting_language_title">Language</string>
+    <string name="profile_setting_language_zh">简体中文</string>
+    <string name="profile_setting_language_en">English</string>
+    <string name="profile_setting_language_system">Follow System</string>
+    <string name="profile_setting_ratting">Rating us</string>
+    <string name="profile_setting_ratting_desc">If you like it, please give us a good rating.</string>
+    <string name="profile_setting_font_size">Content Font Size</string>
+    <string name="profile_setting_font_size_desc">Adjust the content’s font and icon size</string>
+    <string name="profile_setting_font_size_small">Small</string>
+    <string name="profile_setting_font_size_medium">Medium</string>
+    <string name="profile_setting_font_size_large">Large</string>
+    <string name="profile_setting_immersive_nav_bar">Immersive Navigation Bar</string>
+    <string name="profile_setting_immersive_nav_bar_desc">The bottom navigation bar hides automatically when scrolling on the homepage.</string>
+    <string name="profile_setting_timeline_position">Default timeline position</string>
+    <string name="profile_setting_timeline_position_last_read">Where I left off</string>
+    <string name="profile_setting_timeline_position_newest">Latest posts</string>
+    <string name="profile_setting_theme_title">Theme color</string>
+    <string name="profile_setting_theme_default">Default</string>
+    <string name="profile_setting_theme_system">Follow system</string>
+
+    <string name="profile_about_version">Version:&#160;</string>
+    <string name="profile_about_website">Website:&#160;</string>
+    <string name="profile_about_developer">Created by&#160;</string>
+    <string name="profile_about_contract_us">Contact me at:&#160;</string>
+    <string name="profile_about_telegram">Telegram Group:&#160;</string>
+    <string name="profile_about_privacy_policy">Privacy Policy:&#160;</string>
+
+    <string name="profile_setting_check_for_update">Check for update</string>
+    <string name="profile_setting_already_latest_version">Your app is already up to date</string>
+    <string name="profile_setting_have_new_version">New version available, click to update.</string>
+
+    <string name="profile_donate_page_title">Select how you’d like to donate</string>
+
+    <string name="profile_account_not_login">Session expired</string>
 </resources>

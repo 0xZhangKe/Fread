@@ -6,8 +6,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.textOf
 import com.zhangke.fread.common.update.AppUpdateManager
-import com.zhangke.fread.feature.profile.Res
-import com.zhangke.fread.feature.profile.profile_setting_already_latest_version
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -45,7 +44,7 @@ class AboutViewModel @Inject constructor(
                         )
                     }
                     if (!needUpdate) {
-                        _snackBarMessage.emit(textOf(Res.string.profile_setting_already_latest_version))
+                        _snackBarMessage.emit(textOf(LocalizedString.profileSettingAlreadyLatestVersion))
                     }
                 }
         }

@@ -1,10 +1,10 @@
 package com.zhangke.framework.utils
 
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.duration_day
-import com.zhangke.fread.framework.duration_hour
-import com.zhangke.fread.framework.duration_minute
-import com.zhangke.fread.framework.duration_week
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.duration_day
+import com.zhangke.fread.localization.duration_hour
+import com.zhangke.fread.localization.duration_minute
+import com.zhangke.fread.localization.duration_week
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days

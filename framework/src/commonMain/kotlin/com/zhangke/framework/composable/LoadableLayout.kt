@@ -13,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.empty
-import com.zhangke.fread.framework.retry
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.empty
+import com.zhangke.fread.localization.retry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 

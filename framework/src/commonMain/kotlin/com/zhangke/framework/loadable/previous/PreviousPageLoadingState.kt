@@ -19,9 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.TextString
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.feeds_load_previous_page_failed_label
-import com.zhangke.fread.framework.feeds_load_previous_page_label
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.feeds_load_previous_page_failed_label
+import com.zhangke.fread.localization.feeds_load_previous_page_label
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.stringResource
 

@@ -3,10 +3,10 @@ package com.zhangke.framework.toast
 import android.os.Build
 import android.widget.Toast
 import com.zhangke.framework.utils.appContext
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.image_save_failed
-import com.zhangke.fread.framework.image_save_success
-import com.zhangke.fread.framework.image_saving
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.image_save_failed
+import com.zhangke.fread.localization.image_save_success
+import com.zhangke.fread.localization.image_saving
 import org.jetbrains.compose.resources.getString
 
 actual fun toast(message: String?) {

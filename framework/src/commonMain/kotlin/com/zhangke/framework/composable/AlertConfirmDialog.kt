@@ -1,10 +1,10 @@
 package com.zhangke.framework.composable
 
 import androidx.compose.runtime.Composable
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.alert
-import com.zhangke.fread.framework.cancel
-import com.zhangke.fread.framework.ok
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.alert
+import com.zhangke.fread.localization.cancel
+import com.zhangke.fread.localization.ok
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

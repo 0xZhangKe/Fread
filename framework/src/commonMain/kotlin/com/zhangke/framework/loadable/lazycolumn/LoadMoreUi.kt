@@ -24,9 +24,9 @@ import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.load_more_error
-import com.zhangke.fread.framework.retry
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.load_more_error
+import com.zhangke.fread.localization.retry
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

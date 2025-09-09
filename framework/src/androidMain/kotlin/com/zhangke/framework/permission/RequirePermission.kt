@@ -17,9 +17,9 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.utils.extractActivity
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.alert
-import com.zhangke.fread.framework.permission_write_external_permission_denied
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.alert
+import com.zhangke.fread.localization.permission_write_external_permission_denied
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 

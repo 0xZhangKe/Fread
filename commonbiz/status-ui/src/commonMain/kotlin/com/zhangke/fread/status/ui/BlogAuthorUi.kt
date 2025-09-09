@@ -23,9 +23,7 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusInfoStyleDefaults
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_follow
-import com.zhangke.fread.statusui.status_ui_unfollow
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -152,9 +150,9 @@ private fun BaseBlogAuthor(
                     StyledTextButton(
                         modifier = Modifier.align(Alignment.CenterVertically),
                         text = if (following) {
-                            stringResource(Res.string.status_ui_unfollow)
+                            stringResource(LocalizedString.statusUiUnfollow)
                         } else {
-                            stringResource(Res.string.status_ui_follow)
+                            stringResource(LocalizedString.statusUiFollow)
                         },
                         style = TextButtonStyle.STANDARD,
                         onClick = {

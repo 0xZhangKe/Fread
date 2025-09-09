@@ -4,9 +4,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.style.StatusStyle
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_bottom_label_edited_at
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -17,7 +16,7 @@ fun StatusBottomEditedLabel(
 ) {
     Text(
         modifier = modifier,
-        text = stringResource(Res.string.status_ui_bottom_label_edited_at, editedAt),
+        text = stringResource(LocalizedString.statusUiBottomLabelEditedAt, editedAt),
         textAlign = TextAlign.Start,
         color = style.secondaryFontColor,
         style = style.bottomLabelStyle.textStyle,

@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -52,8 +53,6 @@ import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle.ContentStyle
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_sensitive_by_filter
 
 /**
  * 博客正文部分，仅包含内容，投票，媒体，链接预览卡片。
@@ -220,7 +219,7 @@ fun BlogTextContentSection(
         } else {
             val text =
                 org.jetbrains.compose.resources.stringResource(
-                    Res.string.status_ui_sensitive_by_filter,
+                    LocalizedString.statusUiSensitiveByFilter,
                     blog.filtered!!.first().title,
                 )
             remember { RichText(text) }

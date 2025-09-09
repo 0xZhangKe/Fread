@@ -18,14 +18,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_more
-import com.zhangke.fread.statusui.status_ui_delete_status_confirm
-import com.zhangke.fread.statusui.status_ui_interaction_translate
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -133,7 +132,7 @@ private fun InteractionItem(
                 onDismissRequest()
                 showDeleteConfirmDialog = false
             },
-            contentText = stringResource(Res.string.status_ui_delete_status_confirm),
+            contentText = stringResource(LocalizedString.statusUiDeleteStatusConfirm),
             onNegativeClick = {
                 onDismissRequest()
                 showDeleteConfirmDialog = false
@@ -174,7 +173,7 @@ private fun AdditionalMoreOptions(
     }
     if (blogTranslationState.support) {
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.status_ui_interaction_translate),
+            text = stringResource(LocalizedString.statusUiInteractionTranslate),
             imageVector = Icons.Default.Language,
             onClick = {
                 onDismissRequest()

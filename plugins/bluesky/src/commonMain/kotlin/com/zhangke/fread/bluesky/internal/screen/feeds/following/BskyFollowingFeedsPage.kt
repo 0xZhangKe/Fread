@@ -56,7 +56,6 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
-import com.zhangke.fread.statusui.status_ui_edit_content_delete_dialog_content
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -259,7 +258,7 @@ class BskyFollowingFeedsPage(
         if (showDeleteConfirmDialog) {
             FreadDialog(
                 onDismissRequest = { showDeleteConfirmDialog = false },
-                contentText = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_delete_dialog_content),
+                contentText = stringResource(LocalizedString.statusUiEditContentDeleteDialogContent),
                 onNegativeClick = {
                     showDeleteConfirmDialog = false
                 },

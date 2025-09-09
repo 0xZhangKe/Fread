@@ -39,7 +39,6 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.user.CommonUserPlaceHolder
 import com.zhangke.fread.status.ui.user.CommonUserUi
 import com.zhangke.fread.status.uri.FormalUri
-import com.zhangke.fread.statusui.status_ui_follow
 import org.jetbrains.compose.resources.stringResource
 
 class UserListScreen(
@@ -200,7 +199,7 @@ class UserListScreen(
                     Spacer(modifier = Modifier.width(6.dp))
                     StyledTextButton(
                         modifier = Modifier.align(Alignment.CenterVertically),
-                        text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_follow),
+                        text = stringResource(LocalizedString.statusUiFollow),
                         style = TextButtonStyle.STANDARD,
                         onClick = {
                             onFollowClick(authorUiState)

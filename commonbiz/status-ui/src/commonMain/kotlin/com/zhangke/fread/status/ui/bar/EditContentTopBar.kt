@@ -17,11 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_edit_content_delete_dialog_content
-import com.zhangke.fread.statusui.status_ui_edit_content_name_hint
-import com.zhangke.fread.statusui.status_ui_edit_content_name_label
-import com.zhangke.fread.statusui.status_ui_edit_content_name_title
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -61,7 +57,7 @@ fun EditContentTopBar(
     if (showDeleteConfirmDialog) {
         FreadDialog(
             onDismissRequest = { showDeleteConfirmDialog = false },
-            contentText = stringResource(Res.string.status_ui_edit_content_delete_dialog_content),
+            contentText = stringResource(LocalizedString.statusUiEditContentDeleteDialogContent),
             onNegativeClick = {
                 showDeleteConfirmDialog = false
             },
@@ -91,7 +87,7 @@ private fun EditContentNameDialog(
         onDismissRequest = {
             onDismissRequest()
         },
-        title = stringResource(Res.string.status_ui_edit_content_name_title),
+        title = stringResource(LocalizedString.statusUiEditContentNameTitle),
         content = {
             OutlinedTextField(
                 modifier = Modifier
@@ -103,12 +99,12 @@ private fun EditContentNameDialog(
                 },
                 label = {
                     Text(
-                        text = stringResource(Res.string.status_ui_edit_content_name_label)
+                        text = stringResource(LocalizedString.statusUiEditContentNameLabel)
                     )
                 },
                 placeholder = {
                     Text(
-                        text = stringResource(Res.string.status_ui_edit_content_name_hint)
+                        text = stringResource(LocalizedString.statusUiEditContentNameHint)
                     )
                 },
             )

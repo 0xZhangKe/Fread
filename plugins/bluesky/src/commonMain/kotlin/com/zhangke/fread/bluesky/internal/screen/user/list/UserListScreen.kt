@@ -42,11 +42,7 @@ import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.user.CommonUserPlaceHolder
 import com.zhangke.fread.status.ui.user.CommonUserUi
-import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_following
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.statusui.Res as StatusRes
 
 class UserListScreen(
     private val locator: PlatformLocator,
@@ -229,9 +225,9 @@ class UserListScreen(
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = if (user.following) {
-                        stringResource(StatusRes.string.status_ui_user_detail_relationship_following)
+                        stringResource(LocalizedString.statusUiUserDetailRelationshipFollowing)
                     } else {
-                        stringResource(StatusRes.string.status_ui_user_detail_relationship_not_follow)
+                        stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow)
                     },
                     style = TextButtonStyle.STANDARD,
                     onClick = {
@@ -244,7 +240,7 @@ class UserListScreen(
                 )
                 if (showConfirmDialog) {
                     AlertConfirmDialog(
-                        content = stringResource(StatusRes.string.status_ui_relationship_btn_dialog_content_cancel_follow),
+                        content = stringResource(LocalizedString.statusUiRelationshipBtnDialogContentCancelFollow),
                         onConfirm = { onUnfollowClick(user) },
                         onDismissRequest = { showConfirmDialog = false },
                     )

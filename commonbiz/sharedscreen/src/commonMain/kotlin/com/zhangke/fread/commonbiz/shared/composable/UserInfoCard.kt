@@ -32,6 +32,7 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.VerticalIndentLayout
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.formatToHumanReadable
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -40,9 +41,6 @@ import com.zhangke.fread.status.ui.richtext.SelectableRichText
 import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.img_banner_background
-import com.zhangke.fread.statusui.status_ui_user_detail_follower_info
-import com.zhangke.fread.statusui.status_ui_user_detail_following_info
-import com.zhangke.fread.statusui.status_ui_user_detail_posts
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -270,9 +268,9 @@ private fun UserFollowInfo(
     followingCount: Long?,
     statusesCount: Long?,
 ) {
-    val followerText = stringResource(Res.string.status_ui_user_detail_follower_info)
-    val followingText = stringResource(Res.string.status_ui_user_detail_following_info)
-    val statusText = stringResource(Res.string.status_ui_user_detail_posts)
+    val followerText = stringResource(LocalizedString.statusUiUserDetailFollowerInfo)
+    val followingText = stringResource(LocalizedString.statusUiUserDetailFollowingInfo)
+    val statusText = stringResource(LocalizedString.statusUiUserDetailPosts)
     val infoText = remember(followingCount, followersCount, statusesCount) {
         buildString {
             if (followersCount != null) {

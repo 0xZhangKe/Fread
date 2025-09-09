@@ -32,7 +32,13 @@ fun PostStatusWarning(
                 .fillMaxSize(),
             value = warning,
             onValueChange = onValueChanged,
-            placeholder = { Text(text = stringResource(LocalizedString.postStatusContentWarning)) },
+            placeholder = {
+                Text(
+                    text = stringResource(LocalizedString.postStatusContentWarning),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = inverseOnSurfaceDark,
+                )
+            },
             colors = TextFieldDefaults.colors(
                 focusedTextColor = inverseOnSurfaceDark,
                 unfocusedTextColor = inverseOnSurfaceDark,

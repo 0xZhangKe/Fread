@@ -263,4 +263,18 @@
     <string name="status_ui_logout_dialog_content">Are you sure you want to log out?</string>
 
     <string name="status_ui_search_account_status_hint">Search posts</string>
+
+    <string name="explorer_search_no_results">No results found</string>
+    <string name="explorer_search_bar_hint">Search</string>
+    <string name="explorer_search_bar_hint_specialize_platform">Search in %1$s</string>
+    <string name="explorer_search_tab_title_author">Accounts</string>
+    <string name="explorer_search_tab_title_status">Status</string>
+    <string name="explorer_search_tab_title_hashtag">Hashtags</string>
+    <string name="explorer_search_tab_title_server">Server</string>
+
+    <string name="explorer_tab_title">Explorer</string>
+
+    <string name="explorer_tab_status_title">Posts</string>
+    <string name="explorer_tab_users_title">Users</string>
+    <string name="explorer_tab_hashtag_title">Hashtags</string>
 </resources>

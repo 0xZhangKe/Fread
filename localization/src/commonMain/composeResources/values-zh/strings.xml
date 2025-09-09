@@ -335,4 +335,57 @@
     <string name="notifications_account_empty_tip">当前没有已登录账号</string>
     <string name="notifications_tab_all">所有</string>
     <string name="notifications_tab_mention">提及</string>
+    <string name="profile_page_title">账号</string>
+
+    <string name="profile_setting_about_title">关于</string>
+    <string name="profile_setting_donate_desc">给我买杯咖啡以此支持这个项目</string>
+    <string name="profile_setting_inline_video_auto_play">Inline 视频自动播放</string>
+    <string name="profile_setting_inline_video_auto_play_subtitle">开启后，Feeds 流中的视频将会自动播放。</string>
+    <string name="profile_setting_always_show_sensitive_content">敏感内容默认显示</string>
+    <string name="profile_setting_always_show_sensitive_content_subtitle">开启后，敏感内容默认会显示。</string>
+    <string name="profile_setting_dark_mode_title">深色模式</string>
+    <string name="profile_setting_dark_mode_dark">深色模式</string>
+    <string name="profile_setting_dark_mode_light">浅色模式</string>
+    <string name="profile_setting_dark_mode_follow_system">跟随系统</string>
+    <string name="profile_setting_open_source_title">开源声明</string>
+    <string name="profile_setting_open_source_desc">本项目使用到的依赖库的开源声明</string>
+    <string name="profile_setting_open_source_feedback">给我们反馈</string>
+    <string name="profile_setting_open_source_feedback_desc">加入 Telegram 群组或者其它方式</string>
+    <string name="profile_setting_open_source_feedback_telegram">加入 Telegram 群组</string>
+    <string name="profile_setting_open_source_feedback_github">创建 GitHub issue</string>
+    <string name="profile_setting_open_source_feedback_email">发送邮件</string>
+    <string name="profile_setting_language_title">语言</string>
+    <string name="profile_setting_language_zh">简体中文</string>
+    <string name="profile_setting_language_en">English</string>
+    <string name="profile_setting_language_system">跟随系统</string>
+    <string name="profile_setting_ratting">给我们评价</string>
+    <string name="profile_setting_ratting_desc">如果觉得不错请到应用市场给我们一个好评</string>
+    <string name="profile_setting_font_size">内容字体大小</string>
+    <string name="profile_setting_font_size_desc">调整内容的字体和图标大小</string>
+    <string name="profile_setting_font_size_small">小</string>
+    <string name="profile_setting_font_size_medium">中</string>
+    <string name="profile_setting_font_size_large">大</string>
+    <string name="profile_setting_immersive_nav_bar">沉浸式导航栏</string>
+    <string name="profile_setting_immersive_nav_bar_desc">打开后，首页滑动时会隐藏底部的导航栏。</string>
+    <string name="profile_setting_timeline_position">首页的时间线默认位置</string>
+    <string name="profile_setting_timeline_position_last_read">上次阅读位置</string>
+    <string name="profile_setting_timeline_position_newest">最新位置</string>
+    <string name="profile_setting_theme_title">主题色</string>
+    <string name="profile_setting_theme_default">默认</string>
+    <string name="profile_setting_theme_system">系统</string>
+
+    <string name="profile_about_version">版本：</string>
+    <string name="profile_about_website">官网：</string>
+    <string name="profile_about_developer">开发者：</string>
+    <string name="profile_about_contract_us">联系我：</string>
+    <string name="profile_about_telegram">Telegram 群组：</string>
+    <string name="profile_about_privacy_policy">隐私协议：</string>
+
+    <string name="profile_setting_check_for_update">检查更新</string>
+    <string name="profile_setting_already_latest_version">当前版本已经是最新了</string>
+    <string name="profile_setting_have_new_version">有新版本，点击更新。</string>
+
+    <string name="profile_donate_page_title">请选择捐赠方式</string>
+
+    <string name="profile_account_not_login">登陆已失效</string>
 </resources>

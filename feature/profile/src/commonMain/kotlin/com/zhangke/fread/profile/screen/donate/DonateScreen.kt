@@ -29,7 +29,7 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.af_dian
 import com.zhangke.fread.feature.profile.kofi_symbol
-import com.zhangke.fread.feature.profile.profile_donate_page_title
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -60,7 +60,7 @@ class DonateScreen : BaseScreen() {
                     .padding(bottom = 16.dp),
             ) {
                 Text(
-                    text = stringResource(Res.string.profile_donate_page_title),
+                    text = stringResource(LocalizedString.profileDonatePageTitle),
                     fontSize = 18.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

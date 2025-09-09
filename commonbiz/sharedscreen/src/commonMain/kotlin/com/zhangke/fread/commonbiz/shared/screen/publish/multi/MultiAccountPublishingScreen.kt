@@ -40,9 +40,6 @@ import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.post_status_exit_dialog_content
-import com.zhangke.fread.commonbiz.shared.screen.post_status_success
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMediaAttachment
@@ -53,7 +50,7 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTex
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostInteractionSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusVisibilityUi
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusWarning
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.status.model.StatusVisibility
@@ -108,7 +105,7 @@ class MultiAccountPublishingScreen(
             onSettingSelected = viewModel::onSettingSelected,
             onAddAccountClick = viewModel::onAddAccount,
         )
-        val successMessage = stringResource(Res.string.post_status_success)
+        val successMessage = stringResource(LocalizedString.postStatusSuccess)
         ConsumeFlow(viewModel.publishSuccessFlow) {
             toast(successMessage)
             navigator.pop()
@@ -118,7 +115,7 @@ class MultiAccountPublishingScreen(
             FreadDialog(
                 onDismissRequest = { showExitDialog = false },
                 content = {
-                    Text(text = stringResource(Res.string.post_status_exit_dialog_content))
+                    Text(text = stringResource(LocalizedString.postStatusExitDialogContent))
                 },
                 onNegativeClick = {
                     showExitDialog = false
@@ -228,7 +225,7 @@ class MultiAccountPublishingScreen(
                     onContentChanged = onContentChanged,
                     mentionHighlightEnabled = false,
                     placeholder = buildAnnotatedString {
-                        append(stringResource(Res.string.shared_publish_blog_text_hint))
+                        append(stringResource(LocalizedString.sharedPublishBlogTextHint))
                     },
                 )
                 PublishPostMediaAttachment(

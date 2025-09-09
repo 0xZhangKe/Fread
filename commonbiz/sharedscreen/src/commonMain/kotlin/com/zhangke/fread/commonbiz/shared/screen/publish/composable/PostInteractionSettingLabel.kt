@@ -33,25 +33,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.status.model.ReplySetting
 import com.zhangke.fread.status.model.StatusList
-import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_follower
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_following
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_mentioned
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_quote_allow
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_quote_title
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_all
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_combine_title
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_nobody
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_subtitle
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_title
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_subtitle
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_title
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_limited
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_no_limit
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,19 +97,19 @@ fun PostInteractionSettingLabel(
                     .verticalScroll(rememberScrollState()),
             ) {
                 Text(
-                    text = stringResource(Res.string.shared_publish_interaction_dialog_title),
+                    text = stringResource(LocalizedString.sharedPublishInteractionDialogTitle),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
                 )
                 Text(
-                    text = stringResource(Res.string.shared_publish_interaction_dialog_subtitle),
+                    text = stringResource(LocalizedString.sharedPublishInteractionDialogSubtitle),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 HorizontalDivider(modifier = Modifier.padding(top = 16.dp).fillMaxWidth())
                 Text(
                     modifier = Modifier.padding(top = 26.dp),
-                    text = stringResource(Res.string.shared_publish_interaction_dialog_quote_title),
+                    text = stringResource(LocalizedString.sharedPublishInteractionDialogQuoteTitle),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
@@ -133,7 +119,7 @@ fun PostInteractionSettingLabel(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = stringResource(Res.string.shared_publish_interaction_dialog_quote_allow),
+                        text = stringResource(LocalizedString.sharedPublishInteractionDialogQuoteAllow),
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Spacer(modifier = Modifier.weight(1F))
@@ -145,14 +131,14 @@ fun PostInteractionSettingLabel(
                 HorizontalDivider(modifier = Modifier.padding(top = 16.dp).fillMaxWidth())
                 Text(
                     modifier = Modifier.padding(top = 26.dp),
-                    text = stringResource(Res.string.shared_publish_interaction_dialog_reply_title),
+                    text = stringResource(LocalizedString.sharedPublishInteractionDialogReplyTitle),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
                 )
                 Text(
                     modifier = Modifier.padding(top = 16.dp),
-                    text = stringResource(Res.string.shared_publish_interaction_dialog_reply_subtitle),
+                    text = stringResource(LocalizedString.sharedPublishInteractionDialogReplySubtitle),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Row(
@@ -162,42 +148,42 @@ fun PostInteractionSettingLabel(
                     InteractionOption(
                         modifier = Modifier.weight(1F)
                             .noRippleClick { onSettingSelected(ReplySetting.Everybody) },
-                        text = stringResource(Res.string.shared_publish_interaction_dialog_reply_all),
+                        text = stringResource(LocalizedString.sharedPublishInteractionDialogReplyAll),
                         selected = setting.replySetting is ReplySetting.Everybody,
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     InteractionOption(
                         modifier = Modifier.weight(1F)
                             .noRippleClick { onSettingSelected(ReplySetting.Nobody) },
-                        text = stringResource(Res.string.shared_publish_interaction_dialog_reply_nobody),
+                        text = stringResource(LocalizedString.sharedPublishInteractionDialogReplyNobody),
                         selected = setting.replySetting is ReplySetting.Nobody,
                     )
                 }
                 if (setting.replySetting !is ReplySetting.Nobody) {
                     Text(
                         modifier = Modifier.padding(top = 26.dp),
-                        text = stringResource(Res.string.shared_publish_interaction_dialog_reply_combine_title),
+                        text = stringResource(LocalizedString.sharedPublishInteractionDialogReplyCombineTitle),
                         style = MaterialTheme.typography.bodySmall,
                     )
 
                     InteractionOption(
                         modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
                             .noRippleClick { onSettingOptionsSelected(ReplySetting.CombineOption.Mentioned) },
-                        text = stringResource(Res.string.shared_publish_interaction_dialog_mentioned),
+                        text = stringResource(LocalizedString.sharedPublishInteractionDialogMentioned),
                         selected = setting.replySetting.combinedMentions,
                     )
 
                     InteractionOption(
                         modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
                             .noRippleClick { onSettingOptionsSelected(ReplySetting.CombineOption.Following) },
-                        text = stringResource(Res.string.shared_publish_interaction_dialog_following),
+                        text = stringResource(LocalizedString.sharedPublishInteractionDialogFollowing),
                         selected = setting.replySetting.combinedFollowing,
                     )
 
                     InteractionOption(
                         modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
                             .noRippleClick { onSettingOptionsSelected(ReplySetting.CombineOption.Followers) },
-                        text = stringResource(Res.string.shared_publish_interaction_dialog_follower),
+                        text = stringResource(LocalizedString.sharedPublishInteractionDialogFollower),
                         selected = setting.replySetting.combinedFollowers,
                     )
 
@@ -271,9 +257,9 @@ private fun InteractionOption(
 internal val PostInteractionSetting.label: String
     @Composable get() {
         return if (this.replySetting is ReplySetting.Everybody) {
-            stringResource(Res.string.shared_publish_interaction_no_limit)
+            stringResource(LocalizedString.sharedPublishInteractionNoLimit)
         } else {
-            stringResource(Res.string.shared_publish_interaction_limited)
+            stringResource(LocalizedString.sharedPublishInteractionLimited)
         }
     }
 

@@ -13,8 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.post_status_content_warning
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.drawSpoilerBackground
 import org.jetbrains.compose.resources.stringResource
 
@@ -33,13 +32,7 @@ fun PostStatusWarning(
                 .fillMaxSize(),
             value = warning,
             onValueChange = onValueChanged,
-            placeholder = {
-                Text(
-                    text = stringResource(Res.string.post_status_content_warning),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = inverseOnSurfaceDark,
-                )
-            },
+            placeholder = { Text(text = stringResource(LocalizedString.postStatusContentWarning)) },
             colors = TextFieldDefaults.colors(
                 focusedTextColor = inverseOnSurfaceDark,
                 unfocusedTextColor = inverseOnSurfaceDark,

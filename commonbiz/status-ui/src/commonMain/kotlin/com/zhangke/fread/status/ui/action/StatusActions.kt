@@ -6,11 +6,7 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.PersonSearch
 import androidx.compose.runtime.Composable
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_interaction_copy_url
-import com.zhangke.fread.statusui.status_ui_interaction_open_blog_by_other_account
-import com.zhangke.fread.statusui.status_ui_interaction_open_in_browser
-import com.zhangke.fread.statusui.status_ui_interaction_open_original_instance
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -18,7 +14,7 @@ fun DropDownCopyLinkItem(
     onClick: () -> Unit,
 ) {
     ModalDropdownMenuItem(
-        text = stringResource(Res.string.status_ui_interaction_copy_url),
+        text = stringResource(LocalizedString.statusUiInteractionCopyUrl),
         imageVector = Icons.Default.ContentCopy,
         onClick = onClick,
     )
@@ -27,7 +23,7 @@ fun DropDownCopyLinkItem(
 @Composable
 fun DropDownOpenInBrowserItem(onClick: () -> Unit) {
     ModalDropdownMenuItem(
-        text = stringResource(Res.string.status_ui_interaction_open_in_browser),
+        text = stringResource(LocalizedString.statusUiInteractionOpenInBrowser),
         imageVector = Icons.Default.Language,
         onClick = onClick,
     )
@@ -36,7 +32,7 @@ fun DropDownOpenInBrowserItem(onClick: () -> Unit) {
 @Composable
 fun DropDownOpenOriginalInstanceItem(onClick: () -> Unit) {
     ModalDropdownMenuItem(
-        text = stringResource(Res.string.status_ui_interaction_open_original_instance),
+        text = stringResource(LocalizedString.statusUiInteractionOpenOriginalInstance),
         imageVector = Icons.Default.CloudQueue,
         onClick = onClick,
     )
@@ -45,7 +41,7 @@ fun DropDownOpenOriginalInstanceItem(onClick: () -> Unit) {
 @Composable
 fun DropDownOpenStatusByOtherAccountItem(onClick: () -> Unit) {
     ModalDropdownMenuItem(
-        text = stringResource(Res.string.status_ui_interaction_open_blog_by_other_account),
+        text = stringResource(LocalizedString.statusUiInteractionOpenBlogByOtherAccount),
         imageVector = Icons.Default.PersonSearch,
         onClick = onClick,
     )

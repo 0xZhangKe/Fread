@@ -68,11 +68,7 @@ import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.user.UserHandleLine
-import com.zhangke.fread.statusui.status_ui_edit_profile
-import com.zhangke.fread.statusui.status_ui_logout
-import com.zhangke.fread.statusui.status_ui_logout_dialog_content
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.statusui.Res as StatusUiRes
 
 class BskyUserDetailScreen(
     private val locator: PlatformLocator,
@@ -228,7 +224,7 @@ class BskyUserDetailScreen(
                         onClick = onEditProfileClick,
                     ) {
                         Text(
-                            text = stringResource(StatusUiRes.string.status_ui_edit_profile)
+                            text = stringResource(LocalizedString.statusUiEditProfile)
                         )
                     }
                 } else if (uiState.relationship != null) {
@@ -374,7 +370,7 @@ private fun SelfAccountActions(
     )
     var showLogoutDialog by remember { mutableStateOf(false) }
     ModalDropdownMenuItem(
-        text = stringResource(StatusUiRes.string.status_ui_logout),
+        text = stringResource(LocalizedString.statusUiLogout),
         imageVector = Icons.AutoMirrored.Filled.Logout,
         colors = MenuDefaults.itemColors(
             textColor = MaterialTheme.colorScheme.error,
@@ -385,7 +381,7 @@ private fun SelfAccountActions(
     if (showLogoutDialog) {
         FreadDialog(
             onDismissRequest = { showLogoutDialog = false },
-            contentText = stringResource(StatusUiRes.string.status_ui_logout_dialog_content),
+            contentText = stringResource(LocalizedString.statusUiLogoutDialogContent),
             onPositiveClick = {
                 showLogoutDialog = false
                 onLogoutClick()

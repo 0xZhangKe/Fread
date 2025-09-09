@@ -12,22 +12,12 @@ import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.framework.utils.formatToHumanReadable
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_format_quote
 import com.zhangke.fread.statusui.ic_share
 import com.zhangke.fread.statusui.ic_status_comment
 import com.zhangke.fread.statusui.ic_status_forward
-import com.zhangke.fread.statusui.status_ui_bookmark
-import com.zhangke.fread.statusui.status_ui_boosted
-import com.zhangke.fread.statusui.status_ui_comment
-import com.zhangke.fread.statusui.status_ui_delete
-import com.zhangke.fread.statusui.status_ui_edit
-import com.zhangke.fread.statusui.status_ui_like
-import com.zhangke.fread.statusui.status_ui_pin
-import com.zhangke.fread.statusui.status_ui_quote
-import com.zhangke.fread.statusui.status_ui_share
-import com.zhangke.fread.statusui.status_ui_unbookmark
-import com.zhangke.fread.statusui.status_ui_unpin
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -78,47 +68,51 @@ internal fun editIcon(): ImageVector {
 
 @Composable
 fun likeAlt(): String {
-    return stringResource(Res.string.status_ui_like)
+    return stringResource(LocalizedString.statusUiLike)
 }
 
 @Composable
 internal fun forwardAlt(): String {
-    return stringResource(Res.string.status_ui_boosted)
+    return stringResource(LocalizedString.statusUiBoosted)
 }
 
 @Composable
 internal fun quoteAlt(): String {
-    return stringResource(Res.string.status_ui_quote)
+    return stringResource(LocalizedString.statusUiQuote)
 }
 
 @Composable
 internal fun replyAlt(): String {
-    return stringResource(Res.string.status_ui_comment)
+    return stringResource(LocalizedString.statusUiComment)
 }
 
 @Composable
 internal fun bookmarkAlt(bookmarked: Boolean): String {
-    return if (bookmarked) stringResource(Res.string.status_ui_unbookmark) else stringResource(Res.string.status_ui_bookmark)
+    return if (bookmarked) stringResource(LocalizedString.statusUiUnbookmark) else stringResource(
+        LocalizedString.statusUiBookmark
+    )
 }
 
 @Composable
 internal fun deleteAlt(): String {
-    return stringResource(Res.string.status_ui_delete)
+    return stringResource(LocalizedString.statusUiDelete)
 }
 
 @Composable
 internal fun shareAlt(): String {
-    return stringResource(Res.string.status_ui_share)
+    return stringResource(LocalizedString.statusUiShare)
 }
 
 @Composable
 fun pinAlt(pinned: Boolean): String {
-    return if (pinned) stringResource(Res.string.status_ui_unpin) else stringResource(Res.string.status_ui_pin)
+    return if (pinned) stringResource(LocalizedString.statusUiUnpin) else stringResource(
+        LocalizedString.statusUiPin
+    )
 }
 
 @Composable
 internal fun editAlt(): String {
-    return stringResource(Res.string.status_ui_edit)
+    return stringResource(LocalizedString.statusUiEdit)
 }
 
 internal fun Long.countToLabel(): String? {

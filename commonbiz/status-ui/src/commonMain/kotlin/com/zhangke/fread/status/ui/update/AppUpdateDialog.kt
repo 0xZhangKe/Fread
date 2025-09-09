@@ -4,9 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.DialogProperties
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.update.AppReleaseInfo
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_update_dialog_release_note
-import com.zhangke.fread.statusui.status_ui_update_dialog_title
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -21,9 +19,9 @@ fun AppUpdateDialog(
             dismissOnBackPress = false,
             dismissOnClickOutside = false,
         ),
-        title = stringResource(Res.string.status_ui_update_dialog_title),
+        title = stringResource(LocalizedString.statusUiUpdateDialogTitle),
         contentText = stringResource(
-            Res.string.status_ui_update_dialog_release_note,
+            LocalizedString.statusUiUpdateDialogReleaseNote,
             appReleaseInfo.versionName,
             appReleaseInfo.releaseNote,
         ),

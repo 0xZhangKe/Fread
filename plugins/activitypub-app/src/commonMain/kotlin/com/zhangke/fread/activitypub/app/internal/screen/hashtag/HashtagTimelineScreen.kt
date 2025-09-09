@@ -49,10 +49,9 @@ import com.zhangke.fread.activitypub.app.activity_pub_hashtag_unfollow_dialog_me
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_following
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
 import kotlinx.coroutines.flow.SharedFlow
 import org.jetbrains.compose.resources.stringResource
 
@@ -312,9 +311,9 @@ data class HashtagTimelineScreen(
                 TextButtonStyle.ACTIVE
             },
             text = if (uiState.following) {
-                stringResource(com.zhangke.fread.statusui.Res.string.status_ui_user_detail_relationship_following)
+                stringResource(LocalizedString.statusUiUserDetailRelationshipFollowing)
             } else {
-                stringResource(com.zhangke.fread.statusui.Res.string.status_ui_user_detail_relationship_not_follow)
+                stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow)
             },
         )
         if (showUnfollowDialog) {

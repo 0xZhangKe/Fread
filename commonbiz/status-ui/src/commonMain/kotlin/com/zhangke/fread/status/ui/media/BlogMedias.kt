@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.pxToDp
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -33,8 +34,6 @@ import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.video.BlogVideos
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_image_sensitive_label
 import org.jetbrains.compose.resources.stringResource
 
 private var cachedContainerWidth: Dp? = null
@@ -92,7 +91,7 @@ fun BlogMedias(
                         contentColor = Color.White,
                     ),
                 ) {
-                    Text(stringResource(Res.string.status_ui_image_sensitive_label))
+                    Text(stringResource(LocalizedString.statusUiImageSensitiveLabel))
                 }
             } else {
                 IconButton(

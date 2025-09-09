@@ -15,8 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_new_status
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -39,7 +38,7 @@ fun NewStatusNotifyBar(
                 imageVector = Icons.Default.ArrowUpward,
                 contentDescription = "Scroll Up",
             )
-            val tip = stringResource(Res.string.status_ui_new_status)
+            val tip = stringResource(LocalizedString.statusUiNewStatus)
             Text(
                 modifier = Modifier.padding(start = 4.dp),
                 text = tip,

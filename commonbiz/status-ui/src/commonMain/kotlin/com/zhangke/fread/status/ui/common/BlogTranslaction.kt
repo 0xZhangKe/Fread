@@ -10,11 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.style.StatusStyle
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_translate_show_original
-import com.zhangke.fread.statusui.status_ui_translating
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -41,7 +39,7 @@ fun BlogTranslateLabel(
                         onShowOriginalClick()
                     }
                     .padding(horizontal = 16.dp),
-                text = stringResource(Res.string.status_ui_translate_show_original),
+                text = stringResource(LocalizedString.statusUiTranslateShowOriginal),
                 style = style.infoLineStyle.descStyle,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -49,7 +47,7 @@ fun BlogTranslateLabel(
             Text(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
-                text = stringResource(Res.string.status_ui_translating),
+                text = stringResource(LocalizedString.statusUiTranslating),
                 style = style.infoLineStyle.descStyle,
             )
         }

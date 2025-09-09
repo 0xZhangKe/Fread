@@ -133,14 +133,10 @@ import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
-import com.zhangke.fread.statusui.status_ui_edit_profile
-import com.zhangke.fread.statusui.status_ui_logout
-import com.zhangke.fread.statusui.status_ui_logout_dialog_content
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import com.zhangke.fread.statusui.Res as StatusUiRes
 
 data class UserDetailScreen(
     val locator: PlatformLocator,
@@ -416,7 +412,7 @@ data class UserDetailScreen(
                         onClick = onEditClick,
                     ) {
                         Text(
-                            text = stringResource(StatusUiRes.string.status_ui_edit_profile)
+                            text = stringResource(LocalizedString.statusUiEditProfile)
                         )
                     }
                 } else if (uiState.relationships != null) {
@@ -766,7 +762,7 @@ data class UserDetailScreen(
         )
         var showLogoutDialog by remember { mutableStateOf(false) }
         ModalDropdownMenuItem(
-            text = stringResource(StatusUiRes.string.status_ui_logout),
+            text = stringResource(LocalizedString.statusUiLogout),
             imageVector = Icons.AutoMirrored.Filled.Logout,
             colors = MenuDefaults.itemColors(
                 textColor = MaterialTheme.colorScheme.error,
@@ -777,7 +773,7 @@ data class UserDetailScreen(
         if (showLogoutDialog) {
             FreadDialog(
                 onDismissRequest = { showLogoutDialog = false },
-                contentText = stringResource(StatusUiRes.string.status_ui_logout_dialog_content),
+                contentText = stringResource(LocalizedString.statusUiLogoutDialogContent),
                 onPositiveClick = {
                     showLogoutDialog = false
                     onLogoutClick()

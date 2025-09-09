@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.statusui.status_ui_user_detail_follows_you
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -62,7 +62,7 @@ fun UserHandleLine(
                     )
                     .padding(horizontal = 4.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_user_detail_follows_you),
+                text = stringResource(LocalizedString.statusUiUserDetailFollowsYou),
                 style = MaterialTheme.typography.bodySmall
                     .copy(fontWeight = FontWeight.Normal),
             )

@@ -39,13 +39,9 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.composable.StatusSourceNode
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
-import com.zhangke.fread.feeds.pre_add_feeds_input_label_1
-import com.zhangke.fread.feeds.pre_add_feeds_input_label_2
-import com.zhangke.fread.feeds.search_feeds_title
-import com.zhangke.fread.feeds.search_feeds_title_hint
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.source.StatusSource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.jvm.Transient
@@ -99,7 +95,7 @@ internal class SearchSourceForAddScreen : BaseScreen() {
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.search_feeds_title),
+                    title = stringResource(LocalizedString.searchFeedsTitle),
                     onBackClick = onBackClick,
                 )
             },
@@ -123,7 +119,7 @@ internal class SearchSourceForAddScreen : BaseScreen() {
                     ),
                     placeholder = {
                         Text(
-                            text = stringResource(Res.string.search_feeds_title_hint),
+                            text = stringResource(LocalizedString.searchFeedsTitleHint),
                             style = MaterialTheme.typography.labelMedium,
                         )
                     },
@@ -175,13 +171,13 @@ internal class SearchSourceForAddScreen : BaseScreen() {
         return buildAnnotatedString {
             append(
                 HighlightTextBuildUtil.buildHighlightText(
-                    text = stringResource(Res.string.pre_add_feeds_input_label_1),
+                    text = stringResource(LocalizedString.preAddFeedsInputLabel1),
                     fontWeight = FontWeight.Bold,
                 )
             )
             append(
                 HighlightTextBuildUtil.buildHighlightText(
-                    text = stringResource(Res.string.pre_add_feeds_input_label_2),
+                    text = stringResource(LocalizedString.preAddFeedsInputLabel2),
                     fontWeight = FontWeight.Bold,
                 )
             )

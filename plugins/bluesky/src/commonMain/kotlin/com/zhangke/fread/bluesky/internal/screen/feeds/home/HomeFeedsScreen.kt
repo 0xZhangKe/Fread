@@ -17,8 +17,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.feeds
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
@@ -56,7 +55,7 @@ class HomeFeedsScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.feeds),
+                    title = stringResource(LocalizedString.feeds),
                     onBackClick = navigator::pop,
                 )
             },

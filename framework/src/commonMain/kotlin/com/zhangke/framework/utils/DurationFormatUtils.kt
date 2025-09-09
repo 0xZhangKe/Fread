@@ -1,10 +1,6 @@
 package com.zhangke.framework.utils
 
-import com.zhangke.fread.localization.Res
-import com.zhangke.fread.localization.duration_day
-import com.zhangke.fread.localization.duration_hour
-import com.zhangke.fread.localization.duration_minute
-import com.zhangke.fread.localization.duration_week
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.getString
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -16,26 +12,26 @@ suspend fun Duration.formattedString(): String {
     val formattedDuration = format()
     val weeks = dayToWeek(formattedDuration.days)
     if (weeks > 0) {
-        builder.append("$weeks${getString(Res.string.duration_week)}")
+        builder.append("$weeks${getString(LocalizedString.durationWeek)}")
     }
     val days = (formattedDuration.days - weeks * 7).coerceAtLeast(0)
     if (days > 0) {
         if (builder.isNotEmpty()) {
             builder.append(" ")
         }
-        builder.append("$days${getString(Res.string.duration_day)}")
+        builder.append("$days${getString(LocalizedString.durationDay)}")
     }
     if (formattedDuration.hours > 0) {
         if (builder.isNotEmpty()) {
             builder.append(" ")
         }
-        builder.append("${formattedDuration.hours}${getString(Res.string.duration_hour)}")
+        builder.append("${formattedDuration.hours}${getString(LocalizedString.durationHour)}")
     }
     if (formattedDuration.minutes > 0) {
         if (builder.isNotEmpty()) {
             builder.append(" ")
         }
-        builder.append("${formattedDuration.minutes}${getString(Res.string.duration_minute)}")
+        builder.append("${formattedDuration.minutes}${getString(LocalizedString.durationMinute)}")
     }
     return builder.toString()
 }

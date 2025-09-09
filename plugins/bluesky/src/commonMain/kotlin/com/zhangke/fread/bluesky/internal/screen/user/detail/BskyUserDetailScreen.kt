@@ -55,9 +55,8 @@ import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.feeds
-import com.zhangke.fread.commonbiz.search
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
@@ -73,7 +72,6 @@ import com.zhangke.fread.statusui.status_ui_edit_profile
 import com.zhangke.fread.statusui.status_ui_logout
 import com.zhangke.fread.statusui.status_ui_logout_dialog_content
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.commonbiz.Res as CommonBizRes
 import com.zhangke.fread.statusui.Res as StatusUiRes
 
 class BskyUserDetailScreen(
@@ -285,13 +283,13 @@ private fun TopBarActions(
     SimpleIconButton(
         onClick = onSearchClick,
         imageVector = Icons.Default.Search,
-        contentDescription = stringResource(CommonBizRes.string.search),
+        contentDescription = stringResource(LocalizedString.search),
     )
     if (uiState.isOwner) {
         SimpleIconButton(
             onClick = onFollowingFeedsClick,
             imageVector = Icons.AutoMirrored.Outlined.ListAlt,
-            contentDescription = stringResource(CommonBizRes.string.feeds),
+            contentDescription = stringResource(LocalizedString.feeds),
         )
     }
     var showMorePopup by remember {

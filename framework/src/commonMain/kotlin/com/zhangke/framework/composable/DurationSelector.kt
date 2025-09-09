@@ -20,11 +20,7 @@ import com.sd.lib.compose.wheel_picker.FVerticalWheelPicker
 import com.sd.lib.compose.wheel_picker.FWheelPickerState
 import com.sd.lib.compose.wheel_picker.rememberFWheelPickerState
 import com.zhangke.framework.utils.format
-import com.zhangke.fread.localization.Res
-import com.zhangke.fread.localization.duration_day
-import com.zhangke.fread.localization.duration_hour
-import com.zhangke.fread.localization.duration_minute
-import com.zhangke.fread.localization.duration_selector_title
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
@@ -43,7 +39,7 @@ fun DurationSelector(
     }
     FreadDialog(
         onDismissRequest = onDismissRequest,
-        title = stringResource(Res.string.duration_selector_title),
+        title = stringResource(LocalizedString.durationSelectorTitle),
         onNegativeClick = {
             onDismissRequest()
         },
@@ -119,7 +115,7 @@ private fun DurationSelectorContent(
         Column(modifier = Modifier.weight(1F)) {
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = stringResource(Res.string.duration_day),
+                text = stringResource(LocalizedString.durationDay),
             )
             DurationSelectorItem(
                 state = dayState,
@@ -131,7 +127,7 @@ private fun DurationSelectorContent(
         Column(modifier = Modifier.weight(1F)) {
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = stringResource(Res.string.duration_hour),
+                text = stringResource(LocalizedString.durationHour),
             )
             DurationSelectorItem(
                 state = hourState,
@@ -143,7 +139,7 @@ private fun DurationSelectorContent(
         Column(modifier = Modifier.weight(1F)) {
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = stringResource(Res.string.duration_minute),
+                text = stringResource(LocalizedString.durationMinute),
             )
             DurationSelectorItem(
                 state = minutesState,

@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -21,11 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zhangke.fread.commonbiz.login
-import com.zhangke.fread.localization.Res
-import com.zhangke.fread.localization.cancel
 import com.zhangke.fread.hosting.authentication_page_failed_title
 import com.zhangke.fread.hosting.authentication_page_normal_title
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -86,13 +84,13 @@ fun AuthenticationPage(
                     Button(
                         onClick = onCancelClick
                     ) {
-                        Text(text = stringResource(Res.string.cancel))
+                        Text(text = stringResource(LocalizedString.cancel))
                     }
                     Button(
                         modifier = Modifier.padding(start = 15.dp),
                         onClick = onLoginClick
                     ) {
-                        Text(text = stringResource(com.zhangke.fread.commonbiz.Res.string.login))
+                        Text(text = stringResource(LocalizedString.login))
                     }
                 }
             }

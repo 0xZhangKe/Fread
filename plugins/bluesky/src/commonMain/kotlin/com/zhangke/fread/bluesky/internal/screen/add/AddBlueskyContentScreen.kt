@@ -57,12 +57,10 @@ import com.zhangke.fread.bluesky.bsky_add_content_title
 import com.zhangke.fread.bluesky.bsky_add_content_user_name
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalToastHelper
-import com.zhangke.fread.commonbiz.add_content_success_snackbar
-import com.zhangke.fread.commonbiz.login
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.commonbiz.Res as CommonRes
 
 class AddBlueskyContentScreen(
     private val baseUrl: FormalBaseUrl? = null,
@@ -99,7 +97,7 @@ class AddBlueskyContentScreen(
         LoadingDialog(loading = uiState.logging, onDismissRequest = viewModel::onCancelLogin)
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessage)
         ConsumeFlow(viewModel.loginSuccessFlow) {
-            toastHelper.showToast(getString(CommonRes.string.add_content_success_snackbar))
+            toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
             navigator.pop()
         }
     }
@@ -234,7 +232,7 @@ class AddBlueskyContentScreen(
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
                     ) {
-                        Text(stringResource(com.zhangke.fread.commonbiz.Res.string.login))
+                        Text(stringResource(LocalizedString.login))
                     }
                 }
             }

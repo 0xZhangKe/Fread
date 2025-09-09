@@ -24,9 +24,7 @@ import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.fread.localization.Res
-import com.zhangke.fread.localization.load_more_error
-import com.zhangke.fread.localization.retry
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -58,7 +56,7 @@ fun LoadMoreUi(
             ) {
                 var errorMessage = loadState.message?.let { textString(it) }
                 if (errorMessage.isNullOrEmpty()) {
-                    errorMessage = stringResource(Res.string.load_more_error)
+                    errorMessage = stringResource(LocalizedString.loadMoreError)
                 }
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -69,7 +67,7 @@ fun LoadMoreUi(
                     modifier = Modifier.padding(top = 6.dp),
                     onClick = onLoadMore,
                 ) {
-                    Text(text = stringResource(Res.string.retry))
+                    Text(text = stringResource(LocalizedString.retry))
                 }
             }
         }

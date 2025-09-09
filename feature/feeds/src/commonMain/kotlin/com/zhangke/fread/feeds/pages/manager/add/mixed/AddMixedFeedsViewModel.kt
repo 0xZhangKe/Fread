@@ -10,11 +10,11 @@ import com.zhangke.framework.ktx.map
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.onboarding.OnboardingComponent
-import com.zhangke.fread.commonbiz.add_feeds_page_empty_name_exist
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.add_feeds_page_empty_name_tips
 import com.zhangke.fread.feeds.add_feeds_page_empty_source_tips
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.source.StatusSource
@@ -102,7 +102,7 @@ class AddMixedFeedsViewModel @Inject constructor(
                 return@launchInViewModel
             }
             if (contentRepo.checkNameExist(currentState.sourceName)) {
-                _errorMessageFlow.emit(textOf(com.zhangke.fread.commonbiz.Res.string.add_feeds_page_empty_name_exist))
+                _errorMessageFlow.emit(textOf(LocalizedString.addFeedsPageEmptyNameExist))
                 return@launchInViewModel
             }
             val sourceList = currentState.sourceList

@@ -10,16 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.bluesky_description
 import com.zhangke.fread.commonbiz.bluesky_logo
-import com.zhangke.fread.commonbiz.bluesky_name
 import com.zhangke.fread.commonbiz.mastodon_black_text
-import com.zhangke.fread.commonbiz.mastodon_description
 import com.zhangke.fread.commonbiz.mastodon_logo
-import com.zhangke.fread.commonbiz.mastodon_name
 import com.zhangke.fread.commonbiz.mastodon_white_text
-import com.zhangke.fread.commonbiz.mixed_content_description
-import com.zhangke.fread.commonbiz.mixed_content_name
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.isActivityPub
 import com.zhangke.fread.status.model.isBluesky
@@ -62,12 +57,12 @@ fun PlatformLogo(
 
 @Composable
 fun mastodonName(): String {
-    return stringResource(Res.string.mastodon_name)
+    return stringResource(LocalizedString.mastodonName)
 }
 
 @Composable
 fun mastodonDescription(): String {
-    return stringResource(Res.string.mastodon_description)
+    return stringResource(LocalizedString.mastodonDescription)
 }
 
 @Composable
@@ -87,12 +82,12 @@ fun mastodonHorizontalLogo(): ImageVector {
 
 @Composable
 fun blueskyName(): String {
-    return stringResource(Res.string.bluesky_name)
+    return stringResource(LocalizedString.blueskyName)
 }
 
 @Composable
 fun blueskyDescription(): String {
-    return stringResource(Res.string.bluesky_description)
+    return stringResource(LocalizedString.blueskyDescription)
 }
 
 @Composable
@@ -107,10 +102,10 @@ fun rssLogo(): ImageVector {
 
 @Composable
 fun mixedName(): String {
-    return stringResource(Res.string.mixed_content_name)
+    return stringResource(LocalizedString.mixedContentName)
 }
 
 @Composable
 fun mixedDescription(): String {
-    return stringResource(Res.string.mixed_content_description)
+    return stringResource(LocalizedString.mixedContentDescription)
 }

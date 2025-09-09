@@ -243,4 +243,9 @@ object LocalizedString {
     val feedsDeleteConfirmContent = localizedString.feeds_delete_confirm_content
     val feedsSelectTypeScreenTitle = localizedString.feeds_select_type_screen_title
     val feedsSelectTypeScreenContent = localizedString.feeds_select_type_screen_content
+
+    val notificationTabTitle = localizedString.notification_tab_title
+    val notificationsAccountEmptyTip = localizedString.notifications_account_empty_tip
+    val notificationsTabAll = localizedString.notifications_tab_all
+    val notificationsTabMention = localizedString.notifications_tab_mention
 }

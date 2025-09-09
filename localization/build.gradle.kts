@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zhangke.fread.framework"
+    namespace = "com.zhangke.fread.localization"
     sourceSets {
         getByName("main") {
             res.srcDirs("src/commonMain/res")
@@ -17,7 +17,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(path = ":localization"))
                 implementation(libs.bundles.voyager)
 
                 implementation(compose.components.resources)
@@ -58,19 +57,6 @@ kotlin {
             dependencies {
                 implementation(compose.uiTooling)
                 implementation(compose.preview)
-
-                implementation(libs.androidx.core.ktx)
-                implementation(libs.bundles.androidx.activity)
-                implementation(libs.accompanist.permissions)
-
-                implementation(libs.okhttp3)
-                implementation(libs.okhttp3.logging)
-
-                implementation(libs.bundles.androidx.media3)
-
-                implementation(libs.ktml)
-
-                implementation(libs.ktor.client.okhttp)
             }
         }
         androidUnitTest {

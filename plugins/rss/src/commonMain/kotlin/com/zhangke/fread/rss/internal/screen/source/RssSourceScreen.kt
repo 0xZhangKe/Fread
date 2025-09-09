@@ -40,9 +40,9 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.UrlEncoder
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.framework.alert
-import com.zhangke.fread.framework.cancel
-import com.zhangke.fread.framework.ok
+import com.zhangke.fread.localization.alert
+import com.zhangke.fread.localization.cancel
+import com.zhangke.fread.localization.ok
 import com.zhangke.fread.rss.Res
 import com.zhangke.fread.rss.rss_source_detail_screen_add_date
 import com.zhangke.fread.rss.rss_source_detail_screen_custom_title
@@ -193,18 +193,18 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
                 mutableStateOf(displayName)
             }
             FreadDialog(
-                title = stringResource(com.zhangke.fread.framework.Res.string.alert),
+                title = stringResource(com.zhangke.fread.localization.Res.string.alert),
                 onDismissRequest = {
                     showEditDisplayNameDialog = false
                 },
-                positiveButtonText = stringResource(com.zhangke.fread.framework.Res.string.ok),
+                positiveButtonText = stringResource(com.zhangke.fread.localization.Res.string.ok),
                 onPositiveClick = {
                     showEditDisplayNameDialog = false
                     if (newDisplayName != displayName) {
                         onDisplayNameChanged(newDisplayName)
                     }
                 },
-                negativeButtonText = stringResource(com.zhangke.fread.framework.Res.string.cancel),
+                negativeButtonText = stringResource(com.zhangke.fread.localization.Res.string.cancel),
                 onNegativeClick = {
                     showEditDisplayNameDialog = false
                 },

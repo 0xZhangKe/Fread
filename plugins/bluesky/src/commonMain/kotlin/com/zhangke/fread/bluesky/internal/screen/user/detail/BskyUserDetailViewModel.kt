@@ -18,7 +18,7 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.framework.unknown_error
+import com.zhangke.fread.localization.unknown_error
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -174,7 +174,7 @@ class BskyUserDetailViewModel @Inject constructor(
         } else {
             val errorMessage = exceptionOrNull()?.toTextStringOrNull()
             _snackBarMessage.emit(
-                errorMessage ?: textOf(com.zhangke.fread.framework.Res.string.unknown_error)
+                errorMessage ?: textOf(com.zhangke.fread.localization.Res.string.unknown_error)
             )
         }
     }

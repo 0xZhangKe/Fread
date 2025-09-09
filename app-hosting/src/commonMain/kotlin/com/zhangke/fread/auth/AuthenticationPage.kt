@@ -22,8 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.fread.commonbiz.login
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.cancel
 import com.zhangke.fread.hosting.authentication_page_failed_title
 import com.zhangke.fread.hosting.authentication_page_normal_title
 import org.jetbrains.compose.resources.stringResource

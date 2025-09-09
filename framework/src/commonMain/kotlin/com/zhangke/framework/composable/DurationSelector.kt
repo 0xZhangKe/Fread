@@ -20,11 +20,11 @@ import com.sd.lib.compose.wheel_picker.FVerticalWheelPicker
 import com.sd.lib.compose.wheel_picker.FWheelPickerState
 import com.sd.lib.compose.wheel_picker.rememberFWheelPickerState
 import com.zhangke.framework.utils.format
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.duration_day
-import com.zhangke.fread.framework.duration_hour
-import com.zhangke.fread.framework.duration_minute
-import com.zhangke.fread.framework.duration_selector_title
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.duration_day
+import com.zhangke.fread.localization.duration_hour
+import com.zhangke.fread.localization.duration_minute
+import com.zhangke.fread.localization.duration_selector_title
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration

@@ -1,7 +1,7 @@
 package com.zhangke.framework.composable
 
 import androidx.compose.runtime.Composable
-import com.zhangke.fread.framework.unknown_error
+import com.zhangke.fread.localization.unknown_error
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
@@ -55,7 +55,7 @@ fun Throwable.toTextStringOrNull(): TextString? {
 
 suspend fun MutableSharedFlow<TextString>.emitTextMessageFromThrowable(t: Throwable) {
     val message = t.toTextStringOrNull()
-        ?: textOf(getString(com.zhangke.fread.framework.Res.string.unknown_error))
+        ?: textOf(getString(com.zhangke.fread.localization.Res.string.unknown_error))
     this.emit(message)
 }
 

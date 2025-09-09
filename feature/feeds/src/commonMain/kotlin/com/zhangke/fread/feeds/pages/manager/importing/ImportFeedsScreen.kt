@@ -58,7 +58,7 @@ import com.zhangke.fread.feeds.feeds_import_back_dialog_message
 import com.zhangke.fread.feeds.feeds_import_button
 import com.zhangke.fread.feeds.feeds_import_page_hint
 import com.zhangke.fread.feeds.feeds_import_page_title
-import com.zhangke.fread.framework.alert
+import com.zhangke.fread.localization.alert
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import com.zhangke.fread.commonbiz.Res as CommonRes
@@ -89,8 +89,8 @@ class ImportFeedsScreen : BaseScreen() {
                 onDismissRequest = {
                     showBackDialog = false
                 },
-                title = stringResource(com.zhangke.fread.framework.Res.string.alert),
-                contentText = stringResource(com.zhangke.fread.feeds.Res.string.feeds_import_back_dialog_message),
+                title = stringResource(com.zhangke.fread.localization.Res.string.alert),
+                contentText = stringResource(Res.string.feeds_import_back_dialog_message),
                 onNegativeClick = {
                     showBackDialog = false
                 },

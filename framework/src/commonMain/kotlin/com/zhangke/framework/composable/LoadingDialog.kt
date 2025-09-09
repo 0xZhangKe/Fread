@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.localization.Res
+import com.zhangke.fread.localization.cancel
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

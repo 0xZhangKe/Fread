@@ -81,7 +81,7 @@ kotlin {
 compose {
     resources {
         publicResClass = true
-        packageOfResClass = "com.zhangke.fread.framework"
+        packageOfResClass = "com.zhangke.fread.localization"
         generateResClass = always
     }
 }

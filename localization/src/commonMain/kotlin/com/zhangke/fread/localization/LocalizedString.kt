@@ -196,4 +196,16 @@ object LocalizedString {
     val statusUiLogout = localizedString.status_ui_logout
     val statusUiLogoutDialogContent = localizedString.status_ui_logout_dialog_content
     val statusUiSearchAccountStatusHint = localizedString.status_ui_search_account_status_hint
+
+    val explorerSearchNoResults = localizedString.explorer_search_no_results
+    val explorerSearchBarHint = localizedString.explorer_search_bar_hint
+    val explorerSearchBarHintSpecializePlatform = localizedString.explorer_search_bar_hint_specialize_platform
+    val explorerSearchTabTitleAuthor = localizedString.explorer_search_tab_title_author
+    val explorerSearchTabTitleStatus = localizedString.explorer_search_tab_title_status
+    val explorerSearchTabTitleHashtag = localizedString.explorer_search_tab_title_hashtag
+    val explorerSearchTabTitleServer = localizedString.explorer_search_tab_title_server
+    val explorerTabTitle = localizedString.explorer_tab_title
+    val explorerTabStatusTitle = localizedString.explorer_tab_status_title
+    val explorerTabUsersTitle = localizedString.explorer_tab_users_title
+    val explorerTabHashtagTitle = localizedString.explorer_tab_hashtag_title
 }

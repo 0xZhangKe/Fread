@@ -25,8 +25,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
-import com.zhangke.fread.explore.Res
-import com.zhangke.fread.explore.explorer_search_tab_title_author
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.BlogAuthorUi
@@ -39,7 +38,7 @@ internal class SearchedAuthorTab(
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
-            title = stringResource(Res.string.explorer_search_tab_title_author),
+            title = stringResource(LocalizedString.explorerSearchTabTitleAuthor),
         )
 
     @Composable

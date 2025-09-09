@@ -4,11 +4,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDefaultLocale
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_follower_only
-import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_mentioned_only
-import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_public
-import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_unlisted
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PostInteractionSetting
@@ -16,6 +11,7 @@ import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.model.isActivityPub
 import com.zhangke.fread.status.model.isBluesky
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.StringResource
 
 data class MultiAccountPublishingUiState(
@@ -88,10 +84,10 @@ data class MultiPublishingAccountWithRules(
 
 internal val StatusVisibility.describeStringId: StringResource
     get() = when (this) {
-        StatusVisibility.PUBLIC -> Res.string.post_status_scope_public
-        StatusVisibility.UNLISTED -> Res.string.post_status_scope_unlisted
-        StatusVisibility.PRIVATE -> Res.string.post_status_scope_follower_only
-        StatusVisibility.DIRECT -> Res.string.post_status_scope_mentioned_only
+        StatusVisibility.PUBLIC -> LocalizedString.postStatusScopePublic
+        StatusVisibility.UNLISTED -> LocalizedString.postStatusScopeUnlisted
+        StatusVisibility.PRIVATE -> LocalizedString.postStatusScopeFollowerOnly
+        StatusVisibility.DIRECT -> LocalizedString.postStatusScopeMentionedOnly
     }
 
 data class PublishPostMediaAttachmentFile(

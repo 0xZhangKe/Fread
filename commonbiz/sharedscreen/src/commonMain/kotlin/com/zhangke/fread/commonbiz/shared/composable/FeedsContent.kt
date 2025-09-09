@@ -38,9 +38,7 @@ import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
-import com.zhangke.fread.commonbiz.shared.screen.list_content_empty_placeholder
-import com.zhangke.fread.commonbiz.shared.screen.shared_feeds_go_to_login
-import com.zhangke.fread.commonbiz.shared.screen.shared_feeds_not_login_title
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.isAuthenticationFailure
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -253,7 +251,7 @@ fun NotLoginPageError(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_not_login_title),
+            text = stringResource(LocalizedString.sharedFeedsNotLoginTitle),
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
             textAlign = TextAlign.Center,
         )
@@ -269,7 +267,7 @@ fun NotLoginPageError(
             modifier = Modifier.padding(top = 16.dp),
             onClick = onLoginClick,
         ) {
-            Text(text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_go_to_login))
+            Text(text = stringResource(LocalizedString.sharedFeedsGoToLogin))
         }
     }
 }
@@ -285,7 +283,7 @@ fun EmptyListContent() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, top = 56.dp, end = 16.dp),
-            text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.list_content_empty_placeholder),
+            text = stringResource(LocalizedString.listContentEmptyPlaceholder),
             textAlign = TextAlign.Center,
         )
     }

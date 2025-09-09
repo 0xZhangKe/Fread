@@ -45,11 +45,6 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Grid
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.transparentIndicatorColors
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_alt_label
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_media_alt_dialog_input_hint
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_media_alt_dialog_input_tip
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_media_alt_dialog_title
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
 import org.jetbrains.compose.resources.stringResource
@@ -132,7 +127,7 @@ private fun PublishPostMediaAttachmentImage(
             )
             Spacer(modifier = Modifier.width(1.dp))
             Text(
-                text = stringResource(Res.string.shared_alt_label),
+                text = stringResource(LocalizedString.sharedAltLabel),
                 color = fontColor,
                 style = MaterialTheme.typography.labelSmall,
             )
@@ -199,7 +194,7 @@ private fun PublishPostImageAltDialog(
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
         ) {
             Text(
-                text = stringResource(Res.string.shared_publish_media_alt_dialog_title),
+                text = stringResource(LocalizedString.sharedPublishMediaAltDialogTitle),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
             )
 
@@ -221,7 +216,7 @@ private fun PublishPostImageAltDialog(
 
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = stringResource(Res.string.shared_publish_media_alt_dialog_input_tip),
+                text = stringResource(LocalizedString.sharedPublishMediaAltDialogInputTip),
                 style = MaterialTheme.typography.labelMedium,
             )
 
@@ -237,7 +232,7 @@ private fun PublishPostImageAltDialog(
                 value = inputtedValue,
                 onValueChange = { inputtedValue = it },
                 minLines = 1,
-                placeholder = { Text(stringResource(Res.string.shared_publish_media_alt_dialog_input_hint)) },
+                placeholder = { Text(text = stringResource(LocalizedString.sharedPublishMediaAltDialogInputHint)) },
                 colors = TextFieldDefaults.transparentIndicatorColors.copy(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,

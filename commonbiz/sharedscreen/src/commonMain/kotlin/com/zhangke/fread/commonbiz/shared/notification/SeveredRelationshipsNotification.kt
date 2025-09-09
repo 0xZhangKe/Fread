@@ -11,8 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_severed_desc
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.notification.StatusNotification
 import org.jetbrains.compose.resources.stringResource
@@ -35,7 +34,7 @@ fun SeveredRelationshipsNotification(
             avatar = notification.author.avatar,
             createAt = notification.formattingDisplayTime,
             accountName = notification.author.humanizedName,
-            interactionDesc = stringResource(Res.string.shared_notification_severed_desc),
+            interactionDesc = stringResource(LocalizedString.sharedNotificationSeveredDesc),
             style = style,
         )
 

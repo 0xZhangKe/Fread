@@ -33,14 +33,7 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_user_list_empty
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_blocked
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_muted
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_blocks
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_followers
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_following
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_likes
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_mutes
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_reblog
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.user.CommonUserPlaceHolder
@@ -48,7 +41,6 @@ import com.zhangke.fread.status.ui.user.CommonUserUi
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.status_ui_follow
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.commonbiz.shared.screen.Res as SharedRes
 
 class UserListScreen(
     private val locator: PlatformLocator,
@@ -183,7 +175,7 @@ class UserListScreen(
                 Spacer(modifier = Modifier.width(6.dp))
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(SharedRes.string.shared_user_list_action_blocked),
+                    text = stringResource(LocalizedString.sharedUserListActionBlocked),
                     style = TextButtonStyle.STANDARD,
                     onClick = {
                         onUnblockClick(author)
@@ -195,7 +187,7 @@ class UserListScreen(
                 Spacer(modifier = Modifier.width(6.dp))
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(SharedRes.string.shared_user_list_action_muted),
+                    text = stringResource(LocalizedString.sharedUserListActionMuted),
                     style = TextButtonStyle.STANDARD,
                     onClick = {
                         onUnmuteClick(author)
@@ -223,11 +215,11 @@ class UserListScreen(
 
     private val UserListType.title: String
         @Composable get() = when (this) {
-            UserListType.FAVOURITES -> stringResource(SharedRes.string.shared_user_list_title_likes)
-            UserListType.REBLOGS -> stringResource(SharedRes.string.shared_user_list_title_reblog)
-            UserListType.MUTED -> stringResource(SharedRes.string.shared_user_list_title_mutes)
-            UserListType.BLOCKED -> stringResource(SharedRes.string.shared_user_list_title_blocks)
-            UserListType.FOLLOWERS -> stringResource(SharedRes.string.shared_user_list_title_followers)
-            UserListType.FOLLOWING -> stringResource(SharedRes.string.shared_user_list_title_following)
+            UserListType.FAVOURITES -> stringResource(LocalizedString.sharedUserListTitleLikes)
+            UserListType.REBLOGS -> stringResource(LocalizedString.sharedUserListTitleReblog)
+            UserListType.MUTED -> stringResource(LocalizedString.sharedUserListTitleMutes)
+            UserListType.BLOCKED -> stringResource(LocalizedString.sharedUserListTitleBlocks)
+            UserListType.FOLLOWERS -> stringResource(LocalizedString.sharedUserListTitleFollowers)
+            UserListType.FOLLOWING -> stringResource(LocalizedString.sharedUserListTitleFollowing)
         }
 }

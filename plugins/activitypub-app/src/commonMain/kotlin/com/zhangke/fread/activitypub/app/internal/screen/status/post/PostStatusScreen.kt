@@ -35,14 +35,13 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
-import com.zhangke.fread.commonbiz.shared.screen.post_status_exit_dialog_content
-import com.zhangke.fread.commonbiz.shared.screen.post_status_success
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMediaAttachment
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusVisibilityUi
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusWarning
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
@@ -124,7 +123,7 @@ class PostStatusScreen(
             )
         }
         val successMessage =
-            stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.post_status_success)
+            stringResource(LocalizedString.postStatusSuccess)
         ConsumeFlow(viewModel.publishSuccessFlow) {
             toast(successMessage)
             navigator.pop()
@@ -136,7 +135,7 @@ class PostStatusScreen(
             FreadDialog(
                 onDismissRequest = { showExitDialog = false },
                 content = {
-                    Text(text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.post_status_exit_dialog_content))
+                    Text(text = stringResource(LocalizedString.postStatusExitDialogContent))
                 },
                 onNegativeClick = {
                     showExitDialog = false

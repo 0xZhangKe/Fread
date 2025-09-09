@@ -49,3 +49,4 @@ include(":plugins:bluesky")
 if (enableFirebaseModule) {
     include(":plugins:fread-firebase")
 }
+include(":localization")

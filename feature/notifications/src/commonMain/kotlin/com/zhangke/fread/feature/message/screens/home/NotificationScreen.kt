@@ -48,9 +48,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.illustration_message
-import com.zhangke.fread.feature.notifications.Res
-import com.zhangke.fread.feature.notifications.notification_tab_title
-import com.zhangke.fread.feature.notifications.notifications_account_empty_tip
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
@@ -126,7 +124,7 @@ class NotificationScreen : BaseScreen() {
                             top = 16.dp,
                             end = 16.dp
                         ),
-                        text = stringResource(Res.string.notifications_account_empty_tip),
+                        text = stringResource(LocalizedString.notificationsAccountEmptyTip),
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -175,7 +173,7 @@ class NotificationScreen : BaseScreen() {
         TopAppBar(
             title = {
                 Text(
-                    text = stringResource(Res.string.notification_tab_title),
+                    text = stringResource(LocalizedString.notificationTabTitle),
                 )
             },
             actions = {

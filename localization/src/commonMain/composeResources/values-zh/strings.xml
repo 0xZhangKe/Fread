@@ -330,4 +330,9 @@
 
     <string name="feeds_select_type_screen_title">请选择内容类型</string>
     <string name="feeds_select_type_screen_content">请选择您要添加的内容类型</string>
+
+    <string name="notification_tab_title">通知</string>
+    <string name="notifications_account_empty_tip">当前没有已登录账号</string>
+    <string name="notifications_tab_all">所有</string>
+    <string name="notifications_tab_mention">提及</string>
 </resources>

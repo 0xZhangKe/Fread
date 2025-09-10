@@ -41,13 +41,6 @@ import com.zhangke.framework.utils.UrlEncoder
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.rss.Res
-import com.zhangke.fread.rss.rss_source_detail_screen_add_date
-import com.zhangke.fread.rss.rss_source_detail_screen_custom_title
-import com.zhangke.fread.rss.rss_source_detail_screen_home_url
-import com.zhangke.fread.rss.rss_source_detail_screen_last_update_date
-import com.zhangke.fread.rss.rss_source_detail_screen_title
-import com.zhangke.fread.rss.rss_source_detail_screen_url
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import kotlinx.coroutines.flow.Flow
@@ -85,7 +78,7 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
             topBar = {
                 Toolbar(
                     onBackClick = onBackClick,
-                    title = stringResource(Res.string.rss_source_detail_screen_title),
+                    title = stringResource(LocalizedString.rss_source_detail_screen_title),
                 )
             },
             snackbarHost = {
@@ -139,7 +132,7 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
                         modifier = Modifier.clickable {
                             browserLauncher.launchWebTabInApp(rssSource.url)
                         },
-                        title = stringResource(Res.string.rss_source_detail_screen_url),
+                        title = stringResource(LocalizedString.rss_source_detail_screen_url),
                         content = rssSource.url,
                     )
                     if (rssSource.homePage.isNullOrEmpty().not()) {
@@ -147,16 +140,16 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
                             modifier = Modifier.clickable {
                                 browserLauncher.launchWebTabInApp(rssSource.homePage!!)
                             },
-                            title = stringResource(Res.string.rss_source_detail_screen_home_url),
+                            title = stringResource(LocalizedString.rss_source_detail_screen_home_url),
                             content = rssSource.homePage!!,
                         )
                     }
                     RssInfoItem(
-                        title = stringResource(Res.string.rss_source_detail_screen_add_date),
+                        title = stringResource(LocalizedString.rss_source_detail_screen_add_date),
                         content = uiState.formattedAddDate.orEmpty(),
                     )
                     RssInfoItem(
-                        title = stringResource(Res.string.rss_source_detail_screen_last_update_date),
+                        title = stringResource(LocalizedString.rss_source_detail_screen_last_update_date),
                         content = uiState.formattedLastUpdateDate.orEmpty(),
                     )
                 }
@@ -173,7 +166,7 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
             mutableStateOf(false)
         }
         RssInfoItem(
-            title = stringResource(Res.string.rss_source_detail_screen_custom_title),
+            title = stringResource(LocalizedString.rss_source_detail_screen_custom_title),
             content = displayName,
             option = {
                 SimpleIconButton(
@@ -214,7 +207,7 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
                             newDisplayName = it
                         },
                         label = {
-                            Text(text = stringResource(Res.string.rss_source_detail_screen_custom_title))
+                            Text(text = stringResource(LocalizedString.rss_source_detail_screen_custom_title))
                         }
                     )
                 }

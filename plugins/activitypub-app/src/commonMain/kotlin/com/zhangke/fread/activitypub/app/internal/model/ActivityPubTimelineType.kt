@@ -1,9 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.model
 
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_home_timeline
-import com.zhangke.fread.activitypub.app.activity_pub_local_timeline
-import com.zhangke.fread.activitypub.app.activity_pub_public_timeline
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.getString
 
 enum class ActivityPubTimelineType {
@@ -14,9 +11,9 @@ enum class ActivityPubTimelineType {
 
     suspend fun nickName(): String {
         return when (this) {
-            HOME -> getString(Res.string.activity_pub_home_timeline)
-            LOCAL -> getString(Res.string.activity_pub_local_timeline)
-            PUBLIC -> getString(Res.string.activity_pub_public_timeline)
+            HOME -> getString(LocalizedString.activity_pub_home_timeline)
+            LOCAL -> getString(LocalizedString.activity_pub_local_timeline)
+            PUBLIC -> getString(LocalizedString.activity_pub_public_timeline)
         }
     }
 

@@ -21,8 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zhangke.fread.hosting.authentication_page_failed_title
-import com.zhangke.fread.hosting.authentication_page_normal_title
 import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
@@ -59,9 +57,9 @@ fun AuthenticationPage(
             Column {
 
                 val loginMessageResId = if (isOauthFailed) {
-                    com.zhangke.fread.hosting.Res.string.authentication_page_failed_title
+                    LocalizedString.authentication_page_failed_title
                 } else {
-                    com.zhangke.fread.hosting.Res.string.authentication_page_normal_title
+                    LocalizedString.authentication_page_normal_title
                 }
 
                 Text(

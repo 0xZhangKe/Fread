@@ -38,13 +38,8 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.voyager.navigationResult
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_dialog_hint
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_dialog_title
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_remove_keyword_dialog_content
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_title
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_whole_word
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 class HiddenKeywordScreen(
@@ -76,7 +71,7 @@ class HiddenKeywordScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.activity_pub_filter_edit_keyword_title),
+                    title = stringResource(LocalizedString.activity_pub_filter_edit_keyword_title),
                     onBackClick = {
                         resultNavigator.popWithResult(keywordsList)
                     },
@@ -127,7 +122,7 @@ class HiddenKeywordScreen(
                                     },
                                 )
                                 Text(
-                                    text = stringResource(Res.string.activity_pub_filter_edit_whole_word),
+                                    text = stringResource(LocalizedString.activity_pub_filter_edit_whole_word),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
@@ -149,7 +144,7 @@ class HiddenKeywordScreen(
                         )
                         if (showDeleteConfirmDialog) {
                             FreadDialog(
-                                contentText = stringResource(Res.string.activity_pub_filter_edit_keyword_remove_keyword_dialog_content),
+                                contentText = stringResource(LocalizedString.activity_pub_filter_edit_keyword_remove_keyword_dialog_content),
                                 onDismissRequest = {
                                     showDeleteConfirmDialog = false
                                 },
@@ -196,7 +191,7 @@ class HiddenKeywordScreen(
             mutableStateOf(keyword?.keyword.orEmpty())
         }
         FreadDialog(
-            title = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_title),
+            title = stringResource(LocalizedString.activity_pub_filter_edit_keyword_dialog_title),
             onDismissRequest = onDismissRequest,
             content = {
                 OutlinedTextField(
@@ -209,10 +204,10 @@ class HiddenKeywordScreen(
                     },
                     maxLines = 1,
                     label = {
-                        Text(text = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_hint))
+                        Text(text = stringResource(LocalizedString.activity_pub_filter_edit_keyword_dialog_hint))
                     },
                     placeholder = {
-                        Text(text = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_hint))
+                        Text(text = stringResource(LocalizedString.activity_pub_filter_edit_keyword_dialog_hint))
                     },
                 )
             },

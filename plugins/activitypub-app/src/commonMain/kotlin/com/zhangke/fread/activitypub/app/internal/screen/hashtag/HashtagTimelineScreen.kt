@@ -44,8 +44,6 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_hashtag_unfollow_dialog_message
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
@@ -318,7 +316,7 @@ data class HashtagTimelineScreen(
         )
         if (showUnfollowDialog) {
             AlertConfirmDialog(
-                content = stringResource(Res.string.activity_pub_hashtag_unfollow_dialog_message),
+                content = stringResource(LocalizedString.activity_pub_hashtag_unfollow_dialog_message),
                 onConfirm = onUnfollowClick,
                 onDismissRequest = { showUnfollowDialog = false },
             )

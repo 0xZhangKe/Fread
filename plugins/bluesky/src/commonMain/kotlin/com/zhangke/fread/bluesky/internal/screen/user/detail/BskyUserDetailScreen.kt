@@ -36,14 +36,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_user_detail_action_block_user
-import com.zhangke.fread.bluesky.bsky_user_detail_action_block_user_dialog_message
-import com.zhangke.fread.bluesky.bsky_user_detail_action_blocked_list
-import com.zhangke.fread.bluesky.bsky_user_detail_action_mute_user
-import com.zhangke.fread.bluesky.bsky_user_detail_action_mute_user_dialog_message
-import com.zhangke.fread.bluesky.bsky_user_detail_action_muted_list
-import com.zhangke.fread.bluesky.bsky_user_detail_action_unmute_user
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPage
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreen
@@ -332,7 +324,7 @@ private fun TopBarActions(
     }
     if (showBlockUserConfirmDialog) {
         AlertConfirmDialog(
-            content = stringResource(Res.string.bsky_user_detail_action_block_user_dialog_message),
+            content = stringResource(LocalizedString.bsky_user_detail_action_block_user_dialog_message),
             onConfirm = {
                 showBlockUserConfirmDialog = false
                 onBlockClick()
@@ -342,7 +334,7 @@ private fun TopBarActions(
     }
     if (showMuteDialog) {
         AlertConfirmDialog(
-            content = stringResource(Res.string.bsky_user_detail_action_mute_user_dialog_message),
+            content = stringResource(LocalizedString.bsky_user_detail_action_mute_user_dialog_message),
             onConfirm = {
                 showMuteDialog = false
                 onMuteClick()
@@ -359,12 +351,12 @@ private fun SelfAccountActions(
     onLogoutClick: () -> Unit,
 ) {
     ModalDropdownMenuItem(
-        text = stringResource(Res.string.bsky_user_detail_action_muted_list),
+        text = stringResource(LocalizedString.bsky_user_detail_action_muted_list),
         imageVector = Icons.AutoMirrored.Filled.VolumeOff,
         onClick = onMuteUserListClick,
     )
     ModalDropdownMenuItem(
-        text = stringResource(Res.string.bsky_user_detail_action_blocked_list),
+        text = stringResource(LocalizedString.bsky_user_detail_action_blocked_list),
         imageVector = Icons.Default.Block,
         onClick = onBlockedUserListClick,
     )
@@ -401,9 +393,9 @@ private fun OtherAccountActions(
 ) {
     val fixedName = uiState.displayName?.take(10).orEmpty()
     val muteOrUnmuteText = if (uiState.muted) {
-        stringResource(Res.string.bsky_user_detail_action_unmute_user)
+        stringResource(LocalizedString.bsky_user_detail_action_unmute_user)
     } else {
-        stringResource(Res.string.bsky_user_detail_action_mute_user, fixedName)
+        stringResource(LocalizedString.bsky_user_detail_action_mute_user, fixedName)
     }
     ModalDropdownMenuItem(
         text = muteOrUnmuteText,
@@ -419,7 +411,7 @@ private fun OtherAccountActions(
     )
     if (!uiState.blocked) {
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.bsky_user_detail_action_block_user, fixedName),
+            text = stringResource(LocalizedString.bsky_user_detail_action_block_user, fixedName),
             imageVector = Icons.Default.Block,
             onClick = {
                 onDismissMorePopupRequest()

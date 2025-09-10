@@ -47,7 +47,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.bluesky.bsky_feeds_explorer_more
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreen
@@ -136,7 +135,7 @@ class BskyFollowingFeedsPage(
                         SimpleIconButton(
                             onClick = onExplorerClick,
                             imageVector = Icons.Default.Explore,
-                            contentDescription = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more),
+                            contentDescription = stringResource(LocalizedString.bsky_feeds_explorer_more),
                         )
 
                         SimpleIconButton(
@@ -231,7 +230,7 @@ class BskyFollowingFeedsPage(
                                             onClick = onExplorerClick,
                                         ) {
                                             Text(
-                                                text = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more)
+                                                text = stringResource(LocalizedString.bsky_feeds_explorer_more)
                                             )
                                         }
                                     }

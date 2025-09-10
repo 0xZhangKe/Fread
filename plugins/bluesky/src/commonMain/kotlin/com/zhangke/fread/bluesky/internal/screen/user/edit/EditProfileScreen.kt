@@ -52,8 +52,6 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_edit_profile_title
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -101,7 +99,7 @@ class EditProfileScreen(
             topBar = {
                 var showConfirmExitDialog by remember { mutableStateOf(false) }
                 Toolbar(
-                    title = stringResource(Res.string.bsky_edit_profile_title),
+                    title = stringResource(LocalizedString.bsky_edit_profile_title),
                     onBackClick = {
                         if (uiState.modified) {
                             showConfirmExitDialog = true

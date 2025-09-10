@@ -4,8 +4,6 @@ import com.zhangke.activitypub.entities.ActivityPubTagEntity
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_hashtag_timeline_description
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
@@ -18,6 +16,7 @@ import com.zhangke.fread.common.utils.getCurrentInstant
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
@@ -108,7 +107,7 @@ class HashtagTimelineViewModel(
             }
         }
         return getString(
-            Res.string.activity_pub_hashtag_timeline_description,
+            LocalizedString.activity_pub_hashtag_timeline_description,
             posts.toString(),
             participants.toString(),
             todayPosts.toString(),

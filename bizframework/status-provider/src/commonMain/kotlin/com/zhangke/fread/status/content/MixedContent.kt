@@ -10,12 +10,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.uri.FormalUri
-import fread.bizframework.status_provider.generated.resources.Res
-import fread.bizframework.status_provider.generated.resources.mixed_content_subtitle_1
-import fread.bizframework.status_provider.generated.resources.mixed_content_subtitle_2
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
@@ -47,8 +45,8 @@ data class MixedContent(
     @Composable
     private fun buildSubtitle(): AnnotatedString {
         return buildAnnotatedString {
-            val prefix = stringResource(Res.string.mixed_content_subtitle_1)
-            val suffix = stringResource(Res.string.mixed_content_subtitle_2)
+            val prefix = stringResource(LocalizedString.mixed_content_subtitle_1)
+            val suffix = stringResource(LocalizedString.mixed_content_subtitle_2)
             append(prefix)
             val sizeString = " " + sourceUriList.size.toString() + " "
             append(sizeString)

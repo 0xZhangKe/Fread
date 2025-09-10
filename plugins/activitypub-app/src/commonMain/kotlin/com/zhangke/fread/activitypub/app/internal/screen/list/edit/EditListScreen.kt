@@ -15,11 +15,10 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_back_reminder
 import com.zhangke.fread.activitypub.app.internal.screen.list.ListDetailPageContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserScreen
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 
 class EditListScreen(
@@ -48,7 +47,7 @@ class EditListScreen(
         if (showBackReminder) {
             FreadDialog(
                 onDismissRequest = { showBackReminder = false },
-                contentText = org.jetbrains.compose.resources.stringResource(Res.string.activity_pub_add_list_back_reminder),
+                contentText = org.jetbrains.compose.resources.stringResource(LocalizedString.activity_pub_add_list_back_reminder),
                 onNegativeClick = { showBackReminder = false },
                 onPositiveClick = {
                     showBackReminder = false

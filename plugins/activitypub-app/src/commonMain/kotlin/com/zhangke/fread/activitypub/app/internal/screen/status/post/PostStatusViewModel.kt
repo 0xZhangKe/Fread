@@ -27,7 +27,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.Gen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
-import com.zhangke.fread.activitypub.app.post_status_poll_is_empty
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
@@ -359,7 +358,7 @@ class PostStatusViewModel @Inject constructor(
             }
             for (option in attachment.optionList) {
                 if (option.isEmpty()) {
-                    _snackMessage.emitInViewModel(textOf(com.zhangke.fread.activitypub.app.Res.string.post_status_poll_is_empty))
+                    _snackMessage.emitInViewModel(textOf(LocalizedString.post_status_poll_is_empty))
                     return
                 }
             }

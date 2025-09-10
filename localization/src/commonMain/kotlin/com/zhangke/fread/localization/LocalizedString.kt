@@ -20,7 +20,8 @@ object LocalizedString {
     val imageSaving = localizedString.image_saving
     val imageSaveSuccess = localizedString.image_save_success
     val imageSaveFailed = localizedString.image_save_failed
-    val permissionWriteExternalPermissionDenied = localizedString.permission_write_external_permission_denied
+    val permissionWriteExternalPermissionDenied =
+        localizedString.permission_write_external_permission_denied
     val feedsLoadPreviousPageLabel = localizedString.feeds_load_previous_page_label
     val feedsLoadPreviousPageFailedLabel = localizedString.feeds_load_previous_page_failed_label
     val image = localizedString.image
@@ -90,29 +91,46 @@ object LocalizedString {
     val sharedUserListActionBlock = localizedString.shared_user_list_action_block
     val sharedUserListActionMuted = localizedString.shared_user_list_action_muted
     val sharedUserListActionBlocked = localizedString.shared_user_list_action_blocked
-    val sharedUserListActionMuteDialogMessage = localizedString.shared_user_list_action_mute_dialog_message
-    val sharedUserListActionBlockDialogMessage = localizedString.shared_user_list_action_block_dialog_message
+    val sharedUserListActionMuteDialogMessage =
+        localizedString.shared_user_list_action_mute_dialog_message
+    val sharedUserListActionBlockDialogMessage =
+        localizedString.shared_user_list_action_block_dialog_message
     val sharedPublishBlogTitle = localizedString.shared_publish_blog_title
     val sharedPublishBlogTextHint = localizedString.shared_publish_blog_text_hint
     val sharedPublishReplyInputHint = localizedString.shared_publish_reply_input_hint
     val sharedPublishInteractionNoLimit = localizedString.shared_publish_interaction_no_limit
     val sharedPublishInteractionLimited = localizedString.shared_publish_interaction_limited
-    val sharedPublishInteractionDialogTitle = localizedString.shared_publish_interaction_dialog_title
-    val sharedPublishInteractionDialogSubtitle = localizedString.shared_publish_interaction_dialog_subtitle
-    val sharedPublishInteractionDialogQuoteTitle = localizedString.shared_publish_interaction_dialog_quote_title
-    val sharedPublishInteractionDialogQuoteAllow = localizedString.shared_publish_interaction_dialog_quote_allow
-    val sharedPublishInteractionDialogReplyTitle = localizedString.shared_publish_interaction_dialog_reply_title
-    val sharedPublishInteractionDialogReplySubtitle = localizedString.shared_publish_interaction_dialog_reply_subtitle
-    val sharedPublishInteractionDialogReplyAll = localizedString.shared_publish_interaction_dialog_reply_all
-    val sharedPublishInteractionDialogReplyNobody = localizedString.shared_publish_interaction_dialog_reply_nobody
-    val sharedPublishInteractionDialogReplyCombineTitle = localizedString.shared_publish_interaction_dialog_reply_combine_title
-    val sharedPublishInteractionDialogMentioned = localizedString.shared_publish_interaction_dialog_mentioned
-    val sharedPublishInteractionDialogFollowing = localizedString.shared_publish_interaction_dialog_following
-    val sharedPublishInteractionDialogFollower = localizedString.shared_publish_interaction_dialog_follower
-    val sharedPublishInteractionDialogInList = localizedString.shared_publish_interaction_dialog_in_list
+    val sharedPublishInteractionDialogTitle =
+        localizedString.shared_publish_interaction_dialog_title
+    val sharedPublishInteractionDialogSubtitle =
+        localizedString.shared_publish_interaction_dialog_subtitle
+    val sharedPublishInteractionDialogQuoteTitle =
+        localizedString.shared_publish_interaction_dialog_quote_title
+    val sharedPublishInteractionDialogQuoteAllow =
+        localizedString.shared_publish_interaction_dialog_quote_allow
+    val sharedPublishInteractionDialogReplyTitle =
+        localizedString.shared_publish_interaction_dialog_reply_title
+    val sharedPublishInteractionDialogReplySubtitle =
+        localizedString.shared_publish_interaction_dialog_reply_subtitle
+    val sharedPublishInteractionDialogReplyAll =
+        localizedString.shared_publish_interaction_dialog_reply_all
+    val sharedPublishInteractionDialogReplyNobody =
+        localizedString.shared_publish_interaction_dialog_reply_nobody
+    val sharedPublishInteractionDialogReplyCombineTitle =
+        localizedString.shared_publish_interaction_dialog_reply_combine_title
+    val sharedPublishInteractionDialogMentioned =
+        localizedString.shared_publish_interaction_dialog_mentioned
+    val sharedPublishInteractionDialogFollowing =
+        localizedString.shared_publish_interaction_dialog_following
+    val sharedPublishInteractionDialogFollower =
+        localizedString.shared_publish_interaction_dialog_follower
+    val sharedPublishInteractionDialogInList =
+        localizedString.shared_publish_interaction_dialog_in_list
     val sharedPublishMediaAltDialogTitle = localizedString.shared_publish_media_alt_dialog_title
-    val sharedPublishMediaAltDialogInputTip = localizedString.shared_publish_media_alt_dialog_input_tip
-    val sharedPublishMediaAltDialogInputHint = localizedString.shared_publish_media_alt_dialog_input_hint
+    val sharedPublishMediaAltDialogInputTip =
+        localizedString.shared_publish_media_alt_dialog_input_tip
+    val sharedPublishMediaAltDialogInputHint =
+        localizedString.shared_publish_media_alt_dialog_input_hint
     val sharedFeedsNotLoginTitle = localizedString.shared_feeds_not_login_title
     val sharedFeedsGoToLogin = localizedString.shared_feeds_go_to_login
     val sharedPublishSelectAccountTitle = localizedString.shared_publish_select_account_title
@@ -129,7 +147,8 @@ object LocalizedString {
     val selectAccountOpenStatusTitle = localizedString.select_account_open_status_title
     val selectAccountOpenStatusEmpty = localizedString.select_account_open_status_empty
     val selectAccountOpenStatusSearchIn = localizedString.select_account_open_status_search_in
-    val selectAccountOpenStatusSearchFailed = localizedString.select_account_open_status_search_failed
+    val selectAccountOpenStatusSearchFailed =
+        localizedString.select_account_open_status_search_failed
     val statusUiBoosted = localizedString.status_ui_boosted
     val statusUiQuote = localizedString.status_ui_quote
     val statusUiLike = localizedString.status_ui_like
@@ -148,40 +167,58 @@ object LocalizedString {
     val statusUiNewStatus = localizedString.status_ui_new_status
     val statusUiDeleteStatusConfirm = localizedString.status_ui_delete_status_confirm
     val statusUiImageSensitiveLabel = localizedString.status_ui_image_sensitive_label
-    val statusUiImageContentShowHiddenLabel = localizedString.status_ui_image_content_show_hidden_label
-    val statusUiImageContentHideHiddenLabel = localizedString.status_ui_image_content_hide_hidden_label
+    val statusUiImageContentShowHiddenLabel =
+        localizedString.status_ui_image_content_show_hidden_label
+    val statusUiImageContentHideHiddenLabel =
+        localizedString.status_ui_image_content_hide_hidden_label
     val statusUiPollVote = localizedString.status_ui_poll_vote
     val statusUiPollVoteFinishedTip = localizedString.status_ui_poll_vote_finished_tip
     val statusUiPollVotesFinishedTip = localizedString.status_ui_poll_votes_finished_tip
     val statusUiInteractionOpenInBrowser = localizedString.status_ui_interaction_open_in_browser
-    val statusUiInteractionOpenOriginalInstance = localizedString.status_ui_interaction_open_original_instance
+    val statusUiInteractionOpenOriginalInstance =
+        localizedString.status_ui_interaction_open_original_instance
     val statusUiInteractionCopyUrl = localizedString.status_ui_interaction_copy_url
     val statusUiInteractionTranslate = localizedString.status_ui_interaction_translate
-    val statusUiInteractionOpenBlogByOtherAccount = localizedString.status_ui_interaction_open_blog_by_other_account
+    val statusUiInteractionOpenBlogByOtherAccount =
+        localizedString.status_ui_interaction_open_blog_by_other_account
     val statusUiVisibilityMentionedOnly = localizedString.status_ui_visibility_mentioned_only
     val statusUiLabelPinned = localizedString.status_ui_label_pinned
     val statusUiInfoLabelEdited = localizedString.status_ui_info_label_edited
-    val statusUiInteractionLabelFavouritedCount = localizedString.status_ui_interaction_label_favourited_count
-    val statusUiInteractionLabelBoostedCount = localizedString.status_ui_interaction_label_boosted_count
+    val statusUiInteractionLabelFavouritedCount =
+        localizedString.status_ui_interaction_label_favourited_count
+    val statusUiInteractionLabelBoostedCount =
+        localizedString.status_ui_interaction_label_boosted_count
     val statusUiBottomLabelEditedAt = localizedString.status_ui_bottom_label_edited_at
     val statusUiTranslating = localizedString.status_ui_translating
     val statusUiTranslateShowOriginal = localizedString.status_ui_translate_show_original
-    val statusUiEditContentDeleteDialogContent = localizedString.status_ui_edit_content_delete_dialog_content
+    val statusUiEditContentDeleteDialogContent =
+        localizedString.status_ui_edit_content_delete_dialog_content
     val statusUiEditContentNameTitle = localizedString.status_ui_edit_content_name_title
     val statusUiEditContentNameLabel = localizedString.status_ui_edit_content_name_label
     val statusUiEditContentNameHint = localizedString.status_ui_edit_content_name_hint
-    val statusUiEditContentConfigShowingListTitle = localizedString.status_ui_edit_content_config_showing_list_title
-    val statusUiEditContentConfigHiddenListTitle = localizedString.status_ui_edit_content_config_hidden_list_title
-    val statusUiUserDetailRelationshipMutuals = localizedString.status_ui_user_detail_relationship_mutuals
-    val statusUiUserDetailRelationshipBlocking = localizedString.status_ui_user_detail_relationship_blocking
-    val statusUiUserDetailRelationshipFollowing = localizedString.status_ui_user_detail_relationship_following
-    val statusUiUserDetailRelationshipNotFollow = localizedString.status_ui_user_detail_relationship_not_follow
-    val statusUiUserDetailRelationshipRequested = localizedString.status_ui_user_detail_relationship_requested
-    val statusUiUserDetailRelationshipFollowBack = localizedString.status_ui_user_detail_relationship_follow_back
+    val statusUiEditContentConfigShowingListTitle =
+        localizedString.status_ui_edit_content_config_showing_list_title
+    val statusUiEditContentConfigHiddenListTitle =
+        localizedString.status_ui_edit_content_config_hidden_list_title
+    val statusUiUserDetailRelationshipMutuals =
+        localizedString.status_ui_user_detail_relationship_mutuals
+    val statusUiUserDetailRelationshipBlocking =
+        localizedString.status_ui_user_detail_relationship_blocking
+    val statusUiUserDetailRelationshipFollowing =
+        localizedString.status_ui_user_detail_relationship_following
+    val statusUiUserDetailRelationshipNotFollow =
+        localizedString.status_ui_user_detail_relationship_not_follow
+    val statusUiUserDetailRelationshipRequested =
+        localizedString.status_ui_user_detail_relationship_requested
+    val statusUiUserDetailRelationshipFollowBack =
+        localizedString.status_ui_user_detail_relationship_follow_back
     val statusUiUserDetailRequestByTip = localizedString.status_ui_user_detail_request_by_tip
-    val statusUiRelationshipBtnDialogContentCancelFollow = localizedString.status_ui_relationship_btn_dialog_content_cancel_follow
-    val statusUiRelationshipBtnDialogContentCancelFollowRequest = localizedString.status_ui_relationship_btn_dialog_content_cancel_follow_request
-    val statusUiRelationshipBtnDialogContentCancelBlocking = localizedString.status_ui_relationship_btn_dialog_content_cancel_blocking
+    val statusUiRelationshipBtnDialogContentCancelFollow =
+        localizedString.status_ui_relationship_btn_dialog_content_cancel_follow
+    val statusUiRelationshipBtnDialogContentCancelFollowRequest =
+        localizedString.status_ui_relationship_btn_dialog_content_cancel_follow_request
+    val statusUiRelationshipBtnDialogContentCancelBlocking =
+        localizedString.status_ui_relationship_btn_dialog_content_cancel_blocking
     val statusUiUserDetailFollowsYou = localizedString.status_ui_user_detail_follows_you
     val statusUiUserDetailPosts = localizedString.status_ui_user_detail_posts
     val statusUiUserDetailFollowerInfo = localizedString.status_ui_user_detail_follower_info
@@ -199,7 +236,8 @@ object LocalizedString {
 
     val explorerSearchNoResults = localizedString.explorer_search_no_results
     val explorerSearchBarHint = localizedString.explorer_search_bar_hint
-    val explorerSearchBarHintSpecializePlatform = localizedString.explorer_search_bar_hint_specialize_platform
+    val explorerSearchBarHintSpecializePlatform =
+        localizedString.explorer_search_bar_hint_specialize_platform
     val explorerSearchTabTitleAuthor = localizedString.explorer_search_tab_title_author
     val explorerSearchTabTitleStatus = localizedString.explorer_search_tab_title_status
     val explorerSearchTabTitleHashtag = localizedString.explorer_search_tab_title_hashtag
@@ -235,9 +273,12 @@ object LocalizedString {
     val searchFeedsTitle = localizedString.search_feeds_title
     val searchFeedsTitleHint = localizedString.search_feeds_title_hint
     val feedsSelectAccountForPostStatus = localizedString.feeds_select_account_for_post_status
-    val feedsMixedConfigEditNewNameDialogTitle = localizedString.feeds_mixed_config_edit_new_name_dialog_title
-    val feedsMixedConfigEditNewNameDialogLabel = localizedString.feeds_mixed_config_edit_new_name_dialog_label
-    val feedsMixedConfigEditDeleteContentDialogMessage = localizedString.feeds_mixed_config_edit_delete_content_dialog_message
+    val feedsMixedConfigEditNewNameDialogTitle =
+        localizedString.feeds_mixed_config_edit_new_name_dialog_title
+    val feedsMixedConfigEditNewNameDialogLabel =
+        localizedString.feeds_mixed_config_edit_new_name_dialog_label
+    val feedsMixedConfigEditDeleteContentDialogMessage =
+        localizedString.feeds_mixed_config_edit_delete_content_dialog_message
     val feedsMixedConfigNotFound = localizedString.feeds_mixed_config_not_found
     val feedsImportBackDialogMessage = localizedString.feeds_import_back_dialog_message
     val feedsDeleteConfirmContent = localizedString.feeds_delete_confirm_content
@@ -251,9 +292,12 @@ object LocalizedString {
     val profileSettingAboutTitle = localizedString.profile_setting_about_title
     val profileSettingDonateDesc = localizedString.profile_setting_donate_desc
     val profileSettingInlineVideoAutoPlay = localizedString.profile_setting_inline_video_auto_play
-    val profileSettingInlineVideoAutoPlaySubtitle = localizedString.profile_setting_inline_video_auto_play_subtitle
-    val profileSettingAlwaysShowSensitiveContent = localizedString.profile_setting_always_show_sensitive_content
-    val profileSettingAlwaysShowSensitiveContentSubtitle = localizedString.profile_setting_always_show_sensitive_content_subtitle
+    val profileSettingInlineVideoAutoPlaySubtitle =
+        localizedString.profile_setting_inline_video_auto_play_subtitle
+    val profileSettingAlwaysShowSensitiveContent =
+        localizedString.profile_setting_always_show_sensitive_content
+    val profileSettingAlwaysShowSensitiveContentSubtitle =
+        localizedString.profile_setting_always_show_sensitive_content_subtitle
     val profileSettingDarkModeTitle = localizedString.profile_setting_dark_mode_title
     val profileSettingDarkModeDark = localizedString.profile_setting_dark_mode_dark
     val profileSettingDarkModeLight = localizedString.profile_setting_dark_mode_light
@@ -261,10 +305,14 @@ object LocalizedString {
     val profileSettingOpenSourceTitle = localizedString.profile_setting_open_source_title
     val profileSettingOpenSourceDesc = localizedString.profile_setting_open_source_desc
     val profileSettingOpenSourceFeedback = localizedString.profile_setting_open_source_feedback
-    val profileSettingOpenSourceFeedbackDesc = localizedString.profile_setting_open_source_feedback_desc
-    val profileSettingOpenSourceFeedbackTelegram = localizedString.profile_setting_open_source_feedback_telegram
-    val profileSettingOpenSourceFeedbackGithub = localizedString.profile_setting_open_source_feedback_github
-    val profileSettingOpenSourceFeedbackEmail = localizedString.profile_setting_open_source_feedback_email
+    val profileSettingOpenSourceFeedbackDesc =
+        localizedString.profile_setting_open_source_feedback_desc
+    val profileSettingOpenSourceFeedbackTelegram =
+        localizedString.profile_setting_open_source_feedback_telegram
+    val profileSettingOpenSourceFeedbackGithub =
+        localizedString.profile_setting_open_source_feedback_github
+    val profileSettingOpenSourceFeedbackEmail =
+        localizedString.profile_setting_open_source_feedback_email
     val profileSettingLanguageTitle = localizedString.profile_setting_language_title
     val profileSettingLanguageZh = localizedString.profile_setting_language_zh
     val profileSettingLanguageEn = localizedString.profile_setting_language_en
@@ -279,8 +327,10 @@ object LocalizedString {
     val profileSettingImmersiveNavBar = localizedString.profile_setting_immersive_nav_bar
     val profileSettingImmersiveNavBarDesc = localizedString.profile_setting_immersive_nav_bar_desc
     val profileSettingTimelinePosition = localizedString.profile_setting_timeline_position
-    val profileSettingTimelinePositionLastRead = localizedString.profile_setting_timeline_position_last_read
-    val profileSettingTimelinePositionNewest = localizedString.profile_setting_timeline_position_newest
+    val profileSettingTimelinePositionLastRead =
+        localizedString.profile_setting_timeline_position_last_read
+    val profileSettingTimelinePositionNewest =
+        localizedString.profile_setting_timeline_position_newest
     val profileSettingThemeTitle = localizedString.profile_setting_theme_title
     val profileSettingThemeDefault = localizedString.profile_setting_theme_default
     val profileSettingThemeSystem = localizedString.profile_setting_theme_system
@@ -295,4 +345,209 @@ object LocalizedString {
     val profileSettingHaveNewVersion = localizedString.profile_setting_have_new_version
     val profileDonatePageTitle = localizedString.profile_donate_page_title
     val profileAccountNotLogin = localizedString.profile_account_not_login
+
+    val rss_source_detail_screen_title = localizedString.rss_source_detail_screen_title
+    val rss_source_detail_screen_custom_title = localizedString.rss_source_detail_screen_custom_title
+    val rss_source_detail_screen_url = localizedString.rss_source_detail_screen_url
+    val rss_source_detail_screen_home_url = localizedString.rss_source_detail_screen_home_url
+    val rss_source_detail_screen_add_date = localizedString.rss_source_detail_screen_add_date
+    val rss_source_detail_screen_last_update_date = localizedString.rss_source_detail_screen_last_update_date
+
+    val bluesky_protocol_name = localizedString.bluesky_protocol_name
+
+    val bsky_add_content_title = localizedString.bsky_add_content_title
+    val bsky_add_content_hosting_provider = localizedString.bsky_add_content_hosting_provider
+    val bsky_add_content_user_name = localizedString.bsky_add_content_user_name
+    val bsky_add_content_password = localizedString.bsky_add_content_password
+    val bsky_add_content_factor_token = localizedString.bsky_add_content_factor_token
+
+    val bsky_edit_content_title = localizedString.bsky_edit_content_title
+
+    val bsky_feeds_explorer_more = localizedString.bsky_feeds_explorer_more
+    val bsky_feeds_explorer_creator_label = localizedString.bsky_feeds_explorer_creator_label
+    val bsky_feeds_explorer_liked_by = localizedString.bsky_feeds_explorer_liked_by
+    val bsky_feeds_detail_creator_prefix = localizedString.bsky_feeds_detail_creator_prefix
+    val bsky_feeds_item_subtitle = localizedString.bsky_feeds_item_subtitle
+
+    val bsky_feeds_following_name = localizedString.bsky_feeds_following_name
+
+    val bsky_feeds_user_posts = localizedString.bsky_feeds_user_posts
+    val bsky_feeds_user_replies = localizedString.bsky_feeds_user_replies
+    val bsky_feeds_user_medias = localizedString.bsky_feeds_user_medias
+    val bsky_feeds_user_likes = localizedString.bsky_feeds_user_likes
+
+    val bsky_user_detail_action_blocked_list = localizedString.bsky_user_detail_action_blocked_list
+    val bsky_user_detail_action_muted_list = localizedString.bsky_user_detail_action_muted_list
+    val bsky_user_detail_action_mute_user = localizedString.bsky_user_detail_action_mute_user
+    val bsky_user_detail_action_unmute_user = localizedString.bsky_user_detail_action_unmute_user
+    val bsky_user_detail_action_block_user = localizedString.bsky_user_detail_action_block_user
+    val bsky_user_detail_action_unblock_user = localizedString.bsky_user_detail_action_unblock_user
+    val bsky_user_detail_action_block_user_dialog_message = localizedString.bsky_user_detail_action_block_user_dialog_message
+    val bsky_user_detail_action_mute_user_dialog_message = localizedString.bsky_user_detail_action_mute_user_dialog_message
+
+    val bsky_edit_profile_title = localizedString.bsky_edit_profile_title
+
+    val activity_pub_login_exception = localizedString.activity_pub_login_exception
+
+    val activity_pub_home_timeline = localizedString.activity_pub_home_timeline
+    val activity_pub_local_timeline = localizedString.activity_pub_local_timeline
+    val activity_pub_public_timeline = localizedString.activity_pub_public_timeline
+
+    val activity_pub_instance_detail_language_label = localizedString.activity_pub_instance_detail_language_label
+    val activity_pub_instance_detail_active_month_label = localizedString.activity_pub_instance_detail_active_month_label
+
+    val activity_pub_user_detail_join_date = localizedString.activity_pub_user_detail_join_date
+    val activity_pub_user_detail_tab_post = localizedString.activity_pub_user_detail_tab_post
+    val activity_pub_user_detail_tab_replies = localizedString.activity_pub_user_detail_tab_replies
+    val activity_pub_user_detail_tab_media = localizedString.activity_pub_user_detail_tab_media
+    val activity_pub_user_detail_tab_about = localizedString.activity_pub_user_detail_tab_about
+    val activity_pub_user_detail_tab_about_joined = localizedString.activity_pub_user_detail_tab_about_joined
+    val activity_pub_user_detail_menu_block = localizedString.activity_pub_user_detail_menu_block
+    val activity_pub_user_detail_menu_block_domain = localizedString.activity_pub_user_detail_menu_block_domain
+    val activity_pub_user_detail_menu_unblock_domain = localizedString.activity_pub_user_detail_menu_unblock_domain
+    val activity_pub_user_detail_menu_edit_private_note = localizedString.activity_pub_user_detail_menu_edit_private_note
+    val activity_pub_user_detail_menu_edit_private_note_dialog_hint = localizedString.activity_pub_user_detail_menu_edit_private_note_dialog_hint
+    val activity_pub_user_detail_dialog_content_block = localizedString.activity_pub_user_detail_dialog_content_block
+    val activity_pub_user_detail_dialog_content_block_domain = localizedString.activity_pub_user_detail_dialog_content_block_domain
+    val activity_pub_user_menu_blocked_user_list = localizedString.activity_pub_user_menu_blocked_user_list
+    val activity_pub_user_menu_muted_user_list = localizedString.activity_pub_user_menu_muted_user_list
+    val activity_pub_user_detail_menu_mute_user = localizedString.activity_pub_user_detail_menu_mute_user
+    val activity_pub_user_detail_menu_unmute_user = localizedString.activity_pub_user_detail_menu_unmute_user
+    val activity_pub_mute_user_bottom_sheet_title = localizedString.activity_pub_mute_user_bottom_sheet_title
+    val activity_pub_mute_user_bottom_sheet_role1 = localizedString.activity_pub_mute_user_bottom_sheet_role1
+    val activity_pub_mute_user_bottom_sheet_role2 = localizedString.activity_pub_mute_user_bottom_sheet_role2
+    val activity_pub_mute_user_bottom_sheet_role3 = localizedString.activity_pub_mute_user_bottom_sheet_role3
+    val activity_pub_mute_user_bottom_sheet_role4 = localizedString.activity_pub_mute_user_bottom_sheet_role4
+    val activity_pub_mute_user_bottom_sheet_btn_mute = localizedString.activity_pub_mute_user_bottom_sheet_btn_mute
+
+    val activity_pub_about = localizedString.activity_pub_about
+    val activity_pub_about_rule_title = localizedString.activity_pub_about_rule_title
+    val activity_pub_trends_tag = localizedString.activity_pub_trends_tag
+    val activity_pub_trends_tag_description = localizedString.activity_pub_trends_tag_description
+    val activity_pub_trends_status = localizedString.activity_pub_trends_status
+
+    val input_media_desc_page_title = localizedString.input_media_desc_page_title
+    val input_media_desc_input_hint = localizedString.input_media_desc_input_hint
+
+    val post_status_page_title = localizedString.post_status_page_title
+    val post_screen_input_hint = localizedString.post_screen_input_hint
+    val post_screen_media_descriptor_placeholder = localizedString.post_screen_media_descriptor_placeholder
+    val post_status_poll_item_hint = localizedString.post_status_poll_item_hint
+    val post_status_poll_duration = localizedString.post_status_poll_duration
+    val post_status_poll_function_title = localizedString.post_status_poll_function_title
+    val post_status_poll_single = localizedString.post_status_poll_single
+    val post_status_poll_multiple = localizedString.post_status_poll_multiple
+    val post_status_poll_style_select_dialog_title = localizedString.post_status_poll_style_select_dialog_title
+    val post_status_poll_is_empty = localizedString.post_status_poll_is_empty
+    val post_status_media_is_not_upload = localizedString.post_status_media_is_not_upload
+
+    val add_instance_screen_title = localizedString.add_instance_screen_title
+    val add_instance_input_service_hint = localizedString.add_instance_input_service_hint
+    val add_instance_input_service_error = localizedString.add_instance_input_service_error
+
+    val activity_pub_content_tab_home = localizedString.activity_pub_content_tab_home
+    val activity_pub_content_tab_local_timeline = localizedString.activity_pub_content_tab_local_timeline
+    val activity_pub_content_tab_public_timeline = localizedString.activity_pub_content_tab_public_timeline
+    val activity_pub_content_tab_trending = localizedString.activity_pub_content_tab_trending
+
+    val activity_pub_hashtag_timeline_description = localizedString.activity_pub_hashtag_timeline_description
+    val activity_pub_hashtag_unfollow_dialog_message = localizedString.activity_pub_hashtag_unfollow_dialog_message
+
+    val activity_pub_edit_account_info_label_about = localizedString.activity_pub_edit_account_info_label_about
+
+    val activity_pub_edit_content_screen_config_not_found = localizedString.activity_pub_edit_content_screen_config_not_found
+
+    val activity_pub_user_list_empty = localizedString.activity_pub_user_list_empty
+
+    val activity_pub_muted_user_list_empty = localizedString.activity_pub_muted_user_list_empty
+    val activity_pub_muted_user_list_unmute = localizedString.activity_pub_muted_user_list_unmute
+
+    val activity_pub_blocked_user_list_empty = localizedString.activity_pub_blocked_user_list_empty
+    val activity_pub_blocked_user_list_unblock = localizedString.activity_pub_blocked_user_list_unblock
+
+    val activity_pub_bookmarks_list_title = localizedString.activity_pub_bookmarks_list_title
+    val activity_pub_favourites_list_title = localizedString.activity_pub_favourites_list_title
+
+    val activity_pub_followed_tags_screen_title = localizedString.activity_pub_followed_tags_screen_title
+
+    val activity_pub_filters_list_page_title = localizedString.activity_pub_filters_list_page_title
+    val activity_pub_filters_active = localizedString.activity_pub_filters_active
+    val activity_pub_filters_expired = localizedString.activity_pub_filters_expired
+
+    val activity_pub_select_platform_title = localizedString.activity_pub_select_platform_title
+    val activity_pub_select_platform_text_hint = localizedString.activity_pub_select_platform_text_hint
+
+    val activity_pub_filter_edit_title = localizedString.activity_pub_filter_edit_title
+    val activity_pub_filter_edit_input_title_label = localizedString.activity_pub_filter_edit_input_title_label
+    val activity_pub_filter_edit_input_title_hint = localizedString.activity_pub_filter_edit_input_title_hint
+    val activity_pub_filter_edit_duration = localizedString.activity_pub_filter_edit_duration
+    val activity_pub_filter_edit_duration_permanent = localizedString.activity_pub_filter_edit_duration_permanent
+    val activity_pub_filter_edit_duration_thirty_minutes = localizedString.activity_pub_filter_edit_duration_thirty_minutes
+    val activity_pub_filter_edit_duration_one_hour = localizedString.activity_pub_filter_edit_duration_one_hour
+    val activity_pub_filter_edit_duration_twelve_hours = localizedString.activity_pub_filter_edit_duration_twelve_hours
+    val activity_pub_filter_edit_duration_one_day = localizedString.activity_pub_filter_edit_duration_one_day
+    val activity_pub_filter_edit_duration_three_day = localizedString.activity_pub_filter_edit_duration_three_day
+    val activity_pub_filter_edit_duration_one_week = localizedString.activity_pub_filter_edit_duration_one_week
+    val activity_pub_filter_edit_duration_custom = localizedString.activity_pub_filter_edit_duration_custom
+    val activity_pub_filter_edit_duration_finish_subtitle = localizedString.activity_pub_filter_edit_duration_finish_subtitle
+
+    val activity_pub_filter_edit_keyword_title = localizedString.activity_pub_filter_edit_keyword_title
+    val activity_pub_filter_edit_keyword_dialog_title = localizedString.activity_pub_filter_edit_keyword_dialog_title
+    val activity_pub_filter_edit_keyword_dialog_hint = localizedString.activity_pub_filter_edit_keyword_dialog_hint
+    val activity_pub_filter_edit_keyword_remove_keyword_dialog_content = localizedString.activity_pub_filter_edit_keyword_remove_keyword_dialog_content
+    val activity_pub_filter_edit_keyword_list_title = localizedString.activity_pub_filter_edit_keyword_list_title
+    val activity_pub_filter_edit_keyword_list_desc = localizedString.activity_pub_filter_edit_keyword_list_desc
+    val activity_pub_filter_edit_context_title = localizedString.activity_pub_filter_edit_context_title
+    val activity_pub_filter_edit_context_selector_title = localizedString.activity_pub_filter_edit_context_selector_title
+    val activity_pub_filter_edit_context_home = localizedString.activity_pub_filter_edit_context_home
+    val activity_pub_filter_edit_context_notification = localizedString.activity_pub_filter_edit_context_notification
+    val activity_pub_filter_edit_context_timeline = localizedString.activity_pub_filter_edit_context_timeline
+    val activity_pub_filter_edit_context_thread = localizedString.activity_pub_filter_edit_context_thread
+    val activity_pub_filter_edit_context_account = localizedString.activity_pub_filter_edit_context_account
+    val activity_pub_filter_edit_empty_context = localizedString.activity_pub_filter_edit_empty_context
+    val activity_pub_filter_edit_warning_title = localizedString.activity_pub_filter_edit_warning_title
+    val activity_pub_filter_edit_warning_desc = localizedString.activity_pub_filter_edit_warning_desc
+    val activity_pub_filter_edit_delete_content = localizedString.activity_pub_filter_edit_delete_content
+    val activity_pub_filter_edit_back_dialog = localizedString.activity_pub_filter_edit_back_dialog
+    val activity_pub_filter_edit_whole_word = localizedString.activity_pub_filter_edit_whole_word
+
+    val activity_pub_explorer_tab_status_title = localizedString.activity_pub_explorer_tab_status_title
+    val activity_pub_explorer_tab_users_title = localizedString.activity_pub_explorer_tab_users_title
+    val activity_pub_explorer_tab_hashtag_title = localizedString.activity_pub_explorer_tab_hashtag_title
+
+    val activity_pub_created_list_title = localizedString.activity_pub_created_list_title
+    val activity_pub_add_list_title = localizedString.activity_pub_add_list_title
+    val activity_pub_add_list_name = localizedString.activity_pub_add_list_name
+    val activity_pub_add_list_replies = localizedString.activity_pub_add_list_replies
+    val activity_pub_add_list_replies_non = localizedString.activity_pub_add_list_replies_non
+    val activity_pub_add_list_replies_list = localizedString.activity_pub_add_list_replies_list
+    val activity_pub_add_list_replies_followers = localizedString.activity_pub_add_list_replies_followers
+    val activity_pub_add_list_accounts = localizedString.activity_pub_add_list_accounts
+    val activity_pub_add_list_hide_in_timeline = localizedString.activity_pub_add_list_hide_in_timeline
+    val activity_pub_add_list_hide_in_timeline_desc = localizedString.activity_pub_add_list_hide_in_timeline_desc
+    val activity_pub_add_list_remove_user_message = localizedString.activity_pub_add_list_remove_user_message
+    val activity_pub_add_list_name_is_empty = localizedString.activity_pub_add_list_name_is_empty
+    val activity_pub_add_list_back_reminder = localizedString.activity_pub_add_list_back_reminder
+    val activity_pub_search_user_placeholder = localizedString.activity_pub_search_user_placeholder
+    val activity_pub_list_delete_confirm = localizedString.activity_pub_list_delete_confirm
+
+    val mixed_content_subtitle_1 = localizedString.mixed_content_subtitle_1
+    val mixed_content_subtitle_2 = localizedString.mixed_content_subtitle_2
+    val date_time_ago = localizedString.date_time_ago
+    val date_time_day = localizedString.date_time_day
+    val date_time_hour = localizedString.date_time_hour
+    val date_time_minute = localizedString.date_time_minute
+    val date_time_second = localizedString.date_time_second
+
+    val authentication_page_normal_title = localizedString.authentication_page_normal_title
+    val authentication_page_failed_title = localizedString.authentication_page_failed_title
+    val main_drawer_title = localizedString.main_drawer_title
+    val main_drawer_mixed_item_subtitle_1 = localizedString.main_drawer_mixed_item_subtitle_1
+    val main_drawer_mixed_item_subtitle_2 = localizedString.main_drawer_mixed_item_subtitle_2
+    val main_drawer_settings = localizedString.main_drawer_settings
+    val main_drawer_donate = localizedString.main_drawer_donate
+    val main_request_notification_dialog_title = localizedString.main_request_notification_dialog_title
+    val main_request_notification_dialog_reject_button = localizedString.main_request_notification_dialog_reject_button
+    val main_request_notification_dialog_allow_button = localizedString.main_request_notification_dialog_allow_button
+    val main_request_notification_dialog_content = localizedString.main_request_notification_dialog_content
 }

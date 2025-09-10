@@ -56,8 +56,6 @@ import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_about
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.uri.FormalUri
@@ -227,7 +225,7 @@ class EditAccountInfoScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = stringResource(Res.string.activity_pub_edit_account_info_label_about),
+                text = stringResource(LocalizedString.activity_pub_edit_account_info_label_about),
                 style = MaterialTheme.typography.headlineSmall,
             )
             Box(modifier = Modifier.weight(1F))

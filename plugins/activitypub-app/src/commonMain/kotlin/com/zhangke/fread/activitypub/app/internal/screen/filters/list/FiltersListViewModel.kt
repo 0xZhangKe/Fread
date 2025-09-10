@@ -7,12 +7,10 @@ import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_filters_active
-import com.zhangke.fread.activitypub.app.activity_pub_filters_expired
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,9 +70,9 @@ class FiltersListViewModel @Inject constructor(
     private fun ActivityPubFilterEntity.toUiState(): FilterItemUiState {
         val expiresAtDate = this.expiresAt?.let(DateParser::parseAll)
         val validateDescription = if (expiresAtDate != null && expiresAtDate.toEpochMilliseconds() < getCurrentTimeMillis()){
-            textOf(Res.string.activity_pub_filters_expired)
+            textOf(LocalizedString.activity_pub_filters_expired)
         }else{
-            textOf(Res.string.activity_pub_filters_active)
+            textOf(LocalizedString.activity_pub_filters_active)
         }
         return FilterItemUiState(
             id = this.id,

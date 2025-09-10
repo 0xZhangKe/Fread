@@ -41,15 +41,13 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.formatToHumanReadable
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_feeds_detail_creator_prefix
-import com.zhangke.fread.bluesky.bsky_feeds_explorer_liked_by
 import com.zhangke.fread.bluesky.internal.composable.FeedsAvatar
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyProfile
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.action.likeAlt
 import com.zhangke.fread.status.ui.action.likeIcon
@@ -168,7 +166,7 @@ class FeedsDetailScreen(
             modifier = Modifier.fillMaxWidth()
                 .padding(top = 8.dp, start = 16.dp, end = 16.dp),
             text = stringResource(
-                Res.string.bsky_feeds_explorer_liked_by,
+                LocalizedString.bsky_feeds_explorer_liked_by,
                 (feeds.likeCount ?: 0L).formatToHumanReadable(),
             ),
             style = MaterialTheme.typography.labelMedium,
@@ -262,7 +260,7 @@ class FeedsDetailScreen(
                 )
                 if (!authorHandle.isNullOrEmpty()) {
                     val authorPrefix =
-                        stringResource(Res.string.bsky_feeds_detail_creator_prefix)
+                        stringResource(LocalizedString.bsky_feeds_detail_creator_prefix)
                     val creator = remember(authorHandle) {
                         buildAnnotatedString {
                             append(authorPrefix)

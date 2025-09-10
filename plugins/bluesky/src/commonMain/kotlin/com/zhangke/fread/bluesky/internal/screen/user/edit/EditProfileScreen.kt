@@ -52,17 +52,10 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_edit_profile_title
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.edit_profile_edit_confirm_message
-import com.zhangke.fread.commonbiz.edit_profile_input_name_hint
-import com.zhangke.fread.commonbiz.edit_profile_input_note_hint
-import com.zhangke.fread.commonbiz.edit_profile_label_name
-import com.zhangke.fread.commonbiz.edit_profile_label_note
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.commonbiz.Res as CommonRes
 
 class EditProfileScreen(
     private val locator: PlatformLocator,
@@ -106,7 +99,7 @@ class EditProfileScreen(
             topBar = {
                 var showConfirmExitDialog by remember { mutableStateOf(false) }
                 Toolbar(
-                    title = stringResource(Res.string.bsky_edit_profile_title),
+                    title = stringResource(LocalizedString.bsky_edit_profile_title),
                     onBackClick = {
                         if (uiState.modified) {
                             showConfirmExitDialog = true
@@ -134,7 +127,7 @@ class EditProfileScreen(
                 )
                 if (showConfirmExitDialog) {
                     AlertConfirmDialog(
-                        content = stringResource(CommonRes.string.edit_profile_edit_confirm_message),
+                        content = stringResource(LocalizedString.editProfileEditConfirmMessage),
                         onConfirm = onBackClick,
                         onDismissRequest = { showConfirmExitDialog = false }
                     )
@@ -181,11 +174,11 @@ class EditProfileScreen(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.7F),
-                            text = stringResource(CommonRes.string.edit_profile_input_name_hint)
+                            text = stringResource(LocalizedString.editProfileInputNameHint)
                         )
                     },
                     label = {
-                        Text(text = stringResource(CommonRes.string.edit_profile_label_name))
+                        Text(text = stringResource(LocalizedString.editProfileLabelName))
                     },
                 )
                 OutlinedTextField(
@@ -197,11 +190,11 @@ class EditProfileScreen(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.7F),
-                            text = stringResource(com.zhangke.fread.commonbiz.Res.string.edit_profile_input_note_hint),
+                            text = stringResource(LocalizedString.editProfileInputNoteHint),
                         )
                     },
                     label = {
-                        Text(text = stringResource(com.zhangke.fread.commonbiz.Res.string.edit_profile_label_note))
+                        Text(text = stringResource(LocalizedString.editProfileLabelNote))
                     },
                 )
             }

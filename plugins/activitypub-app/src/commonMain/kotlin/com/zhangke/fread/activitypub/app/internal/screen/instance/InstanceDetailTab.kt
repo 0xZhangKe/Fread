@@ -7,11 +7,9 @@ import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_about
-import com.zhangke.fread.activitypub.app.activity_pub_trends_tag
 import com.zhangke.fread.activitypub.app.internal.screen.instance.about.ServerAboutPage
 import com.zhangke.fread.activitypub.app.internal.screen.instance.tags.ServerTrendsTagsPage
+import com.zhangke.fread.localization.LocalizedString
 
 internal enum class InstanceDetailTab(
     val title: TextString,
@@ -23,14 +21,14 @@ internal enum class InstanceDetailTab(
 ) {
 
     ABOUT(
-        title = textOf(Res.string.activity_pub_about),
+        title = textOf(LocalizedString.activity_pub_about),
         content = @Composable { baseUrl, rules, contentCanScrollBackward ->
             ServerAboutPage(baseUrl, rules, contentCanScrollBackward)
         },
     ),
 
     TRENDS_TAG(
-        title = textOf(Res.string.activity_pub_trends_tag),
+        title = textOf(LocalizedString.activity_pub_trends_tag),
         content = @Composable { baseUrl, _, contentCanScrollBackward ->
             ServerTrendsTagsPage(baseUrl, contentCanScrollBackward)
         },

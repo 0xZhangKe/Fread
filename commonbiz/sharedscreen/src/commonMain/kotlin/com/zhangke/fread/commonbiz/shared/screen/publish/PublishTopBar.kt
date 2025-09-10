@@ -11,8 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_title
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -22,7 +21,7 @@ fun PublishTopBar(
     onPublishClick: () -> Unit,
 ) {
     Toolbar(
-        title = stringResource(Res.string.shared_publish_blog_title),
+        title = stringResource(LocalizedString.sharedPublishBlogTitle),
         onBackClick = onBackClick,
         actions = {
             if (publishing) {

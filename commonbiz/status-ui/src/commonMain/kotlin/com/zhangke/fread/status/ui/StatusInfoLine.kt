@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -30,10 +31,6 @@ import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_info_label_edited
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_follow_back
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
 import kotlinx.datetime.Instant
 import org.jetbrains.compose.resources.stringResource
 
@@ -120,7 +117,7 @@ fun StatusInfoLine(
                     Text(
                         modifier = Modifier
                             .padding(end = 4.dp),
-                        text = stringResource(Res.string.status_ui_info_label_edited),
+                        text = stringResource(LocalizedString.statusUiInfoLabelEdited),
                         style = style.infoLineStyle.descStyle,
                         maxLines = 1,
                         color = fontColor,
@@ -196,9 +193,9 @@ private fun FollowButton(
     ) {
         Text(
             text = if (relationships.followedBy) {
-                stringResource(Res.string.status_ui_user_detail_relationship_follow_back)
+                stringResource(LocalizedString.statusUiUserDetailRelationshipFollowBack)
             } else {
-                stringResource(Res.string.status_ui_user_detail_relationship_not_follow)
+                stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow)
             },
         )
     }

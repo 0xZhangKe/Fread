@@ -4,7 +4,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,17 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.zhangke.framework.composable.AlertConfirmDialog
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Relationships
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_blocking
-import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow
-import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow_request
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_blocking
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_follow_back
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_following
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_mutuals
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_requested
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -43,11 +33,11 @@ fun RelationshipStateButton(
                 modifier = modifier,
                 onClick = { showDialog = true },
             ) {
-                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_blocking))
+                Text(text = stringResource(LocalizedString.statusUiUserDetailRelationshipBlocking))
             }
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_blocking),
+                    content = stringResource(LocalizedString.statusUiRelationshipBtnDialogContentCancelBlocking),
                     onConfirm = onUnblockClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -63,11 +53,11 @@ fun RelationshipStateButton(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 ),
             ) {
-                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_requested))
+                Text(text = stringResource(LocalizedString.statusUiUserDetailRelationshipRequested))
             }
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow_request),
+                    content = stringResource(LocalizedString.statusUiRelationshipBtnDialogContentCancelFollowRequest),
                     onConfirm = onCancelFollowRequestClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -82,7 +72,7 @@ fun RelationshipStateButton(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 ),
             ) {
-                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_mutuals))
+                Text(text = stringResource(LocalizedString.statusUiUserDetailRelationshipMutuals))
             }
         }
 
@@ -91,7 +81,7 @@ fun RelationshipStateButton(
                 modifier = modifier,
                 onClick = { showUnfollowDialog = true },
             ) {
-                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_following))
+                Text(text = stringResource(LocalizedString.statusUiUserDetailRelationshipFollowing))
             }
         }
 
@@ -100,7 +90,7 @@ fun RelationshipStateButton(
                 modifier = modifier,
                 onClick = onFollowClick,
             ) {
-                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_follow_back))
+                Text(text = stringResource(LocalizedString.statusUiUserDetailRelationshipFollowBack))
             }
         }
 
@@ -109,13 +99,13 @@ fun RelationshipStateButton(
                 modifier = modifier,
                 onClick = onFollowClick,
             ) {
-                Text(text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow))
+                Text(text = stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow))
             }
         }
     }
     if (showUnfollowDialog) {
         AlertConfirmDialog(
-            content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow),
+            content = stringResource(LocalizedString.statusUiRelationshipBtnDialogContentCancelFollow),
             onConfirm = onUnfollowClick,
             onDismissRequest = { showUnfollowDialog = false }
         )

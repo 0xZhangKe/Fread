@@ -18,8 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.resources.logo
-import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.feeds_delete_confirm_content
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.ui.utils.CardInfoSection
 import org.jetbrains.compose.resources.stringResource
@@ -95,7 +94,7 @@ internal fun StatusSourceNode(
                 if (showDeleteConfirmDialog) {
                     FreadDialog(
                         onDismissRequest = { showDeleteConfirmDialog = false },
-                        contentText = stringResource(Res.string.feeds_delete_confirm_content),
+                        contentText = stringResource(LocalizedString.feedsDeleteConfirmContent),
                         onNegativeClick = {
                             showDeleteConfirmDialog = false
                         },

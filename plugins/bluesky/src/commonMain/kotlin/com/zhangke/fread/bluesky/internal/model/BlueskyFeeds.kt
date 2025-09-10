@@ -1,12 +1,7 @@
 package com.zhangke.fread.bluesky.internal.model
 
 import androidx.compose.runtime.Composable
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_feeds_following_name
-import com.zhangke.fread.bluesky.bsky_feeds_user_likes
-import com.zhangke.fread.bluesky.bsky_feeds_user_medias
-import com.zhangke.fread.bluesky.bsky_feeds_user_posts
-import com.zhangke.fread.bluesky.bsky_feeds_user_replies
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
@@ -38,7 +33,7 @@ sealed class BlueskyFeeds {
 
         @Composable
         override fun displayName(): String {
-            return stringResource(Res.string.bsky_feeds_following_name)
+            return stringResource(LocalizedString.bsky_feeds_following_name)
         }
     }
 
@@ -104,7 +99,7 @@ sealed class BlueskyFeeds {
 
         @Composable
         override fun displayName(): String {
-            return stringResource(Res.string.bsky_feeds_user_posts)
+            return stringResource(LocalizedString.bsky_feeds_user_posts)
         }
     }
 
@@ -118,7 +113,7 @@ sealed class BlueskyFeeds {
 
         @Composable
         override fun displayName(): String {
-            return stringResource(Res.string.bsky_feeds_user_replies)
+            return stringResource(LocalizedString.bsky_feeds_user_replies)
         }
     }
 
@@ -132,7 +127,7 @@ sealed class BlueskyFeeds {
 
         @Composable
         override fun displayName(): String {
-            return stringResource(Res.string.bsky_feeds_user_medias)
+            return stringResource(LocalizedString.bsky_feeds_user_medias)
         }
     }
 
@@ -146,7 +141,7 @@ sealed class BlueskyFeeds {
 
         @Composable
         override fun displayName(): String {
-            return stringResource(Res.string.bsky_feeds_user_likes)
+            return stringResource(LocalizedString.bsky_feeds_user_likes)
         }
     }
 }

@@ -13,9 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.empty
-import com.zhangke.fread.framework.retry
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -115,7 +113,7 @@ fun BoxScope.DefaultFailed(
             Button(
                 onClick = onRetryClick,
             ) {
-                Text(org.jetbrains.compose.resources.stringResource(Res.string.retry))
+                Text(org.jetbrains.compose.resources.stringResource(LocalizedString.retry))
             }
         }
     }
@@ -137,7 +135,7 @@ fun BoxScope.DefaultFailed(
 @Composable
 fun BoxScope.DefaultEmpty(
     modifier: Modifier = Modifier,
-    message: String = org.jetbrains.compose.resources.stringResource(Res.string.empty),
+    message: String = org.jetbrains.compose.resources.stringResource(LocalizedString.empty),
 ) {
     Box(
         modifier = modifier.fillMaxSize(),

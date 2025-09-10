@@ -12,10 +12,9 @@ import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.exceptionOrThrow
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_name_is_empty
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -130,7 +129,7 @@ class EditListViewModel @Inject constructor(
 
     fun onSaveClick() {
         if (_uiState.value.name.text.isEmpty()) {
-            _snackBarFlow.emitInViewModel(textOf(Res.string.activity_pub_add_list_name_is_empty))
+            _snackBarFlow.emitInViewModel(textOf(LocalizedString.activity_pub_add_list_name_is_empty))
             return
         }
         _uiState.update { it.copy(showLoadingCover = true) }

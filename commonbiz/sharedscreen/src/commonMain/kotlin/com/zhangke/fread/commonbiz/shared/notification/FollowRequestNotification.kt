@@ -22,8 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_follow_request
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -51,7 +50,7 @@ fun FollowRequestNotification(
             createAt = notification.formattingDisplayTime,
             avatar = notification.author.avatar,
             accountName = null,
-            interactionDesc = stringResource(Res.string.shared_notification_follow_request),
+            interactionDesc = stringResource(LocalizedString.sharedNotificationFollowRequest),
             style = style,
         )
 

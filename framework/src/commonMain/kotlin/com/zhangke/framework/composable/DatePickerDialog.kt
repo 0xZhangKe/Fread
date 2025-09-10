@@ -22,12 +22,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.ok
+import com.zhangke.fread.localization.LocalizedString
 import io.ktor.util.date.getTimeMillis
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -67,7 +65,7 @@ fun DatePickerDialog(
                     onDismissRequest()
                     onConfirmClick()
                 }) {
-                    Text(text = stringResource(Res.string.ok))
+                    Text(text = stringResource(LocalizedString.ok))
                 }
             }
             DatePicker(

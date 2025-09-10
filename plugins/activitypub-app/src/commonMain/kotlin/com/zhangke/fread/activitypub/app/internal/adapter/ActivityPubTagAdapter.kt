@@ -2,10 +2,9 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
 import com.zhangke.framework.composable.textOf
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_trends_tag_description
 import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.common.utils.getCurrentInstant
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Hashtag
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -27,7 +26,7 @@ class ActivityPubTagAdapter @Inject constructor() {
         return Hashtag(
             name = "#${entity.name}",
             url = entity.url,
-            description = textOf(Res.string.activity_pub_trends_tag_description, pass2DayUses),
+            description = textOf(LocalizedString.activity_pub_trends_tag_description, pass2DayUses),
             following = entity.following,
             history = convertHistoryList(entity.history),
             protocol = createActivityPubProtocol(),

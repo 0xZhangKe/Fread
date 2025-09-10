@@ -48,28 +48,8 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberFutureDatePickerState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.navigationResult
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_back_dialog
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_context_selector_title
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_context_title
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_delete_content
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_custom
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_one_day
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_one_hour
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_one_week
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_permanent
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_thirty_minutes
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_three_day
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_twelve_hours
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_empty_context
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_input_title_label
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_list_desc
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_title
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_warning_desc
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_warning_title
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.utils.getScreenWidth
 import kotlinx.datetime.Clock
@@ -136,7 +116,7 @@ class EditFilterScreen(
         if (showBackDialog) {
             FreadDialog(
                 onDismissRequest = { showBackDialog = false },
-                contentText = stringResource(Res.string.activity_pub_filter_edit_back_dialog),
+                contentText = stringResource(LocalizedString.activity_pub_filter_edit_back_dialog),
                 onNegativeClick = { showBackDialog = false },
                 onPositiveClick = {
                     showBackDialog = false
@@ -162,7 +142,7 @@ class EditFilterScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.activity_pub_filter_edit_title),
+                    title = stringResource(LocalizedString.activity_pub_filter_edit_title),
                     onBackClick = onBackClick,
                     actions = {
                         if (id.isNullOrEmpty().not()) {
@@ -193,10 +173,10 @@ class EditFilterScreen(
                     onValueChange = onTitleChanged,
                     maxLines = 1,
                     placeholder = {
-                        Text(text = stringResource(Res.string.activity_pub_filter_edit_input_title_label))
+                        Text(text = stringResource(LocalizedString.activity_pub_filter_edit_input_title_label))
                     },
                     label = {
-                        Text(text = stringResource(Res.string.activity_pub_filter_edit_input_title_label))
+                        Text(text = stringResource(LocalizedString.activity_pub_filter_edit_input_title_label))
                     },
                 )
 
@@ -212,9 +192,9 @@ class EditFilterScreen(
                         }
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    title = stringResource(Res.string.activity_pub_filter_edit_keyword_list_title),
+                    title = stringResource(LocalizedString.activity_pub_filter_edit_keyword_list_title),
                     subtitle = stringResource(
-                        Res.string.activity_pub_filter_edit_keyword_list_desc,
+                        LocalizedString.activity_pub_filter_edit_keyword_list_desc,
                         uiState.keywordCount
                     ),
                 )
@@ -251,7 +231,7 @@ class EditFilterScreen(
                     }
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                title = stringResource(Res.string.activity_pub_filter_edit_duration),
+                title = stringResource(LocalizedString.activity_pub_filter_edit_duration),
                 subtitle = uiState.getExpiresDateDesc(),
             )
             DropdownMenu(
@@ -260,56 +240,56 @@ class EditFilterScreen(
                 onDismissRequest = { showDurationPopup = false },
             ) {
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_permanent)) },
+                    text = { Text(text = stringResource(LocalizedString.activity_pub_filter_edit_duration_permanent)) },
                     onClick = {
                         showDurationPopup = false
                         onExpiredDateSelected(null)
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_thirty_minutes)) },
+                    text = { Text(text = stringResource(LocalizedString.activity_pub_filter_edit_duration_thirty_minutes)) },
                     onClick = {
                         showDurationPopup = false
                         onExpiredDateSelected(Clock.System.now().plus(30.minutes))
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_one_hour)) },
+                    text = { Text(text = stringResource(LocalizedString.activity_pub_filter_edit_duration_one_hour)) },
                     onClick = {
                         showDurationPopup = false
                         onExpiredDateSelected(Clock.System.now().plus(1.hours))
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_twelve_hours)) },
+                    text = { Text(text = stringResource(LocalizedString.activity_pub_filter_edit_duration_twelve_hours)) },
                     onClick = {
                         showDurationPopup = false
                         onExpiredDateSelected(Clock.System.now().plus(12.hours))
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_one_day)) },
+                    text = { Text(text = stringResource(LocalizedString.activity_pub_filter_edit_duration_one_day)) },
                     onClick = {
                         showDurationPopup = false
                         onExpiredDateSelected(Clock.System.now().plus(1.days))
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_three_day)) },
+                    text = { Text(text = stringResource(LocalizedString.activity_pub_filter_edit_duration_three_day)) },
                     onClick = {
                         showDurationPopup = false
                         onExpiredDateSelected(Clock.System.now().plus(3.days))
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_one_week)) },
+                    text = { Text(text = stringResource(LocalizedString.activity_pub_filter_edit_duration_one_week)) },
                     onClick = {
                         showDurationPopup = false
                         onExpiredDateSelected(Clock.System.now().plus(7.days))
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_custom)) },
+                    text = { Text(text = stringResource(LocalizedString.activity_pub_filter_edit_duration_custom)) },
                     onClick = {
                         showDurationPopup = false
                         showDurationSelector = true
@@ -346,8 +326,8 @@ class EditFilterScreen(
         ) {
             LinedItem(
                 modifier = Modifier.weight(1F),
-                title = stringResource(Res.string.activity_pub_filter_edit_warning_title),
-                subtitle = stringResource(Res.string.activity_pub_filter_edit_warning_desc),
+                title = stringResource(LocalizedString.activity_pub_filter_edit_warning_title),
+                subtitle = stringResource(LocalizedString.activity_pub_filter_edit_warning_desc),
             )
             Switch(
                 checked = uiState.filterByWarn,
@@ -371,9 +351,9 @@ class EditFilterScreen(
                 .clickable { showSelector = true }
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            title = stringResource(Res.string.activity_pub_filter_edit_context_title),
+            title = stringResource(LocalizedString.activity_pub_filter_edit_context_title),
             subtitle = uiState.contextList.map { it.title }.joinToString().ifEmpty {
-                stringResource(Res.string.activity_pub_filter_edit_empty_context)
+                stringResource(LocalizedString.activity_pub_filter_edit_empty_context)
             },
         )
         if (showSelector) {
@@ -395,7 +375,7 @@ class EditFilterScreen(
             mutableStateListOf<FilterContext>().also { it.addAll(selectedContext) }
         }
         FreadDialog(
-            title = stringResource(Res.string.activity_pub_filter_edit_context_selector_title),
+            title = stringResource(LocalizedString.activity_pub_filter_edit_context_selector_title),
             onDismissRequest = onDismissRequest,
             onNegativeClick = onDismissRequest,
             content = {
@@ -469,7 +449,7 @@ class EditFilterScreen(
         )
         if (showConfirmDialog) {
             FreadDialog(
-                contentText = stringResource(Res.string.activity_pub_filter_edit_delete_content),
+                contentText = stringResource(LocalizedString.activity_pub_filter_edit_delete_content),
                 onDismissRequest = { showConfirmDialog = false },
                 onNegativeClick = { showConfirmDialog = false },
                 onPositiveClick = {

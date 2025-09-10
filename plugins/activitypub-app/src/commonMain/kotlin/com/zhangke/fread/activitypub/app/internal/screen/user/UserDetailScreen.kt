@@ -73,30 +73,6 @@ import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_created_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_favourites_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_filters_list_page_title
-import com.zhangke.fread.activitypub.app.activity_pub_followed_tags_screen_title
-import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_btn_mute
-import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_role1
-import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_role2
-import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_role3
-import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_role4
-import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_title
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block_domain
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_join_date
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block_domain
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_edit_private_note
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_edit_private_note_dialog_hint
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_mute_user
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_unblock_domain
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_unmute_user
-import com.zhangke.fread.activitypub.app.activity_pub_user_menu_blocked_user_list
-import com.zhangke.fread.activitypub.app.activity_pub_user_menu_muted_user_list
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
@@ -114,9 +90,8 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.formatDate
-import com.zhangke.fread.commonbiz.search
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
-import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.Relationships
@@ -134,14 +109,10 @@ import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.user.UserHandleLine
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
-import com.zhangke.fread.statusui.status_ui_edit_profile
-import com.zhangke.fread.statusui.status_ui_logout
-import com.zhangke.fread.statusui.status_ui_logout_dialog_content
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import com.zhangke.fread.statusui.Res as StatusUiRes
 
 data class UserDetailScreen(
     val locator: PlatformLocator,
@@ -417,7 +388,7 @@ data class UserDetailScreen(
                         onClick = onEditClick,
                     ) {
                         Text(
-                            text = stringResource(StatusUiRes.string.status_ui_edit_profile)
+                            text = stringResource(LocalizedString.statusUiEditProfile)
                         )
                     }
                 } else if (uiState.relationships != null) {
@@ -538,13 +509,13 @@ data class UserDetailScreen(
         SimpleIconButton(
             onClick = onSearchClick,
             imageVector = Icons.Default.Search,
-            contentDescription = stringResource(com.zhangke.fread.commonbiz.Res.string.search),
+            contentDescription = stringResource(LocalizedString.search),
         )
         if (uiState.isAccountOwner) {
             SimpleIconButton(
                 onClick = onCreatedListClick,
                 imageVector = Icons.AutoMirrored.Outlined.ListAlt,
-                contentDescription = stringResource(Res.string.activity_pub_created_list_title),
+                contentDescription = stringResource(LocalizedString.activity_pub_created_list_title),
             )
         }
         var showMorePopup by remember { mutableStateOf(false) }
@@ -637,7 +608,7 @@ data class UserDetailScreen(
         }
         if (showBlockUserConfirmDialog) {
             AlertConfirmDialog(
-                content = stringResource(Res.string.activity_pub_user_detail_dialog_content_block),
+                content = stringResource(LocalizedString.activity_pub_user_detail_dialog_content_block),
                 onConfirm = {
                     showBlockUserConfirmDialog = false
                     onBlockClick()
@@ -647,7 +618,7 @@ data class UserDetailScreen(
         }
         if (showBlockDomainConfirmDialog) {
             AlertConfirmDialog(
-                content = stringResource(Res.string.activity_pub_user_detail_dialog_content_block_domain),
+                content = stringResource(LocalizedString.activity_pub_user_detail_dialog_content_block_domain),
                 onConfirm = {
                     showBlockDomainConfirmDialog = false
                     onBlockDomainClick()
@@ -677,7 +648,7 @@ data class UserDetailScreen(
             mutableStateOf(false)
         }
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.activity_pub_user_detail_menu_edit_private_note),
+            text = stringResource(LocalizedString.activity_pub_user_detail_menu_edit_private_note),
             imageVector = Icons.Default.Edit,
             onClick = {
                 showEditDialog = true
@@ -690,7 +661,7 @@ data class UserDetailScreen(
                     onDismissRequest()
                     showEditDialog = false
                 },
-                title = stringResource(Res.string.activity_pub_user_detail_menu_edit_private_note),
+                title = stringResource(LocalizedString.activity_pub_user_detail_menu_edit_private_note),
                 content = {
                     OutlinedTextField(
                         modifier = Modifier
@@ -702,12 +673,12 @@ data class UserDetailScreen(
                         },
                         label = {
                             Text(
-                                text = stringResource(Res.string.activity_pub_user_detail_menu_edit_private_note)
+                                text = stringResource(LocalizedString.activity_pub_user_detail_menu_edit_private_note)
                             )
                         },
                         placeholder = {
                             Text(
-                                text = stringResource(Res.string.activity_pub_user_detail_menu_edit_private_note_dialog_hint)
+                                text = stringResource(LocalizedString.activity_pub_user_detail_menu_edit_private_note_dialog_hint)
                             )
                         },
                     )
@@ -736,38 +707,38 @@ data class UserDetailScreen(
         onLogoutClick: () -> Unit,
     ) {
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.activity_pub_favourites_list_title),
+            text = stringResource(LocalizedString.activity_pub_favourites_list_title),
             onClick = onFavouritesClick,
             imageVector = Icons.Default.Favorite,
         )
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.activity_pub_bookmarks_list_title),
+            text = stringResource(LocalizedString.activity_pub_bookmarks_list_title),
             onClick = onBookmarksClick,
             imageVector = Icons.Default.Bookmarks,
         )
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.activity_pub_followed_tags_screen_title),
+            text = stringResource(LocalizedString.activity_pub_followed_tags_screen_title),
             onClick = onFollowedHashtagsListClick,
             imageVector = Icons.Default.Tag,
         )
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.activity_pub_user_menu_muted_user_list),
+            text = stringResource(LocalizedString.activity_pub_user_menu_muted_user_list),
             imageVector = Icons.AutoMirrored.Filled.VolumeOff,
             onClick = onMuteUserListClick,
         )
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.activity_pub_user_menu_blocked_user_list),
+            text = stringResource(LocalizedString.activity_pub_user_menu_blocked_user_list),
             imageVector = Icons.Default.Block,
             onClick = onBlockedUserListClick,
         )
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.activity_pub_filters_list_page_title),
+            text = stringResource(LocalizedString.activity_pub_filters_list_page_title),
             imageVector = Icons.Default.FilterAlt,
             onClick = onFilterClick,
         )
         var showLogoutDialog by remember { mutableStateOf(false) }
         ModalDropdownMenuItem(
-            text = stringResource(StatusUiRes.string.status_ui_logout),
+            text = stringResource(LocalizedString.statusUiLogout),
             imageVector = Icons.AutoMirrored.Filled.Logout,
             colors = MenuDefaults.itemColors(
                 textColor = MaterialTheme.colorScheme.error,
@@ -778,7 +749,7 @@ data class UserDetailScreen(
         if (showLogoutDialog) {
             FreadDialog(
                 onDismissRequest = { showLogoutDialog = false },
-                contentText = stringResource(StatusUiRes.string.status_ui_logout_dialog_content),
+                contentText = stringResource(LocalizedString.statusUiLogoutDialogContent),
                 onPositiveClick = {
                     showLogoutDialog = false
                     onLogoutClick()
@@ -808,9 +779,9 @@ data class UserDetailScreen(
         )
         val fixedName = account.account.displayName.take(10)
         val muteOrUnmuteText = if (relationship.muting) {
-            stringResource(Res.string.activity_pub_user_detail_menu_unmute_user, fixedName)
+            stringResource(LocalizedString.activity_pub_user_detail_menu_unmute_user, fixedName)
         } else {
-            stringResource(Res.string.activity_pub_user_detail_menu_mute_user, fixedName)
+            stringResource(LocalizedString.activity_pub_user_detail_menu_mute_user, fixedName)
         }
         ModalDropdownMenuItem(
             text = muteOrUnmuteText,
@@ -826,7 +797,7 @@ data class UserDetailScreen(
         )
         if (!relationship.blocking) {
             ModalDropdownMenuItem(
-                text = stringResource(Res.string.activity_pub_user_detail_menu_block, fixedName),
+                text = stringResource(LocalizedString.activity_pub_user_detail_menu_block, fixedName),
                 imageVector = Icons.Default.Block,
                 onClick = {
                     onDismissMorePopupRequest()
@@ -838,9 +809,9 @@ data class UserDetailScreen(
         val host = uiState.userInsight!!.baseUrl.host
         if (domainBlocked != null) {
             val blockDomainLabel = if (domainBlocked) {
-                stringResource(Res.string.activity_pub_user_detail_menu_unblock_domain, host)
+                stringResource(LocalizedString.activity_pub_user_detail_menu_unblock_domain, host)
             } else {
-                stringResource(Res.string.activity_pub_user_detail_menu_block_domain, host)
+                stringResource(LocalizedString.activity_pub_user_detail_menu_block_domain, host)
             }
             ModalDropdownMenuItem(
                 text = blockDomainLabel,
@@ -877,7 +848,7 @@ data class UserDetailScreen(
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_title),
+                    text = stringResource(LocalizedString.activity_pub_mute_user_bottom_sheet_title),
                     style = MaterialTheme.typography.titleLarge,
                 )
 
@@ -905,22 +876,22 @@ data class UserDetailScreen(
 
                 MuteUserRoleItem(
                     icon = Icons.Default.Campaign,
-                    role = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_role1)
+                    role = stringResource(LocalizedString.activity_pub_mute_user_bottom_sheet_role1)
                 )
 
                 MuteUserRoleItem(
                     icon = Icons.Default.VisibilityOff,
-                    role = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_role2)
+                    role = stringResource(LocalizedString.activity_pub_mute_user_bottom_sheet_role2)
                 )
 
                 MuteUserRoleItem(
                     icon = Icons.Default.AlternateEmail,
-                    role = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_role3)
+                    role = stringResource(LocalizedString.activity_pub_mute_user_bottom_sheet_role3)
                 )
 
                 MuteUserRoleItem(
                     icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
-                    role = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_role4)
+                    role = stringResource(LocalizedString.activity_pub_mute_user_bottom_sheet_role4)
                 )
 
                 Button(
@@ -930,7 +901,7 @@ data class UserDetailScreen(
                         .height(40.dp),
                     onClick = onConfirmClick,
                 ) {
-                    Text(text = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_btn_mute))
+                    Text(text = stringResource(LocalizedString.activity_pub_mute_user_bottom_sheet_btn_mute))
                 }
                 TextButton(
                     modifier = Modifier
@@ -943,7 +914,7 @@ data class UserDetailScreen(
                         }
                     },
                 ) {
-                    Text(text = stringResource(com.zhangke.fread.framework.Res.string.cancel))
+                    Text(text = stringResource(LocalizedString.cancel))
                 }
             }
         }
@@ -992,7 +963,7 @@ data class UserDetailScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     FieldLine(
-                        key = stringResource(Res.string.activity_pub_user_detail_join_date),
+                        key = stringResource(LocalizedString.activity_pub_user_detail_join_date),
                         value = DateParser.parseOrCurrent(account.createdAt).formatDate(),
                         emojis = emojis,
                     )

@@ -17,10 +17,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.utils.formatToHumanReadable
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_user_detail_follower_info
-import com.zhangke.fread.statusui.status_ui_user_detail_following_info
-import com.zhangke.fread.statusui.status_ui_user_detail_posts
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -40,7 +37,7 @@ fun UserFollowLine(
     ) {
         CountInfoItem(
             count = followersCount,
-            descId = Res.string.status_ui_user_detail_follower_info,
+            descId = LocalizedString.statusUiUserDetailFollowerInfo,
             onClick = onFollowerClick,
             isHighlightBigger = isHighlightBigger,
         )
@@ -52,7 +49,7 @@ fun UserFollowLine(
         )
         CountInfoItem(
             count = followingCount,
-            descId = Res.string.status_ui_user_detail_following_info,
+            descId = LocalizedString.statusUiUserDetailFollowingInfo,
             onClick = onFollowingClick,
             isHighlightBigger = isHighlightBigger,
         )
@@ -65,7 +62,7 @@ fun UserFollowLine(
         CountInfoItem(
             count = statusesCount,
             isHighlightBigger = isHighlightBigger,
-            descId = Res.string.status_ui_user_detail_posts,
+            descId = LocalizedString.statusUiUserDetailPosts,
         )
     }
 }

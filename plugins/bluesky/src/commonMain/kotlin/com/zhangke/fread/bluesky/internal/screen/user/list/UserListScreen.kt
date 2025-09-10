@@ -38,27 +38,11 @@ import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_block
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_block_dialog_message
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_blocked
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_mute
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_mute_dialog_message
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_muted
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_blocks
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_followers
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_following
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_likes
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_mutes
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_reblog
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.user.CommonUserPlaceHolder
 import com.zhangke.fread.status.ui.user.CommonUserUi
-import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_following
-import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.statusui.Res as StatusRes
 
 class UserListScreen(
     private val locator: PlatformLocator,
@@ -187,9 +171,9 @@ class UserListScreen(
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = if (user.muted) {
-                        stringResource(Res.string.shared_user_list_action_muted)
+                        stringResource(LocalizedString.sharedUserListActionMuted)
                     } else {
-                        stringResource(Res.string.shared_user_list_action_mute)
+                        stringResource(LocalizedString.sharedUserListActionMute)
                     },
                     style = if (user.muted) TextButtonStyle.STANDARD else TextButtonStyle.ALERT,
                     onClick = {
@@ -202,7 +186,7 @@ class UserListScreen(
                 )
                 if (showConfirmDialog) {
                     AlertConfirmDialog(
-                        content = stringResource(Res.string.shared_user_list_action_mute_dialog_message),
+                        content = stringResource(LocalizedString.sharedUserListActionMuteDialogMessage),
                         onConfirm = { onMuteClick(user) },
                         onDismissRequest = { showConfirmDialog = false },
                     )
@@ -214,9 +198,9 @@ class UserListScreen(
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = if (user.blocked) {
-                        stringResource(Res.string.shared_user_list_action_blocked)
+                        stringResource(LocalizedString.sharedUserListActionBlocked)
                     } else {
-                        stringResource(Res.string.shared_user_list_action_block)
+                        stringResource(LocalizedString.sharedUserListActionBlock)
                     },
                     style = if (user.blocked) TextButtonStyle.STANDARD else TextButtonStyle.ALERT,
                     onClick = {
@@ -229,7 +213,7 @@ class UserListScreen(
                 )
                 if (showConfirmDialog) {
                     AlertConfirmDialog(
-                        content = stringResource(Res.string.shared_user_list_action_block_dialog_message),
+                        content = stringResource(LocalizedString.sharedUserListActionBlockDialogMessage),
                         onConfirm = { onBlockClick(user) },
                         onDismissRequest = { showConfirmDialog = false },
                     )
@@ -241,9 +225,9 @@ class UserListScreen(
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = if (user.following) {
-                        stringResource(StatusRes.string.status_ui_user_detail_relationship_following)
+                        stringResource(LocalizedString.statusUiUserDetailRelationshipFollowing)
                     } else {
-                        stringResource(StatusRes.string.status_ui_user_detail_relationship_not_follow)
+                        stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow)
                     },
                     style = TextButtonStyle.STANDARD,
                     onClick = {
@@ -256,7 +240,7 @@ class UserListScreen(
                 )
                 if (showConfirmDialog) {
                     AlertConfirmDialog(
-                        content = stringResource(StatusRes.string.status_ui_relationship_btn_dialog_content_cancel_follow),
+                        content = stringResource(LocalizedString.statusUiRelationshipBtnDialogContentCancelFollow),
                         onConfirm = { onUnfollowClick(user) },
                         onDismissRequest = { showConfirmDialog = false },
                     )
@@ -267,11 +251,11 @@ class UserListScreen(
 
     private val UserListType.title: String
         @Composable get() = when (this) {
-            UserListType.LIKE -> stringResource(Res.string.shared_user_list_title_likes)
-            UserListType.REBLOG -> stringResource(Res.string.shared_user_list_title_reblog)
-            UserListType.MUTED -> stringResource(Res.string.shared_user_list_title_mutes)
-            UserListType.BLOCKED -> stringResource(Res.string.shared_user_list_title_blocks)
-            UserListType.FOLLOWERS -> stringResource(Res.string.shared_user_list_title_followers)
-            UserListType.FOLLOWING -> stringResource(Res.string.shared_user_list_title_following)
+            UserListType.LIKE -> stringResource(LocalizedString.sharedUserListTitleLikes)
+            UserListType.REBLOG -> stringResource(LocalizedString.sharedUserListTitleReblog)
+            UserListType.MUTED -> stringResource(LocalizedString.sharedUserListTitleMutes)
+            UserListType.BLOCKED -> stringResource(LocalizedString.sharedUserListTitleBlocks)
+            UserListType.FOLLOWERS -> stringResource(LocalizedString.sharedUserListTitleFollowers)
+            UserListType.FOLLOWING -> stringResource(LocalizedString.sharedUserListTitleFollowing)
         }
 }

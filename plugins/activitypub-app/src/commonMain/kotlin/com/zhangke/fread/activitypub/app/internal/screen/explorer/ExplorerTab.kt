@@ -35,11 +35,8 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.pxToDp
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_explorer_tab_hashtag_title
-import com.zhangke.fread.activitypub.app.activity_pub_explorer_tab_status_title
-import com.zhangke.fread.activitypub.app.activity_pub_explorer_tab_users_title
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -58,9 +55,9 @@ class ExplorerTab(
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
             title = when (feedsTabType) {
-                ExplorerFeedsTabType.STATUS -> stringResource(Res.string.activity_pub_explorer_tab_status_title)
-                ExplorerFeedsTabType.USERS -> stringResource(Res.string.activity_pub_explorer_tab_users_title)
-                ExplorerFeedsTabType.HASHTAG -> stringResource(Res.string.activity_pub_explorer_tab_hashtag_title)
+                ExplorerFeedsTabType.STATUS -> stringResource(LocalizedString.activity_pub_explorer_tab_status_title)
+                ExplorerFeedsTabType.USERS -> stringResource(LocalizedString.activity_pub_explorer_tab_users_title)
+                ExplorerFeedsTabType.HASHTAG -> stringResource(LocalizedString.activity_pub_explorer_tab_hashtag_title)
             }
         )
 

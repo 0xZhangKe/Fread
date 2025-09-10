@@ -27,14 +27,11 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.Gen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
-import com.zhangke.fread.activitypub.app.post_status_poll_is_empty
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.post_status_content_is_empty
-import com.zhangke.fread.commonbiz.shared.screen.post_status_failed
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusVisibility
@@ -351,17 +348,17 @@ class PostStatusViewModel @Inject constructor(
         val account = currentUiState.account
         val attachment = currentUiState.attachment
         if (currentUiState.content.text.isEmpty() && currentUiState.attachment == null) {
-            _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
+            _snackMessage.emitInViewModel(textOf(LocalizedString.postStatusContentIsEmpty))
             return
         }
         if (attachment is PostStatusAttachment.Poll) {
             if (currentUiState.content.text.isEmpty()) {
-                _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
+                _snackMessage.emitInViewModel(textOf(LocalizedString.postStatusContentIsEmpty))
                 return
             }
             for (option in attachment.optionList) {
                 if (option.isEmpty()) {
-                    _snackMessage.emitInViewModel(textOf(com.zhangke.fread.activitypub.app.Res.string.post_status_poll_is_empty))
+                    _snackMessage.emitInViewModel(textOf(LocalizedString.post_status_poll_is_empty))
                     return
                 }
             }
@@ -378,7 +375,7 @@ class PostStatusViewModel @Inject constructor(
             }.onFailure { t ->
                 _uiState.updateOnSuccess { it.copy(publishing = false) }
                 val errorMessage = textOf(
-                    Res.string.post_status_failed,
+                    LocalizedString.postStatusFailed,
                     t.message.ifNullOrEmpty { "unknown error" }.take(180),
                 )
                 _snackMessage.emit(errorMessage)

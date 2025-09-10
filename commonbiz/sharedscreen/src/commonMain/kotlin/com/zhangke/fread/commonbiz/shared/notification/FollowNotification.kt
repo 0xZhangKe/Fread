@@ -8,8 +8,7 @@ import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_follow_desc
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.notification.StatusNotification
 import org.jetbrains.compose.resources.stringResource
@@ -34,7 +33,7 @@ fun FollowNotification(
             avatar = notification.author.avatar,
             createAt = notification.formattingDisplayTime,
             accountName = notification.author.humanizedName,
-            interactionDesc = stringResource(Res.string.shared_notification_follow_desc),
+            interactionDesc = stringResource(LocalizedString.sharedNotificationFollowDesc),
             style = style,
         )
         UserInfoCard(

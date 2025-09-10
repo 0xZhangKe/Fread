@@ -24,8 +24,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.fread.common.page.BasePagerTab
-import com.zhangke.fread.explore.Res
-import com.zhangke.fread.explore.explorer_search_tab_title_hashtag
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
@@ -36,7 +35,7 @@ internal class SearchedHashtagTab(private val locator: PlatformLocator, private 
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
-            title = stringResource(Res.string.explorer_search_tab_title_hashtag),
+            title = stringResource(LocalizedString.explorerSearchTabTitleHashtag),
         )
 
     @OptIn(ExperimentalVoyagerApi::class)

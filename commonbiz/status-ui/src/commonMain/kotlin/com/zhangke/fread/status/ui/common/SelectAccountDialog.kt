@@ -26,10 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.zhangke.framework.composable.TextWithIcon
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_switch_account_dialog_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -51,7 +50,7 @@ fun SelectAccountDialog(
             ) {
                 Text(
                     modifier = Modifier,
-                    text = stringResource(Res.string.status_ui_switch_account_dialog_title),
+                    text = stringResource(LocalizedString.statusUiSwitchAccountDialogTitle),
                     style = MaterialTheme.typography.titleMedium
                         .copy(fontWeight = FontWeight.SemiBold),
                 )

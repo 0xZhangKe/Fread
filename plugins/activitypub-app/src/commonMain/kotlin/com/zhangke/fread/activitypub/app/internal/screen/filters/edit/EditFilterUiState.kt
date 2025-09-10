@@ -4,10 +4,8 @@ import androidx.compose.runtime.Composable
 import com.zhangke.framework.utils.Parcelize
 import com.zhangke.framework.utils.PlatformParcelable
 import com.zhangke.framework.utils.PlatformSerializable
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_finish_subtitle
-import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_permanent
 import com.zhangke.fread.common.utils.formatDefault
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
@@ -35,10 +33,10 @@ data class EditFilterUiState(
     @Composable
     fun getExpiresDateDesc(): String {
         if (expiresDate == null) {
-            return stringResource(Res.string.activity_pub_filter_edit_duration_permanent)
+            return stringResource(LocalizedString.activity_pub_filter_edit_duration_permanent)
         }
         return stringResource(
-            Res.string.activity_pub_filter_edit_duration_finish_subtitle,
+            LocalizedString.activity_pub_filter_edit_duration_finish_subtitle,
             expiresDateString,
         )
     }

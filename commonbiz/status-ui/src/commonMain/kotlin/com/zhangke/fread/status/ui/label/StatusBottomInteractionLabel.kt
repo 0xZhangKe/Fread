@@ -18,10 +18,8 @@ import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.formatToHumanReadable
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.style.StatusStyle
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_interaction_label_boosted_count
-import com.zhangke.fread.statusui.status_ui_interaction_label_favourited_count
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -41,7 +39,7 @@ fun StatusBottomInteractionLabel(
         val boostedText = buildHighlightLabelText(
             highlight = boostedCount.formatToHumanReadable(),
             wholeText = stringResource(
-                Res.string.status_ui_interaction_label_boosted_count,
+                LocalizedString.statusUiInteractionLabelBoostedCount,
                 boostedCount.formatToHumanReadable(),
             ),
             style = style.bottomLabelStyle.textStyle,
@@ -57,7 +55,7 @@ fun StatusBottomInteractionLabel(
         val favouritedText = buildHighlightLabelText(
             highlight = favouritedCount.formatToHumanReadable(),
             wholeText = stringResource(
-                Res.string.status_ui_interaction_label_favourited_count,
+                LocalizedString.statusUiInteractionLabelFavouritedCount,
                 favouritedCount.formatToHumanReadable(),
             ),
             style = style.bottomLabelStyle.textStyle,

@@ -35,10 +35,9 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.textString
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_filters_list_page_title
 import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterScreen
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
@@ -87,7 +86,7 @@ class FiltersListScreen(
             },
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.activity_pub_filters_list_page_title),
+                    title = stringResource(LocalizedString.activity_pub_filters_list_page_title),
                     onBackClick = onBackClick,
                 )
             },

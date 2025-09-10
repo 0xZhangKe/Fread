@@ -56,14 +56,8 @@ import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.commonbiz.Res as CommonRes
-import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_about
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.edit_profile_input_name_hint
-import com.zhangke.fread.commonbiz.edit_profile_input_note_hint
-import com.zhangke.fread.commonbiz.edit_profile_label_name
-import com.zhangke.fread.commonbiz.edit_profile_label_note
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.SharedFlow
 import org.jetbrains.compose.resources.stringResource
@@ -184,11 +178,11 @@ class EditAccountInfoScreen(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.7F),
-                            text = stringResource(CommonRes.string.edit_profile_input_name_hint)
+                            text = stringResource(LocalizedString.editProfileInputNameHint)
                         )
                     },
                     label = {
-                        Text(text = stringResource(CommonRes.string.edit_profile_label_name))
+                        Text(text = stringResource(LocalizedString.editProfileLabelName))
                     },
                 )
                 OutlinedTextField(
@@ -200,11 +194,11 @@ class EditAccountInfoScreen(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.7F),
-                            text = stringResource(CommonRes.string.edit_profile_input_note_hint),
+                            text = stringResource(LocalizedString.editProfileInputNoteHint),
                         )
                     },
                     label = {
-                        Text(text = stringResource(CommonRes.string.edit_profile_label_note))
+                        Text(text = stringResource(LocalizedString.editProfileLabelNote))
                     },
                 )
                 AccountFieldListUi(
@@ -231,7 +225,7 @@ class EditAccountInfoScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = stringResource(Res.string.activity_pub_edit_account_info_label_about),
+                text = stringResource(LocalizedString.activity_pub_edit_account_info_label_about),
                 style = MaterialTheme.typography.headlineSmall,
             )
             Box(modifier = Modifier.weight(1F))

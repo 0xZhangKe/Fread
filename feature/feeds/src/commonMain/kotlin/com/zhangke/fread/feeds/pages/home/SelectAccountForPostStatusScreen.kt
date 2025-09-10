@@ -21,8 +21,7 @@ import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.feeds_select_account_for_post_status
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import org.jetbrains.compose.resources.stringResource
@@ -47,7 +46,7 @@ class SelectAccountForPostStatusScreen(
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         Column(modifier = Modifier.fillMaxWidth()) {
             Toolbar(
-                title = stringResource(Res.string.feeds_select_account_for_post_status),
+                title = stringResource(LocalizedString.feedsSelectAccountForPostStatus),
             )
 
             accountList.forEach { account ->

@@ -11,12 +11,9 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_media
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_post
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_replies
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
@@ -31,9 +28,9 @@ internal class UserTimelineTab(
     override val options: PagerTabOptions
         @Composable get() {
             val title = when (tabType) {
-                UserTimelineTabType.POSTS -> Res.string.activity_pub_user_detail_tab_post
-                UserTimelineTabType.REPLIES -> Res.string.activity_pub_user_detail_tab_replies
-                UserTimelineTabType.MEDIA -> Res.string.activity_pub_user_detail_tab_media
+                UserTimelineTabType.POSTS -> LocalizedString.activity_pub_user_detail_tab_post
+                UserTimelineTabType.REPLIES -> LocalizedString.activity_pub_user_detail_tab_replies
+                UserTimelineTabType.MEDIA -> LocalizedString.activity_pub_user_detail_tab_media
             }
             return PagerTabOptions(title = stringResource(title))
         }

@@ -49,20 +49,12 @@ import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_add_content_factor_token
-import com.zhangke.fread.bluesky.bsky_add_content_hosting_provider
-import com.zhangke.fread.bluesky.bsky_add_content_password
-import com.zhangke.fread.bluesky.bsky_add_content_title
-import com.zhangke.fread.bluesky.bsky_add_content_user_name
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalToastHelper
-import com.zhangke.fread.commonbiz.add_content_success_snackbar
-import com.zhangke.fread.commonbiz.login
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.commonbiz.Res as CommonRes
 
 class AddBlueskyContentScreen(
     private val baseUrl: FormalBaseUrl? = null,
@@ -99,7 +91,7 @@ class AddBlueskyContentScreen(
         LoadingDialog(loading = uiState.logging, onDismissRequest = viewModel::onCancelLogin)
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessage)
         ConsumeFlow(viewModel.loginSuccessFlow) {
-            toastHelper.showToast(getString(CommonRes.string.add_content_success_snackbar))
+            toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
             navigator.pop()
         }
     }
@@ -120,7 +112,7 @@ class AddBlueskyContentScreen(
             modifier = Modifier.fillMaxSize().imePadding(),
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.bsky_add_content_title),
+                    title = stringResource(LocalizedString.bsky_add_content_title),
                     onBackClick = onBackClick,
                 )
             },
@@ -172,7 +164,7 @@ class AddBlueskyContentScreen(
                         },
                         onValueChange = onHostingChange,
                         label = {
-                            Text(stringResource(Res.string.bsky_add_content_hosting_provider))
+                            Text(stringResource(LocalizedString.bsky_add_content_hosting_provider))
                         },
                         singleLine = true,
                     )
@@ -189,7 +181,7 @@ class AddBlueskyContentScreen(
                         },
                         onValueChange = onUserNameChange,
                         label = {
-                            Text(stringResource(Res.string.bsky_add_content_user_name))
+                            Text(stringResource(LocalizedString.bsky_add_content_user_name))
                         },
                         singleLine = true,
                     )
@@ -208,7 +200,7 @@ class AddBlueskyContentScreen(
                         )
                     },
                     label = {
-                        Text(stringResource(Res.string.bsky_add_content_password))
+                        Text(stringResource(LocalizedString.bsky_add_content_password))
                     },
                     singleLine = true,
                 )
@@ -220,7 +212,7 @@ class AddBlueskyContentScreen(
                         value = uiState.factorToken,
                         onValueChange = onFactorTokenChange,
                         label = {
-                            Text(stringResource(Res.string.bsky_add_content_factor_token))
+                            Text(stringResource(LocalizedString.bsky_add_content_factor_token))
                         },
                         singleLine = true,
                     )
@@ -234,7 +226,7 @@ class AddBlueskyContentScreen(
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
                     ) {
-                        Text(stringResource(com.zhangke.fread.commonbiz.Res.string.login))
+                        Text(stringResource(LocalizedString.login))
                     }
                 }
             }

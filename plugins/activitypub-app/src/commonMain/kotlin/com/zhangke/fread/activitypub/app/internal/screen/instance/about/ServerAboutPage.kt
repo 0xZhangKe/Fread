@@ -28,9 +28,8 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_about_rule_title
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
@@ -133,7 +132,7 @@ private fun ServerAboutRulesSection(
         Column(modifier = modifier) {
             Text(
                 modifier = Modifier,
-                text = stringResource(Res.string.activity_pub_about_rule_title),
+                text = stringResource(LocalizedString.activity_pub_about_rule_title),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleLarge,
             )

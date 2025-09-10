@@ -47,17 +47,14 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.bluesky.bsky_feeds_explorer_more
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreen
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreen
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.feeds
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
-import com.zhangke.fread.statusui.status_ui_edit_content_delete_dialog_content
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -132,13 +129,13 @@ class BskyFollowingFeedsPage(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.feeds),
+                    title = stringResource(LocalizedString.feeds),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(
                             onClick = onExplorerClick,
                             imageVector = Icons.Default.Explore,
-                            contentDescription = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more),
+                            contentDescription = stringResource(LocalizedString.bsky_feeds_explorer_more),
                         )
 
                         SimpleIconButton(
@@ -233,7 +230,7 @@ class BskyFollowingFeedsPage(
                                             onClick = onExplorerClick,
                                         ) {
                                             Text(
-                                                text = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more)
+                                                text = stringResource(LocalizedString.bsky_feeds_explorer_more)
                                             )
                                         }
                                     }
@@ -260,7 +257,7 @@ class BskyFollowingFeedsPage(
         if (showDeleteConfirmDialog) {
             FreadDialog(
                 onDismissRequest = { showDeleteConfirmDialog = false },
-                contentText = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_delete_dialog_content),
+                contentText = stringResource(LocalizedString.statusUiEditContentDeleteDialogContent),
                 onNegativeClick = {
                     showDeleteConfirmDialog = false
                 },

@@ -40,10 +40,9 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.transparentIndicatorColors
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_search_user_placeholder
 import com.zhangke.fread.activitypub.app.internal.screen.list.AccountItem
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
@@ -100,7 +99,7 @@ class SearchUserScreen(
                             onValueChange = { onQueryChange(it) },
                             placeholder = {
                                 Text(
-                                    text = stringResource(Res.string.activity_pub_search_user_placeholder)
+                                    text = stringResource(LocalizedString.activity_pub_search_user_placeholder)
                                 )
                             },
                             keyboardActions = KeyboardActions(

@@ -19,9 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.TextString
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.feeds_load_previous_page_failed_label
-import com.zhangke.fread.framework.feeds_load_previous_page_label
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.stringResource
 
@@ -91,7 +89,7 @@ private fun LoadingPreviousUi(
         horizontalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = stringResource(Res.string.feeds_load_previous_page_label),
+            text = stringResource(LocalizedString.feedsLoadPreviousPageLabel),
             style = MaterialTheme.typography.labelMedium,
         )
         Spacer(modifier = Modifier.width(6.dp))
@@ -120,7 +118,7 @@ private fun LoadPreviousFailedUi(
                 modifier = Modifier
                     .padding(vertical = 6.dp)
                     .align(Alignment.CenterHorizontally),
-                text = stringResource(Res.string.feeds_load_previous_page_failed_label),
+                text = stringResource(LocalizedString.feedsLoadPreviousPageFailedLabel),
                 style = MaterialTheme.typography.labelMedium,
             )
         }

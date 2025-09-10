@@ -45,9 +45,8 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.bar.EditContentTopBar
-import com.zhangke.fread.statusui.status_ui_edit_content_config_hidden_list_title
-import com.zhangke.fread.statusui.status_ui_edit_content_config_showing_list_title
 import kotlinx.coroutines.flow.Flow
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -145,7 +144,7 @@ class EditContentConfigScreen(
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_config_showing_list_title),
+            text = stringResource(LocalizedString.statusUiEditContentConfigShowingListTitle),
             style = MaterialTheme.typography.titleMedium,
         )
         var tabsInUi by remember(uiState.content.showingTabList) {
@@ -220,7 +219,7 @@ class EditContentConfigScreen(
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_config_hidden_list_title),
+            text = stringResource(LocalizedString.statusUiEditContentConfigHiddenListTitle),
             style = MaterialTheme.typography.titleMedium,
         )
         uiState.content.hidingTabList.forEach { tabItem ->

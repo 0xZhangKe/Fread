@@ -15,13 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_favourited_desc
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_poll_desc
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_quote_desc
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reblog_desc
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_update_desc
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.notification.StatusNotification
@@ -57,7 +51,7 @@ fun StatusNotificationUi(
                         indexInList = indexInList,
                         icon = Icons.Default.Favorite,
                         iconTint = MaterialTheme.colorScheme.tertiary,
-                        interactionDesc = stringResource(Res.string.shared_notification_favourited_desc),
+                        interactionDesc = stringResource(LocalizedString.sharedNotificationFavouritedDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
@@ -93,7 +87,7 @@ fun StatusNotificationUi(
                         createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
-                        interactionDesc = stringResource(Res.string.shared_notification_reblog_desc),
+                        interactionDesc = stringResource(LocalizedString.sharedNotificationReblogDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
@@ -107,7 +101,7 @@ fun StatusNotificationUi(
                         author = null,
                         indexInList = indexInList,
                         icon = Icons.Default.Poll,
-                        interactionDesc = stringResource(Res.string.shared_notification_poll_desc),
+                        interactionDesc = stringResource(LocalizedString.sharedNotificationPollDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
@@ -141,7 +135,7 @@ fun StatusNotificationUi(
                         createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = Icons.Default.Edit,
-                        interactionDesc = stringResource(Res.string.shared_notification_update_desc),
+                        interactionDesc = stringResource(LocalizedString.sharedNotificationUpdateDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
@@ -167,7 +161,7 @@ fun StatusNotificationUi(
                         createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = Icons.Default.NotificationsNone,
-                        interactionDesc = stringResource(Res.string.shared_notification_new_status_desc),
+                        interactionDesc = stringResource(LocalizedString.sharedNotificationNewStatusDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
@@ -181,7 +175,7 @@ fun StatusNotificationUi(
                         createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         icon = quoteIcon(),
-                        interactionDesc = stringResource(Res.string.shared_notification_quote_desc),
+                        interactionDesc = stringResource(LocalizedString.sharedNotificationQuoteDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )

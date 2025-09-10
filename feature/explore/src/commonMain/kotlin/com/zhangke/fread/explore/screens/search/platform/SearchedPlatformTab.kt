@@ -15,8 +15,7 @@ import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.DefaultLoading
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.common.page.BasePagerTab
-import com.zhangke.fread.explore.Res
-import com.zhangke.fread.explore.explorer_search_tab_title_server
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.search.SearchedPlatform
 import com.zhangke.fread.status.ui.source.SearchPlatformResultUi
@@ -29,7 +28,7 @@ internal class SearchedPlatformTab(
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
-            title = stringResource(Res.string.explorer_search_tab_title_server),
+            title = stringResource(LocalizedString.explorerSearchTabTitleServer),
         )
 
     @Composable

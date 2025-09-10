@@ -48,10 +48,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreen
-import com.zhangke.fread.hosting.Res
-import com.zhangke.fread.hosting.main_drawer_donate
-import com.zhangke.fread.hosting.main_drawer_settings
-import com.zhangke.fread.hosting.main_drawer_title
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
@@ -124,7 +121,7 @@ private fun MainDrawerContent(
             ) {
                 TopAppBar(
                     title = {
-                        Text(text = stringResource(Res.string.main_drawer_title))
+                        Text(text = stringResource(LocalizedString.main_drawer_title))
                     },
                     actions = {
                         SimpleIconButton(
@@ -201,7 +198,7 @@ private fun MainDrawerContent(
                         contentDescription = "Settings",
                     )
                     Spacer(modifier = Modifier.width(16.dp))
-                    Text(text = stringResource(Res.string.main_drawer_settings))
+                    Text(text = stringResource(LocalizedString.main_drawer_settings))
                 }
                 Row(
                     modifier = Modifier
@@ -216,7 +213,7 @@ private fun MainDrawerContent(
                         contentDescription = "Donate",
                     )
                     Spacer(modifier = Modifier.width(16.dp))
-                    Text(text = stringResource(Res.string.main_drawer_donate))
+                    Text(text = stringResource(LocalizedString.main_drawer_donate))
                 }
             }
         }

@@ -34,9 +34,7 @@ import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.notification.StatusNotificationUi
-import com.zhangke.fread.feature.notifications.Res
-import com.zhangke.fread.feature.notifications.notifications_tab_all
-import com.zhangke.fread.feature.notifications.notifications_tab_mention
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
@@ -175,14 +173,14 @@ class NotificationTab(
                 onCheckedChange = { onTabCheckedChange(false) },
                 shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
             ) {
-                Text(text = stringResource(Res.string.notifications_tab_all))
+                Text(text = stringResource(LocalizedString.notificationsTabAll))
             }
             SegmentedButton(
                 checked = uiState.inOnlyMentionTab,
                 onCheckedChange = { onTabCheckedChange(true) },
                 shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
             ) {
-                Text(text = stringResource(Res.string.notifications_tab_mention))
+                Text(text = stringResource(LocalizedString.notificationsTabMention))
             }
         }
     }

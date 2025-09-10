@@ -41,9 +41,8 @@ import com.zhangke.framework.loadable.lazycolumn.ObserveLoadMore
 import com.zhangke.framework.utils.transparentIndicatorAndContainerColors
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_search_account_status_hint
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
@@ -108,7 +107,7 @@ abstract class AbstractSearchStatusScreen : BaseScreen() {
                             onValueChange = onQueryChanged,
                             placeholder = {
                                 Text(
-                                    text = stringResource(Res.string.status_ui_search_account_status_hint),
+                                    text = stringResource(LocalizedString.statusUiSearchAccountStatusHint),
                                 )
                             },
                             keyboardActions = KeyboardActions(

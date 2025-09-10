@@ -30,7 +30,7 @@ import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
-import com.zhangke.fread.commonbiz.shared.screen.shared_status_context_screen_title
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.StatusInfoLine
@@ -57,7 +57,7 @@ class RssBlogDetailScreen(
             topBar = {
                 Toolbar(
                     title = blog.title.ifNullOrEmpty {
-                        stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_status_context_screen_title)
+                        stringResource(LocalizedString.sharedStatusContextScreenTitle)
                     },
                     onBackClick = navigator::pop,
                     actions = {

@@ -52,18 +52,8 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_hide_in_timeline
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_hide_in_timeline_desc
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_name
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_remove_user_message
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_replies
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_replies_followers
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_replies_list
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_replies_non
-import com.zhangke.fread.activitypub.app.activity_pub_add_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_list_delete_confirm
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.ListRepliesPolicy
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import org.jetbrains.compose.resources.stringResource
 
@@ -91,7 +81,7 @@ internal fun ListDetailPageContent(
     Scaffold(
         topBar = {
             Toolbar(
-                title = stringResource(Res.string.activity_pub_add_list_title),
+                title = stringResource(LocalizedString.activity_pub_add_list_title),
                 onBackClick = onBackClick,
                 actions = {
                     if (showDeleteIcon) {
@@ -99,7 +89,7 @@ internal fun ListDetailPageContent(
                         if (showDeleteDialog) {
                             FreadDialog(
                                 onDismissRequest = { showDeleteDialog = false },
-                                contentText = stringResource(Res.string.activity_pub_list_delete_confirm),
+                                contentText = stringResource(LocalizedString.activity_pub_list_delete_confirm),
                                 onNegativeClick = { showDeleteDialog = false },
                                 onPositiveClick = {
                                     onDeleteClick()
@@ -212,7 +202,7 @@ private fun ListDetailSetting(
             onValueChange = { onNameChangedRequest(it) },
             label = {
                 Text(
-                    text = stringResource(Res.string.activity_pub_add_list_name)
+                    text = stringResource(LocalizedString.activity_pub_add_list_name)
                 )
             },
         )
@@ -240,7 +230,7 @@ private fun ListDetailSetting(
                 readOnly = true,
                 onValueChange = { },
                 label = {
-                    Text(text = stringResource(Res.string.activity_pub_add_list_replies))
+                    Text(text = stringResource(LocalizedString.activity_pub_add_list_replies))
                 },
             )
             DropdownMenu(
@@ -266,12 +256,12 @@ private fun ListDetailSetting(
         ) {
             Column(modifier = Modifier.weight(1F)) {
                 Text(
-                    text = stringResource(Res.string.activity_pub_add_list_hide_in_timeline),
+                    text = stringResource(LocalizedString.activity_pub_add_list_hide_in_timeline),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
                     modifier = Modifier.padding(top = 1.dp),
-                    text = stringResource(Res.string.activity_pub_add_list_hide_in_timeline_desc),
+                    text = stringResource(LocalizedString.activity_pub_add_list_hide_in_timeline_desc),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -286,7 +276,7 @@ private fun ListDetailSetting(
 
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(Res.string.activity_pub_add_list_replies_list),
+            text = stringResource(LocalizedString.activity_pub_add_list_replies_list),
             style = MaterialTheme.typography.titleMedium,
         )
     }
@@ -335,7 +325,7 @@ internal fun AccountItem(
             if (showRemoveConfirmDialog) {
                 FreadDialog(
                     onDismissRequest = { showRemoveConfirmDialog = false },
-                    contentText = stringResource(Res.string.activity_pub_add_list_remove_user_message),
+                    contentText = stringResource(LocalizedString.activity_pub_add_list_remove_user_message),
                     onNegativeClick = { showRemoveConfirmDialog = false },
                     onPositiveClick = {
                         showRemoveConfirmDialog = false
@@ -371,8 +361,8 @@ private fun AccountPlaceholder() {
 private val ListRepliesPolicy.showName: String
     @Composable get() {
         return when (this) {
-            ListRepliesPolicy.FOLLOWING -> stringResource(Res.string.activity_pub_add_list_replies_followers)
-            ListRepliesPolicy.LIST -> stringResource(Res.string.activity_pub_add_list_replies_list)
-            ListRepliesPolicy.NONE -> stringResource(Res.string.activity_pub_add_list_replies_non)
+            ListRepliesPolicy.FOLLOWING -> stringResource(LocalizedString.activity_pub_add_list_replies_followers)
+            ListRepliesPolicy.LIST -> stringResource(LocalizedString.activity_pub_add_list_replies_list)
+            ListRepliesPolicy.NONE -> stringResource(LocalizedString.activity_pub_add_list_replies_non)
         }
     }

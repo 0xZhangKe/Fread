@@ -18,10 +18,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SlickRoundCornerShape
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogPoll
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_poll_vote
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -90,7 +89,7 @@ internal fun MultipleChoicePoll(
         ) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = stringResource(Res.string.status_ui_poll_vote),
+                text = stringResource(LocalizedString.statusUiPollVote),
             )
         }
     }

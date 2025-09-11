@@ -20,7 +20,7 @@ Fread is a decentralized microblogging client that seamlessly integrates Mastodo
 
  - `fread-xxx-google-play-signed.apk`: Signed by Google Play and includes push notifications. If you are used to updating through Google Play, you can choose this version.
  - `fread-xxx-fdroid.apk`: The version available on F-Droid does not include push notifications, and its signature is inconsistent with Google Play. If you are used to using F-Droid, please use this version.
- - `fread-xxx-fdroid.apk`: Test version, contains some logs, the functionality is the same as the Google Play version, but the signature is the same as F-Droid.
+ - `fread-xxx-debug.apk`: Test version, contains some logs, the functionality is the same as the Google Play version, but the signature is the same as F-Droid.
 
 Because Fread accidentally used Google Play managed signatures, there are currently two different signed versions of Fread distributed. **These two versions cannot be upgraded to each other**. Please choose with caution.
 

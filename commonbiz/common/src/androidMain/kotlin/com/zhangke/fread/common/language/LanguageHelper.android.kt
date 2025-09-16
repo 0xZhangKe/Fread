@@ -12,11 +12,15 @@ import com.zhangke.framework.utils.ActivityLifecycleCallbacksAdapter
 import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.di.ActivityScope
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.localization.LanguageCode
+import com.zhangke.fread.localization.locale
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Inject
 import java.lang.ref.WeakReference
 import java.util.Locale
+
+private const val OLD_LANGUAGE_SETTING = "app_language_setting"
 
 @ApplicationScope
 class LanguageHelper @Inject constructor(
@@ -25,16 +29,16 @@ class LanguageHelper @Inject constructor(
 ) {
     private val pausedActivityList = mutableListOf<WeakReference<Activity>>()
 
-    var currentType = readLocalFromStorage() ?: LanguageSettingType.SYSTEM
+    var currentLanguage: LanguageSettingItem = readLocalLanguageCode()
         private set
 
     fun init() {
-        application.changeLanguage(currentType)
+        application.changeLanguage(currentLanguage)
         application.registerActivityLifecycleCallbacks(object :
             ActivityLifecycleCallbacksAdapter() {
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                activity.changeLanguage(currentType)
+                activity.changeLanguage(currentLanguage)
                 super.onActivityCreated(activity, savedInstanceState)
             }
 
@@ -55,32 +59,44 @@ class LanguageHelper @Inject constructor(
         })
     }
 
-    private fun readLocalFromStorage(): LanguageSettingType? {
+    private fun readLocalLanguageCode(): LanguageSettingItem {
         return runBlocking {
-            when (localConfigManager.getInt(LANGUAGE_SETTING)) {
-                LanguageSettingType.CN.value -> LanguageSettingType.CN
-                LanguageSettingType.EN.value -> LanguageSettingType.EN
-                LanguageSettingType.SYSTEM.value -> LanguageSettingType.SYSTEM
-                else -> null
-            }
+            val id = localConfigManager.getString(LOCAL_KEY_LANGUAGE)
+                ?.let { LanguageSettingItem.fromLocalId(it) }
+            if (id != null) return@runBlocking id
+            tryReadOldConfigAsLanguageCode() ?: LanguageSettingItem.FollowSystem
         }
     }
 
-    private fun saveLocalToStorage(type: LanguageSettingType) {
+    private suspend fun tryReadOldConfigAsLanguageCode(): LanguageSettingItem? {
+        val type = localConfigManager.getInt(OLD_LANGUAGE_SETTING)
+        if (type == null) return null
+        val code = when (type) {
+            LanguageSettingType.CN.value -> LanguageSettingItem.Language(LanguageCode.ZH_CN)
+            LanguageSettingType.EN.value -> LanguageSettingItem.Language(LanguageCode.EN_US)
+            LanguageSettingType.SYSTEM.value -> LanguageSettingItem.FollowSystem
+            else -> null
+        }
+        if (code == null) return null
+        saveLocalToStorage(code)
+        localConfigManager.removeKey(OLD_LANGUAGE_SETTING)
+        return code
+    }
+
+    private fun saveLocalToStorage(item: LanguageSettingItem) {
         ApplicationScope.launch {
-            localConfigManager.putInt(LANGUAGE_SETTING, type.value)
+            localConfigManager.putString(LOCAL_KEY_LANGUAGE, item.localId)
         }
     }
 
     private fun notifyOtherActivityConfig() {
-        pausedActivityList.mapNotNull { it.get() }
-            .forEach { it.recreate() }
+        pausedActivityList.mapNotNull { it.get() }.forEach { it.recreate() }
     }
 
-    fun setLanguage(type: LanguageSettingType) {
-        currentType = type
-        saveLocalToStorage(type)
-        application.changeLanguage(type)
+    fun setLanguage(item: LanguageSettingItem) {
+        currentLanguage = item
+        saveLocalToStorage(item)
+        application.changeLanguage(item)
         notifyOtherActivityConfig()
     }
 }
@@ -90,20 +106,21 @@ actual class ActivityLanguageHelper @Inject constructor(
     private val languageHelper: LanguageHelper,
     private val activity: ComponentActivity,
 ) {
-    actual val currentType get() = languageHelper.currentType
 
-    actual fun setLanguage(type: LanguageSettingType) {
-        languageHelper.setLanguage(type)
-        activity.changeLanguage(type)
+    actual val currentLanguage get() = languageHelper.currentLanguage
+
+    actual fun setLanguage(item: LanguageSettingItem) {
+        languageHelper.setLanguage(item)
+        activity.changeLanguage(item)
         activity.recreate()
     }
 }
 
-private fun Context.changeLanguage(type: LanguageSettingType) {
+private fun Context.changeLanguage(item: LanguageSettingItem) {
     val metrics = resources.displayMetrics
     val configuration = resources.configuration
 
-    val targetLocale = type.toLocale() ?: Locale.getDefault()
+    val targetLocale = item.locale
     Locale.setDefault(targetLocale)
     if (VERSION.SDK_INT >= 24) {
         configuration.setLocales(LocaleList(targetLocale))
@@ -115,10 +132,10 @@ private fun Context.changeLanguage(type: LanguageSettingType) {
     resources.updateConfiguration(configuration, metrics)
 }
 
-private fun LanguageSettingType.toLocale(): Locale? {
-    return when (this) {
-        LanguageSettingType.CN -> Locale.SIMPLIFIED_CHINESE
-        LanguageSettingType.EN -> Locale.ENGLISH
-        LanguageSettingType.SYSTEM -> null
+private val LanguageSettingItem.locale: Locale
+    get() {
+        return when (this) {
+            is LanguageSettingItem.FollowSystem -> Locale.getDefault()
+            is LanguageSettingItem.Language -> code.locale
+        }
     }
-}

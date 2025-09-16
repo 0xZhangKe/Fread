@@ -2,8 +2,9 @@ package com.zhangke.fread.common.language
 
 import androidx.compose.runtime.staticCompositionLocalOf
 
-internal const val LANGUAGE_SETTING = "app_language_setting"
+internal const val LOCAL_KEY_LANGUAGE = "app_language_code"
 
+@Deprecated("Use LanguageCode directly")
 enum class LanguageSettingType(val value: Int) {
     CN(1),
     EN(2),
@@ -13,9 +14,10 @@ enum class LanguageSettingType(val value: Int) {
 
 expect class ActivityLanguageHelper {
 
-        val currentType: LanguageSettingType
+    val currentLanguage: LanguageSettingItem
 
-        fun setLanguage(type: LanguageSettingType)
+    fun setLanguage(item: LanguageSettingItem)
 }
 
-val LocalActivityLanguageHelper = staticCompositionLocalOf<ActivityLanguageHelper> { error("No ActivityLanguageHelper provided") }
+val LocalActivityLanguageHelper =
+    staticCompositionLocalOf<ActivityLanguageHelper> { error("No ActivityLanguageHelper provided") }

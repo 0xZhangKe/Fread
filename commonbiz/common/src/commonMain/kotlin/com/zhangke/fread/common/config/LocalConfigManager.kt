@@ -47,6 +47,10 @@ class LocalConfigManager @Inject constructor(
     suspend fun putBoolean(key: String, value: Boolean) {
         configSettings.putBoolean(key, value)
     }
+
+    suspend fun removeKey(key: String) {
+        configSettings.remove(key)
+    }
 }
 
 val LocalLocalConfigManager =

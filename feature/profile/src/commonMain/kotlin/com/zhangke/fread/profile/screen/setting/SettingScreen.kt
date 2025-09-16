@@ -55,7 +55,7 @@ import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
-import com.zhangke.fread.common.language.LanguageSettingType
+import com.zhangke.fread.common.language.LanguageSettingItem
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.theme.ThemeType
@@ -63,6 +63,7 @@ import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_code
 import com.zhangke.fread.feature.profile.ic_ratting
 import com.zhangke.fread.localization.LocalizedString
+import com.zhangke.fread.localization.displayName
 import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
@@ -132,7 +133,7 @@ class SettingScreen : BaseScreen() {
         onOpenSourceClick: () -> Unit,
         onDayNightModeClick: (DayNightMode) -> Unit,
         onThemeTypeChanged: (ThemeType) -> Unit,
-        onLanguageClick: (LanguageSettingType) -> Unit,
+        onLanguageClick: (LanguageSettingItem) -> Unit,
         onImmersiveBarChanged: (on: Boolean) -> Unit,
         onRatingClick: () -> Unit,
         onAboutClick: () -> Unit,
@@ -337,17 +338,18 @@ class SettingScreen : BaseScreen() {
 
     @Composable
     private fun LanguageItem(
-        onLanguageClick: (LanguageSettingType) -> Unit,
+        onLanguageClick: (LanguageSettingItem) -> Unit,
     ) {
         val activityLanguageHelper = LocalActivityLanguageHelper.current
+        val subtitle = activityLanguageHelper.currentLanguage.getDisplayName()
         SettingItemWithPopup(
             icon = Icons.Default.Language,
             title = stringResource(LocalizedString.profileSettingLanguageTitle),
-            subtitle = activityLanguageHelper.currentType.typeName,
-            dropDownItemCount = LanguageSettingType.entries.size,
-            dropDownItemText = { LanguageSettingType.entries[it].typeName },
+            subtitle = subtitle,
+            dropDownItemCount = LanguageSettingItem.items.size,
+            dropDownItemText = { LanguageSettingItem.items[it].getDisplayName() },
             onItemClick = {
-                onLanguageClick(LanguageSettingType.entries[it])
+                onLanguageClick(LanguageSettingItem.items[it])
             }
         )
     }

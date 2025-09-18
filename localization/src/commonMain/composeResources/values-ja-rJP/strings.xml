@@ -149,7 +149,7 @@
     <string name="profile_setting_open_source_feedback_telegram">Telegram グループに参加</string>
     <string name="profile_setting_open_source_feedback_github">GitHub の issue を作成</string>
     <string name="profile_setting_open_source_feedback_email">メールを送信</string>
-    <string name="profile_setting_language_title">言語</string>
+    <string name="profile_setting_language_title">表示言語</string>
     <string name="profile_setting_language_zh">簡体字中国語</string>
     <string name="profile_setting_language_en">英語</string>
     <string name="profile_setting_language_system">システムに合わせる</string>

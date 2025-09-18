@@ -149,7 +149,7 @@
     <string name="profile_setting_open_source_feedback_telegram">Únete al grupo de Telegram</string>
     <string name="profile_setting_open_source_feedback_github">Crear issue en GitHub</string>
     <string name="profile_setting_open_source_feedback_email">Enviar correo</string>
-    <string name="profile_setting_language_title">Idioma</string>
+    <string name="profile_setting_language_title">Idioma de visualización</string>
     <string name="profile_setting_language_zh">Chino simplificado</string>
     <string name="profile_setting_language_en">Inglés</string>
     <string name="profile_setting_language_system">Seguir el sistema</string>

@@ -149,7 +149,7 @@
     <string name="profile_setting_open_source_feedback_telegram">加入 Telegram 群組</string>
     <string name="profile_setting_open_source_feedback_github">建立 GitHub issue</string>
     <string name="profile_setting_open_source_feedback_email">發送郵件</string>
-    <string name="profile_setting_language_title">語言</string>
+    <string name="profile_setting_language_title">顯示語言</string>
     <string name="profile_setting_language_zh">簡體中文</string>
     <string name="profile_setting_language_en">English</string>
     <string name="profile_setting_language_system">跟隨系統</string>

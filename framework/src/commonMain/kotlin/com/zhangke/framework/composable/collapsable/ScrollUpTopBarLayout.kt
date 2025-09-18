@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,13 +32,13 @@ fun ScrollUpTopBarLayout(
 ) {
     var topBarHeightPx: Int by rememberSaveable { mutableIntStateOf(0) }
     var headerContentHeightPx: Int by rememberSaveable { mutableIntStateOf(0) }
-    val nestedScrollConnection = if (immersiveToTopBar){
+    val nestedScrollConnection = if (immersiveToTopBar) {
         rememberCollapsableTopBarLayoutConnection(
             contentCanScrollBackward = contentCanScrollBackward,
             maxPx = headerContentHeightPx.toFloat(),
             minPx = topBarHeightPx.toFloat(),
         )
-    }else{
+    } else {
         rememberCollapsableTopBarLayoutConnection(
             contentCanScrollBackward = contentCanScrollBackward,
             maxPx = headerContentHeightPx.toFloat(),
@@ -79,7 +78,9 @@ fun ScrollUpTopBarLayout(
             },
             measurePolicy = { measurables, constraints ->
                 val topBarPlaceable = measurables.first().measure(constraints)
-                val headerContentPlaceable = measurables[1].measure(constraints)
+                val headerContentPlaceable = measurables[1].measure(
+                    constraints.copy(maxHeight = constraints.maxHeight * 6)
+                )
                 val scrollableContentPlaceable = measurables[2].measure(constraints)
                 if (topBarHeightPx != topBarPlaceable.measuredHeight) {
                     topBarHeightPx = topBarPlaceable.measuredHeight

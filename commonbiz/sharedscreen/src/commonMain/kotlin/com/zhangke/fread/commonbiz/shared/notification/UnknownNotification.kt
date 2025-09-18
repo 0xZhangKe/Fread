@@ -9,8 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_unknown_desc
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.notification.StatusNotification
 import org.jetbrains.compose.resources.stringResource
 
@@ -27,7 +26,7 @@ fun UnknownNotification(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = stringResource(Res.string.shared_notification_unknown_desc),
+            text = stringResource(LocalizedString.sharedNotificationUnknownDesc),
         )
         Text(
             modifier = Modifier

@@ -15,10 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.commonbiz.illustration_inspiration
-import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.empty_content_hint_desc
-import com.zhangke.fread.feeds.empty_content_hint_title
-import com.zhangke.fread.feeds.feeds_add_content
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -48,14 +45,14 @@ fun EmptyContent(
 
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                text = stringResource(Res.string.empty_content_hint_title),
+                text = stringResource(LocalizedString.emptyContentHintTitle),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
             )
 
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
-                text = stringResource(Res.string.empty_content_hint_desc),
+                text = stringResource(LocalizedString.emptyContentHintDesc),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
             )
@@ -65,7 +62,7 @@ fun EmptyContent(
             modifier = Modifier.padding(top = 32.dp),
             onClick = onAddClick
         ) {
-            Text(text = stringResource(Res.string.feeds_add_content))
+            Text(text = stringResource(LocalizedString.feedsAddContent))
         }
     }
 }

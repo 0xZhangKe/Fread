@@ -55,10 +55,8 @@ import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
-import com.zhangke.fread.explore.Res
-import com.zhangke.fread.explore.explorer_search_bar_hint
-import com.zhangke.fread.explore.explorer_search_bar_hint_specialize_platform
 import com.zhangke.fread.explore.screens.search.SearchScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -127,7 +125,7 @@ fun Screen.ExplorerSearchBar(
                         Text(
                             modifier = Modifier,
                             text = stringResource(
-                                Res.string.explorer_search_bar_hint_specialize_platform,
+                                LocalizedString.explorerSearchBarHintSpecializePlatform,
                                 selectedAccount.platform.baseUrl.host,
                             ),
                             overflow = TextOverflow.Ellipsis,
@@ -135,7 +133,7 @@ fun Screen.ExplorerSearchBar(
                     } else {
                         Text(
                             modifier = Modifier,
-                            text = stringResource(Res.string.explorer_search_bar_hint),
+                            text = stringResource(LocalizedString.explorerSearchBarHint),
                         )
                     }
                 },

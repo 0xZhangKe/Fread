@@ -19,10 +19,9 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_followed_tags_screen_title
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
@@ -73,7 +72,7 @@ class TagListScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.activity_pub_followed_tags_screen_title),
+                    title = stringResource(LocalizedString.activity_pub_followed_tags_screen_title),
                     onBackClick = onBackClick,
                 )
             },

@@ -32,10 +32,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.input_media_desc_input_hint
-import com.zhangke.fread.activitypub.app.input_media_desc_page_title
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 import kotlin.jvm.Transient
 
@@ -55,7 +53,7 @@ class InputMediaDescriptionScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.input_media_desc_page_title),
+                    title = stringResource(LocalizedString.input_media_desc_page_title),
                     onBackClick = {
                         onDescriptionInputted(inputtedText)
                         navigator.pop()
@@ -107,7 +105,7 @@ class InputMediaDescriptionScreen(
                         unfocusedIndicatorColor = Color.Transparent,
                     ),
                     placeholder = {
-                        Text(text = stringResource(Res.string.input_media_desc_input_hint))
+                        Text(text = stringResource(LocalizedString.input_media_desc_input_hint))
                     },
                     onValueChange = {
                         inputtedText = it

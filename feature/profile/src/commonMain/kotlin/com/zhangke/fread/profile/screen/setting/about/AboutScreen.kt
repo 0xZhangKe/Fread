@@ -50,16 +50,7 @@ import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.ic_fread_logo
-import com.zhangke.fread.feature.profile.Res
-import com.zhangke.fread.feature.profile.profile_about_contract_us
-import com.zhangke.fread.feature.profile.profile_about_developer
-import com.zhangke.fread.feature.profile.profile_about_privacy_policy
-import com.zhangke.fread.feature.profile.profile_about_telegram
-import com.zhangke.fread.feature.profile.profile_about_version
-import com.zhangke.fread.feature.profile.profile_about_website
-import com.zhangke.fread.feature.profile.profile_setting_about_title
-import com.zhangke.fread.feature.profile.profile_setting_check_for_update
-import com.zhangke.fread.feature.profile.profile_setting_have_new_version
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.update.AppUpdateDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -115,7 +106,7 @@ class AboutScreen : BaseScreen() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.profile_setting_about_title),
+                    title = stringResource(LocalizedString.profileSettingAboutTitle),
                     onBackClick = onBackClick,
                 )
             },
@@ -155,7 +146,7 @@ class AboutScreen : BaseScreen() {
                     )
                     Spacer(modifier = Modifier.height(32.dp))
                     AboutClickableItem(
-                        title = stringResource(Res.string.profile_about_website),
+                        title = stringResource(LocalizedString.profileAboutWebsite),
                         clickableText = AppCommonConfig.WEBSITE,
                         showUnderline = true,
                         onClick = {
@@ -174,7 +165,7 @@ class AboutScreen : BaseScreen() {
                     ) {
                         AboutClickableItem(
                             modifier = Modifier,
-                            title = stringResource(Res.string.profile_about_version),
+                            title = stringResource(LocalizedString.profileAboutVersion),
                             clickableText = version,
                             showUnderline = false,
                             onClick = {},
@@ -182,7 +173,7 @@ class AboutScreen : BaseScreen() {
                         if (uiState.newReleaseInfo != null) {
                             Text(
                                 modifier = Modifier.padding(start = 6.dp),
-                                text = stringResource(Res.string.profile_setting_have_new_version),
+                                text = stringResource(LocalizedString.profileSettingHaveNewVersion),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = LocalContentColor.current.copy(alpha = 0.7F),
                                 maxLines = 1,
@@ -196,7 +187,7 @@ class AboutScreen : BaseScreen() {
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     AboutClickableItem(
-                        title = stringResource(Res.string.profile_about_developer),
+                        title = stringResource(LocalizedString.profileAboutDeveloper),
                         clickableText = AppCommonConfig.AUTHOR,
                         showUnderline = true,
                         onClick = {
@@ -205,7 +196,7 @@ class AboutScreen : BaseScreen() {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AboutClickableItem(
-                        title = stringResource(Res.string.profile_about_contract_us),
+                        title = stringResource(LocalizedString.profileAboutContractUs),
                         clickableText = AppCommonConfig.AUTHOR_EMAIL,
                         showUnderline = false,
                         onClick = {
@@ -215,7 +206,7 @@ class AboutScreen : BaseScreen() {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AboutClickableItem(
-                        title = stringResource(Res.string.profile_about_telegram),
+                        title = stringResource(LocalizedString.profileAboutTelegram),
                         clickableText = AppCommonConfig.TELEGRAM_GROUP,
                         showUnderline = false,
                         onClick = {
@@ -225,7 +216,7 @@ class AboutScreen : BaseScreen() {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AboutClickableItem(
-                        title = stringResource(Res.string.profile_about_privacy_policy),
+                        title = stringResource(LocalizedString.profileAboutPrivacyPolicy),
                         clickableText = AppCommonConfig.PRIVACY_POLICY,
                         showUnderline = false,
                         onClick = {
@@ -247,7 +238,7 @@ class AboutScreen : BaseScreen() {
                             )
                         } else {
                             Text(
-                                text = stringResource(Res.string.profile_setting_check_for_update),
+                                text = stringResource(LocalizedString.profileSettingCheckForUpdate),
                             )
                         }
                     }

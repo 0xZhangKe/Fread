@@ -13,13 +13,10 @@ import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.repo.SelectedAccountPublishingRepo
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.post_status_content_is_empty
-import com.zhangke.fread.commonbiz.shared.screen.post_status_failed
-import com.zhangke.fread.commonbiz.shared.screen.post_status_part_failed
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.usecase.PublishPostOnMultiAccountUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.PublishingPartFailed
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PostInteractionSetting
@@ -189,7 +186,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
     fun onPublishClick() {
         val uiState = _uiState.value
         if (uiState.medias.isEmpty() && uiState.content.text.isEmpty()) {
-            _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
+            _snackMessage.emitInViewModel(textOf(LocalizedString.postStatusContentIsEmpty))
             return
         }
         launchInViewModel {
@@ -201,10 +198,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
                 _uiState.update { it.copy(publishing = false) }
                 if (t is PublishingPartFailed) {
                     _snackMessage.emit(
-                        textOf(
-                            Res.string.post_status_part_failed,
-                            t.message.orEmpty(),
-                        )
+                        textOf(LocalizedString.postStatusPartFailed, t.message.orEmpty())
                     )
                     _uiState.update { state ->
                         state.copy(
@@ -215,7 +209,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
                     }
                 } else {
                     val errorMessage = textOf(
-                        Res.string.post_status_failed,
+                        LocalizedString.postStatusFailed,
                         t.message.ifNullOrEmpty { "unknown error" }.take(180),
                     )
                     _snackMessage.emit(errorMessage)

@@ -17,9 +17,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.utils.extractActivity
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.alert
-import com.zhangke.fread.framework.permission_write_external_permission_denied
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -58,11 +56,11 @@ fun RequirePermission(
             }
             if (showDeniedDialog) {
                 FreadDialog(
-                    title = stringResource(Res.string.alert),
+                    title = stringResource(LocalizedString.alert),
                     onDismissRequest = {
                         showDeniedDialog = false
                     },
-                    contentText = stringResource(Res.string.permission_write_external_permission_denied),
+                    contentText = stringResource(LocalizedString.permissionWriteExternalPermissionDenied),
                     onNegativeClick = {
                         showDeniedDialog = false
                         coroutineScope.launch {

@@ -54,7 +54,6 @@ import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
 import com.zhangke.fread.utils.LocalActivityHelper
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import me.tatarka.inject.annotations.Inject
 
 typealias FreadApp = @Composable () -> Unit

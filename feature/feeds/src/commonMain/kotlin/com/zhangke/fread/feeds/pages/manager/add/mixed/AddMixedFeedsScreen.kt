@@ -38,22 +38,17 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalToastHelper
-import com.zhangke.fread.commonbiz.add_content_success_snackbar
 import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.add_feeds_page_feeds_empty
-import com.zhangke.fread.feeds.add_feeds_page_feeds_name_hint
-import com.zhangke.fread.feeds.add_feeds_page_feeds_name_label
-import com.zhangke.fread.feeds.add_feeds_page_title
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.feeds.ic_import
 import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsScreen
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.source.StatusSource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import com.zhangke.fread.commonbiz.Res as CommonRes
 
 /**
  * 添加混合 Feeds 页面
@@ -93,7 +88,7 @@ internal class AddMixedFeedsScreen(
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.addContentSuccessFlow) {
-            toastHelper.showToast(getString(CommonRes.string.add_content_success_snackbar))
+            toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
             navigator.pop()
         }
     }
@@ -112,7 +107,7 @@ internal class AddMixedFeedsScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.add_feeds_page_title),
+                    title = stringResource(LocalizedString.addFeedsPageTitle),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(
@@ -148,10 +143,10 @@ internal class AddMixedFeedsScreen(
                         value = uiState.sourceName,
                         maxLines = 1,
                         label = {
-                            Text(text = stringResource(Res.string.add_feeds_page_feeds_name_label))
+                            Text(text = stringResource(LocalizedString.addFeedsPageFeedsNameLabel))
                         },
                         placeholder = {
-                            Text(text = stringResource(Res.string.add_feeds_page_feeds_name_hint))
+                            Text(text = stringResource(LocalizedString.addFeedsPageFeedsNameHint))
                         },
                         onValueChange = {
                             onNameInputValueChanged(it.take(uiState.maxNameLength))
@@ -174,7 +169,7 @@ internal class AddMixedFeedsScreen(
                             .clickable {
                                 onAddSourceClick()
                             },
-                        text = stringResource(Res.string.add_feeds_page_feeds_empty),
+                        text = stringResource(LocalizedString.addFeedsPageFeedsEmpty),
                         style = MaterialTheme.typography.labelLarge,
                     )
                 } else {

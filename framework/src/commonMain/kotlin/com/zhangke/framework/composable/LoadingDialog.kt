@@ -18,8 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -55,7 +54,7 @@ fun CancelableLoadingDialog(
                             onClick = onCancelClick,
                         ) {
                             Text(
-                                text = stringResource(Res.string.cancel)
+                                text = stringResource(LocalizedString.cancel)
                             )
                         }
                     }

@@ -15,10 +15,8 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.status_ui_bookmarks
-import com.zhangke.fread.statusui.status_ui_likes
 import org.jetbrains.compose.resources.stringResource
 
 class StatusListTabStatusListScreen(
@@ -31,8 +29,8 @@ class StatusListTabStatusListScreen(
         @Composable
         get() = PagerTabOptions(
             title = when (type) {
-                StatusListType.BOOKMARKS -> stringResource(Res.string.status_ui_bookmarks)
-                StatusListType.FAVOURITES -> stringResource(Res.string.status_ui_likes)
+                StatusListType.BOOKMARKS -> stringResource(LocalizedString.statusUiBookmarks)
+                StatusListType.FAVOURITES -> stringResource(LocalizedString.statusUiLikes)
             },
         )
 

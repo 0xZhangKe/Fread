@@ -35,13 +35,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_empty
-import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_search_failed
-import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_search_in
-import com.zhangke.fread.commonbiz.shared.screen.select_account_open_status_title
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
-import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol
@@ -111,7 +106,7 @@ class SelectAccountOpenStatusScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    text = stringResource(Res.string.select_account_open_status_title),
+                    text = stringResource(LocalizedString.selectAccountOpenStatusTitle),
                     fontSize = 18.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -124,7 +119,7 @@ class SelectAccountOpenStatusScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = stringResource(Res.string.select_account_open_status_empty)
+                            text = stringResource(LocalizedString.selectAccountOpenStatusEmpty)
                         )
                     }
                 } else {
@@ -188,13 +183,13 @@ class SelectAccountOpenStatusScreen(
             Spacer(modifier = Modifier.height(16.dp))
             if (uiState.searchFailed) {
                 Text(
-                    text = stringResource(Res.string.select_account_open_status_search_failed),
+                    text = stringResource(LocalizedString.selectAccountOpenStatusSearchFailed),
                     style = MaterialTheme.typography.titleMedium,
                 )
             } else {
                 Text(
                     text = stringResource(
-                        Res.string.select_account_open_status_search_in,
+                        LocalizedString.selectAccountOpenStatusSearchIn,
                         uiState.searchingAccount?.platform?.name.orEmpty(),
                     ),
                     style = MaterialTheme.typography.titleMedium,
@@ -213,7 +208,7 @@ class SelectAccountOpenStatusScreen(
                 },
             ) {
                 Text(
-                    text = stringResource(com.zhangke.fread.framework.Res.string.cancel)
+                    text = stringResource(LocalizedString.cancel)
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))

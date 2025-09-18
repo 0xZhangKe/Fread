@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.fread.common.resources.logo
-import com.zhangke.fread.commonbiz.login
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -114,7 +114,7 @@ fun BlogPlatformCard(
                         onClick = onLoginClick,
                     ) {
                         Text(
-                            text = stringResource(com.zhangke.fread.commonbiz.Res.string.login),
+                            text = stringResource(LocalizedString.login),
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))

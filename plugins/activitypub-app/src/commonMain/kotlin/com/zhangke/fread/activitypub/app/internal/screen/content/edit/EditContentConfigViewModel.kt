@@ -4,13 +4,11 @@ import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_screen_config_not_found
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.usecase.content.ReorderActivityPubTabUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.commonbiz.add_feeds_page_empty_name_exist
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -40,7 +38,7 @@ class EditContentConfigViewModel @Inject constructor(
             contentRepo.getContentFlow(contentId)
                 .collect { content ->
                     if (content !is ActivityPubContent) {
-                        _snackbarMessageFlow.emit(textOf(Res.string.activity_pub_edit_content_screen_config_not_found))
+                        _snackbarMessageFlow.emit(textOf(LocalizedString.activity_pub_edit_content_screen_config_not_found))
                         return@collect
                     }
                     _uiState.value = EditContentConfigUiState(content)
@@ -99,7 +97,7 @@ class EditContentConfigViewModel @Inject constructor(
     fun onEditNameClick(contentName: String) {
         launchInViewModel {
             if (contentRepo.checkNameExist(contentName)) {
-                _snackbarMessageFlow.emit(textOf(com.zhangke.fread.commonbiz.Res.string.add_feeds_page_empty_name_exist))
+                _snackbarMessageFlow.emit(textOf(LocalizedString.addFeedsPageEmptyNameExist))
                 return@launchInViewModel
             }
             val newContent = contentRepo.getContent(contentId)

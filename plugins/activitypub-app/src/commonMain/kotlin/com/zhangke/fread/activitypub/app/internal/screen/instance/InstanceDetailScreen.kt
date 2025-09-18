@@ -43,13 +43,11 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.navigationResult
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_instance_detail_active_month_label
-import com.zhangke.fread.activitypub.app.activity_pub_instance_detail_language_label
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
@@ -199,7 +197,7 @@ class InstanceDetailScreen(
                     .padding(top = 4.dp)
                     .freadPlaceholder(visible = loading),
                 text = stringResource(
-                    Res.string.activity_pub_instance_detail_language_label,
+                    LocalizedString.activity_pub_instance_detail_language_label,
                     languageString
                 ),
                 maxLines = 3,
@@ -210,7 +208,7 @@ class InstanceDetailScreen(
                     .padding(top = 4.dp)
                     .freadPlaceholder(visible = loading),
                 text = stringResource(
-                    Res.string.activity_pub_instance_detail_active_month_label,
+                    LocalizedString.activity_pub_instance_detail_active_month_label,
                     instance?.usage?.users?.activeMonth.toString()
                 ),
                 style = MaterialTheme.typography.bodyMedium,

@@ -1,10 +1,7 @@
 package com.zhangke.framework.composable
 
 import androidx.compose.runtime.Composable
-import com.zhangke.fread.framework.Res
-import com.zhangke.fread.framework.alert
-import com.zhangke.fread.framework.cancel
-import com.zhangke.fread.framework.ok
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -15,14 +12,14 @@ fun AlertConfirmDialog(
 ) {
     FreadDialog(
         onDismissRequest = onDismissRequest,
-        title = stringResource(Res.string.alert),
+        title = stringResource(LocalizedString.alert),
         contentText = content,
-        positiveButtonText = stringResource(Res.string.ok),
+        positiveButtonText = stringResource(LocalizedString.ok),
         onPositiveClick = {
             onDismissRequest()
             onConfirm()
         },
-        negativeButtonText = stringResource(Res.string.cancel),
+        negativeButtonText = stringResource(LocalizedString.cancel),
         onNegativeClick = onDismissRequest,
     )
 }

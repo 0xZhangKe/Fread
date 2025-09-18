@@ -148,7 +148,7 @@ class StatusContextSubViewModel(
                         status = status.updateFollowingState(anchorAuthorFollowing!!)
                     )
                 } else {
-                    statusContext
+                    statusContext.copy(status = status)
                 }
             }
             .onSuccess { statusContext ->

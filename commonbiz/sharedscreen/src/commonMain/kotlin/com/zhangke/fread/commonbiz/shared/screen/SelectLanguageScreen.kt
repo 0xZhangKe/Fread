@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -30,6 +30,7 @@ import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 import kotlin.jvm.Transient
 
@@ -55,7 +56,7 @@ class SelectLanguageScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.shared_select_language_title),
+                    title = stringResource(LocalizedString.sharedSelectLanguageTitle),
                     onBackClick = navigator::pop,
                     actions = {
                         if (multipleSelection) {

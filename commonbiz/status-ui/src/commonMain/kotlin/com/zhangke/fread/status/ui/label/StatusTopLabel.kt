@@ -19,15 +19,12 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_status_forward
-import com.zhangke.fread.statusui.status_ui_boosted
-import com.zhangke.fread.statusui.status_ui_label_pinned
-import com.zhangke.fread.statusui.status_ui_top_label_continued_thread
-import com.zhangke.fread.statusui.status_ui_visibility_mentioned_only
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -39,7 +36,7 @@ fun StatusMentionOnlyLabel(
     IconWithTextLabel(
         modifier = modifier,
         icon = Icons.Default.AlternateEmail,
-        text = stringResource(Res.string.status_ui_visibility_mentioned_only),
+        text = stringResource(LocalizedString.statusUiVisibilityMentionedOnly),
         style = style,
         color = MaterialTheme.colorScheme.primary,
     )
@@ -81,7 +78,7 @@ fun ReblogTopLabel(
         )
         Text(
             modifier = Modifier.padding(start = 4.dp),
-            text = stringResource(Res.string.status_ui_boosted),
+            text = stringResource(LocalizedString.statusUiBoosted),
             maxLines = 1,
             style = MaterialTheme.typography.bodySmall,
             fontSize = style.topLabelStyle.textSize,
@@ -98,7 +95,7 @@ fun StatusPinnedLabel(
     IconWithTextLabel(
         modifier = modifier,
         icon = Icons.Default.PushPin,
-        text = stringResource(Res.string.status_ui_label_pinned),
+        text = stringResource(LocalizedString.statusUiLabelPinned),
         style = style,
     )
 }
@@ -116,7 +113,7 @@ fun ContinueThread(
             end = style.containerEndPadding,
         ).onSizeChanged { onHeightChanged(it.height) },
         maxLines = 1,
-        text = stringResource(Res.string.status_ui_top_label_continued_thread),
+        text = stringResource(LocalizedString.statusUiTopLabelContinuedThread),
         color = style.secondaryFontColor,
         fontSize = style.topLabelStyle.textSize,
         textDecoration = TextDecoration.Underline,

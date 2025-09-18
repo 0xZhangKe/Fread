@@ -34,7 +34,7 @@ import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.onOpenBlogWithOtherAccountClick
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
-import com.zhangke.fread.commonbiz.shared.screen.shared_status_context_screen_title
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -130,7 +130,7 @@ data class StatusContextScreen(
             },
             topBar = {
                 Toolbar(
-                    title = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_status_context_screen_title),
+                    title = stringResource(LocalizedString.sharedStatusContextScreenTitle),
                     onBackClick = onBackClick,
                     actions = {
                         if (uiState.currentAccount != null) {

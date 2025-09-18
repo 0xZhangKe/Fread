@@ -35,9 +35,7 @@ import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
-import com.zhangke.fread.feature.profile.Res
-import com.zhangke.fread.feature.profile.profile_account_not_login
-import com.zhangke.fread.feature.profile.profile_page_title
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import org.jetbrains.compose.resources.stringResource
@@ -90,7 +88,7 @@ class ProfileScreen : BaseScreen() {
                     title = {
                         Text(
                             modifier = Modifier,
-                            text = stringResource(Res.string.profile_page_title),
+                            text = stringResource(LocalizedString.profilePageTitle),
                             color = MaterialTheme.colorScheme.onSurface,
                         )
                     },
@@ -148,7 +146,7 @@ class ProfileScreen : BaseScreen() {
                             contentColor = MaterialTheme.colorScheme.error,
                         ),
                     ) {
-                        Text(text = stringResource(Res.string.profile_account_not_login))
+                        Text(text = stringResource(LocalizedString.profileAccountNotLogin))
                     }
                 }
             } else {

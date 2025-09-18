@@ -26,8 +26,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.fread.explore.Res
-import com.zhangke.fread.explore.explorer_search_tab_title_status
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -38,7 +37,7 @@ internal class SearchedStatusTab(private val locator: PlatformLocator, private v
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
-            title = stringResource(Res.string.explorer_search_tab_title_status),
+            title = stringResource(LocalizedString.explorerSearchTabTitleStatus),
         )
 
     @OptIn(ExperimentalVoyagerApi::class)

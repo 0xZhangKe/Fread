@@ -36,14 +36,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_user_detail_action_block_user
-import com.zhangke.fread.bluesky.bsky_user_detail_action_block_user_dialog_message
-import com.zhangke.fread.bluesky.bsky_user_detail_action_blocked_list
-import com.zhangke.fread.bluesky.bsky_user_detail_action_mute_user
-import com.zhangke.fread.bluesky.bsky_user_detail_action_mute_user_dialog_message
-import com.zhangke.fread.bluesky.bsky_user_detail_action_muted_list
-import com.zhangke.fread.bluesky.bsky_user_detail_action_unmute_user
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPage
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreen
@@ -55,9 +47,8 @@ import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.feeds
-import com.zhangke.fread.commonbiz.search
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
@@ -69,12 +60,7 @@ import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.user.UserHandleLine
-import com.zhangke.fread.statusui.status_ui_edit_profile
-import com.zhangke.fread.statusui.status_ui_logout
-import com.zhangke.fread.statusui.status_ui_logout_dialog_content
 import org.jetbrains.compose.resources.stringResource
-import com.zhangke.fread.commonbiz.Res as CommonBizRes
-import com.zhangke.fread.statusui.Res as StatusUiRes
 
 class BskyUserDetailScreen(
     private val locator: PlatformLocator,
@@ -230,7 +216,7 @@ class BskyUserDetailScreen(
                         onClick = onEditProfileClick,
                     ) {
                         Text(
-                            text = stringResource(StatusUiRes.string.status_ui_edit_profile)
+                            text = stringResource(LocalizedString.statusUiEditProfile)
                         )
                     }
                 } else if (uiState.relationship != null) {
@@ -285,13 +271,13 @@ private fun TopBarActions(
     SimpleIconButton(
         onClick = onSearchClick,
         imageVector = Icons.Default.Search,
-        contentDescription = stringResource(CommonBizRes.string.search),
+        contentDescription = stringResource(LocalizedString.search),
     )
     if (uiState.isOwner) {
         SimpleIconButton(
             onClick = onFollowingFeedsClick,
             imageVector = Icons.AutoMirrored.Outlined.ListAlt,
-            contentDescription = stringResource(CommonBizRes.string.feeds),
+            contentDescription = stringResource(LocalizedString.feeds),
         )
     }
     var showMorePopup by remember {
@@ -338,7 +324,7 @@ private fun TopBarActions(
     }
     if (showBlockUserConfirmDialog) {
         AlertConfirmDialog(
-            content = stringResource(Res.string.bsky_user_detail_action_block_user_dialog_message),
+            content = stringResource(LocalizedString.bsky_user_detail_action_block_user_dialog_message),
             onConfirm = {
                 showBlockUserConfirmDialog = false
                 onBlockClick()
@@ -348,7 +334,7 @@ private fun TopBarActions(
     }
     if (showMuteDialog) {
         AlertConfirmDialog(
-            content = stringResource(Res.string.bsky_user_detail_action_mute_user_dialog_message),
+            content = stringResource(LocalizedString.bsky_user_detail_action_mute_user_dialog_message),
             onConfirm = {
                 showMuteDialog = false
                 onMuteClick()
@@ -365,18 +351,18 @@ private fun SelfAccountActions(
     onLogoutClick: () -> Unit,
 ) {
     ModalDropdownMenuItem(
-        text = stringResource(Res.string.bsky_user_detail_action_muted_list),
+        text = stringResource(LocalizedString.bsky_user_detail_action_muted_list),
         imageVector = Icons.AutoMirrored.Filled.VolumeOff,
         onClick = onMuteUserListClick,
     )
     ModalDropdownMenuItem(
-        text = stringResource(Res.string.bsky_user_detail_action_blocked_list),
+        text = stringResource(LocalizedString.bsky_user_detail_action_blocked_list),
         imageVector = Icons.Default.Block,
         onClick = onBlockedUserListClick,
     )
     var showLogoutDialog by remember { mutableStateOf(false) }
     ModalDropdownMenuItem(
-        text = stringResource(StatusUiRes.string.status_ui_logout),
+        text = stringResource(LocalizedString.statusUiLogout),
         imageVector = Icons.AutoMirrored.Filled.Logout,
         colors = MenuDefaults.itemColors(
             textColor = MaterialTheme.colorScheme.error,
@@ -387,7 +373,7 @@ private fun SelfAccountActions(
     if (showLogoutDialog) {
         FreadDialog(
             onDismissRequest = { showLogoutDialog = false },
-            contentText = stringResource(StatusUiRes.string.status_ui_logout_dialog_content),
+            contentText = stringResource(LocalizedString.statusUiLogoutDialogContent),
             onPositiveClick = {
                 showLogoutDialog = false
                 onLogoutClick()
@@ -407,9 +393,9 @@ private fun OtherAccountActions(
 ) {
     val fixedName = uiState.displayName?.take(10).orEmpty()
     val muteOrUnmuteText = if (uiState.muted) {
-        stringResource(Res.string.bsky_user_detail_action_unmute_user)
+        stringResource(LocalizedString.bsky_user_detail_action_unmute_user)
     } else {
-        stringResource(Res.string.bsky_user_detail_action_mute_user, fixedName)
+        stringResource(LocalizedString.bsky_user_detail_action_mute_user, fixedName)
     }
     ModalDropdownMenuItem(
         text = muteOrUnmuteText,
@@ -425,7 +411,7 @@ private fun OtherAccountActions(
     )
     if (!uiState.blocked) {
         ModalDropdownMenuItem(
-            text = stringResource(Res.string.bsky_user_detail_action_block_user, fixedName),
+            text = stringResource(LocalizedString.bsky_user_detail_action_block_user, fixedName),
             imageVector = Icons.Default.Block,
             onClick = {
                 onDismissMorePopupRequest()

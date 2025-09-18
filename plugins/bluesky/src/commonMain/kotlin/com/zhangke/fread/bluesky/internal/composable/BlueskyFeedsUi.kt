@@ -35,11 +35,8 @@ import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.utils.formatToHumanReadable
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_feeds_explorer_creator_label
-import com.zhangke.fread.bluesky.bsky_feeds_explorer_liked_by
-import com.zhangke.fread.bluesky.bsky_feeds_item_subtitle
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.statusui.ic_drag_indicator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -94,7 +91,7 @@ fun BlueskyFollowingFeeds(
 private fun buildFeedsSubtitle(feeds: BlueskyFeeds): String? {
     if (feeds !is BlueskyFeeds.Feeds) return null
     return stringResource(
-        Res.string.bsky_feeds_item_subtitle,
+        LocalizedString.bsky_feeds_item_subtitle,
         feeds.creator.prettyHandle,
         (feeds.likeCount ?: 0).formatToHumanReadable(),
     )
@@ -134,7 +131,7 @@ fun BlueskyExploringFeeds(
                     Text(
                         modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                         text = stringResource(
-                            Res.string.bsky_feeds_explorer_creator_label,
+                            LocalizedString.bsky_feeds_explorer_creator_label,
                             feeds.creatorName!!,
                         ),
                         style = MaterialTheme.typography.labelMedium,
@@ -170,7 +167,7 @@ fun BlueskyExploringFeeds(
         Text(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             text = stringResource(
-                Res.string.bsky_feeds_explorer_liked_by,
+                LocalizedString.bsky_feeds_explorer_liked_by,
                 (feeds.likeCount ?: 0L).formatToHumanReadable(),
             ),
             style = MaterialTheme.typography.labelMedium,

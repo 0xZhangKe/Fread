@@ -22,11 +22,9 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_about
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_about_joined
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -41,7 +39,7 @@ internal class UserAboutTab(
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
-            title = stringResource(Res.string.activity_pub_user_detail_tab_about)
+            title = stringResource(LocalizedString.activity_pub_user_detail_tab_about)
         )
 
     @Composable
@@ -79,7 +77,7 @@ internal class UserAboutTab(
             if (!uiState.joinedDatetime.isNullOrEmpty()) {
                 Text(
                     text = stringResource(
-                        Res.string.activity_pub_user_detail_tab_about_joined,
+                        LocalizedString.activity_pub_user_detail_tab_about_joined,
                         uiState.joinedDatetime
                     ),
                 )

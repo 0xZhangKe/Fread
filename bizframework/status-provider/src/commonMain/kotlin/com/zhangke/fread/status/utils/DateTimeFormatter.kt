@@ -2,12 +2,7 @@ package com.zhangke.fread.status.utils
 
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.Composable
-import fread.bizframework.status_provider.generated.resources.Res
-import fread.bizframework.status_provider.generated.resources.date_time_ago
-import fread.bizframework.status_provider.generated.resources.date_time_day
-import fread.bizframework.status_provider.generated.resources.date_time_hour
-import fread.bizframework.status_provider.generated.resources.date_time_minute
-import fread.bizframework.status_provider.generated.resources.date_time_second
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.format
@@ -87,18 +82,18 @@ data class DatetimeFormatConfig(
 )
 
 suspend fun defaultFormatConfig() = DatetimeFormatConfig(
-    ago = getString(Res.string.date_time_ago),
-    day = getString(Res.string.date_time_day),
-    hour = getString(Res.string.date_time_hour),
-    minutes = getString(Res.string.date_time_minute),
-    second = getString(Res.string.date_time_second),
+    ago = getString(LocalizedString.date_time_ago),
+    day = getString(LocalizedString.date_time_day),
+    hour = getString(LocalizedString.date_time_hour),
+    minutes = getString(LocalizedString.date_time_minute),
+    second = getString(LocalizedString.date_time_second),
 )
 
 @Composable
 fun defaultUiFormatConfig() = DatetimeFormatConfig(
-    ago = stringResource(Res.string.date_time_ago),
-    day = stringResource(Res.string.date_time_day),
-    hour = stringResource(Res.string.date_time_hour),
-    minutes = stringResource(Res.string.date_time_minute),
-    second = stringResource(Res.string.date_time_second),
+    ago = stringResource(LocalizedString.date_time_ago),
+    day = stringResource(LocalizedString.date_time_day),
+    hour = stringResource(LocalizedString.date_time_hour),
+    minutes = stringResource(LocalizedString.date_time_minute),
+    second = stringResource(LocalizedString.date_time_second),
 )

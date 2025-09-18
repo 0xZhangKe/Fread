@@ -41,10 +41,8 @@ import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.framework.utils.toPx
-import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_reply_input_hint
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.richtext.RichText
@@ -205,14 +203,14 @@ fun PublishPostScaffold(
                 placeholder = if (replyingBlog != null) {
                     HighlightTextBuildUtil.buildHighlightText(
                         text = stringResource(
-                            Res.string.shared_publish_reply_input_hint,
+                            LocalizedString.sharedPublishReplyInputHint,
                             replyingBlog.author.prettyHandle,
                         ),
                         highLightColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7F)
                     )
                 } else {
                     buildAnnotatedString {
-                        append(stringResource(Res.string.shared_publish_blog_text_hint))
+                        append(stringResource(LocalizedString.sharedPublishBlogTextHint))
                     }
                 },
             )

@@ -38,10 +38,8 @@ import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_select_platform_text_hint
-import com.zhangke.fread.activitypub.app.activity_pub_select_platform_title
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
 import org.jetbrains.compose.resources.stringResource
@@ -86,7 +84,7 @@ class SelectPlatformScreen : BaseScreen() {
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.activity_pub_select_platform_title),
+                    title = stringResource(LocalizedString.activity_pub_select_platform_title),
                     onBackClick = onBackClick,
                 )
             },
@@ -110,7 +108,7 @@ class SelectPlatformScreen : BaseScreen() {
                     ),
                     placeholder = {
                         Text(
-                            text = stringResource(Res.string.activity_pub_select_platform_text_hint),
+                            text = stringResource(LocalizedString.activity_pub_select_platform_text_hint),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     },

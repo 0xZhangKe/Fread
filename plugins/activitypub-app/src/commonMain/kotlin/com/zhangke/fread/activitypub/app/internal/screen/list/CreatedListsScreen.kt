@@ -31,11 +31,10 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_created_list_title
 import com.zhangke.fread.activitypub.app.internal.screen.list.add.AddListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListScreen
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
 
@@ -79,7 +78,7 @@ class CreatedListsScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(Res.string.activity_pub_created_list_title),
+                    title = stringResource(LocalizedString.activity_pub_created_list_title),
                     onBackClick = onBackClick,
                 )
             },

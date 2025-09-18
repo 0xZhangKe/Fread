@@ -25,12 +25,11 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
-import com.zhangke.fread.bluesky.Res
-import com.zhangke.fread.bluesky.bsky_feeds_explorer_more
 import com.zhangke.fread.bluesky.internal.composable.BlueskyExploringFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreen
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
 import org.jetbrains.compose.resources.stringResource
@@ -84,7 +83,7 @@ class ExplorerFeedsScreen(
             topBar = {
                 if (!inlineMode) {
                     Toolbar(
-                        title = stringResource(Res.string.bsky_feeds_explorer_more),
+                        title = stringResource(LocalizedString.bsky_feeds_explorer_more),
                         onBackClick = onBackClick,
                     )
                 }

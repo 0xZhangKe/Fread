@@ -20,10 +20,11 @@ class StatusResolver(
 
     suspend fun getStatus(
         locator: PlatformLocator,
-        blog: Blog,
+        blogId: String?,
+        blogUri: String?,
         platform: BlogPlatform,
     ): Result<StatusUiState> {
-        return resolverList.mapFirst { it.getStatus(locator, blog, platform) }
+        return resolverList.mapFirst { it.getStatus(locator, blogId, blogUri, platform) }
     }
 
     suspend fun getStatusList(
@@ -96,7 +97,8 @@ interface IStatusResolver {
 
     suspend fun getStatus(
         locator: PlatformLocator,
-        blog: Blog,
+        blogId: String?,
+        blogUri: String?,
         platform: BlogPlatform,
     ): Result<StatusUiState>?
 

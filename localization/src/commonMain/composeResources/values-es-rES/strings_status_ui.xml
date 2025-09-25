@@ -117,4 +117,5 @@
     <string name="shared_select_language_title">Seleccionar idioma</string>
     <string name="shared_status_context_screen_title">Detalle</string>
     <string name="shared_alt_label">ALT</string>
+    <string name="status_ui_embed_quote_unavailable">La cita actual no está disponible</string>
 </resources>

@@ -14,6 +14,7 @@ import com.fleeksoft.ksoup.nodes.TextNode
 import com.fleeksoft.ksoup.select.NodeVisitor
 import com.zhangke.framework.architect.theme.primaryLight
 import com.zhangke.framework.network.SimpleUri
+import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.Facet
@@ -61,11 +62,11 @@ object HtmlParser {
         private val popQueue = ArrayDeque<Int>()
 
         private var skip = false
+        private var inQuoteInline = false
 
         override fun head(node: Node, depth: Int) {
-            if (skip) {
-                return
-            }
+            if (skip) return
+            if (inQuoteInline) return
             if (node is TextNode) {
                 spanBuilder.appendWithEmoji(node.text(), emojis)
                 return
@@ -75,7 +76,9 @@ object HtmlParser {
                     "br" -> spanBuilder.appendLine()
 
                     "p" -> {
-                        if (spanBuilder.length > 0) {
+                        if (node.hasClass("quote-inline")) {
+                            inQuoteInline = true
+                        } else if (spanBuilder.length > 0) {
                             spanBuilder.appendLine()
                         }
                     }
@@ -154,6 +157,12 @@ object HtmlParser {
                     "a" -> {
                         if (popQueue.isNotEmpty()) {
                             spanBuilder.pop(popQueue.removeLast())
+                        }
+                    }
+
+                    "p" ->{
+                        if (node.hasClass("quote-inline")) {
+                            inQuoteInline = false
                         }
                     }
 

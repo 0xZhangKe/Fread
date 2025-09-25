@@ -40,6 +40,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
@@ -52,6 +53,8 @@ data class StatusContextScreen(
     val locator: PlatformLocator,
     val serializedStatus: String? = null,
     val serializedBlog: String? = null,
+    val blogId: String? = null,
+    val platform: BlogPlatform? = null,
     val blogTranslationUiState: BlogTranslationUiState? = null,
 ) : BaseScreen() {
 
@@ -74,10 +77,23 @@ data class StatusContextScreen(
                 blogTranslationUiState = null,
             )
         }
+
+        fun create(
+            locator: PlatformLocator,
+            blogId: String,
+            platform: BlogPlatform
+        ): StatusContextScreen {
+            return StatusContextScreen(
+                locator = locator,
+                blogId = blogId,
+                blogTranslationUiState = null,
+                platform = platform,
+            )
+        }
     }
 
     override val key: ScreenKey =
-        locator.toString() + serializedStatus?.let(Md5::md5) + serializedBlog?.let(Md5::md5)
+        locator.toString() + serializedStatus?.let(Md5::md5) + serializedBlog?.let(Md5::md5) + blogId + platform
 
     @Composable
     override fun Content() {
@@ -88,6 +104,8 @@ data class StatusContextScreen(
             locator = locator,
             anchorStatus = serializedStatus?.let(globalJson::decodeFromString),
             blog = serializedBlog?.let { globalJson.decodeFromString(it) },
+            blogId = blogId,
+            platform = platform,
             blogTranslationUiState = blogTranslationUiState,
         )
         val uiState by viewModel.uiState.collectAsState()

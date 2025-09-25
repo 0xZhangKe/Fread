@@ -21,6 +21,7 @@ import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.updateStatus
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.preParse
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -214,6 +215,10 @@ class FeedsViewModelController(
 
     override fun onBlogClick(locator: PlatformLocator, blog: Blog) {
         interactiveHandler.onBlogClick(locator, blog)
+    }
+
+    override fun onBlogIdClick(locator: PlatformLocator, platform: BlogPlatform, blogId: String) {
+        interactiveHandler.onBlogIdClick(locator, platform, blogId)
     }
 
     override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {

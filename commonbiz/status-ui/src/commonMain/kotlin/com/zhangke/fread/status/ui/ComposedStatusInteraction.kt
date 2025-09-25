@@ -10,6 +10,7 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.platform.BlogPlatform
 
 
 interface ComposedStatusInteraction {
@@ -29,6 +30,7 @@ interface ComposedStatusInteraction {
     fun onMentionClick(locator: PlatformLocator, did: String, protocol: StatusProviderProtocol)
     fun onStatusClick(status: StatusUiState)
     fun onBlogClick(locator: PlatformLocator, blog: Blog)
+    fun onBlogIdClick(locator: PlatformLocator, platform: BlogPlatform, blogId: String)
     fun onBlockClick(locator: PlatformLocator, blog: Blog)
     fun onFollowClick(locator: PlatformLocator, target: BlogAuthor)
     fun onUnfollowClick(locator: PlatformLocator, target: BlogAuthor)

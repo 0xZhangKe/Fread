@@ -1,6 +1,7 @@
 package com.zhangke.fread.commonbiz.shared.screen.status.context
 
 import com.zhangke.framework.composable.emitInViewModel
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
@@ -13,11 +14,13 @@ import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.updateFollowingState
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.DescendantStatus
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
@@ -34,7 +37,9 @@ class StatusContextSubViewModel(
     private val locator: PlatformLocator,
     anchorStatus: StatusUiState?,
     blog: Blog?,
+    private val blogId: String?,
     private val blogTranslationUiState: BlogTranslationUiState?,
+    private val platform: BlogPlatform?,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -53,22 +58,28 @@ class StatusContextSubViewModel(
     )
     val uiState = _uiState.asStateFlow()
 
-    private val anchorStatus: StatusUiState =
-        anchorStatus ?: statusUiStateAdapter.toStatusUiStateSnapshot(
+    private val anchorStatus: StatusUiState? = anchorStatus ?: blog?.let {
+        statusUiStateAdapter.toStatusUiStateSnapshot(
             locator = locator,
-            status = Status.NewBlog(blog!!),
+            status = Status.NewBlog(it),
             blogTranslationState = blogTranslationUiState,
         )
+    }
 
     private var anchorAuthorFollowing: Boolean? = null
 
     init {
-        _uiState.update {
-            it.copy(
-                contextStatus = listOf(
-                    StatusInContext(type = StatusInContextType.ANCHOR, status = this.anchorStatus)
+        if (this.anchorStatus != null) {
+            _uiState.update {
+                it.copy(
+                    contextStatus = listOf(
+                        StatusInContext(
+                            type = StatusInContextType.ANCHOR,
+                            status = this.anchorStatus
+                        )
+                    )
                 )
-            )
+            }
         }
         initInteractiveHandler(
             coroutineScope = viewModelScope,
@@ -109,7 +120,11 @@ class StatusContextSubViewModel(
         launchInViewModel {
             loadStatusContext()
         }
-        loadAnchorFollowingState()
+        val anchorAuthor = this.anchorStatus?.status?.intrinsicBlog?.author
+            ?: _uiState.value.anchorStatus?.status?.status?.intrinsicBlog?.author
+        if (anchorAuthor != null) {
+            loadAnchorFollowingState(anchorAuthor)
+        }
     }
 
     fun onScrolledToAnchor() {
@@ -129,6 +144,21 @@ class StatusContextSubViewModel(
 
     private suspend fun loadStatusContext() {
         _uiState.update { it.copy(loading = true) }
+        var anchorStatus = this.anchorStatus
+        if (anchorStatus == null && !blogId.isNullOrEmpty() && platform != null) {
+            anchorStatus = loadStatus(
+                blogId = blogId,
+                blogUri = null,
+                platform = platform,
+            )
+            if (anchorStatus != null) {
+                loadAnchorFollowingState(anchorStatus.status.intrinsicBlog.author)
+            }
+        }
+        if (anchorStatus == null) {
+            _uiState.update { it.copy(errorMessage = textOf("Blog not found.")) }
+            return
+        }
         statusProvider.statusResolver
             .getStatusContext(locator, anchorStatus.status)
             .map { statusContext ->
@@ -142,7 +172,7 @@ class StatusContextSubViewModel(
                     } else {
                         it
                     }
-                } ?: loadStatus() ?: anchorStatus
+                } ?: loadStatus(anchorStatus.status.intrinsicBlog) ?: anchorStatus
                 if (anchorAuthorFollowing != null) {
                     statusContext.copy(
                         status = status.updateFollowingState(anchorAuthorFollowing!!)
@@ -170,10 +200,28 @@ class StatusContextSubViewModel(
             }
     }
 
-    private suspend fun loadStatus(): StatusUiState? {
+    private suspend fun loadStatus(
+        blog: Blog
+    ): StatusUiState? {
+        return loadStatus(
+            blogId = blog.id,
+            blogUri = blog.url,
+            platform = blog.platform,
+        )
+    }
+
+    private suspend fun loadStatus(
+        blogId: String?,
+        blogUri: String?,
+        platform: BlogPlatform,
+    ): StatusUiState? {
         return statusProvider.statusResolver
-            .getStatus(locator, anchorStatus.status.intrinsicBlog, anchorStatus.status.platform)
-            .map {
+            .getStatus(
+                locator = locator,
+                blogId = blogId,
+                blogUri = blogUri,
+                platform = platform,
+            ).map {
                 it.copy(blogTranslationState = blogTranslationUiState ?: it.blogTranslationState)
                 if (anchorAuthorFollowing != null) {
                     it.updateFollowingState(anchorAuthorFollowing!!)
@@ -242,12 +290,12 @@ class StatusContextSubViewModel(
         updateAnchorFollowingState()
     }
 
-    private fun loadAnchorFollowingState() {
+    private fun loadAnchorFollowingState(author: BlogAuthor) {
         launchInViewModel {
             statusProvider.statusResolver
                 .isFollowing(
                     locator = locator,
-                    target = anchorStatus.status.intrinsicBlog.author,
+                    target = author,
                 )?.onSuccess { following ->
                     anchorAuthorFollowing = following
                     updateAnchorFollowingState()

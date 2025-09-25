@@ -130,6 +130,13 @@ fun StatusUi(
             onOpenBlogWithOtherAccountClick = {
                 onOpenBlogWithOtherAccountClick(status)
             },
+            onUnavailableQuoteClick = {
+                composedStatusInteraction.onBlogIdClick(
+                    locator = status.locator,
+                    platform = status.status.platform,
+                    blogId = rawStatus.id,
+                )
+            },
         )
     }
 }

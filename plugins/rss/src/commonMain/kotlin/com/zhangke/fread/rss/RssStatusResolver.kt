@@ -29,7 +29,8 @@ class RssStatusResolver @Inject constructor(
 
     override suspend fun getStatus(
         locator: PlatformLocator,
-        blog: Blog,
+        blogId: String?,
+        blogUri: String?,
         platform: BlogPlatform
     ): Result<StatusUiState>? {
         return null

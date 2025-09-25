@@ -19,6 +19,7 @@ internal fun BlogEmbedsUi(
     style: StatusStyle,
     onContentClick: (Blog) -> Unit,
     onUrlClick: (url: String) -> Unit,
+    onUnavailableQuoteClick: (String) -> Unit,
 ) {
     if (embeds.isEmpty()) return
     embeds.forEach { embed ->
@@ -29,6 +30,7 @@ internal fun BlogEmbedsUi(
             style = style,
             onUrlClick = onUrlClick,
             onContentClick = onContentClick,
+            onUnavailableQuoteClick = onUnavailableQuoteClick,
         )
     }
 }
@@ -40,6 +42,7 @@ private fun BlogEmbedUi(
     style: StatusStyle,
     onContentClick: (Blog) -> Unit,
     onUrlClick: (url: String) -> Unit,
+    onUnavailableQuoteClick: (String) -> Unit,
 ) {
     when (embed) {
         is BlogEmbed.Link -> {
@@ -61,6 +64,14 @@ private fun BlogEmbedUi(
                 blog = embed.blog,
                 style = style,
                 onContentClick = onContentClick,
+            )
+        }
+
+        is BlogEmbed.UnavailableQuote -> {
+            UnavailableQuoteInEmbedding(
+                modifier = modifier.embedBorder().padding(16.dp),
+                unavailableQuote = embed,
+                onContentClick = onUnavailableQuoteClick,
             )
         }
     }

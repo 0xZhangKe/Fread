@@ -42,15 +42,17 @@ class ActivityPubStatusResolver @Inject constructor(
 
     override suspend fun getStatus(
         locator: PlatformLocator,
-        blog: Blog,
+        blogId: String?,
+        blogUri: String?,
         platform: BlogPlatform
     ): Result<StatusUiState>? {
         if (platform.protocol.notActivityPub) return null
         val statusRepo = clientManager.getClient(locator).statusRepo
         val loggedAccount = loggedAccountProvider.getAccount(locator)
-        return statusRepo.getStatuses(blog.id)
+        if (blogId.isNullOrEmpty()) return Result.failure(IllegalArgumentException("blogId is null or empty!"))
+        return statusRepo.getStatuses(blogId)
             .mapCatching { entity ->
-                if (entity == null) throw RuntimeException("Can't find status(${blog.id})")
+                if (entity == null) throw IllegalArgumentException("Can't find status(${blogId})")
                 activityPubStatusAdapter.toStatusUiState(
                     entity = entity,
                     platform = platform,

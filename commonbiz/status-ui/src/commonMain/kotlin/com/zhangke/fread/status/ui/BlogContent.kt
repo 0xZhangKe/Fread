@@ -76,6 +76,7 @@ fun BlogContent(
     onMentionClick: (Mention) -> Unit = {},
     onMentionDidClick: (String) -> Unit = {},
     onShowOriginalClick: () -> Unit,
+    onUnavailableQuoteClick: (String) -> Unit,
     detailModel: Boolean = false,
     editedTime: String? = null,
 ) {
@@ -148,6 +149,7 @@ fun BlogContent(
                 style = style,
                 onContentClick = onBlogClick,
                 onUrlClick = onUrlClick,
+                onUnavailableQuoteClick = onUnavailableQuoteClick,
             )
         }
 

@@ -117,4 +117,5 @@
     <string name="shared_select_language_title">Select Language</string>
     <string name="shared_status_context_screen_title">Detail</string>
     <string name="shared_alt_label">ALT</string>
+    <string name="status_ui_embed_quote_unavailable">The current quote is unavailable</string>
 </resources>

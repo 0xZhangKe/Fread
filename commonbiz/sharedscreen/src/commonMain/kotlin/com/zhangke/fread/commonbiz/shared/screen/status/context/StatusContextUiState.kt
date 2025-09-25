@@ -13,6 +13,8 @@ data class StatusContextUiState(
 ) {
 
     val anchorIndex: Int get() = contextStatus.indexOfFirst { it.type == StatusInContextType.ANCHOR }
+
+    val anchorStatus: StatusInContext? get() = contextStatus.getOrNull(anchorIndex)
 }
 
 data class StatusInContext(

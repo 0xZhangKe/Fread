@@ -43,13 +43,15 @@ class BlueskyStatusResolver @Inject constructor(
 
     override suspend fun getStatus(
         locator: PlatformLocator,
-        blog: Blog,
+        blogId: String?,
+        blogUri: String?,
         platform: BlogPlatform
     ): Result<StatusUiState>? {
         if (platform.protocol.notBluesky) return null
         val client = clientManager.getClient(locator)
         val account = client.loggedAccountProvider()
-        return client.getPostsCatching(GetPostsQueryParams(listOf(AtUri(blog.url))))
+        if (blogUri.isNullOrEmpty()) return Result.failure(IllegalArgumentException("blogUri is null!"))
+        return client.getPostsCatching(GetPostsQueryParams(listOf(AtUri(blogUri))))
             .map {
                 statusAdapter.convertToUiState(
                     locator = locator,

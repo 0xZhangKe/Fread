@@ -117,4 +117,5 @@
     <string name="shared_select_language_title">选择语言</string>
     <string name="shared_status_context_screen_title">详情</string>
     <string name="shared_alt_label">替代文本</string>
+    <string name="status_ui_embed_quote_unavailable">当前引用不可用</string>
 </resources>

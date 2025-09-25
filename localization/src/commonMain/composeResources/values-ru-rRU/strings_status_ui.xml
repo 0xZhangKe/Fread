@@ -117,4 +117,5 @@
     <string name="shared_select_language_title">Выберите язык</string>
     <string name="shared_status_context_screen_title">Детали</string>
     <string name="shared_alt_label">ALT</string>
+    <string name="status_ui_embed_quote_unavailable">Текущая цитата недоступна</string>
 </resources>

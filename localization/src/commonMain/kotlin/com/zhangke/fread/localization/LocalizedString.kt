@@ -626,4 +626,5 @@ object LocalizedString {
         localizedString.main_request_notification_dialog_allow_button
     val main_request_notification_dialog_content =
         localizedString.main_request_notification_dialog_content
+    val status_ui_embed_quote_unavailable = localizedString.status_ui_embed_quote_unavailable
 }

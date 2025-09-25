@@ -48,4 +48,10 @@ sealed interface BlogEmbed {
     data class Blog(
         val blog: com.zhangke.fread.status.blog.Blog,
     ) : BlogEmbed
+
+    @Serializable
+    data class UnavailableQuote(
+        val reason: String,
+        val blogId: String?,
+    ) : BlogEmbed
 }

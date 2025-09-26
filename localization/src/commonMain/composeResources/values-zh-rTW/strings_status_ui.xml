@@ -118,4 +118,5 @@
     <string name="shared_status_context_screen_title">詳情</string>
     <string name="shared_alt_label">替代文字</string>
     <string name="status_ui_embed_quote_unavailable">當前引用無法使用</string>
+    <string name="status_ui_action_unforward">取消轉發</string>
 </resources>

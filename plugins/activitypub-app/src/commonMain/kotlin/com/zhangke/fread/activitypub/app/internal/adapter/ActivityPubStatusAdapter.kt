@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.ActivityPubFilterEntity
 import com.zhangke.activitypub.entities.ActivityPubFilterResultEntity
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
+import com.zhangke.activitypub.entities.ActivityPubQuoteApprovalEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
@@ -15,6 +16,7 @@ import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.blog.PostingApplication
+import com.zhangke.fread.status.blog.QuoteApproval
 import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
@@ -166,9 +168,9 @@ class ActivityPubStatusAdapter @Inject constructor(
                 support = true,
                 repliesCount = entity.repliesCount.toLong(),
             ),
+            quote = buildQuote(entity),
             supportEdit = true,
             isReply = !entity.inReplyToId.isNullOrEmpty(),
-            quote = Blog.Quote(support = false),
             platform = platform,
             mediaList = entity.mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
             poll = entity.poll?.let(pollAdapter::adapt),
@@ -279,6 +281,23 @@ class ActivityPubStatusAdapter @Inject constructor(
             embedUrl = embedUrl,
             blurhash = blurhash,
         )
+    }
+
+    private fun buildQuote(entity: ActivityPubStatusEntity): Blog.Quote {
+        val currentUserApproval = entity.quoteApproval?.currentUser?.toApproval()
+        return Blog.Quote(
+            support = currentUserApproval?.quotable ?: false,
+            currentUserApproval = currentUserApproval,
+        )
+    }
+
+    private fun String.toApproval(): QuoteApproval {
+        return when (this) {
+            ActivityPubQuoteApprovalEntity.AUTOMATIC -> QuoteApproval.AUTOMATIC
+            ActivityPubQuoteApprovalEntity.MANUAL -> QuoteApproval.MANUAL
+            ActivityPubQuoteApprovalEntity.DENIED -> QuoteApproval.DENIED
+            else -> QuoteApproval.UNKNOWN
+        }
     }
 
     private fun ActivityPubStatusEntity.Application.toApplication(): PostingApplication {

@@ -118,4 +118,5 @@
     <string name="shared_status_context_screen_title">Details</string>
     <string name="shared_alt_label">ALT</string>
     <string name="status_ui_embed_quote_unavailable">Das aktuelle Zitat ist nicht verfügbar</string>
+    <string name="status_ui_action_unforward">Weiterleitung aufheben</string>
 </resources>

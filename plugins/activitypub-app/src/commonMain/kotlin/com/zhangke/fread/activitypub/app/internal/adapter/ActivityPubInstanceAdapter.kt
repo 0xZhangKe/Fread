@@ -11,7 +11,7 @@ class ActivityPubInstanceAdapter @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
 ) {
 
-    suspend fun toPlatform(
+    fun toPlatform(
         baseUrl: FormalBaseUrl,
         instance: ActivityPubInstanceEntity
     ): BlogPlatform {
@@ -26,6 +26,7 @@ class ActivityPubInstanceAdapter @Inject constructor(
             description = instance.description,
             protocol = createActivityPubProtocol(),
             thumbnail = instance.thumbnail.url,
+            supportsQuotePost = instance.supportsQuotePost,
         )
     }
 }

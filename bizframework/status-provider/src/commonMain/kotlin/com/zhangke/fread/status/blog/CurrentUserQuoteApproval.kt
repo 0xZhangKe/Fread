@@ -3,7 +3,7 @@ package com.zhangke.fread.status.blog
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class QuoteApproval {
+enum class CurrentUserQuoteApproval {
 
     AUTOMATIC,
     MANUAL,

@@ -119,4 +119,8 @@
     <string name="shared_alt_label">代替テキスト</string>
     <string name="status_ui_embed_quote_unavailable">現在の引用は利用できません</string>
     <string name="status_ui_action_unforward">再共有を取り消す</string>
+    <string name="status_ui_quote_approval_public">誰でも</string>
+    <string name="status_ui_quote_approval_follower">フォロワーのみ</string>
+    <string name="status_ui_quote_approval_nobody">自分のみ</string>
+    <string name="status_ui_visibility">公開範囲</string>
 </resources>

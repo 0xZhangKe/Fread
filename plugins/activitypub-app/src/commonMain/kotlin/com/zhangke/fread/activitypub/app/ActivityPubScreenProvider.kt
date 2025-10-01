@@ -33,33 +33,53 @@ class ActivityPubScreenProvider @Inject constructor(
 ) : IStatusScreenProvider {
 
     override fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
-        if (blog.platform.protocol.notActivityPub) return null
-        var accountUri = locator.accountUri
-        if (accountUri == null) {
-            accountUri = loggedAccountProvider.getAccount(locator.baseUrl)?.uri
-        }
-        accountUri ?: return null
-        return PostStatusScreenRoute.buildReplyScreen(
-            accountUri = accountUri,
+        return openPublishPostScreen(
+            locator = locator,
             blog = blog,
-        )
+        ) { accountUri, blog ->
+            PostStatusScreenRoute.buildReplyScreen(
+                accountUri = accountUri,
+                blog = blog,
+            )
+        }
     }
 
     override fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+        return openPublishPostScreen(
+            locator = locator,
+            blog = blog,
+        ) { accountUri, blog ->
+            PostStatusScreenRoute.buildEditBlogRoute(
+                accountUri = accountUri,
+                blog = blog,
+            )
+        }
+    }
+
+    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+        return openPublishPostScreen(
+            locator = locator,
+            blog = blog,
+        ) { accountUri, blog ->
+            PostStatusScreenRoute.buildQuoteBlogScreen(
+                accountUri = accountUri,
+                quoteBlog = blog,
+            )
+        }
+    }
+
+    private fun openPublishPostScreen(
+        locator: PlatformLocator,
+        blog: Blog,
+        builder: (FormalUri, Blog) -> Screen,
+    ): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = locator.accountUri
         if (accountUri == null) {
             accountUri = loggedAccountProvider.getAccount(locator.baseUrl)?.uri
         }
         accountUri ?: return null
-        return PostStatusScreenRoute.buildEditBlogRoute(
-            accountUri = accountUri,
-            blog = blog,
-        )
-    }
-
-    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
-        return null
+        return builder(accountUri, blog)
     }
 
     override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {

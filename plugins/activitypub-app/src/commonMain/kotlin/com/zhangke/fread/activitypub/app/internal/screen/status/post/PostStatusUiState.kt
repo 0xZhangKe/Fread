@@ -10,6 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.QuoteApprovalPolicy
 import com.zhangke.fread.status.model.StatusVisibility
 import kotlin.time.Duration
 
@@ -24,11 +25,13 @@ data class PostStatusUiState(
     val sensitive: Boolean,
     val warningContent: TextFieldValue,
     val replyToBlog: Blog?,
+    val quotingBlog: Blog?,
     val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
     val rules: PostBlogRules,
     val publishing: Boolean,
     val mentionState: LoadableState<List<ActivityPubAccountEntity>>,
+    val quoteApprovalPolicy: QuoteApprovalPolicy,
 ) {
 
     val allowedInputCount: Int get() = rules.maxCharacters - content.text.length
@@ -49,7 +52,8 @@ data class PostStatusUiState(
             account: ActivityPubLoggedAccount,
             allLoggedAccount: List<ActivityPubLoggedAccount>,
             visibility: StatusVisibility,
-            replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
+            replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams? = null,
+            quotingInfo: PostStatusScreenParams.QuoteBlogParams? = null,
             content: TextFieldValue = TextFieldValue(""),
             sensitive: Boolean = false,
             warningContent: TextFieldValue = TextFieldValue(""),
@@ -66,6 +70,7 @@ data class PostStatusUiState(
                 visibility = visibility,
                 sensitive = sensitive,
                 replyToBlog = replyToAuthorInfo?.replyingToBlog,
+                quotingBlog = quotingInfo?.quoteBlog,
                 warningContent = warningContent,
                 emojiList = emptyList(),
                 language = language ?: getDefaultLocale(),
@@ -74,6 +79,7 @@ data class PostStatusUiState(
                 visibilityChangeable = visibilityChangeable,
                 publishing = false,
                 mentionState = LoadableState.idle(),
+                quoteApprovalPolicy = QuoteApprovalPolicy.PUBLIC,
             )
         }
     }

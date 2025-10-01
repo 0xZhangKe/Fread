@@ -50,6 +50,12 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
                 allLoggedAccount = allLoggedAccount,
                 editParams = screenParams,
             )
+
+            is PostStatusScreenParams.QuoteBlogParams -> buildQuotingPostUiState(
+                defaultAccount = defaultAccount,
+                allLoggedAccount = allLoggedAccount,
+                quotingParams = screenParams,
+            )
         }.let { Result.success(it) }
     }
 
@@ -81,6 +87,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             visibility = replyParams.replyingToBlog.visibility,
             replyToAuthorInfo = replyParams,
             accountChangeable = false,
+            quotingInfo = null,
         )
     }
 
@@ -102,6 +109,24 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             visibilityChangeable = false,
             accountChangeable = false,
             attachment = blog.generateAttachment(),
+            quotingInfo = null,
+        )
+    }
+
+    private fun buildQuotingPostUiState(
+        defaultAccount: ActivityPubLoggedAccount,
+        allLoggedAccount: List<ActivityPubLoggedAccount>,
+        quotingParams: PostStatusScreenParams.QuoteBlogParams,
+    ): PostStatusUiState {
+        return PostStatusUiState.default(
+            account = defaultAccount,
+            allLoggedAccount = allLoggedAccount,
+            content = buildTextFieldValue(""),
+            visibility = StatusVisibility.PUBLIC,
+            quotingInfo = quotingParams,
+            replyToAuthorInfo = null,
+            visibilityChangeable = true,
+            accountChangeable = false,
         )
     }
 

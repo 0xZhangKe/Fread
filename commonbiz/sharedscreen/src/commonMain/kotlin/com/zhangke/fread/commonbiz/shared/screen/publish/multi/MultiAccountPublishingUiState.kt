@@ -82,7 +82,7 @@ data class MultiPublishingAccountWithRules(
     val rules: PublishBlogRules?,
 )
 
-internal val StatusVisibility.describeStringId: StringResource
+val StatusVisibility.describeStringId: StringResource
     get() = when (this) {
         StatusVisibility.PUBLIC -> LocalizedString.postStatusScopePublic
         StatusVisibility.UNLISTED -> LocalizedString.postStatusScopeUnlisted

@@ -119,4 +119,8 @@
     <string name="shared_alt_label">ALT</string>
     <string name="status_ui_embed_quote_unavailable">Das aktuelle Zitat ist nicht verfügbar</string>
     <string name="status_ui_action_unforward">Weiterleitung aufheben</string>
+    <string name="status_ui_quote_approval_public">Jeder</string>
+    <string name="status_ui_quote_approval_follower">Nur Follower</string>
+    <string name="status_ui_quote_approval_nobody">Nur ich</string>
+    <string name="status_ui_visibility">Sichtbarkeit</string>
 </resources>

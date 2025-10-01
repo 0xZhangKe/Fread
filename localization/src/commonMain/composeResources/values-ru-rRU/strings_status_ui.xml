@@ -119,4 +119,8 @@
     <string name="shared_alt_label">ALT</string>
     <string name="status_ui_embed_quote_unavailable">Текущая цитата недоступна</string>
     <string name="status_ui_action_unforward">Отменить пересылку</string>
+    <string name="status_ui_quote_approval_public">Все</string>
+    <string name="status_ui_quote_approval_follower">Только подписчики</string>
+    <string name="status_ui_quote_approval_nobody">Только я</string>
+    <string name="status_ui_visibility">Видимость</string>
 </resources>

@@ -213,7 +213,7 @@ fun PostInteractionSettingLabel(
 }
 
 @Composable
-private fun InteractionOption(
+fun InteractionOption(
     modifier: Modifier,
     text: String,
     selected: Boolean,

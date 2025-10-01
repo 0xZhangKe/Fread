@@ -16,4 +16,5 @@ data class BlogPlatform(
     val baseUrl: FormalBaseUrl,
     val protocol: StatusProviderProtocol,
     val thumbnail: String?,
+    val supportsQuotePost: Boolean? = null,
 ) : PlatformParcelable, PlatformSerializable

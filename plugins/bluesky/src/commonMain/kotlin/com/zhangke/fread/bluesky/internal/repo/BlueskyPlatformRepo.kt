@@ -27,6 +27,7 @@ class BlueskyPlatformRepo @Inject constructor(
             thumbnail = "https://web-cdn.bsky.app/static/apple-touch-icon.png",
             protocol = createBlueskyProtocol(),
             baseUrl = baseUrl,
+            supportsQuotePost = true,
         )
     }
 }

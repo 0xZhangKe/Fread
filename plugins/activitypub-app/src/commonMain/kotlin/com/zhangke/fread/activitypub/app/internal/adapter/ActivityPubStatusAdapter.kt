@@ -15,8 +15,8 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.blog.CurrentUserQuoteApproval
 import com.zhangke.fread.status.blog.PostingApplication
-import com.zhangke.fread.status.blog.QuoteApproval
 import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
@@ -168,7 +168,7 @@ class ActivityPubStatusAdapter @Inject constructor(
                 support = true,
                 repliesCount = entity.repliesCount.toLong(),
             ),
-            quote = buildQuote(entity),
+            quote = buildQuote(entity, platform),
             supportEdit = true,
             isReply = !entity.inReplyToId.isNullOrEmpty(),
             platform = platform,
@@ -283,20 +283,24 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
-    private fun buildQuote(entity: ActivityPubStatusEntity): Blog.Quote {
+    private fun buildQuote(
+        entity: ActivityPubStatusEntity,
+        blogPlatform: BlogPlatform,
+    ): Blog.Quote {
         val currentUserApproval = entity.quoteApproval?.currentUser?.toApproval()
         return Blog.Quote(
-            support = currentUserApproval?.quotable ?: false,
+            support = blogPlatform.supportsQuotePost == true,
+            enabled = currentUserApproval?.quotable ?: false,
             currentUserApproval = currentUserApproval,
         )
     }
 
-    private fun String.toApproval(): QuoteApproval {
+    private fun String.toApproval(): CurrentUserQuoteApproval {
         return when (this) {
-            ActivityPubQuoteApprovalEntity.AUTOMATIC -> QuoteApproval.AUTOMATIC
-            ActivityPubQuoteApprovalEntity.MANUAL -> QuoteApproval.MANUAL
-            ActivityPubQuoteApprovalEntity.DENIED -> QuoteApproval.DENIED
-            else -> QuoteApproval.UNKNOWN
+            ActivityPubQuoteApprovalEntity.CURRENT_USER_AUTOMATIC -> CurrentUserQuoteApproval.AUTOMATIC
+            ActivityPubQuoteApprovalEntity.CURRENT_USER_MANUAL -> CurrentUserQuoteApproval.MANUAL
+            ActivityPubQuoteApprovalEntity.CURRENT_USER_DENIED -> CurrentUserQuoteApproval.DENIED
+            else -> CurrentUserQuoteApproval.UNKNOWN
         }
     }
 

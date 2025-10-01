@@ -119,4 +119,8 @@
     <string name="shared_alt_label">ALT</string>
     <string name="status_ui_embed_quote_unavailable">A citação atual não está disponível</string>
     <string name="status_ui_action_unforward">Cancelar encaminhamento</string>
+    <string name="status_ui_quote_approval_public">Qualquer pessoa</string>
+    <string name="status_ui_quote_approval_follower">Apenas seguidores</string>
+    <string name="status_ui_quote_approval_nobody">Só eu</string>
+    <string name="status_ui_visibility">Visibilidade</string>
 </resources>

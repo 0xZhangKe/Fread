@@ -119,4 +119,8 @@
     <string name="shared_alt_label">替代文字</string>
     <string name="status_ui_embed_quote_unavailable">當前引用不可用</string>
     <string name="status_ui_action_unforward">取消轉發</string>
+    <string name="status_ui_quote_approval_public">任何人</string>
+    <string name="status_ui_quote_approval_follower">只限追蹤者</string>
+    <string name="status_ui_quote_approval_nobody">只限自己</string>
+    <string name="status_ui_visibility">可見性</string>
 </resources>

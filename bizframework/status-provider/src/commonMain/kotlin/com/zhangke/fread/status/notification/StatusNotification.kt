@@ -121,6 +121,25 @@ sealed interface StatusNotification {
     }
 
     @Serializable
+    data class QuoteUpdate(
+        override val id: String,
+        val author: BlogAuthor,
+        val quote: StatusUiState,
+        override val unread: Boolean,
+        override val createAt: Instant,
+    ) : StatusNotification {
+
+        override val status: StatusUiState get() = quote
+
+        override val locator: PlatformLocator
+            get() = quote.locator
+
+        override val formattingDisplayTime: FormattingTime by lazy {
+            FormattingTime(createAt)
+        }
+    }
+
+    @Serializable
     data class Reply(
         override val id: String,
         val author: BlogAuthor,

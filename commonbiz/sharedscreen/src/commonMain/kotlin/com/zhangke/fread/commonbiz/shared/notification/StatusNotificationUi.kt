@@ -181,6 +181,20 @@ fun StatusNotificationUi(
                     )
                 }
 
+                is StatusNotification.QuoteUpdate -> {
+                    NotificationWithWholeStatus(
+                        blog = notification.status.status.intrinsicBlog,
+                        locator = notification.locator,
+                        author = notification.author,
+                        createAt = notification.formattingDisplayTime,
+                        indexInList = indexInList,
+                        icon = Icons.Default.Edit,
+                        interactionDesc = stringResource(LocalizedString.sharedNotificationUpdateDesc),
+                        style = style,
+                        composedStatusInteraction = composedStatusInteraction,
+                    )
+                }
+
                 is StatusNotification.SeveredRelationships -> {
                     SeveredRelationshipsNotification(
                         notification = notification,

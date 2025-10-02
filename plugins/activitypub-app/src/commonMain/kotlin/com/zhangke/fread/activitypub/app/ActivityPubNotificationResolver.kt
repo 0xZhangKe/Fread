@@ -116,7 +116,7 @@ class ActivityPubNotificationResolver @Inject constructor(
             }
     }
 
-    private suspend fun convertNotification(
+    private fun convertNotification(
         locator: PlatformLocator,
         entity: ActivityPubNotificationsEntity,
         loggedAccount: ActivityPubLoggedAccount?,
@@ -250,6 +250,45 @@ class ActivityPubNotificationResolver @Inject constructor(
                     unread = unread,
                     reason = entity.relationshipSeveranceEvent?.targetName.ifNullOrEmpty { "Unknown" },
                 )
+            }
+
+            ActivityPubNotificationsEntity.Type.QUOTE -> {
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        locator = locator,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.Quote(
+                        id = entity.id,
+                        author = author,
+                        quote = status,
+                        unread = unread,
+                    )
+                }
+            }
+
+            ActivityPubNotificationsEntity.Type.QUOTED_UPDATE -> {
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        locator = locator,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.QuoteUpdate(
+                        id = entity.id,
+                        author = author,
+                        quote = status,
+                        unread = unread,
+                        createAt = createAt,
+                    )
+                }
             }
 
             else -> StatusNotification.Unknown(

@@ -8,6 +8,7 @@ import com.zhangke.framework.utils.isO3LanguageCode
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.apCode
+import com.zhangke.fread.activitypub.app.internal.adapter.toEntityVisibility
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
@@ -187,14 +188,5 @@ class PublishPostUseCase @Inject constructor(
         return clientManager.getClient(locator).mediaRepo
             .updateMedia(id = fileId, description = alt)
             .map { }
-    }
-
-    private fun StatusVisibility.toEntityVisibility(): ActivityPubStatusVisibilityEntity {
-        return when (this) {
-            StatusVisibility.PUBLIC -> ActivityPubStatusVisibilityEntity.PUBLIC
-            StatusVisibility.UNLISTED -> ActivityPubStatusVisibilityEntity.UNLISTED
-            StatusVisibility.PRIVATE -> ActivityPubStatusVisibilityEntity.PRIVATE
-            StatusVisibility.DIRECT -> ActivityPubStatusVisibilityEntity.DIRECT
-        }
     }
 }

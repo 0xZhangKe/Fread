@@ -14,7 +14,6 @@ import com.fleeksoft.ksoup.nodes.TextNode
 import com.fleeksoft.ksoup.select.NodeVisitor
 import com.zhangke.framework.architect.theme.primaryLight
 import com.zhangke.framework.network.SimpleUri
-import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.Facet
@@ -24,6 +23,8 @@ import com.zhangke.fread.status.richtext.OnLinkTargetClick
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 
 object HtmlParser {
+
+    private const val QUOTE_INLINE_CLASS = "quote-inline"
 
     fun parse(
         document: String,
@@ -76,7 +77,7 @@ object HtmlParser {
                     "br" -> spanBuilder.appendLine()
 
                     "p" -> {
-                        if (node.hasClass("quote-inline")) {
+                        if (node.hasClass(QUOTE_INLINE_CLASS)) {
                             inQuoteInline = true
                         } else if (spanBuilder.length > 0) {
                             spanBuilder.appendLine()
@@ -160,8 +161,8 @@ object HtmlParser {
                         }
                     }
 
-                    "p" ->{
-                        if (node.hasClass("quote-inline")) {
+                    "p" -> {
+                        if (node.hasClass(QUOTE_INLINE_CLASS)) {
                             inQuoteInline = false
                         }
                     }
@@ -184,6 +185,8 @@ object HtmlParser {
 
     class ParseToPlainVisitor(private val builder: StringBuilder) : NodeVisitor {
 
+        private var inQuoteInline = false
+
         private fun Element?.isMention(): Boolean {
             if (this == null) return false
             if (hasClass("hashtag")) return false
@@ -200,7 +203,12 @@ object HtmlParser {
         }
 
         override fun head(node: Node, depth: Int) {
+            if (inQuoteInline) return
             if (node is Element) {
+                if (node.tagName() == "p" && node.hasClass(QUOTE_INLINE_CLASS)) {
+                    inQuoteInline = true
+                    return
+                }
                 if (node.tagName() == "br") {
                     builder.appendLine()
                 }
@@ -215,6 +223,12 @@ object HtmlParser {
             if (node is TextNode) {
                 if ((node.parent() as? Element)?.isMention() == true) return
                 builder.append(node.text())
+            }
+        }
+
+        override fun tail(node: Node, depth: Int) {
+            if (node is Element && node.tagName() == "p" && node.hasClass(QUOTE_INLINE_CLASS)) {
+                inQuoteInline = false
             }
         }
 

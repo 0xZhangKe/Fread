@@ -1,6 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.platform
 
-import com.zhangke.activitypub.entities.ActivityPubInstanceConfigurationEntity
+import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostBlogRules
 import com.zhangke.fread.status.model.PlatformLocator
@@ -14,14 +14,16 @@ class GetInstancePostStatusRulesUseCase @Inject constructor(
         return clientManager.getClient(locator)
             .instanceRepo
             .getInstanceInformation()
-            .map { it.configuration.toRule() }
+            .map { it.toRule() }
     }
 
-    private fun ActivityPubInstanceConfigurationEntity.toRule(): PostBlogRules {
+    private fun ActivityPubInstanceEntity.toRule(): PostBlogRules {
+        val config = configuration
         return PostBlogRules.default(
-            maxCharacters = this.statuses?.maxCharacters ?: 0,
-            maxMediaCount = this.statuses?.maxMediaAttachments ?: 0,
-            maxPollOptions = this.polls?.maxOptions ?: 0,
+            maxCharacters = config.statuses?.maxCharacters ?: 0,
+            maxMediaCount = config.statuses?.maxMediaAttachments ?: 0,
+            maxPollOptions = config.polls?.maxOptions ?: 0,
+            supportsQuotePost = this.supportsQuotePost,
         )
     }
 }

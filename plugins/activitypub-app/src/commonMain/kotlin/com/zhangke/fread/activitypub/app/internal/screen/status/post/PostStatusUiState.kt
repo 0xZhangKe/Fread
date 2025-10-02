@@ -22,6 +22,7 @@ data class PostStatusUiState(
     val attachment: PostStatusAttachment?,
     val visibility: StatusVisibility,
     val visibilityChangeable: Boolean,
+    val quoteApprovalPolicyChangeable: Boolean,
     val sensitive: Boolean,
     val warningContent: TextFieldValue,
     val replyToBlog: Blog?,
@@ -52,8 +53,8 @@ data class PostStatusUiState(
             account: ActivityPubLoggedAccount,
             allLoggedAccount: List<ActivityPubLoggedAccount>,
             visibility: StatusVisibility,
-            replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams? = null,
-            quotingInfo: PostStatusScreenParams.QuoteBlogParams? = null,
+            replyingToBlog: Blog? = null,
+            quoteBlog: Blog? = null,
             content: TextFieldValue = TextFieldValue(""),
             sensitive: Boolean = false,
             warningContent: TextFieldValue = TextFieldValue(""),
@@ -61,6 +62,7 @@ data class PostStatusUiState(
             accountChangeable: Boolean = true,
             visibilityChangeable: Boolean = true,
             attachment: PostStatusAttachment? = null,
+            quoteApprovalPolicyChangeable: Boolean = true,
         ): PostStatusUiState {
             return PostStatusUiState(
                 account = account,
@@ -69,8 +71,8 @@ data class PostStatusUiState(
                 attachment = attachment,
                 visibility = visibility,
                 sensitive = sensitive,
-                replyToBlog = replyToAuthorInfo?.replyingToBlog,
-                quotingBlog = quotingInfo?.quoteBlog,
+                replyToBlog = replyingToBlog,
+                quotingBlog = quoteBlog,
                 warningContent = warningContent,
                 emojiList = emptyList(),
                 language = language ?: getDefaultLocale(),
@@ -80,6 +82,7 @@ data class PostStatusUiState(
                 publishing = false,
                 mentionState = LoadableState.idle(),
                 quoteApprovalPolicy = QuoteApprovalPolicy.PUBLIC,
+                quoteApprovalPolicyChangeable = quoteApprovalPolicyChangeable,
             )
         }
     }
@@ -147,6 +150,7 @@ data class PostBlogRules(
     val maxMediaCount: Int,
     val maxPollOptions: Int,
     val altMaxCharacters: Int,
+    val supportsQuotePost: Boolean,
 ) {
     companion object {
 
@@ -155,12 +159,14 @@ data class PostBlogRules(
             maxMediaCount: Int = 4,
             maxPollOptions: Int = 4,
             altMaxCharacters: Int = 1500,
+            supportsQuotePost: Boolean = false,
         ): PostBlogRules {
             return PostBlogRules(
                 maxCharacters = maxCharacters,
                 maxMediaCount = maxMediaCount,
                 maxPollOptions = maxPollOptions,
                 altMaxCharacters = altMaxCharacters,
+                supportsQuotePost = supportsQuotePost,
             )
         }
     }

@@ -43,6 +43,7 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusWa
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.QuoteApprovalPolicy
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
 import com.zhangke.fread.status.ui.publish.BlogInQuoting
@@ -102,6 +103,7 @@ class PostStatusScreen(
                 onPostClick = viewModel::onPostClick,
                 onSensitiveClick = viewModel::onSensitiveClick,
                 onMediaSelected = viewModel::onMediaSelected,
+                onQuoteApprovalPolicySelect = viewModel::onQuoteApprovalPolicySelect,
                 onLanguageSelected = viewModel::onLanguageSelected,
                 onDeleteClick = viewModel::onMediaDeleteClick,
                 onDescriptionInputted = viewModel::onDescriptionInputted,
@@ -164,6 +166,7 @@ class PostStatusScreen(
         onSensitiveClick: () -> Unit,
         onMediaSelected: (List<PlatformUri>) -> Unit,
         onDeleteClick: (PublishPostMedia) -> Unit,
+        onQuoteApprovalPolicySelect: (QuoteApprovalPolicy) -> Unit,
         onDescriptionInputted: (PublishPostMedia, String) -> Unit,
         onLanguageSelected: (Locale) -> Unit,
         onPollClicked: () -> Unit,
@@ -202,12 +205,24 @@ class PostStatusScreen(
                 }
             },
             postSettingLabel = {
-                PostStatusVisibilityUi(
-                    modifier = Modifier,
-                    visibility = uiState.visibility,
-                    changeable = uiState.visibilityChangeable,
-                    onVisibilitySelect = onVisibilityChanged,
-                )
+                if (uiState.rules.supportsQuotePost) {
+                    PublishInteractionSettingLabel(
+                        modifier = Modifier,
+                        visibility = uiState.visibility,
+                        quoteApprovalPolicy = uiState.quoteApprovalPolicy,
+                        visibilityChangeable = uiState.visibilityChangeable,
+                        quoteApprovalPolicyChangeable = uiState.quoteApprovalPolicyChangeable,
+                        onVisibilitySelect = onVisibilityChanged,
+                        onQuoteApprovalPolicySelect = onQuoteApprovalPolicySelect,
+                    )
+                } else {
+                    PostStatusVisibilityUi(
+                        modifier = Modifier,
+                        visibility = uiState.visibility,
+                        changeable = uiState.visibilityChangeable,
+                        onVisibilitySelect = onVisibilityChanged,
+                    )
+                }
             },
             bottomPanel = {
                 PostStatusBottomBar(

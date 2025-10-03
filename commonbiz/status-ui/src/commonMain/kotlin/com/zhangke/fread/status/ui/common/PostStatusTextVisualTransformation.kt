@@ -8,6 +8,7 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.zhangke.fread.common.utils.HashtagTextUtils
+import com.zhangke.fread.common.utils.LinkTextUtils
 import com.zhangke.fread.common.utils.MentionTextUtil
 
 class PostStatusTextVisualTransformation(
@@ -19,7 +20,8 @@ class PostStatusTextVisualTransformation(
         val hashtags = HashtagTextUtils.findHashtags(text.text)
         val mentions =
             if (enableMentions) MentionTextUtil.findMentionList(text.text) else emptyList()
-        val highlightList = hashtags + mentions
+        val links = LinkTextUtils.findLinks(text.text)
+        val highlightList = hashtags + mentions + links
         return TransformedText(
             text = buildAnnotatedString {
                 append(text)

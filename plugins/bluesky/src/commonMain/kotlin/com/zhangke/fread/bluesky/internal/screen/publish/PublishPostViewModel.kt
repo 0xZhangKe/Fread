@@ -3,9 +3,12 @@ package com.zhangke.fread.bluesky.internal.screen.publish
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.bsky.actor.ProfileView
+import app.bsky.actor.SearchActorsQueryParams
 import app.bsky.graph.ListView
 import com.zhangke.framework.architect.json.fromJson
 import com.zhangke.framework.architect.json.globalJson
+import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
@@ -16,6 +19,7 @@ import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PublishingPostUseCase
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
@@ -66,7 +70,11 @@ class PublishPostViewModel @Inject constructor(
     private val _finishPageFlow = MutableSharedFlow<Unit>()
     val finishPageFlow = _finishPageFlow.asSharedFlow()
 
+    private var searchMentionUserJob: Job? = null
+
     private var publishJob: Job? = null
+
+    private val mentionedUsers = mutableSetOf<ProfileView>()
 
     init {
         launchInViewModel(Dispatchers.IO) {
@@ -98,6 +106,42 @@ class PublishPostViewModel @Inject constructor(
 
     fun onContentChanged(text: TextFieldValue) {
         _uiState.update { it.copy(content = text) }
+        maybeNeedSearchAccount(text)
+    }
+
+    private fun maybeNeedSearchAccount(content: TextFieldValue) {
+        searchMentionUserJob?.cancel()
+        val mentionText = MentionTextUtil.findTypingMentionName(content)?.removePrefix("@")
+        if (mentionText == null || mentionText.length < 2) {
+            _uiState.update {
+                it.copy(mentionState = LoadableState.idle())
+            }
+            return
+        }
+        searchMentionUserJob = launchInViewModel {
+            _uiState.update { it.copy(mentionState = LoadableState.loading()) }
+            clientManager.getClient(locator)
+                .searchActorsCatching(SearchActorsQueryParams(q = mentionText, limit = 10))
+                .map { it.actors }
+                .onSuccess { list ->
+                    _uiState.update { it.copy(mentionState = LoadableState.success(list)) }
+                }
+                .onFailure {
+                    _uiState.update { it.copy(mentionState = LoadableState.idle()) }
+                }
+        }
+    }
+
+    fun onMentionCandidateClick(profile: ProfileView) {
+        _uiState.update { state ->
+            state.copy(
+                content = MentionTextUtil.insertMention(
+                    text = state.content,
+                    insertText = profile.handle.handle,
+                )
+            )
+        }
+        mentionedUsers += profile
     }
 
     fun onQuoteChange(allowQuote: Boolean) {
@@ -216,6 +260,7 @@ class PublishPostViewModel @Inject constructor(
                 replyBlog = uiState.value.replyBlog,
                 quoteBlog = uiState.value.quoteBlog,
                 attachment = uiState.value.attachment,
+                mentionedUsers = mentionedUsers,
             ).onFailure { t ->
                 _uiState.update { it.copy(publishing = false) }
                 _snackBarMessageFlow.emitTextMessageFromThrowable(t)

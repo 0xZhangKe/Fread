@@ -127,5 +127,7 @@ data class Blog(
     @Serializable
     data class Quote(
         val support: Boolean,
+        val enabled: Boolean = false,
+        val currentUserApproval: CurrentUserQuoteApproval? = null,
     )
 }

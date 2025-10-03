@@ -51,7 +51,7 @@ object LoggedAccountMigrateUtil {
         )
     }
 
-    private suspend fun OldActivityPubLoggedAccountEntity.BlogPlatformEntity.toPlatform(): BlogPlatform =
+    private fun OldActivityPubLoggedAccountEntity.BlogPlatformEntity.toPlatform(): BlogPlatform =
         BlogPlatform(
             uri = uri,
             name = name,

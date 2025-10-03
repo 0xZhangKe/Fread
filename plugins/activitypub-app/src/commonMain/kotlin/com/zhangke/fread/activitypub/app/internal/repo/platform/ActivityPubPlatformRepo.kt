@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
+import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
@@ -9,6 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubPlatformRepo @Inject constructor(
@@ -62,10 +64,20 @@ class ActivityPubPlatformRepo @Inject constructor(
 
     private suspend fun getInstanceInfo(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {
         val instanceFromLocal = platformDao.queryByBaseUrl(baseUrl)
+        val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
         if (instanceFromLocal != null) {
+            if (instanceFromLocal.instanceEntity.apiVersions == null) {
+                // refresh local data
+                ApplicationScope.launch {
+                    clientManager.getClient(locator)
+                        .instanceRepo
+                        .getInstanceInformation()
+                        .map { activityPubPlatformEntityAdapter.toEntity(baseUrl, it) }
+                        .onSuccess { platformDao.insert(it) }
+                }
+            }
             return Result.success(instanceFromLocal.instanceEntity)
         }
-        val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
         val instanceResult = clientManager.getClient(locator).instanceRepo.getInstanceInformation()
         if (instanceResult.isFailure) {
             return Result.failure(instanceResult.exceptionOrNull()!!)

@@ -26,6 +26,7 @@ import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.isRss
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.CoroutineScope
@@ -96,6 +97,14 @@ class InteractiveHandler(
 
         override fun onBlogClick(locator: PlatformLocator, blog: Blog) {
             this@InteractiveHandler.onBlogClick(locator, blog)
+        }
+
+        override fun onBlogIdClick(
+            locator: PlatformLocator,
+            platform: BlogPlatform,
+            blogId: String
+        ) {
+            this@InteractiveHandler.onBlogIdClick(locator, platform, blogId)
         }
 
         override fun onBlockClick(locator: PlatformLocator, blog: Blog) {
@@ -212,6 +221,20 @@ class InteractiveHandler(
                 )
             }
             mutableOpenScreenFlow.emit(screen)
+        }
+    }
+
+    override fun onBlogIdClick(
+        locator: PlatformLocator,
+        platform: BlogPlatform,
+        blogId: String,
+    ) {
+        coroutineScope.launch {
+            StatusContextScreen.create(
+                locator = locator,
+                blogId = blogId,
+                platform = platform,
+            )
         }
     }
 

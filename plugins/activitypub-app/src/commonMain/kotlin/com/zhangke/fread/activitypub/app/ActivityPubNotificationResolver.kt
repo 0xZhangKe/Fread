@@ -45,7 +45,7 @@ class ActivityPubNotificationResolver @Inject constructor(
         val notificationsRepo = clientManager.getClient(locator).notificationsRepo
         val types = mutableListOf<String>()
         if (type == INotificationResolver.NotificationRequestType.MENTION) {
-            types += ActivityPubNotificationsEntity.Type.mention
+            types += ActivityPubNotificationsEntity.Type.MENTION
         }
 
         val (unreadCountResult, notificationsResult) = supervisorScope {
@@ -116,7 +116,7 @@ class ActivityPubNotificationResolver @Inject constructor(
             }
     }
 
-    private suspend fun convertNotification(
+    private fun convertNotification(
         locator: PlatformLocator,
         entity: ActivityPubNotificationsEntity,
         loggedAccount: ActivityPubLoggedAccount?,
@@ -134,7 +134,7 @@ class ActivityPubNotificationResolver @Inject constructor(
             )
         }
         return when (entity.type) {
-            ActivityPubNotificationsEntity.Type.favourite -> {
+            ActivityPubNotificationsEntity.Type.FAVORITE -> {
                 if (status == null) {
                     StatusNotification.Unknown(
                         id = entity.id,
@@ -155,7 +155,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 }
             }
 
-            ActivityPubNotificationsEntity.Type.mention -> {
+            ActivityPubNotificationsEntity.Type.MENTION -> {
                 StatusNotification.Mention(
                     id = entity.id,
                     author = author,
@@ -164,7 +164,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.follow -> {
+            ActivityPubNotificationsEntity.Type.FOLLOW -> {
                 StatusNotification.Follow(
                     id = entity.id,
                     author = author,
@@ -174,7 +174,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.reblog -> {
+            ActivityPubNotificationsEntity.Type.REBLOG -> {
                 StatusNotification.Repost(
                     id = entity.id,
                     author = author,
@@ -185,7 +185,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.status -> {
+            ActivityPubNotificationsEntity.Type.STATUS -> {
                 if (status == null) {
                     StatusNotification.Unknown(
                         id = entity.id,
@@ -202,7 +202,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 }
             }
 
-            ActivityPubNotificationsEntity.Type.followRequest -> {
+            ActivityPubNotificationsEntity.Type.FOLLOW_REQUEST -> {
                 StatusNotification.FollowRequest(
                     id = entity.id,
                     createAt = createAt,
@@ -212,7 +212,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.poll -> {
+            ActivityPubNotificationsEntity.Type.POLL -> {
                 if (status == null) {
                     StatusNotification.Unknown(
                         id = entity.id,
@@ -232,7 +232,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 }
             }
 
-            ActivityPubNotificationsEntity.Type.update -> {
+            ActivityPubNotificationsEntity.Type.UPDATE -> {
                 StatusNotification.Update(
                     id = entity.id,
                     createAt = createAt,
@@ -241,7 +241,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.severedRelationships -> {
+            ActivityPubNotificationsEntity.Type.SEVERED_RELATIONSHIPS -> {
                 StatusNotification.SeveredRelationships(
                     id = entity.id,
                     createAt = createAt,
@@ -250,6 +250,45 @@ class ActivityPubNotificationResolver @Inject constructor(
                     unread = unread,
                     reason = entity.relationshipSeveranceEvent?.targetName.ifNullOrEmpty { "Unknown" },
                 )
+            }
+
+            ActivityPubNotificationsEntity.Type.QUOTE -> {
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        locator = locator,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.Quote(
+                        id = entity.id,
+                        author = author,
+                        quote = status,
+                        unread = unread,
+                    )
+                }
+            }
+
+            ActivityPubNotificationsEntity.Type.QUOTED_UPDATE -> {
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        locator = locator,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.QuoteUpdate(
+                        id = entity.id,
+                        author = author,
+                        quote = status,
+                        unread = unread,
+                        createAt = createAt,
+                    )
+                }
             }
 
             else -> StatusNotification.Unknown(

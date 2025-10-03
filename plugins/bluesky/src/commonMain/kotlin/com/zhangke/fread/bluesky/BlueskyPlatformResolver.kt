@@ -31,6 +31,7 @@ class BlueskyPlatformResolver @Inject constructor(
             description = description,
             thumbnail = thumbnail,
             protocol = protocol,
+            supportsQuotePost = true,
         )
     }
 

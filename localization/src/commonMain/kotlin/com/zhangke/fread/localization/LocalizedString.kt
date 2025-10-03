@@ -626,4 +626,10 @@ object LocalizedString {
         localizedString.main_request_notification_dialog_allow_button
     val main_request_notification_dialog_content =
         localizedString.main_request_notification_dialog_content
+    val status_ui_embed_quote_unavailable = localizedString.status_ui_embed_quote_unavailable
+    val status_ui_action_unforward = localizedString.status_ui_action_unforward
+    val status_ui_quote_approval_public = localizedString.status_ui_quote_approval_public
+    val status_ui_quote_approval_follower = localizedString.status_ui_quote_approval_follower
+    val status_ui_quote_approval_nobody = localizedString.status_ui_quote_approval_nobody
+    val status_ui_visibility = localizedString.status_ui_visibility
 }

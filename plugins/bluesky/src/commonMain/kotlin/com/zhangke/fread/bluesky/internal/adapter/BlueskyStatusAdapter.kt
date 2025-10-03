@@ -211,7 +211,7 @@ class BlueskyStatusAdapter @Inject constructor(
                 support = true,
                 repliesCount = replyCount ?: 0L,
             ),
-            quote = Blog.Quote(support = true),
+            quote = Blog.Quote(support = true, enabled = true),
             supportEdit = false,
             sensitive = false,
             spoilerText = "",

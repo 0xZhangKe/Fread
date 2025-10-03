@@ -13,6 +13,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusS
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.model.StatusVisibility
@@ -36,7 +37,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
                 account = defaultAccount,
                 allLoggedAccount = allLoggedAccount,
                 visibility = StatusVisibility.PUBLIC,
-                replyToAuthorInfo = null,
+                replyingToBlog = null,
             )
 
             is PostStatusScreenParams.ReplyStatusParams -> buildReplyUiState(
@@ -49,6 +50,12 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
                 defaultAccount = defaultAccount,
                 allLoggedAccount = allLoggedAccount,
                 editParams = screenParams,
+            )
+
+            is PostStatusScreenParams.QuoteBlogParams -> buildQuotingPostUiState(
+                defaultAccount = defaultAccount,
+                allLoggedAccount = allLoggedAccount,
+                quotingParams = screenParams,
             )
         }.let { Result.success(it) }
     }
@@ -79,8 +86,9 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             allLoggedAccount = allLoggedAccount,
             content = buildTextFieldValue(initialContent),
             visibility = replyParams.replyingToBlog.visibility,
-            replyToAuthorInfo = replyParams,
+            replyingToBlog = replyParams.replyingToBlog,
             accountChangeable = false,
+            quoteBlog = null,
         )
     }
 
@@ -90,6 +98,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         editParams: PostStatusScreenParams.EditStatusParams,
     ): PostStatusUiState {
         val blog = editParams.blog
+        val quotingBlog = blog.embeds.firstNotNullOfOrNull { it as? BlogEmbed.Blog }?.blog
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
@@ -98,10 +107,29 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             sensitive = editParams.blog.sensitive,
             language = editParams.blog.language?.let { initLocale(it) },
             warningContent = buildTextFieldValue(HtmlParser.parseToPlainText(editParams.blog.spoilerText)),
-            replyToAuthorInfo = null,
+            replyingToBlog = null,
             visibilityChangeable = false,
             accountChangeable = false,
+            quoteApprovalPolicyChangeable = false,
             attachment = blog.generateAttachment(),
+            quoteBlog = quotingBlog,
+        )
+    }
+
+    private fun buildQuotingPostUiState(
+        defaultAccount: ActivityPubLoggedAccount,
+        allLoggedAccount: List<ActivityPubLoggedAccount>,
+        quotingParams: PostStatusScreenParams.QuoteBlogParams,
+    ): PostStatusUiState {
+        return PostStatusUiState.default(
+            account = defaultAccount,
+            allLoggedAccount = allLoggedAccount,
+            content = buildTextFieldValue(""),
+            visibility = StatusVisibility.PUBLIC,
+            quoteBlog = quotingParams.quoteBlog,
+            replyingToBlog = null,
+            visibilityChangeable = true,
+            accountChangeable = false,
         )
     }
 

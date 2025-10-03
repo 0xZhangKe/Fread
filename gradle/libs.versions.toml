@@ -65,7 +65,7 @@ goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
 
 bluesky = "0.3.3"
-activity-pub-client = "0.1.3"
+activity-pub-client = "0.1.8"
 
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]

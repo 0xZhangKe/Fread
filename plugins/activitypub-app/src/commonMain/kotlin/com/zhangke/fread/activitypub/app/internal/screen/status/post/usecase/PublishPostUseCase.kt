@@ -1,11 +1,14 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase
 
 import com.zhangke.activitypub.entities.ActivityPubEditStatusEntity
+import com.zhangke.activitypub.entities.ActivityPubPostStatusRequestEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusVisibilityEntity
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.isO3LanguageCode
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
+import com.zhangke.fread.activitypub.app.internal.adapter.apCode
+import com.zhangke.fread.activitypub.app.internal.adapter.toEntityVisibility
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
@@ -14,6 +17,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusU
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.QuoteApprovalPolicy
 import com.zhangke.fread.status.model.StatusVisibility
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -38,6 +42,8 @@ class PublishPostUseCase @Inject constructor(
         language: Locale,
         replyToBlogId: String? = null,
         editingBlogId: String? = null,
+        quotingBlogId: String? = null,
+        quoteApprovalPolicy: QuoteApprovalPolicy? = null,
     ): Result<Unit> {
         val locator = account.locator
         val statusRepo = clientManager.getClient(locator).statusRepo
@@ -53,20 +59,23 @@ class PublishPostUseCase @Inject constructor(
                 mediaAttributes = buildMediaAttributes(attachment),
                 poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
                 sensitive = sensitive,
-                spoilerText = if (sensitive == true) warningContent else null,
+                spoilerText = if (sensitive) warningContent else null,
                 language = language.isO3LanguageCode,
             )
         } else {
-            statusRepo.postStatus(
+            val request = ActivityPubPostStatusRequestEntity(
                 status = content,
                 mediaIds = medias,
                 poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
-                sensitive = sensitive,
-                spoilerText = if (sensitive == true) warningContent else null,
+                isSensitive = sensitive,
+                spoilerText = if (sensitive) warningContent else null,
                 replyToId = replyToBlogId,
-                visibility = visibility.toEntityVisibility(),
+                visibility = visibility.toEntityVisibility().code,
                 language = language.isO3LanguageCode,
+                quotedStatusId = quotingBlogId,
+                quoteApprovalPolicy = quoteApprovalPolicy?.apCode,
             )
+            statusRepo.publishBlog(request)
         }.map {
             statusUpdater.update(
                 statusEntityAdapter.toStatusUiState(
@@ -94,6 +103,8 @@ class PublishPostUseCase @Inject constructor(
             language = uiState.language,
             replyToBlogId = uiState.replyToBlog?.id,
             editingBlogId = editingBlogId,
+            quotingBlogId = uiState.quotingBlog?.id,
+            quoteApprovalPolicy = uiState.quoteApprovalPolicy,
         )
     }
 
@@ -177,14 +188,5 @@ class PublishPostUseCase @Inject constructor(
         return clientManager.getClient(locator).mediaRepo
             .updateMedia(id = fileId, description = alt)
             .map { }
-    }
-
-    private fun StatusVisibility.toEntityVisibility(): ActivityPubStatusVisibilityEntity {
-        return when (this) {
-            StatusVisibility.PUBLIC -> ActivityPubStatusVisibilityEntity.PUBLIC
-            StatusVisibility.UNLISTED -> ActivityPubStatusVisibilityEntity.UNLISTED
-            StatusVisibility.PRIVATE -> ActivityPubStatusVisibilityEntity.PRIVATE
-            StatusVisibility.DIRECT -> ActivityPubStatusVisibilityEntity.DIRECT
-        }
     }
 }

@@ -48,7 +48,7 @@ class RssStatusAdapter @Inject constructor(
             forward = Blog.Forward(false),
             bookmark = Blog.Bookmark(false),
             reply = Blog.Reply(false),
-            quote = Blog.Quote(false),
+            quote = Blog.Quote(support = false, enabled = false),
             sensitive = false,
             supportEdit = false,
             spoilerText = "",

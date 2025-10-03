@@ -1,8 +1,6 @@
 package com.zhangke.fread.status.platform
 
 import com.zhangke.framework.collections.mapFirst
-import com.zhangke.framework.collections.mapFirstOrNull
-import com.zhangke.fread.status.uri.FormalUri
 
 class PlatformResolver(
     private val resolverList: List<IPlatformResolver>,

@@ -77,6 +77,11 @@ internal fun forwardAlt(): String {
 }
 
 @Composable
+internal fun unforwardAlt(): String {
+    return stringResource(LocalizedString.status_ui_action_unforward)
+}
+
+@Composable
 internal fun quoteAlt(): String {
     return stringResource(LocalizedString.statusUiQuote)
 }

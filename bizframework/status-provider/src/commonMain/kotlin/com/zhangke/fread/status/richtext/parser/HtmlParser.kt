@@ -24,6 +24,8 @@ import com.zhangke.fread.status.richtext.model.RichLinkTarget
 
 object HtmlParser {
 
+    private const val QUOTE_INLINE_CLASS = "quote-inline"
+
     fun parse(
         document: String,
         emojis: List<Emoji> = emptyList(),
@@ -61,11 +63,11 @@ object HtmlParser {
         private val popQueue = ArrayDeque<Int>()
 
         private var skip = false
+        private var inQuoteInline = false
 
         override fun head(node: Node, depth: Int) {
-            if (skip) {
-                return
-            }
+            if (skip) return
+            if (inQuoteInline) return
             if (node is TextNode) {
                 spanBuilder.appendWithEmoji(node.text(), emojis)
                 return
@@ -75,7 +77,9 @@ object HtmlParser {
                     "br" -> spanBuilder.appendLine()
 
                     "p" -> {
-                        if (spanBuilder.length > 0) {
+                        if (node.hasClass(QUOTE_INLINE_CLASS)) {
+                            inQuoteInline = true
+                        } else if (spanBuilder.length > 0) {
                             spanBuilder.appendLine()
                         }
                     }
@@ -157,6 +161,12 @@ object HtmlParser {
                         }
                     }
 
+                    "p" -> {
+                        if (node.hasClass(QUOTE_INLINE_CLASS)) {
+                            inQuoteInline = false
+                        }
+                    }
+
                     "span" -> {
                         skip = false
                     }
@@ -175,6 +185,8 @@ object HtmlParser {
 
     class ParseToPlainVisitor(private val builder: StringBuilder) : NodeVisitor {
 
+        private var inQuoteInline = false
+
         private fun Element?.isMention(): Boolean {
             if (this == null) return false
             if (hasClass("hashtag")) return false
@@ -191,7 +203,12 @@ object HtmlParser {
         }
 
         override fun head(node: Node, depth: Int) {
+            if (inQuoteInline) return
             if (node is Element) {
+                if (node.tagName() == "p" && node.hasClass(QUOTE_INLINE_CLASS)) {
+                    inQuoteInline = true
+                    return
+                }
                 if (node.tagName() == "br") {
                     builder.appendLine()
                 }
@@ -206,6 +223,12 @@ object HtmlParser {
             if (node is TextNode) {
                 if ((node.parent() as? Element)?.isMention() == true) return
                 builder.append(node.text())
+            }
+        }
+
+        override fun tail(node: Node, depth: Int) {
+            if (node is Element && node.tagName() == "p" && node.hasClass(QUOTE_INLINE_CLASS)) {
+                inQuoteInline = false
             }
         }
 

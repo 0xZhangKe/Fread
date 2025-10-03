@@ -117,4 +117,10 @@
     <string name="shared_select_language_title">Select Language</string>
     <string name="shared_status_context_screen_title">Detail</string>
     <string name="shared_alt_label">ALT</string>
+    <string name="status_ui_embed_quote_unavailable">The current quote is unavailable</string>
+    <string name="status_ui_action_unforward">Cancel repost</string>
+    <string name="status_ui_quote_approval_public">Anyone</string>
+    <string name="status_ui_quote_approval_follower">Followers only</string>
+    <string name="status_ui_quote_approval_nobody">Just me</string>
+    <string name="status_ui_visibility">Visibility</string>
 </resources>

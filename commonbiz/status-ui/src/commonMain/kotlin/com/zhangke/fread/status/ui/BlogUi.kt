@@ -61,6 +61,7 @@ fun BlogUi(
     showMoreOperationIcon: Boolean = true,
     threadsType: ThreadsType = ThreadsType.NONE,
     onOpenBlogWithOtherAccountClick: (Blog) -> Unit = {},
+    onUnavailableQuoteClick: (String) -> Unit = {},
 ) {
     val textHandler = LocalActivityTextHandler.current
     var infoToTopSpacing: Float? by remember { mutableStateOf(null) }
@@ -145,6 +146,7 @@ fun BlogUi(
             onShowOriginalClick = onShowOriginalClick,
             onBlogClick = onBlogClick,
             onMaybeHashtagClick = onMaybeHashtagClick,
+            onUnavailableQuoteClick = onUnavailableQuoteClick,
         )
         if (showBottomPanel) {
             StatusBottomInteractionPanel(

@@ -30,10 +30,21 @@ object PostStatusScreenRoute {
         )
     }
 
+    fun buildQuoteBlogScreen(
+        accountUri: FormalUri,
+        quoteBlog: Blog,
+    ): Screen {
+        return PostStatusScreen(
+            accountUri = accountUri,
+            quoteBlogJsonString = globalJson.encodeToString(serializer(), quoteBlog),
+        )
+    }
+
     fun buildParams(
         accountUri: FormalUri,
         editBlog: String?,
         replyToBlogJsonString: String?,
+        quoteBlogJsonString: String? = null,
     ): PostStatusScreenParams {
         val replyToBlog = replyToBlogJsonString?.let {
             runCatching { globalJson.fromJson<Blog>(it) }.getOrNull()
@@ -48,6 +59,12 @@ object PostStatusScreenRoute {
             val blog = runCatching { Json.decodeFromString<Blog>(editBlog) }.getOrNull()
             if (blog != null) {
                 return PostStatusScreenParams.EditStatusParams(accountUri, blog)
+            }
+        }
+        if (!quoteBlogJsonString.isNullOrEmpty()){
+            val quoteBlog = runCatching { Json.decodeFromString<Blog>(quoteBlogJsonString) }.getOrNull()
+            if (quoteBlog != null) {
+                return PostStatusScreenParams.QuoteBlogParams(accountUri, quoteBlog)
             }
         }
         return PostStatusScreenParams.PostStatusParams(accountUri)
@@ -68,5 +85,10 @@ sealed interface PostStatusScreenParams {
     data class EditStatusParams(
         override val accountUri: FormalUri?,
         val blog: Blog,
+    ) : PostStatusScreenParams
+
+    data class QuoteBlogParams(
+        override val accountUri: FormalUri?,
+        val quoteBlog: Blog,
     ) : PostStatusScreenParams
 }

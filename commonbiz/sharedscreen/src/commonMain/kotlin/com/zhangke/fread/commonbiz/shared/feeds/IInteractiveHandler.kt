@@ -12,6 +12,7 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,6 +40,7 @@ interface IInteractiveHandler {
     fun onStatusClick(status: StatusUiState)
 
     fun onBlogClick(locator: PlatformLocator, blog: Blog)
+    fun onBlogIdClick(locator: PlatformLocator, platform: BlogPlatform, blogId: String)
 
     fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>)
 

@@ -43,8 +43,11 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusWa
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.QuoteApprovalPolicy
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
+import com.zhangke.fread.status.ui.publish.BlogInQuoting
+import com.zhangke.fread.status.ui.publish.PublishBlogStyle
 import com.zhangke.fread.status.uri.FormalUri
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
@@ -53,6 +56,7 @@ class PostStatusScreen(
     private val accountUri: FormalUri,
     private val editBlogJsonString: String? = null,
     private val replyingBlogJsonString: String? = null,
+    private val quoteBlogJsonString: String? = null,
 ) : BaseScreen() {
 
     @OptIn(InternalVoyagerApi::class)
@@ -66,6 +70,7 @@ class PostStatusScreen(
                     accountUri = accountUri,
                     editBlog = editBlogJsonString,
                     replyToBlogJsonString = replyingBlogJsonString,
+                    quoteBlogJsonString = quoteBlogJsonString,
                 )
             )
         }
@@ -98,6 +103,7 @@ class PostStatusScreen(
                 onPostClick = viewModel::onPostClick,
                 onSensitiveClick = viewModel::onSensitiveClick,
                 onMediaSelected = viewModel::onMediaSelected,
+                onQuoteApprovalPolicySelect = viewModel::onQuoteApprovalPolicySelect,
                 onLanguageSelected = viewModel::onLanguageSelected,
                 onDeleteClick = viewModel::onMediaDeleteClick,
                 onDescriptionInputted = viewModel::onDescriptionInputted,
@@ -160,6 +166,7 @@ class PostStatusScreen(
         onSensitiveClick: () -> Unit,
         onMediaSelected: (List<PlatformUri>) -> Unit,
         onDeleteClick: (PublishPostMedia) -> Unit,
+        onQuoteApprovalPolicySelect: (QuoteApprovalPolicy) -> Unit,
         onDescriptionInputted: (PublishPostMedia, String) -> Unit,
         onLanguageSelected: (Locale) -> Unit,
         onPollClicked: () -> Unit,
@@ -198,12 +205,24 @@ class PostStatusScreen(
                 }
             },
             postSettingLabel = {
-                PostStatusVisibilityUi(
-                    modifier = Modifier,
-                    visibility = uiState.visibility,
-                    changeable = uiState.visibilityChangeable,
-                    onVisibilitySelect = onVisibilityChanged,
-                )
+                if (uiState.rules.supportsQuotePost) {
+                    PublishInteractionSettingLabel(
+                        modifier = Modifier,
+                        visibility = uiState.visibility,
+                        quoteApprovalPolicy = uiState.quoteApprovalPolicy,
+                        visibilityChangeable = uiState.visibilityChangeable,
+                        quoteApprovalPolicyChangeable = uiState.quoteApprovalPolicyChangeable,
+                        onVisibilitySelect = onVisibilityChanged,
+                        onQuoteApprovalPolicySelect = onQuoteApprovalPolicySelect,
+                    )
+                } else {
+                    PostStatusVisibilityUi(
+                        modifier = Modifier,
+                        visibility = uiState.visibility,
+                        changeable = uiState.visibilityChangeable,
+                        onVisibilitySelect = onVisibilityChanged,
+                    )
+                }
             },
             bottomPanel = {
                 PostStatusBottomBar(
@@ -233,12 +252,13 @@ class PostStatusScreen(
                     },
                 )
             },
-            attachment = {
+            attachment = { style ->
                 StatusAttachment(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
                     uiState = uiState,
+                    style = style,
                     onDeleteClick = onDeleteClick,
                     onDescriptionInputted = onDescriptionInputted,
                     onPollContentChanged = onPollContentChanged,
@@ -267,6 +287,7 @@ class PostStatusScreen(
     private fun StatusAttachment(
         modifier: Modifier,
         uiState: PostStatusUiState,
+        style: PublishBlogStyle,
         onDeleteClick: (PublishPostMedia) -> Unit,
         onDescriptionInputted: (PublishPostMedia, String) -> Unit,
         onPollContentChanged: (Int, String) -> Unit,
@@ -276,42 +297,50 @@ class PostStatusScreen(
         onPollStyleSelect: (multiple: Boolean) -> Unit,
         onDurationSelect: (Duration) -> Unit,
     ) {
-        val attachment = uiState.attachment ?: return
-        when (attachment) {
-            is PostStatusAttachment.Image -> {
-                PublishPostMediaAttachment(
-                    modifier = modifier
-                        .padding(horizontal = 16.dp),
-                    medias = attachment.imageList,
-                    mediaAltMaxCharacters = uiState.rules.altMaxCharacters,
-                    onAltChanged = onDescriptionInputted,
-                    onDeleteClick = onDeleteClick,
-                )
-            }
+        if (uiState.quotingBlog != null) {
+            BlogInQuoting(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                blog = uiState.quotingBlog,
+                style = style.statusStyle,
+            )
+        } else {
+            val attachment = uiState.attachment ?: return
+            when (attachment) {
+                is PostStatusAttachment.Image -> {
+                    PublishPostMediaAttachment(
+                        modifier = modifier
+                            .padding(horizontal = 16.dp),
+                        medias = attachment.imageList,
+                        mediaAltMaxCharacters = uiState.rules.altMaxCharacters,
+                        onAltChanged = onDescriptionInputted,
+                        onDeleteClick = onDeleteClick,
+                    )
+                }
 
-            is PostStatusAttachment.Video -> {
-                PublishPostMediaAttachment(
-                    modifier = modifier
-                        .padding(horizontal = 16.dp),
-                    medias = listOf(attachment.video),
-                    mediaAltMaxCharacters = uiState.rules.altMaxCharacters,
-                    onAltChanged = onDescriptionInputted,
-                    onDeleteClick = onDeleteClick,
-                )
-            }
+                is PostStatusAttachment.Video -> {
+                    PublishPostMediaAttachment(
+                        modifier = modifier
+                            .padding(horizontal = 16.dp),
+                        medias = listOf(attachment.video),
+                        mediaAltMaxCharacters = uiState.rules.altMaxCharacters,
+                        onAltChanged = onDescriptionInputted,
+                        onDeleteClick = onDeleteClick,
+                    )
+                }
 
-            is PostStatusAttachment.Poll -> {
-                PostStatusPoll(
-                    modifier = modifier,
-                    poll = attachment,
-                    rules = uiState.rules,
-                    onPollContentChanged = onPollContentChanged,
-                    onRemovePollClick = onRemovePollClick,
-                    onRemoveItemClick = onRemovePollItemClick,
-                    onAddPollItemClick = onAddPollItemClick,
-                    onPollStyleSelect = onPollStyleSelect,
-                    onDurationSelect = onDurationSelect,
-                )
+                is PostStatusAttachment.Poll -> {
+                    PostStatusPoll(
+                        modifier = modifier,
+                        poll = attachment,
+                        rules = uiState.rules,
+                        onPollContentChanged = onPollContentChanged,
+                        onRemovePollClick = onRemovePollClick,
+                        onRemoveItemClick = onRemovePollItemClick,
+                        onAddPollItemClick = onAddPollItemClick,
+                        onPollStyleSelect = onPollStyleSelect,
+                        onDurationSelect = onDurationSelect,
+                    )
+                }
             }
         }
     }

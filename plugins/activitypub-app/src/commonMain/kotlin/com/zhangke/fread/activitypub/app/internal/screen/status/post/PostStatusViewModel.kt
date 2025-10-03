@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.screen.status.post
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.activitypub.entities.ActivityPubPreferencesEntity
 import com.zhangke.framework.collections.remove
 import com.zhangke.framework.collections.removeIndex
 import com.zhangke.framework.collections.updateIndex
@@ -21,6 +22,10 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.framework.utils.getDefaultLocale
+import com.zhangke.framework.utils.initLocale
+import com.zhangke.fread.activitypub.app.internal.adapter.toQuoteApprovalPolicy
+import com.zhangke.fread.activitypub.app.internal.adapter.toStatusVisibility
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.GenerateInitPostStatusUiStateUseCase
@@ -34,6 +39,7 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.QuoteApprovalPolicy
 import com.zhangke.fread.status.model.StatusVisibility
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -86,10 +92,10 @@ class PostStatusViewModel @Inject constructor(
                     _uiState.updateToFailed(it)
                 }
         }
-        loadPostStatusRules()
+        loadPostingSettings()
     }
 
-    private fun loadPostStatusRules() {
+    private fun loadPostingSettings() {
         launchInViewModel {
             _uiState.mapNotNull { it.successDataOrNull()?.account }
                 .distinctUntilChanged()
@@ -107,8 +113,28 @@ class PostStatusViewModel @Inject constructor(
                         }.onFailure {
                             _snackMessage.emitTextMessageFromThrowable(it)
                         }
+                    clientManager.getClient(locator).accountRepo
+                        .getPreferences()
+                        .onSuccess { preferences ->
+                            _uiState.updateOnSuccess { state ->
+                                fillDefaultSetting(state, preferences)
+                            }
+                        }
                 }
         }
+    }
+
+    private fun fillDefaultSetting(
+        state: PostStatusUiState,
+        preferences: ActivityPubPreferencesEntity,
+    ): PostStatusUiState {
+        return state.copy(
+            visibility = preferences.postingDefaultVisibility.toStatusVisibility(),
+            quoteApprovalPolicy = preferences.postingDefaultQuotePolicy?.toQuoteApprovalPolicy()
+                ?: QuoteApprovalPolicy.PUBLIC,
+            language = preferences.postingDefaultLanguage?.let { initLocale(it) }
+                ?: getDefaultLocale(),
+        )
     }
 
     fun onSwitchAccountClick(account: LoggedAccount) {
@@ -234,6 +260,10 @@ class PostStatusViewModel @Inject constructor(
                 state.copy(attachment = null)
             }
         }
+    }
+
+    fun onQuoteApprovalPolicySelect(policy: QuoteApprovalPolicy) {
+        _uiState.updateOnSuccess { it.copy(quoteApprovalPolicy = policy) }
     }
 
     fun onDescriptionInputted(file: PublishPostMedia, description: String) {

@@ -86,17 +86,31 @@ class SelectPlatformViewModel @Inject constructor(
                 ?.let { platformRepo.getPlatform(it).getOrNull() }
                 ?.let { SearchPlatformResult.SearchedPlatform(it) }
             if (platformAsUrl != null) {
-                _uiState.update { it.copy(searchedResult = it.searchedResult + platformAsUrl) }
+                _uiState.update {
+                    val newList = (it.searchedResult + platformAsUrl).distinctByDomain()
+                    it.copy(searchedResult = newList)
+                }
             }
             platformRepo.searchPlatformFromServer(query)
                 .map { list -> list.map { SearchPlatformResult.SearchedSnapshot(it) } }
                 .onSuccess { result ->
-                    _uiState.update { it.copy(searchedResult = it.searchedResult + result) }
+                    _uiState.update {
+                        it.copy(searchedResult = (it.searchedResult + result).distinctByDomain())
+                    }
                 }
             _uiState.update { it.copy(querying = false) }
         }
         queryJob?.invokeOnCancel {
             _uiState.update { it.copy(querying = false) }
+        }
+    }
+
+    private fun List<SearchPlatformResult>.distinctByDomain(): List<SearchPlatformResult> {
+        return distinctBy { result ->
+            when (result) {
+                is SearchPlatformResult.SearchedPlatform -> result.platform.baseUrl.host
+                is SearchPlatformResult.SearchedSnapshot -> result.snapshot.domain
+            }
         }
     }
 

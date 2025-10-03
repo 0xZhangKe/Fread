@@ -20,6 +20,7 @@ class RssPlatformTransformer @Inject constructor() {
             baseUrl = FormalBaseUrl.parse(uriInsight.url)!!,
             protocol = createRssProtocol(),
             thumbnail = source.thumbnail,
+            supportsQuotePost = false,
         )
     }
 }

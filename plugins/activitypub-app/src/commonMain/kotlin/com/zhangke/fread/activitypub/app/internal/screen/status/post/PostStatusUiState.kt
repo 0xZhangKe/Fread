@@ -10,6 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.QuoteApprovalPolicy
 import com.zhangke.fread.status.model.StatusVisibility
 import kotlin.time.Duration
 
@@ -21,14 +22,17 @@ data class PostStatusUiState(
     val attachment: PostStatusAttachment?,
     val visibility: StatusVisibility,
     val visibilityChangeable: Boolean,
+    val quoteApprovalPolicyChangeable: Boolean,
     val sensitive: Boolean,
     val warningContent: TextFieldValue,
     val replyToBlog: Blog?,
+    val quotingBlog: Blog?,
     val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
     val rules: PostBlogRules,
     val publishing: Boolean,
     val mentionState: LoadableState<List<ActivityPubAccountEntity>>,
+    val quoteApprovalPolicy: QuoteApprovalPolicy,
 ) {
 
     val allowedInputCount: Int get() = rules.maxCharacters - content.text.length
@@ -49,7 +53,8 @@ data class PostStatusUiState(
             account: ActivityPubLoggedAccount,
             allLoggedAccount: List<ActivityPubLoggedAccount>,
             visibility: StatusVisibility,
-            replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
+            replyingToBlog: Blog? = null,
+            quoteBlog: Blog? = null,
             content: TextFieldValue = TextFieldValue(""),
             sensitive: Boolean = false,
             warningContent: TextFieldValue = TextFieldValue(""),
@@ -57,6 +62,7 @@ data class PostStatusUiState(
             accountChangeable: Boolean = true,
             visibilityChangeable: Boolean = true,
             attachment: PostStatusAttachment? = null,
+            quoteApprovalPolicyChangeable: Boolean = true,
         ): PostStatusUiState {
             return PostStatusUiState(
                 account = account,
@@ -65,7 +71,8 @@ data class PostStatusUiState(
                 attachment = attachment,
                 visibility = visibility,
                 sensitive = sensitive,
-                replyToBlog = replyToAuthorInfo?.replyingToBlog,
+                replyToBlog = replyingToBlog,
+                quotingBlog = quoteBlog,
                 warningContent = warningContent,
                 emojiList = emptyList(),
                 language = language ?: getDefaultLocale(),
@@ -74,6 +81,8 @@ data class PostStatusUiState(
                 visibilityChangeable = visibilityChangeable,
                 publishing = false,
                 mentionState = LoadableState.idle(),
+                quoteApprovalPolicy = QuoteApprovalPolicy.PUBLIC,
+                quoteApprovalPolicyChangeable = quoteApprovalPolicyChangeable,
             )
         }
     }
@@ -141,6 +150,7 @@ data class PostBlogRules(
     val maxMediaCount: Int,
     val maxPollOptions: Int,
     val altMaxCharacters: Int,
+    val supportsQuotePost: Boolean,
 ) {
     companion object {
 
@@ -149,12 +159,14 @@ data class PostBlogRules(
             maxMediaCount: Int = 4,
             maxPollOptions: Int = 4,
             altMaxCharacters: Int = 1500,
+            supportsQuotePost: Boolean = false,
         ): PostBlogRules {
             return PostBlogRules(
                 maxCharacters = maxCharacters,
                 maxMediaCount = maxMediaCount,
                 maxPollOptions = maxPollOptions,
                 altMaxCharacters = altMaxCharacters,
+                supportsQuotePost = supportsQuotePost,
             )
         }
     }

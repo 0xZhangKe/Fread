@@ -3,11 +3,11 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.ActivityPubFilterEntity
 import com.zhangke.activitypub.entities.ActivityPubFilterResultEntity
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
+import com.zhangke.activitypub.entities.ActivityPubQuoteApprovalEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.author.BlogAuthor
@@ -15,6 +15,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.blog.CurrentUserQuoteApproval
 import com.zhangke.fread.status.blog.PostingApplication
 import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -23,6 +24,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
@@ -67,7 +69,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
-    suspend fun toStatusUiState(
+    fun toStatusUiState(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
         locator: PlatformLocator,
@@ -77,7 +79,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         return toStatusUiState(status, locator, loggedAccount)
     }
 
-    suspend fun toStatusUiState(
+    fun toStatusUiState(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
         locator: PlatformLocator,
@@ -88,7 +90,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         return toStatusUiState(status, locator, logged = logged, isOwner = isOwner)
     }
 
-    suspend fun toStatus(
+    fun toStatus(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status {
@@ -99,7 +101,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         }
     }
 
-    private suspend fun transformNewBlog(
+    private fun transformNewBlog(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status.NewBlog {
@@ -107,7 +109,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         return Status.NewBlog(blog)
     }
 
-    private suspend fun transformReblog(
+    private fun transformReblog(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status.Reblog {
@@ -120,7 +122,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
-    private suspend fun getBlogAndInteractions(
+    private fun getBlogAndInteractions(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform
     ): Blog {
@@ -128,7 +130,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         return transformBlog(entity, platform, statusAuthor)
     }
 
-    private suspend fun transformBlog(
+    private fun transformBlog(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
         author: BlogAuthor,
@@ -166,9 +168,9 @@ class ActivityPubStatusAdapter @Inject constructor(
                 support = true,
                 repliesCount = entity.repliesCount.toLong(),
             ),
+            quote = buildQuote(entity, platform),
             supportEdit = true,
             isReply = !entity.inReplyToId.isNullOrEmpty(),
-            quote = Blog.Quote(support = false),
             platform = platform,
             mediaList = entity.mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
             poll = entity.poll?.let(pollAdapter::adapt),
@@ -179,7 +181,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             mentions = entity.mentions.mapNotNull { it.toMention() },
             tags = entity.tags.map { it.toTag() },
             visibility = entity.visibility.convertActivityPubVisibility(),
-            embeds = entity.card?.toEmbed()?.let { listOf(it) } ?: emptyList(),
+            embeds = buildEmbed(entity, platform),
             editedAt = entity.editedAt?.let { DateParser.parseOrCurrent(it) },
             application = entity.application?.toApplication(),
             filtered = entity.filtered?.map { it.toFiltered() },
@@ -210,7 +212,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
-    private suspend fun ActivityPubStatusEntity.Tag.toTag(): HashtagInStatus {
+    private fun ActivityPubStatusEntity.Tag.toTag(): HashtagInStatus {
         return HashtagInStatus(
             name = name,
             url = url,
@@ -229,7 +231,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         }
     }
 
-    private suspend fun ActivityPubStatusEntity.Mention.toMention(): Mention? {
+    private fun ActivityPubStatusEntity.Mention.toMention(): Mention? {
         val webFinger = WebFinger.create(acct) ?: WebFinger.create(this.url) ?: return null
         return Mention(
             id = id,
@@ -238,6 +240,28 @@ class ActivityPubStatusAdapter @Inject constructor(
             webFinger = webFinger,
             protocol = createActivityPubProtocol(),
         )
+    }
+
+    private fun buildEmbed(
+        entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
+    ): List<BlogEmbed> {
+        val list = mutableListOf<BlogEmbed>()
+        entity.card?.toEmbed()?.let { list += it }
+        if (entity.quote != null) {
+            val quotedStatus = entity.quote?.quotedStatus
+            if (quotedStatus != null) {
+                val statusAuthor = activityPubAccountEntityAdapter.toAuthor(quotedStatus.account)
+                val quotedBlog = transformBlog(quotedStatus, platform, statusAuthor)
+                list += BlogEmbed.Blog(quotedBlog)
+            } else {
+                list += BlogEmbed.UnavailableQuote(
+                    reason = entity.quote?.state.orEmpty(),
+                    blogId = entity.quote?.quotedStatusId,
+                )
+            }
+        }
+        return list
     }
 
     private fun ActivityPubStatusEntity.PreviewCard.toEmbed(): BlogEmbed {
@@ -257,6 +281,27 @@ class ActivityPubStatusAdapter @Inject constructor(
             embedUrl = embedUrl,
             blurhash = blurhash,
         )
+    }
+
+    private fun buildQuote(
+        entity: ActivityPubStatusEntity,
+        blogPlatform: BlogPlatform,
+    ): Blog.Quote {
+        val currentUserApproval = entity.quoteApproval?.currentUser?.toApproval()
+        return Blog.Quote(
+            support = blogPlatform.supportsQuotePost == true,
+            enabled = currentUserApproval?.quotable ?: false,
+            currentUserApproval = currentUserApproval,
+        )
+    }
+
+    private fun String.toApproval(): CurrentUserQuoteApproval {
+        return when (this) {
+            ActivityPubQuoteApprovalEntity.CURRENT_USER_AUTOMATIC -> CurrentUserQuoteApproval.AUTOMATIC
+            ActivityPubQuoteApprovalEntity.CURRENT_USER_MANUAL -> CurrentUserQuoteApproval.MANUAL
+            ActivityPubQuoteApprovalEntity.CURRENT_USER_DENIED -> CurrentUserQuoteApproval.DENIED
+            else -> CurrentUserQuoteApproval.UNKNOWN
+        }
     }
 
     private fun ActivityPubStatusEntity.Application.toApplication(): PostingApplication {

@@ -122,7 +122,7 @@ fun PublishInteractionSettingLabel(
 
                 InteractionOption(
                     modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
-                        .noRippleClick(enabled = quoteApprovalPolicyChangeable) {
+                        .noRippleClick(enabled = visibilityChangeable) {
                             onVisibilitySelect(StatusVisibility.PUBLIC)
                         },
                     text = stringResource(StatusVisibility.PUBLIC.describeStringId),
@@ -131,7 +131,7 @@ fun PublishInteractionSettingLabel(
 
                 InteractionOption(
                     modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
-                        .noRippleClick(enabled = quoteApprovalPolicyChangeable) {
+                        .noRippleClick(enabled = visibilityChangeable) {
                             onVisibilitySelect(StatusVisibility.UNLISTED)
                         },
                     text = stringResource(StatusVisibility.UNLISTED.describeStringId),
@@ -140,7 +140,7 @@ fun PublishInteractionSettingLabel(
 
                 InteractionOption(
                     modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
-                        .noRippleClick(enabled = quoteApprovalPolicyChangeable) {
+                        .noRippleClick(enabled = visibilityChangeable) {
                             onVisibilitySelect(StatusVisibility.PRIVATE)
                         },
                     text = stringResource(StatusVisibility.PRIVATE.describeStringId),
@@ -149,7 +149,7 @@ fun PublishInteractionSettingLabel(
 
                 InteractionOption(
                     modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
-                        .noRippleClick(enabled = quoteApprovalPolicyChangeable) {
+                        .noRippleClick(enabled = visibilityChangeable) {
                             onVisibilitySelect(StatusVisibility.DIRECT)
                         },
                     text = stringResource(StatusVisibility.DIRECT.describeStringId),

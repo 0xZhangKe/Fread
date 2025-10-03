@@ -24,13 +24,14 @@ class BlogPlatformResourceLoader @Inject constructor(
         return@withContext globalJson.decodeFromString<JsonArray?>(json)
             ?.mapNotNull { it as? JsonObject }
             ?.mapNotNull { it.toPlatformSnapshot() }
+            ?.distinctBy { it.domain }
             ?: emptyList()
     }
 
-    private suspend fun JsonObject.toPlatformSnapshot(): PlatformSnapshot? {
+    private fun JsonObject.toPlatformSnapshot(): PlatformSnapshot? {
         val domain = getAsString("domain") ?: return null
         return PlatformSnapshot(
-            domain = domain,
+            domain = domain.lowercase(),
             description = getAsString("description").orEmpty(),
             thumbnail = getAsString("proxied_thumbnail").orEmpty(),
             protocol = createActivityPubProtocol(),

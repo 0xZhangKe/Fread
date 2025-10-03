@@ -1,6 +1,8 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
 import androidx.compose.ui.text.input.TextFieldValue
+import app.bsky.actor.ProfileView
+import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
@@ -23,6 +25,7 @@ data class PublishPostUiState(
     val replyBlog: Blog?,
     val quoteBlog: Blog?,
     val list: List<StatusList>,
+    val mentionState: LoadableState<List<ProfileView>>,
 ) {
 
     val remainingImageCount: Int
@@ -64,6 +67,7 @@ data class PublishPostUiState(
                 maxLanguageCount = 3,
                 publishing = false,
                 list = emptyList(),
+                mentionState = LoadableState.idle(),
             )
         }
     }

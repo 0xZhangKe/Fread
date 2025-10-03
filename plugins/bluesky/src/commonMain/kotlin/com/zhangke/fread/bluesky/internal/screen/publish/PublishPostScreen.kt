@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import app.bsky.actor.ProfileView
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -65,6 +66,7 @@ class PublishPostScreen(
                     navigator.replace(multiAccPublishScreen)
                 }
             },
+            onMentionCandidateClick = viewModel::onMentionCandidateClick,
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
         ConsumeFlow(viewModel.finishPageFlow) {
@@ -87,6 +89,7 @@ class PublishPostScreen(
         onMediaDeleteClick: (PublishPostMedia) -> Unit,
         onPublishClick: () -> Unit,
         onAddAccountClick: () -> Unit,
+        onMentionCandidateClick: (ProfileView) -> Unit,
     ) {
         PublishPostScaffold(
             account = uiState.account,
@@ -120,6 +123,12 @@ class PublishPostScreen(
                     maxLanguageCount = uiState.maxLanguageCount,
                     onMediaSelected = onMediaSelected,
                     onLanguageSelected = onLanguageSelected,
+                    floatingBar = {
+                        MentionCandidateBar(
+                            uiState = uiState,
+                            onMentionClick = onMentionCandidateClick,
+                        )
+                    },
                 )
             },
             attachment = { style ->

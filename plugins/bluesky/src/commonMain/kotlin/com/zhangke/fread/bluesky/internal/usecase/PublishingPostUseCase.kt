@@ -1,5 +1,7 @@
 package com.zhangke.fread.bluesky.internal.usecase
 
+import androidx.compose.ui.text.TextRange
+import app.bsky.actor.ProfileView
 import app.bsky.embed.AspectRatio
 import app.bsky.embed.Images
 import app.bsky.embed.ImagesImage
@@ -25,6 +27,8 @@ import app.bsky.feed.ThreadgateMentionRule
 import app.bsky.richtext.Facet
 import app.bsky.richtext.FacetByteSlice
 import app.bsky.richtext.FacetFeatureUnion
+import app.bsky.richtext.FacetLink
+import app.bsky.richtext.FacetMention
 import app.bsky.richtext.FacetTag
 import com.atproto.repo.ApplyWritesCreate
 import com.atproto.repo.ApplyWritesRequest
@@ -41,6 +45,8 @@ import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostMediaAttachm
 import com.zhangke.fread.bluesky.internal.utils.Tid
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.utils.HashtagTextUtils
+import com.zhangke.fread.common.utils.LinkTextUtils
+import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.PostInteractionSetting
@@ -56,6 +62,7 @@ import sh.christian.ozone.api.Cid
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Language
 import sh.christian.ozone.api.RKey
+import sh.christian.ozone.api.Uri
 
 class PublishingPostUseCase @Inject constructor(
     private val clientManager: BlueskyClientManager,
@@ -70,6 +77,7 @@ class PublishingPostUseCase @Inject constructor(
         replyBlog: Blog? = null,
         attachment: PublishPostMediaAttachment? = null,
         quoteBlog: Blog? = null,
+        mentionedUsers: Set<ProfileView> = emptySet(),
     ): Result<Unit> {
         val client = clientManager.getClient(account.locator)
         val rkey = Tid.generateTID()
@@ -84,7 +92,7 @@ class PublishingPostUseCase @Inject constructor(
             embed = embedResult.getOrNull(),
             createdAt = Clock.System.now(),
             reply = replyResult.getOrNull(),
-            facets = buildFacet(content),
+            facets = buildFacet(content, mentionedUsers),
         )
         val writes = mutableListOf<ApplyWritesRequestWriteUnion>()
         writes += ApplyWritesRequestWriteUnion.Create(
@@ -284,17 +292,17 @@ class PublishingPostUseCase @Inject constructor(
         }
     }
 
-    private fun buildFacet(content: String): List<Facet> {
+    private fun buildFacet(
+        content: String,
+        mentionedUsers: Set<ProfileView>,
+    ): List<Facet> {
         if (content.isEmpty()) return emptyList()
         val facetList = mutableListOf<Facet>()
         val hashtags = HashtagTextUtils.findHashtags(content)
         for (hashtag in hashtags) {
             val tag = content.substring(hashtag.start, hashtag.end)
             val facet = Facet(
-                index = FacetByteSlice(
-                    byteStart = calculateUtf8Index(hashtag.start, content),
-                    byteEnd = calculateUtf8Index(hashtag.end, content),
-                ),
+                index = convertIndex(hashtag, content),
                 features = listOf(
                     FacetFeatureUnion.Tag(
                         value = FacetTag(tag = tag),
@@ -303,7 +311,52 @@ class PublishingPostUseCase @Inject constructor(
             )
             facetList += facet
         }
+        val userRanges = MentionTextUtil.findMentionList(content)
+            .filter { range -> hashtags.firstOrNull { it.intersects(range) } == null }
+        for (userRange in userRanges) {
+            val handle = content.substring(userRange.start, userRange.end)
+            mentionedUsers.firstOrNull { it.handle.handle == handle.removePrefix("@") }
+                ?.did
+                ?.let { did ->
+                    val facet = Facet(
+                        index = convertIndex(userRange, content),
+                        features = listOf(
+                            FacetFeatureUnion.Mention(
+                                value = FacetMention(did = did),
+                            )
+                        ),
+                    )
+                    facetList += facet
+                }
+        }
+        val previousRanges = hashtags + userRanges
+        val linkRanges = LinkTextUtils.findLinks(content)
+            .filter { range ->
+                previousRanges.firstOrNull { it.intersects(range) } == null
+            }
+        for (linkRange in linkRanges) {
+            val link = content.substring(linkRange.start, linkRange.end)
+            val facetLink = if (link.lowercase().startsWith("http")) {
+                FacetLink(Uri(link))
+            } else {
+                FacetLink(Uri("http://$link"))
+            }
+            val facet = Facet(
+                index = convertIndex(linkRange, content),
+                features = listOf(
+                    FacetFeatureUnion.Link(facetLink)
+                ),
+            )
+            facetList += facet
+        }
         return facetList
+    }
+
+    private fun convertIndex(range: TextRange, content: String): FacetByteSlice {
+        return FacetByteSlice(
+            byteStart = calculateUtf8Index(range.start, content),
+            byteEnd = calculateUtf8Index(range.end, content),
+        )
     }
 
     private fun calculateUtf8Index(

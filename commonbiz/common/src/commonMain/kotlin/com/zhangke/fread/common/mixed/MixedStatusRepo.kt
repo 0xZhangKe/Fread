@@ -37,6 +37,7 @@ class MixedStatusRepo @Inject constructor(
     }
 
     suspend fun refresh(content: MixedContent): Result<Unit> {
+        if (content.sourceUriList.isEmpty()) return Result.success(Unit)
         val statusResolver = statusProvider.statusResolver
         val allResult = supervisorScope {
             content.sourceUriList.map { sourceUri ->

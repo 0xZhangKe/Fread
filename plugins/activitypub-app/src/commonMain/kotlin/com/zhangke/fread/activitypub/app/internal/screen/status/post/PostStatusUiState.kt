@@ -10,6 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.model.QuoteApprovalPolicy
 import com.zhangke.fread.status.model.StatusVisibility
 import kotlin.time.Duration
@@ -27,6 +28,7 @@ data class PostStatusUiState(
     val warningContent: TextFieldValue,
     val replyToBlog: Blog?,
     val quotingBlog: Blog?,
+    val unavailableQuote: BlogEmbed.UnavailableQuote?,
     val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
     val rules: PostBlogRules,
@@ -39,6 +41,8 @@ data class PostStatusUiState(
 
     val showAddAccountIcon: Boolean
         get() = accountChangeable && replyToBlog == null
+
+    val isQuotingBlogMode: Boolean get() = quotingBlog != null || unavailableQuote != null
 
     fun hasInputtedData(): Boolean {
         if (content.text.isNotEmpty()) return true
@@ -63,6 +67,7 @@ data class PostStatusUiState(
             visibilityChangeable: Boolean = true,
             attachment: PostStatusAttachment? = null,
             quoteApprovalPolicyChangeable: Boolean = true,
+            unavailableQuote: BlogEmbed.UnavailableQuote? = null,
         ): PostStatusUiState {
             return PostStatusUiState(
                 account = account,
@@ -83,6 +88,7 @@ data class PostStatusUiState(
                 mentionState = LoadableState.idle(),
                 quoteApprovalPolicy = QuoteApprovalPolicy.PUBLIC,
                 quoteApprovalPolicyChangeable = quoteApprovalPolicyChangeable,
+                unavailableQuote = unavailableQuote,
             )
         }
     }

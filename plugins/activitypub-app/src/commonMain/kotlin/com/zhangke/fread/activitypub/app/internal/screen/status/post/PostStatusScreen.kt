@@ -46,6 +46,8 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.QuoteApprovalPolicy
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
+import com.zhangke.fread.status.ui.embed.UnavailableQuoteInEmbedding
+import com.zhangke.fread.status.ui.embed.embedBorder
 import com.zhangke.fread.status.ui.publish.BlogInQuoting
 import com.zhangke.fread.status.ui.publish.PublishBlogStyle
 import com.zhangke.fread.status.uri.FormalUri
@@ -302,6 +304,15 @@ class PostStatusScreen(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 blog = uiState.quotingBlog,
                 style = style.statusStyle,
+            )
+        } else if (uiState.unavailableQuote != null) {
+            UnavailableQuoteInEmbedding(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(16.dp)
+                    .embedBorder()
+                    .padding(16.dp),
+                unavailableQuote = uiState.unavailableQuote,
+                onContentClick = {},
             )
         } else {
             val attachment = uiState.attachment ?: return

@@ -113,6 +113,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             quoteApprovalPolicyChangeable = false,
             attachment = blog.generateAttachment(),
             quoteBlog = quotingBlog,
+            unavailableQuote = blog.embeds.firstNotNullOfOrNull { it as? BlogEmbed.UnavailableQuote },
         )
     }
 

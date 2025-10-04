@@ -60,6 +60,7 @@ fun PublishPostFeaturesPanel(
     selectedLanguages: List<String>,
     maxLanguageCount: Int,
     onLanguageSelected: (List<String>) -> Unit,
+    mediaSelectEnabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     actions: @Composable RowScope.() -> Unit = {},
     floatingBar: @Composable () -> Unit = {},
@@ -82,7 +83,7 @@ fun PublishPostFeaturesPanel(
                     SimpleIconButton(
                         modifier = Modifier,
                         onClick = { launchImage() },
-                        enabled = mediaAvailableCount > 0,
+                        enabled = mediaSelectEnabled && mediaAvailableCount > 0,
                         imageVector = Icons.Default.Image,
                         contentDescription = "Add Image",
                     )
@@ -94,7 +95,7 @@ fun PublishPostFeaturesPanel(
                     SimpleIconButton(
                         modifier = Modifier.padding(start = 4.dp),
                         onClick = { launchVideo() },
-                        enabled = mediaAvailableCount > 0,
+                        enabled = mediaSelectEnabled && mediaAvailableCount > 0,
                         imageVector = Icons.Default.SmartDisplay,
                         contentDescription = "Add Video",
                     )

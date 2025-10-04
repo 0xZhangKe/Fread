@@ -73,6 +73,7 @@ internal fun PostStatusBottomBar(
         mediaAvailableCount = uiState.rules.maxMediaCount,
         onMediaSelected = onMediaSelected,
         selectedLanguages = listOf(uiState.language.languageCode),
+        mediaSelectEnabled = !uiState.isQuotingBlogMode,
         maxLanguageCount = 1,
         onLanguageSelected = { onLanguageSelected(initLocale(it.first())) },
         actions = {
@@ -81,6 +82,7 @@ internal fun PostStatusBottomBar(
                     .align(Alignment.CenterVertically)
                     .padding(start = 4.dp),
                 onClick = onPollClicked,
+                enabled = !uiState.isQuotingBlogMode,
                 imageVector = Icons.Default.Poll,
                 contentDescription = "Add Poll",
             )

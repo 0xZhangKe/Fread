@@ -21,6 +21,7 @@ import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
+import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.framework.utils.initLocale
@@ -113,13 +114,16 @@ class PostStatusViewModel @Inject constructor(
                         }.onFailure {
                             _snackMessage.emitTextMessageFromThrowable(it)
                         }
-                    clientManager.getClient(locator).accountRepo
-                        .getPreferences()
-                        .onSuccess { preferences ->
-                            _uiState.updateOnSuccess { state ->
-                                fillDefaultSetting(state, preferences)
+                    if (screenParams !is PostStatusScreenParams.EditStatusParams) {
+                        clientManager.getClient(locator)
+                            .accountRepo
+                            .getPreferences()
+                            .onSuccess { preferences ->
+                                _uiState.updateOnSuccess { state ->
+                                    fillDefaultSetting(state, preferences)
+                                }
                             }
-                        }
+                    }
                 }
         }
     }

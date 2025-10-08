@@ -38,7 +38,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
             applicationExtension {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 35
+                defaultConfig.targetSdk = 36
             }
             applicationComponentsExtension {
                 configurePrintApksTask(this)

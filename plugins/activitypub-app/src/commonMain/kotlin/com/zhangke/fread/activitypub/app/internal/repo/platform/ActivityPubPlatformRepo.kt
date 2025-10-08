@@ -6,6 +6,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -20,6 +21,7 @@ class ActivityPubPlatformRepo @Inject constructor(
     private val activityPubInstanceAdapter: ActivityPubInstanceAdapter,
     private val platformResourceLoader: BlogPlatformResourceLoader,
     private val mastodonInstanceRepo: MastodonInstanceRepo,
+    private val loggedAccountProvider: LoggedAccountProvider,
 ) {
 
     private val localPlatformSnapshotList = mutableListOf<PlatformSnapshot>()
@@ -68,8 +70,12 @@ class ActivityPubPlatformRepo @Inject constructor(
         if (instanceFromLocal != null) {
             if (instanceFromLocal.instanceEntity.apiVersions == null) {
                 // refresh local data
+                val accountUri = loggedAccountProvider.getAllAccounts()
+                    .firstOrNull { it.baseUrl == baseUrl }
+                    ?.uri
+                val fixedLocator = PlatformLocator(accountUri = accountUri, baseUrl = baseUrl)
                 ApplicationScope.launch {
-                    clientManager.getClient(locator)
+                    clientManager.getClient(fixedLocator)
                         .instanceRepo
                         .getInstanceInformation()
                         .map { activityPubPlatformEntityAdapter.toEntity(baseUrl, it) }

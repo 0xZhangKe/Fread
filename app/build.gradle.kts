@@ -40,8 +40,8 @@ android {
 
     defaultConfig {
         applicationId = "com.zhangke.fread"
-        versionCode = 107010
-        versionName = "1.7.1"
+        versionCode = 107011
+        versionName = "1.7.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

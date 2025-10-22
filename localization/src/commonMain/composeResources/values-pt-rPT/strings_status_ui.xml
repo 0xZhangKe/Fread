@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="status_ui_boosted">impulsionado</string>
+    <string name="status_ui_reposted">impulsionado</string>
+    <string name="status_ui_repost">Impulsionar</string>
     <string name="status_ui_quote">Citar</string>
     <string name="status_ui_like">Curtir</string>
     <string name="status_ui_comment">Comentar</string>

@@ -73,7 +73,7 @@ fun likeAlt(): String {
 
 @Composable
 internal fun forwardAlt(): String {
-    return stringResource(LocalizedString.statusUiBoosted)
+    return stringResource(LocalizedString.status_ui_repost)
 }
 
 @Composable

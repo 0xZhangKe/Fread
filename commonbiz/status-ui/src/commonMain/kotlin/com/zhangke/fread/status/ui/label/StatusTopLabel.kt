@@ -78,7 +78,7 @@ fun ReblogTopLabel(
         )
         Text(
             modifier = Modifier.padding(start = 4.dp),
-            text = stringResource(LocalizedString.statusUiBoosted),
+            text = stringResource(LocalizedString.status_ui_reposted),
             maxLines = 1,
             style = MaterialTheme.typography.bodySmall,
             fontSize = style.topLabelStyle.textSize,

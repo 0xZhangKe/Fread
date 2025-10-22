@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="status_ui_boosted">Поделился</string>
+    <string name="status_ui_reposted">повторно опубликовано</string>
+    <string name="status_ui_repost">Репост</string>
     <string name="status_ui_quote">Цитата</string>
     <string name="status_ui_like">Нравится</string>
     <string name="status_ui_comment">Комментарий</string>

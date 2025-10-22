@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="status_ui_boosted">partagé</string>
+    <string name="status_ui_reposted">partagé</string>
+    <string name="status_ui_repost">Partager</string>
     <string name="status_ui_quote">Citer</string>
     <string name="status_ui_like">J’aime</string>
     <string name="status_ui_comment">Commenter</string>

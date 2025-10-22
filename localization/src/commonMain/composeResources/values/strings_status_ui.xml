@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="status_ui_boosted">boosted</string>
+    <string name="status_ui_reposted">reposted</string>
+    <string name="status_ui_repost">Repost</string>
     <string name="status_ui_quote">Quote</string>
     <string name="status_ui_like">Like</string>
     <string name="status_ui_comment">Comment</string>

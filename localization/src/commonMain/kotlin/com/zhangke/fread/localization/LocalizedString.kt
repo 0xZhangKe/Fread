@@ -152,7 +152,8 @@ object LocalizedString {
     val selectAccountOpenStatusSearchIn = localizedString.select_account_open_status_search_in
     val selectAccountOpenStatusSearchFailed =
         localizedString.select_account_open_status_search_failed
-    val statusUiBoosted = localizedString.status_ui_boosted
+    val status_ui_repost = localizedString.status_ui_repost
+    val status_ui_reposted = localizedString.status_ui_reposted
     val statusUiQuote = localizedString.status_ui_quote
     val statusUiLike = localizedString.status_ui_like
     val statusUiComment = localizedString.status_ui_comment

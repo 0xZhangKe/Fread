@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="status_ui_boosted">ブースト</string>
+    <string name="status_ui_reposted">リポスト済み</string>
+    <string name="status_ui_repost">リポスト</string>
     <string name="status_ui_quote">引用</string>
     <string name="status_ui_like">いいね</string>
     <string name="status_ui_comment">コメント</string>

@@ -41,6 +41,7 @@ Manually disable Firebase join compilation
 - [Fread Introduce](https://medium.com/@kezhang404/fread-the-next-generation-mastodon-client-30bc50e279fd)
 - [The Philosophy of Modular Division in a Large Android Project
 ](https://medium.com/@kezhang404/the-philosophy-of-modular-division-in-a-large-android-project-e588a5dcdb78)
+- [Fread Features and Midterm Review ](https://medium.com/p/fread-features-and-midterm-review-c961e1a8930f)
 
 [**Deepwiki**](https://deepwiki.com/0xZhangKe/Fread)
 

@@ -42,7 +42,7 @@ class ActivityPubSearchEngine @Inject constructor(
     ): Result<List<SearchResult>> {
         val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
         return doSearch(locator) { searchRepo, platform ->
-            searchRepo.query(query).map {
+            searchRepo.query(query = query, resolve = true).map {
                 searchAdapter.toSearchResult(it, platform, locator, account)
             }
         }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,6 +26,7 @@ import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_more
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -157,9 +159,12 @@ private fun AdditionalMoreOptions(
 ) {
     val textHandler = LocalActivityTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
+    val coroutineScope = rememberCoroutineScope()
     DropDownOpenInBrowserItem {
         onDismissRequest()
-        browserLauncher.launchWebTabInApp(blog.link, checkAppSupportPage = false)
+        coroutineScope.launch {
+            browserLauncher.launchWebTabInApp(blog.link, checkAppSupportPage = false)
+        }
     }
     DropDownCopyLinkItem {
         onDismissRequest()

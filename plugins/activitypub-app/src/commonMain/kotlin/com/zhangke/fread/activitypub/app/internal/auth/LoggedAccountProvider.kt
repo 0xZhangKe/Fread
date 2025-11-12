@@ -1,7 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.auth
 
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.framework.utils.throwInDebug
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.PlatformLocator
@@ -35,10 +34,6 @@ class LoggedAccountProvider @Inject constructor() {
     fun getAccount(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
         val accountList = accountSet.read { set ->
             set.filter { it.baseUrl.equalsDomain(baseUrl) }
-        }
-        if (accountList.size > 1) {
-            throwInDebug("Multiple accounts found for base URL: $baseUrl")
-            return null
         }
         return accountList.firstOrNull()
     }

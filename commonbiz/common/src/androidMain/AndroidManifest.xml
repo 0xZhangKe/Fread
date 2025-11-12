@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest>
 
-    <application>
-
-        <activity
-            android:name="com.zhangke.fread.common.browser.BrowserBridgeDialogActivity"
-            android:exported="true"
-            android:theme="@style/DialogActivity" />
-    </application>
 </manifest>

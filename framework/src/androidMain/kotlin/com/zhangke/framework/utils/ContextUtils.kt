@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import androidx.lifecycle.LifecycleOwner
 
@@ -35,4 +36,14 @@ fun Context.extractLifecycleOwner(): LifecycleOwner? {
 
 fun Context.isDebugMode(): Boolean {
     return (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+}
+
+fun Context.startActivityCompat(intent: Intent) {
+    val activity = extractActivity()
+    if (activity != null) {
+        activity.startActivity(intent)
+    } else {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        this.startActivity(intent)
+    }
 }

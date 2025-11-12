@@ -8,12 +8,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.utils.BlendColorUtils
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +32,7 @@ fun DetailTopBar(
         endColor = MaterialTheme.colorScheme.onSurface,
     )
     val browserLauncher = LocalActivityBrowserLauncher.current
+    val coroutineScope = rememberCoroutineScope()
     TopAppBar(
         title = {
             if (progress >= 1F) {
@@ -39,7 +42,9 @@ fun DetailTopBar(
                     fontSizeSp = 22F,
                     maxLines = 1,
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it)
+                        coroutineScope.launch {
+                            browserLauncher.launchWebTabInApp(it)
+                        }
                     },
                 )
             }

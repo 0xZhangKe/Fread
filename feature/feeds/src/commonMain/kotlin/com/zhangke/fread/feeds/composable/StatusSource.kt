@@ -11,12 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.resources.logo
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.source.StatusSource
@@ -53,6 +55,7 @@ internal fun StatusSourceNode(
     onRemoveClick: (() -> Unit)? = null,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
+    val coroutineScope = rememberCoroutineScope()
     CardInfoSection(
         modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
         avatar = source.source.thumbnail,
@@ -61,7 +64,7 @@ internal fun StatusSourceNode(
         description = source.source.description,
         logo = rememberVectorPainter(source.source.protocol.logo),
         onClick = onClick,
-        onUrlClick = { browserLauncher.launchWebTabInApp(it) },
+        onUrlClick = { browserLauncher.launchWebTabInApp(coroutineScope, it) },
         actions = {
             if (source.addEnabled) {
                 IconButton(

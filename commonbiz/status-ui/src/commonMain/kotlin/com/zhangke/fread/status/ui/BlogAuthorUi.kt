@@ -11,6 +11,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -19,11 +20,12 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusInfoStyleDefaults
-import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -106,6 +108,7 @@ private fun BaseBlogAuthor(
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = modifier.fillMaxWidth()
             .clickable { composedStatusInteraction.onUserInfoClick(locator, author) },
@@ -133,7 +136,7 @@ private fun BaseBlogAuthor(
                             overflow = TextOverflow.Ellipsis,
                             fontSizeSp = 16F,
                             onUrlClick = {
-                                browserLauncher.launchWebTabInApp(it, locator)
+                                browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
                             },
                         )
 
@@ -181,7 +184,7 @@ private fun BaseBlogAuthor(
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3,
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, locator)
+                        browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
                     },
                 )
             }

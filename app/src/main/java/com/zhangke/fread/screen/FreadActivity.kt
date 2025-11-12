@@ -32,6 +32,7 @@ import com.zhangke.fread.di.AndroidActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
 import com.zhangke.krouter.KRouter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class FreadActivity : AppCompatActivity(), CallbackableActivity {
@@ -133,8 +134,10 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
         val uri = intent.data?.toString() ?: return
         KRouter.route<RouteAction>(uri)?.execute()
         lifecycleScope.launch {
+            delay(500) // delay for waiting page resumed
             ComposableActions.post(uri)
         }
+        setIntent(Intent())
     }
 
     override fun registerCallback(requestCode: Int, callback: ActivityResultCallback) {

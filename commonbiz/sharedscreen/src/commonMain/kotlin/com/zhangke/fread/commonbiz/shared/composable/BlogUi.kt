@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -20,6 +21,7 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.getStatusTopLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
+import kotlinx.coroutines.launch
 
 @Composable
 fun BlogUi(
@@ -41,6 +43,7 @@ fun BlogUi(
         ThreadsType.NONE
     }
     var continueThreadHeight: Int? by remember { mutableStateOf(null) }
+    val coroutineScope = rememberCoroutineScope()
     Box(modifier = modifier) {
         BlogUi(
             modifier = Modifier,
@@ -94,7 +97,9 @@ fun BlogUi(
                 )
             },
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, locator)
+                coroutineScope.launch {
+                    browserLauncher.launchWebTabInApp(it, locator)
+                }
             },
             onShowOriginalClick = {},
             onTranslateClick = {},

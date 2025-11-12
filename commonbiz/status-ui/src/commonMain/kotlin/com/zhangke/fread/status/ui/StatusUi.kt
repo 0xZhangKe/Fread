@@ -6,10 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.StatusUiState
@@ -50,6 +52,7 @@ fun StatusUi(
         }
     val rawStatus = status.status
     var continueThreadHeight: Int? by remember { mutableStateOf(null) }
+    val coroutineScope = rememberCoroutineScope()
     Box(modifier = modifier) {
         BlogUi(
             modifier = Modifier,
@@ -103,7 +106,7 @@ fun StatusUi(
                 composedStatusInteraction.onFollowClick(status.locator, it)
             },
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, status.locator)
+                browserLauncher.launchWebTabInApp(coroutineScope, it, status.locator)
             },
             onBoostedClick = {
                 composedStatusInteraction.onBoostedClick(status.locator, status)

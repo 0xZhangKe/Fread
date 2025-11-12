@@ -1,8 +1,10 @@
 package com.zhangke.fread.commonbiz.shared.composable
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.status.model.SearchResultUiState
 import com.zhangke.fread.status.ui.BlogAuthorUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -17,6 +19,7 @@ fun SearchResultUi(
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
+    val coroutineScope = rememberCoroutineScope()
     when (searchResult) {
         is SearchResultUiState.Platform -> {
             BlogPlatformUi(
@@ -52,7 +55,7 @@ fun SearchResultUi(
                     composedStatusInteraction.onUserInfoClick(searchResult.locator, it)
                 },
                 onUrlClick = {
-                    browserLauncher.launchWebTabInApp(it, searchResult.locator)
+                    browserLauncher.launchWebTabInApp(coroutineScope, it, searchResult.locator)
                 }
             )
         }

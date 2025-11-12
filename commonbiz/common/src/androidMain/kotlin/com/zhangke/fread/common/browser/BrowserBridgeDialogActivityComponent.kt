@@ -16,9 +16,9 @@ internal abstract class BrowserBridgeDialogActivityComponent(
     fun provideActivity(): Activity = activity
 
     @Provides
-    fun AndroidActivityBrowserLauncher.binds(): ActivityBrowserLauncher = this
+    fun AndroidSystemBrowserLauncher.binds(): SystemBrowserLauncher = this
 
-    abstract val activityBrowserLauncher: ActivityBrowserLauncher
+    abstract val activityBrowserLauncher: BrowserLauncher
 
     companion object
 }

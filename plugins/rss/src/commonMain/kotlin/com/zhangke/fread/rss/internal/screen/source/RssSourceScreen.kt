@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.UrlEncoder
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -73,6 +75,7 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
     ) {
         val browserLauncher = LocalActivityBrowserLauncher.current
         val snackBarState = rememberSnackbarHostState()
+        val coroutineScope = rememberCoroutineScope()
         ConsumeSnackbarFlow(snackBarState, snackBarMessageFlow)
         Scaffold(
             topBar = {
@@ -116,7 +119,7 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
                     onHashtagClick = {},
                     onMentionClick = {},
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it)
+                        browserLauncher.launchWebTabInApp(coroutineScope, it)
                     },
                 )
 
@@ -130,7 +133,7 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
                     )
                     RssInfoItem(
                         modifier = Modifier.clickable {
-                            browserLauncher.launchWebTabInApp(rssSource.url)
+                            browserLauncher.launchWebTabInApp(coroutineScope, rssSource.url)
                         },
                         title = stringResource(LocalizedString.rss_source_detail_screen_url),
                         content = rssSource.url,
@@ -138,10 +141,10 @@ class RssSourceScreen(private val url: String) : BaseScreen() {
                     if (rssSource.homePage.isNullOrEmpty().not()) {
                         RssInfoItem(
                             modifier = Modifier.clickable {
-                                browserLauncher.launchWebTabInApp(rssSource.homePage!!)
+                                browserLauncher.launchWebTabInApp(coroutineScope, rssSource.homePage)
                             },
                             title = stringResource(LocalizedString.rss_source_detail_screen_home_url),
-                            content = rssSource.homePage!!,
+                            content = rssSource.homePage,
                         )
                     }
                     RssInfoItem(

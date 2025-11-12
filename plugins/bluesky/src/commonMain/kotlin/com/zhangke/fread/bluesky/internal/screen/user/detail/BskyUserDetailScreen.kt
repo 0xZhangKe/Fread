@@ -21,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.ScreenKey
@@ -45,6 +46,7 @@ import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
@@ -82,6 +84,7 @@ class BskyUserDetailScreen(
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarState = rememberSnackbarHostState()
+        val coroutineScope = rememberCoroutineScope()
         UserDetailContent(
             uiState = uiState,
             snackbarHostState = snackBarState,
@@ -102,7 +105,7 @@ class BskyUserDetailScreen(
                 navigator.push(UserListScreen(locator = locator, type = UserListType.FOLLOWING))
             },
             onOpenInBrowserClick = {
-                uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(it) }
+                uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(coroutineScope, it) }
             },
             onCopyLinkClick = {
                 uiState.userHomePageUrl?.let { activityTextHandler.copyText(it) }

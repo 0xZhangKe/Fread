@@ -14,4 +14,8 @@ object ComposableActions {
     suspend fun post(uri: String) {
         _actionFlow.emit(uri)
     }
+
+    fun resetReplayCache() {
+        _actionFlow.resetReplayCache()
+    }
 }

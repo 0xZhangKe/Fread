@@ -14,12 +14,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
@@ -31,6 +33,7 @@ class OpenSourceScreen : BaseScreen() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val browserLauncher = LocalActivityBrowserLauncher.current
+        val coroutineScope = rememberCoroutineScope()
         Scaffold(
             topBar = {
                 Toolbar(
@@ -54,7 +57,7 @@ class OpenSourceScreen : BaseScreen() {
                         OpenSourceItem(
                             openSource = openSourceInfo,
                             onClick = {
-                                browserLauncher.launchWebTabInApp(it.url)
+                                browserLauncher.launchWebTabInApp(coroutineScope, it.url)
                             },
                         )
                     }

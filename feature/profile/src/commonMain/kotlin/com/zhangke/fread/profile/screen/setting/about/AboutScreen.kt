@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,6 +53,7 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.ic_fread_logo
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.update.AppUpdateDialog
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -103,6 +105,7 @@ class AboutScreen : BaseScreen() {
     ) {
         val textHandler = LocalActivityTextHandler.current
         val browserLauncher = LocalActivityBrowserLauncher.current
+        val coroutineScope = rememberCoroutineScope()
         Scaffold(
             topBar = {
                 Toolbar(
@@ -150,7 +153,9 @@ class AboutScreen : BaseScreen() {
                         clickableText = AppCommonConfig.WEBSITE,
                         showUnderline = true,
                         onClick = {
-                            browserLauncher.launchFreadLandingPage()
+                            coroutineScope.launch {
+                                browserLauncher.launchFreadLandingPage()
+                            }
                         },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -191,7 +196,9 @@ class AboutScreen : BaseScreen() {
                         clickableText = AppCommonConfig.AUTHOR,
                         showUnderline = true,
                         onClick = {
-                            browserLauncher.launchAuthorWebsite()
+                            coroutineScope.launch {
+                                browserLauncher.launchAuthorWebsite()
+                            }
                         },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -220,7 +227,9 @@ class AboutScreen : BaseScreen() {
                         clickableText = AppCommonConfig.PRIVACY_POLICY,
                         showUnderline = false,
                         onClick = {
-                            browserLauncher.launchWebTabInApp(AppCommonConfig.PRIVACY_POLICY)
+                            coroutineScope.launch {
+                                browserLauncher.launchWebTabInApp(AppCommonConfig.PRIVACY_POLICY)
+                            }
                         },
                     )
 

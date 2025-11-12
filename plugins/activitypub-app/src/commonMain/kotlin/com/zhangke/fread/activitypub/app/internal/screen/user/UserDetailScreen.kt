@@ -87,6 +87,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.formatDate
@@ -134,6 +135,7 @@ data class UserDetailScreen(
         val viewModel = getViewModel<UserDetailContainerViewModel>()
             .getViewModel(locator, userUri, webFinger, userId)
         val uiState by viewModel.uiState.collectAsState()
+        val coroutineScope = rememberCoroutineScope()
         UserDetailContent(
             uiState = uiState,
             messageFlow = viewModel.messageFlow,
@@ -192,7 +194,7 @@ data class UserDetailScreen(
             },
             onOpenInBrowserClick = {
                 uiState.accountUiState?.account?.url?.let {
-                    browserLauncher.launchWebTabInApp(it)
+                    browserLauncher.launchWebTabInApp(coroutineScope, it)
                 }
             },
             onCopyLinkClick = {
@@ -203,6 +205,7 @@ data class UserDetailScreen(
             onOpenOriginalInstanceClick = {
                 uiState.accountUiState?.account?.url?.let { FormalBaseUrl.parse(it) }?.let {
                     browserLauncher.launchWebTabInApp(
+                        scope = coroutineScope,
                         url = it.toString(),
                         locator = locator,
                         checkAppSupportPage = true,
@@ -323,6 +326,7 @@ data class UserDetailScreen(
         val browserLauncher = LocalActivityBrowserLauncher.current
         val contentCanScrollBackward = remember { mutableStateOf(false) }
         val snackBarHost = rememberSnackbarHostState()
+        val coroutineScope = rememberCoroutineScope()
         ConsumeSnackbarFlow(hostState = snackBarHost, messageTextFlow = messageFlow)
         DetailPageScaffold(
             modifier = Modifier.fillMaxSize(),
@@ -337,7 +341,7 @@ data class UserDetailScreen(
             onBannerClick = onBannerClick,
             onAvatarClick = onAvatarClick,
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, locator)
+                browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
             },
             onMaybeHashtagClick = onMaybeHashtagClick,
             onBackClick = onBackClick,
@@ -982,6 +986,7 @@ data class UserDetailScreen(
     @Composable
     private fun FieldLine(key: String, value: String, emojis: List<Emoji>) {
         val browserLauncher = LocalActivityBrowserLauncher.current
+        val coroutineScope = rememberCoroutineScope()
         Row(
             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -1005,7 +1010,7 @@ data class UserDetailScreen(
                     textAlign = TextAlign.End,
                     maxLines = 3,
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, locator)
+                        browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
                     },
                 )
             }

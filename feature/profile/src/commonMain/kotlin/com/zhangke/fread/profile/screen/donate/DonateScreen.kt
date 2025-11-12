@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feature.profile.Res
@@ -39,9 +41,11 @@ class DonateScreen : BaseScreen() {
     override fun Content() {
         super.Content()
         val browserLauncher = LocalActivityBrowserLauncher.current
+        val coroutineScope = rememberCoroutineScope()
         DonateContent(
             onDonateClick = {
                 browserLauncher.launchWebTabInApp(
+                    scope = coroutineScope,
                     url = it.url,
                     checkAppSupportPage = false,
                 )

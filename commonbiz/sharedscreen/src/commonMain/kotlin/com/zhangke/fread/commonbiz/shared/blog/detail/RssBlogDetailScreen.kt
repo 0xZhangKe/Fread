@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -36,6 +37,7 @@ import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.StatusInfoLine
 import com.zhangke.fread.status.ui.style.StatusStyles
 import com.zhangke.fread.status.utils.DateTimeFormatter
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 class RssBlogDetailScreen(
@@ -52,6 +54,7 @@ class RssBlogDetailScreen(
         val browserLauncher = LocalActivityBrowserLauncher.current
 
         val viewModel = getViewModel<RssBlogDetailViewModel>()
+        val coroutineScope = rememberCoroutineScope()
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         Scaffold(
             topBar = {
@@ -63,10 +66,9 @@ class RssBlogDetailScreen(
                     actions = {
                         SimpleIconButton(
                             onClick = {
-                                browserLauncher.launchWebTabInApp(
-                                    blog.url,
-                                    checkAppSupportPage = false
-                                )
+                                coroutineScope.launch {
+                                    browserLauncher.launchWebTabInApp(blog.url, checkAppSupportPage = false)
+                                }
                             },
                             imageVector = Icons.Default.OpenInBrowser,
                             contentDescription = "Open In Browser",
@@ -97,7 +99,9 @@ class RssBlogDetailScreen(
                     onInteractive = { _, _ -> },
                     onUserInfoClick = viewModel::onUserInfoClick,
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it)
+                        coroutineScope.launch {
+                            browserLauncher.launchWebTabInApp(it)
+                        }
                     },
                     blogTranslationState = BlogTranslationUiState(support = false),
                     editedAt = blog.editedAt?.instant,

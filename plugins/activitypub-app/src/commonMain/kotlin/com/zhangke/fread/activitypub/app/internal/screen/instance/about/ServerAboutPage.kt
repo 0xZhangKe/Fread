@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +30,7 @@ import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -111,13 +113,14 @@ private fun ServerAboutAnnouncement(
     baseUrl: FormalBaseUrl,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
+    val coroutineScope = rememberCoroutineScope()
     SelectionContainer {
         FreadRichText(
             modifier = modifier,
             content = entity.content,
             onUrlClick = {
                 val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
-                browserLauncher.launchWebTabInApp(it, locator)
+                browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
             },
         )
     }

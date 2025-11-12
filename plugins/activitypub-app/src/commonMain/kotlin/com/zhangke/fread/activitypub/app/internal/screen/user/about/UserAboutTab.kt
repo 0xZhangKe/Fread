@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Emoji
@@ -98,6 +100,7 @@ internal class UserAboutTab(
         emojis: List<Emoji>,
     ) {
         val browserLauncher = LocalActivityBrowserLauncher.current
+        val coroutineScope = rememberCoroutineScope()
         Text(
             modifier = Modifier
                 .padding(top = 16.dp)
@@ -115,7 +118,7 @@ internal class UserAboutTab(
             onHashtagClick = {},
             emojis = emojis,
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, locator)
+                browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
             },
         )
     }

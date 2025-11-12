@@ -15,6 +15,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +30,7 @@ import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
@@ -42,6 +44,7 @@ fun SourceCommonUi(
     showDivider: Boolean = true,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
+    val coroutineScope = rememberCoroutineScope()
     Column(modifier = modifier) {
         Spacer(Modifier.height(8.dp))
         Row(
@@ -113,7 +116,7 @@ fun SourceCommonUi(
                     onMentionClick = {},
                     onHashtagClick = {},
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it)
+                        browserLauncher.launchWebTabInApp(coroutineScope, it)
                     },
                 )
                 Spacer(modifier = Modifier.width(16.dp))

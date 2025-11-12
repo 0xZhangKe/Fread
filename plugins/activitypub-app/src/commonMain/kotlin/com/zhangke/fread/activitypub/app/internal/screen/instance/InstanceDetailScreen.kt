@@ -101,6 +101,7 @@ class InstanceDetailScreen(
     ) {
         val browserLauncher = LocalActivityBrowserLauncher.current
         val contentCanScrollBackward = remember { mutableStateOf(false) }
+        val coroutineScope = rememberCoroutineScope()
         DetailPageScaffold(
             modifier = Modifier.fillMaxSize(),
             snackbarHostState = rememberSnackbarHostState(),
@@ -131,7 +132,9 @@ class InstanceDetailScreen(
             },
             onBackClick = onBackClick,
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, locator)
+                coroutineScope.launch {
+                    browserLauncher.launchWebTabInApp(it, locator)
+                }
             },
             onMaybeHashtagClick = {},
             onBannerClick = {},

@@ -13,7 +13,7 @@ import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatf
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.common.browser.BrowserInterceptor
-import com.zhangke.fread.common.utils.GlobalScreenNavigation
+import com.zhangke.fread.common.browser.InterceptorResult
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
@@ -28,31 +28,39 @@ class ActivityPubUrlInterceptor @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : BrowserInterceptor {
 
-    override suspend fun intercept(locator: PlatformLocator, url: String): Boolean {
-        val uri = SimpleUri.parse(url) ?: return false
-        if (HttpScheme.validate(uri.scheme.orEmpty())) return false
-        val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
-        val status = parseStatus(locator, uri, account)
-        if (status != null) {
-            GlobalScreenNavigation.navigate(StatusContextScreen.create(status))
-            return true
+    override suspend fun intercept(locator: PlatformLocator?, url: String): InterceptorResult {
+        val uri = SimpleUri.parse(url) ?: return InterceptorResult.CanNotIntercept
+        if (HttpScheme.validate(uri.scheme.orEmpty())) return InterceptorResult.CanNotIntercept
+        val (finalLocator, account) = if (locator == null) {
+            val baseUrl = FormalBaseUrl.parse(url) ?: return InterceptorResult.CanNotIntercept
+            val platform = platformRepo.getPlatform(baseUrl).getOrNull()
+                ?: return InterceptorResult.CanNotIntercept
+            val account = loggedAccountProvider.getAccount(platform.baseUrl)
+            PlatformLocator(baseUrl = platform.baseUrl, accountUri = account?.uri) to account
+        } else {
+            val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
+            locator to account
         }
-        val webFinger = parseActivityPubUser(locator, uri)
+        val status = parseStatus(finalLocator, uri, account)
+        if (status != null) {
+            return InterceptorResult.SuccessWithOpenNewScreen(StatusContextScreen.create(status))
+        }
+        val webFinger = parseActivityPubUser(finalLocator, uri)
         if (webFinger != null) {
-            GlobalScreenNavigation.navigate(
-                UserDetailScreen(
-                    locator = locator,
-                    webFinger = webFinger
-                )
+            return InterceptorResult.SuccessWithOpenNewScreen(
+                UserDetailScreen(locator = finalLocator, webFinger = webFinger)
             )
-            return true
         }
         val platform = parsePlatform(uri)
         if (platform != null) {
-            GlobalScreenNavigation.navigate(InstanceDetailScreen(locator, platform.baseUrl))
-            return true
+            return InterceptorResult.SuccessWithOpenNewScreen(
+                InstanceDetailScreen(
+                    finalLocator,
+                    platform.baseUrl
+                )
+            )
         }
-        return false
+        return InterceptorResult.CanNotIntercept
     }
 
     private suspend fun parseActivityPubUser(locator: PlatformLocator, uri: SimpleUri): WebFinger? {
@@ -117,7 +125,6 @@ class ActivityPubUrlInterceptor @Inject constructor(
     private suspend fun parsePlatform(uri: SimpleUri): BlogPlatform? {
         val baseUrl = FormalBaseUrl.parse(uri.toString()) ?: return null
         if (uri.queries.isNotEmpty()) return null
-        if (!uri.path?.removePrefix("/").isNullOrEmpty()) return null
         return platformRepo.getPlatform(baseUrl).getOrNull()
     }
 }

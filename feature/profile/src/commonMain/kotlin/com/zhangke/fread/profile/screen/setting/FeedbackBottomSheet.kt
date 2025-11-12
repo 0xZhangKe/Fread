@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.localization.LocalizedString
@@ -58,7 +59,7 @@ fun FeedbackBottomSheet(
                 modifier = Modifier
                     .clickable {
                         onDismissRequest()
-                        browserLauncher.launchWebTabInApp(AppCommonConfig.TELEGRAM_GROUP)
+                        browserLauncher.launchWebTabInApp(coroutineScope, AppCommonConfig.TELEGRAM_GROUP)
                     }
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -81,7 +82,7 @@ fun FeedbackBottomSheet(
                 modifier = Modifier
                     .clickable {
                         onDismissRequest()
-                        browserLauncher.launchWebTabInApp(AppCommonConfig.FEEDBACK_URL)
+                        browserLauncher.launchWebTabInApp(coroutineScope, AppCommonConfig.FEEDBACK_URL)
                     }
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp),

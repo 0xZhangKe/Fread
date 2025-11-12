@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProvider
 import cafe.adriel.voyager.hilt.KotlinInjectViewModelProviderFactory
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.module.ModuleStartup
+import com.zhangke.fread.common.browser.BrowserLoadingViewModel
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
@@ -14,6 +15,8 @@ import com.zhangke.fread.common.di.ViewModelKey
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
 import com.zhangke.fread.common.startup.StartupManager
 import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.status.model.PlatformLocator
+import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -58,6 +61,15 @@ interface CommonComponent : CommonPlatformComponent {
     fun bindFreadConfigStartup(module: FreadConfigModuleStartup): ModuleStartup {
         return module
     }
+
+    @IntoMap
+    @Provides
+    fun provideBrowserLoadingViewModel(creator: (String, PlatformLocator?) -> BrowserLoadingViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return BrowserLoadingViewModel::class to BrowserLoadingViewModel.Factory { uri, locator ->
+            creator(uri, locator)
+        }
+    }
+
 }
 
 interface CommonComponentProvider {

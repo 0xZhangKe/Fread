@@ -4,17 +4,23 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.model.PlatformLocator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
-interface ActivityBrowserLauncher {
+class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: SystemBrowserLauncher) {
 
     fun launchBySystemBrowser(url: String) {
         launchBySystemBrowser(url.toPlatformUri())
     }
 
-    fun launchBySystemBrowser(uri: PlatformUri)
+    fun launchBySystemBrowser(uri: PlatformUri) {
+        systemBrowserLauncher.launchBySystemBrowser(uri)
+    }
 
-    fun launchWebTabInApp(
+    suspend fun launchWebTabInApp(
         url: String,
         locator: PlatformLocator? = null,
         checkAppSupportPage: Boolean = true,
@@ -26,21 +32,47 @@ interface ActivityBrowserLauncher {
         )
     }
 
-    fun launchWebTabInApp(
+    suspend fun launchWebTabInApp(
         uri: PlatformUri,
         locator: PlatformLocator? = null,
         checkAppSupportPage: Boolean = true,
-    )
+    ) {
+        if (checkAppSupportPage) {
+            GlobalScreenNavigation.navigate(BrowserLoadingScreen(uri.toString(), locator))
+        } else {
+            systemBrowserLauncher.launchWebTabInApp(uri)
+        }
+    }
 
-    fun launchFreadLandingPage() {
+    suspend fun launchFreadLandingPage() {
         launchWebTabInApp(AppCommonConfig.WEBSITE)
     }
 
-    fun launchAuthorWebsite() {
+    suspend fun launchAuthorWebsite() {
         launchWebTabInApp(AppCommonConfig.AUTHOR_WEBSITE)
     }
 }
 
-val LocalActivityBrowserLauncher = staticCompositionLocalOf<ActivityBrowserLauncher> {
+val LocalActivityBrowserLauncher = staticCompositionLocalOf<BrowserLauncher> {
     error("No ActivityBrowserLauncher provided")
+}
+
+
+fun BrowserLauncher.launchWebTabInApp(
+    scope: CoroutineScope,
+    url: PlatformUri,
+    locator: PlatformLocator? = null,
+    checkAppSupportPage: Boolean = true,
+) {
+    scope.launch { this@launchWebTabInApp.launchWebTabInApp(url, locator, checkAppSupportPage) }
+}
+
+
+fun BrowserLauncher.launchWebTabInApp(
+    scope: CoroutineScope,
+    url: String,
+    locator: PlatformLocator? = null,
+    checkAppSupportPage: Boolean = true,
+) {
+    scope.launch { this@launchWebTabInApp.launchWebTabInApp(url, locator, checkAppSupportPage) }
 }

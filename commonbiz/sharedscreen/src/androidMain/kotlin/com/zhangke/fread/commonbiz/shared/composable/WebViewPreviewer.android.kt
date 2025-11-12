@@ -6,6 +6,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -15,6 +16,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.zhangke.framework.utils.dpToPx
 import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 
 
 @Composable
@@ -25,6 +27,7 @@ actual fun WebViewPreviewer(
     val browserLauncher = LocalActivityBrowserLauncher.current
     val density = LocalDensity.current
     val fontColor = LocalContentColor.current.toArgb()
+    val coroutineScope = rememberCoroutineScope()
     AndroidView(
         modifier = modifier,
         factory = {
@@ -38,7 +41,7 @@ actual fun WebViewPreviewer(
                         view: WebView?,
                         request: WebResourceRequest,
                     ): Boolean {
-                        browserLauncher.launchWebTabInApp(request.url.toPlatformUri())
+                        browserLauncher.launchWebTabInApp(coroutineScope, request.url.toPlatformUri())
                         return true
                     }
                 }

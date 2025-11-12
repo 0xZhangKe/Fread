@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
@@ -23,6 +24,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.localization.LocalizedString
@@ -87,6 +89,7 @@ internal class SearchedAuthorTab(
         nestedScrollConnection: NestedScrollConnection?,
     ) {
         val browserLauncher = LocalActivityBrowserLauncher.current
+        val coroutineScope = rememberCoroutineScope()
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
             onRefresh = onRefresh,
@@ -106,7 +109,7 @@ internal class SearchedAuthorTab(
                     author = item,
                     onClick = onUserInfoClick,
                     onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, locator)
+                        browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
                     },
                 )
             }

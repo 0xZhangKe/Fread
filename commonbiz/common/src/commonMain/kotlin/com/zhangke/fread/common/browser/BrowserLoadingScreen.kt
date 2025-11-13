@@ -20,6 +20,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -37,16 +38,17 @@ class BrowserLoadingScreen(
         val viewModel = getViewModel<BrowserLoadingViewModel, BrowserLoadingViewModel.Factory> {
             it.create(uri, locator)
         }
-        val navigator = LocalNavigator.currentOrThrow
+        val transparentNavigator = LocalNavigator.currentOrThrow
         ConsumeFlow(viewModel.interceptResultFlow) { result ->
             when (result) {
                 is InterceptorResult.CanNotIntercept -> {
                     viewModel.browserLauncher.launchBySystemBrowser(uri)
-                    navigator.pop()
+                    transparentNavigator.pop()
                 }
 
                 is InterceptorResult.SuccessWithOpenNewScreen -> {
-                    navigator.replace(result.screen)
+                    transparentNavigator.pop()
+                    GlobalScreenNavigation.navigate(result.screen)
                 }
             }
         }

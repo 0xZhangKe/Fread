@@ -38,7 +38,7 @@ class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: Sys
         checkAppSupportPage: Boolean = true,
     ) {
         if (checkAppSupportPage) {
-            GlobalScreenNavigation.navigate(BrowserLoadingScreen(uri.toString(), locator))
+            GlobalScreenNavigation.navigateByTransparent(BrowserLoadingScreen(uri.toString(), locator))
         } else {
             systemBrowserLauncher.launchWebTabInApp(uri)
         }

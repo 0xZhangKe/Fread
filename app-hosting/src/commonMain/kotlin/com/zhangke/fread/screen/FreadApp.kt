@@ -22,6 +22,7 @@ import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.zhangke.framework.voyager.FreadScreenTransition
+import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.bubble.BubbleManager
@@ -118,9 +119,13 @@ internal fun FreadApp(
                         LaunchedEffect(Unit) {
                             GlobalScreenNavigation.openScreenFlow
                                 .debounce(300)
-                                .collect { screen ->
-                                    navigator.push(screen)
-                                }
+                                .collect { screen -> navigator.push(screen) }
+                        }
+                        val transparentNavigator = LocalTransparentNavigator.current
+                        LaunchedEffect(Unit) {
+                            GlobalScreenNavigation.openTransparentScreenFlow
+                                .debounce(300)
+                                .collect { transparentNavigator.push(it) }
                         }
                         val bubbles by bubbleManager.bubbleListFlow.collectAsState()
                         if (bubbles.isNotEmpty()) {

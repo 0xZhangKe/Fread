@@ -23,6 +23,7 @@ import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.action.ComposableActions
 import com.zhangke.fread.common.action.RouteAction
 import com.zhangke.fread.common.theme.ThemeType
@@ -135,6 +136,7 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
         KRouter.route<RouteAction>(uri)?.execute()
         lifecycleScope.launch {
             delay(500) // delay for waiting page resumed
+            Log.d("F_TEST") { "post composable action: $uri" }
             ComposableActions.post(uri)
         }
         setIntent(Intent())

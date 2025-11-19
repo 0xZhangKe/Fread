@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.network.SimpleUri
+import com.zhangke.framework.network.addProtocolSuffixIfNecessary
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -30,7 +31,9 @@ class ActivityPubUrlInterceptor @Inject constructor(
 
     override suspend fun intercept(locator: PlatformLocator?, url: String): InterceptorResult {
         val uri = SimpleUri.parse(url) ?: return InterceptorResult.CanNotIntercept
-        if (HttpScheme.validate(uri.scheme.orEmpty())) return InterceptorResult.CanNotIntercept
+        if (!HttpScheme.validate(uri.scheme.orEmpty().addProtocolSuffixIfNecessary())) {
+            return InterceptorResult.CanNotIntercept
+        }
         val (finalLocator, account) = if (locator == null) {
             val baseUrl = FormalBaseUrl.parse(url) ?: return InterceptorResult.CanNotIntercept
             val platform = platformRepo.getPlatform(baseUrl).getOrNull()

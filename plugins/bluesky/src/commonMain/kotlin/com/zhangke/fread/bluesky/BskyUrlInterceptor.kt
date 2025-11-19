@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.network.SimpleUri
+import com.zhangke.framework.network.addProtocolSuffixIfNecessary
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
@@ -18,10 +19,11 @@ class BskyUrlInterceptor @Inject constructor(
     private val accountManager: BlueskyLoggedAccountManager,
     private val clientManager: BlueskyClientManager,
 ) : BrowserInterceptor {
-
     override suspend fun intercept(locator: PlatformLocator?, url: String): InterceptorResult {
         val uri = SimpleUri.parse(url) ?: return InterceptorResult.CanNotIntercept
-        if (HttpScheme.validate(uri.scheme.orEmpty())) return InterceptorResult.CanNotIntercept
+        if (!HttpScheme.validate(uri.scheme.orEmpty().addProtocolSuffixIfNecessary())) {
+            return InterceptorResult.CanNotIntercept
+        }
         val finalLocator = if (locator == null) {
             val baseUrl = FormalBaseUrl.parse(url) ?: return InterceptorResult.CanNotIntercept
             val account = accountManager.getAccount(PlatformLocator(baseUrl = baseUrl))

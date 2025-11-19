@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -21,10 +22,14 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
+import com.zhangke.framework.utils.Log
 import com.zhangke.framework.voyager.FreadScreenTransition
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.fread.common.action.LocalComposableActions
+import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.bubble.BubbleManager
 import com.zhangke.fread.common.bubble.LocalBubbleManager
 import com.zhangke.fread.common.config.FreadConfigManager
@@ -54,7 +59,9 @@ import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
 import com.zhangke.fread.utils.LocalActivityHelper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 typealias FreadApp = @Composable () -> Unit
@@ -125,8 +132,13 @@ internal fun FreadApp(
                         LaunchedEffect(Unit) {
                             GlobalScreenNavigation.openTransparentScreenFlow
                                 .debounce(300)
-                                .collect { transparentNavigator.push(it) }
+                                .collect {
+                                    Log.d("F_TEST") { "open transparent screen:$it" }
+                                    transparentNavigator.push(it)
+                                }
                         }
+                        val browserLauncher = LocalActivityBrowserLauncher.current
+                        RegisterNotificationAction(browserLauncher)
                         val bubbles by bubbleManager.bubbleListFlow.collectAsState()
                         if (bubbles.isNotEmpty()) {
                             Column(modifier = Modifier.fillMaxWidth()) {
@@ -140,4 +152,31 @@ internal fun FreadApp(
             }
         }
     }
+}
+
+@Composable
+private fun RegisterNotificationAction(
+    browserLauncher: BrowserLauncher,
+) {
+    val composableActions = LocalComposableActions.current
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(composableActions) {
+        composableActions.actionFlow.collect { action ->
+            if (handleHttpUrl(action, browserLauncher, coroutineScope)) {
+                composableActions.resetReplayCache()
+            }
+        }
+    }
+}
+
+private fun handleHttpUrl(
+    action: String,
+    browserLauncher: BrowserLauncher,
+    coroutineScope: CoroutineScope
+): Boolean {
+    if (!action.lowercase().startsWith("http")) return false
+    coroutineScope.launch {
+        browserLauncher.launchWebTabInApp(action)
+    }
+    return true
 }

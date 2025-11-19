@@ -17,7 +17,7 @@ object GlobalScreenNavigation {
         _openScreenFlow.emit(screen)
     }
 
-    suspend fun navigateByTransparent(screen: Screen){
+    suspend fun navigateByTransparent(screen: Screen) {
         _openTransparentScreenFlow.emit(screen)
     }
 }

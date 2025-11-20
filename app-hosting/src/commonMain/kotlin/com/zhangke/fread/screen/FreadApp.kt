@@ -22,7 +22,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import com.zhangke.framework.utils.Log
 import com.zhangke.framework.voyager.FreadScreenTransition
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
@@ -133,7 +132,6 @@ internal fun FreadApp(
                             GlobalScreenNavigation.openTransparentScreenFlow
                                 .debounce(300)
                                 .collect {
-                                    Log.d("F_TEST") { "open transparent screen:$it" }
                                     transparentNavigator.push(it)
                                 }
                         }

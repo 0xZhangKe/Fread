@@ -15,3 +15,8 @@ fun String.addProtocolIfNecessary(): String {
     if (this.contains("://")) return this
     return "${HttpScheme.HTTPS}$this"
 }
+
+fun String.addProtocolSuffixIfNecessary(): String {
+    if (this.endsWith("://")) return this
+    return "${this}://"
+}

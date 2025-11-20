@@ -91,10 +91,7 @@ class BlueskyLoggedAccountManager @Inject constructor(
         if (locator.accountUri != null) {
             allAccount.firstOrNull { it.uri == locator.accountUri }?.let { return it }
         }
-        if (allAccount.size == 1) {
-            return allAccount.firstOrNull()
-        }
-        return null
+        return allAccount.firstOrNull()
     }
 
     suspend fun updateAccountProfile(

@@ -77,6 +77,7 @@ import kotlinx.serialization.json.Json
 import sh.christian.ozone.BlueskyApi
 import sh.christian.ozone.XrpcBlueskyApi
 import sh.christian.ozone.api.AtIdentifier
+import sh.christian.ozone.api.Uri
 import sh.christian.ozone.api.response.AtpResponse
 
 class BlueskyClient(
@@ -249,6 +250,12 @@ class BlueskyClient(
 
     suspend fun applyWritesCatching(request: ApplyWritesRequest): Result<ApplyWritesResponse> {
         return runCatching { applyWrites(request) }.toResult()
+    }
+
+    suspend fun searchPostsByUri(uri: String): Result<SearchPostsResponse> {
+        return runCatching {
+            searchPosts(SearchPostsQueryParams(q = "", url = Uri(uri)))
+        }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

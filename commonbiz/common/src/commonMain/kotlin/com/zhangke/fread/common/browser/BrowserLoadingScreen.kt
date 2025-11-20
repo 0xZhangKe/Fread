@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.browser
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.hilt.getViewModel
@@ -20,6 +22,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -37,21 +40,22 @@ class BrowserLoadingScreen(
         val viewModel = getViewModel<BrowserLoadingViewModel, BrowserLoadingViewModel.Factory> {
             it.create(uri, locator)
         }
-        val navigator = LocalNavigator.currentOrThrow
+        val transparentNavigator = LocalNavigator.currentOrThrow
         ConsumeFlow(viewModel.interceptResultFlow) { result ->
             when (result) {
                 is InterceptorResult.CanNotIntercept -> {
                     viewModel.browserLauncher.launchBySystemBrowser(uri)
-                    navigator.pop()
+                    transparentNavigator.pop()
                 }
 
                 is InterceptorResult.SuccessWithOpenNewScreen -> {
-                    navigator.replace(result.screen)
+                    transparentNavigator.pop()
+                    GlobalScreenNavigation.navigate(result.screen)
                 }
             }
         }
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3F)),
             contentAlignment = Alignment.Center,
         ) {
             Surface(

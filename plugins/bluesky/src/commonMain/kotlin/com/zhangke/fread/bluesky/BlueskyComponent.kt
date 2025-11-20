@@ -15,6 +15,7 @@ import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailViewM
 import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListViewModel
+import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
@@ -122,5 +123,11 @@ interface BlueskyComponent : BlueskyPlatformComponent {
         return FeedsDetailViewModel::class to FeedsDetailViewModel.Factory { role, feeds ->
             creator(role, feeds)
         }
+    }
+
+    @IntoSet
+    @Provides
+    fun provideActivityPubUrlInterceptor(urlInterceptor: BskyUrlInterceptor): BrowserInterceptor {
+        return urlInterceptor
     }
 }

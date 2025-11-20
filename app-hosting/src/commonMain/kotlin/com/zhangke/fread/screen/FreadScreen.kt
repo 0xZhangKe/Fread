@@ -38,8 +38,6 @@ import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.action.OpenNotificationPageAction
-import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
@@ -55,7 +53,6 @@ import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.update.AppUpdateDialog
 import com.zhangke.fread.status.ui.utils.getScreenWidth
 import com.zhangke.fread.utils.LocalActivityHelper
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class FreadScreen : BaseScreen() {
@@ -101,8 +98,7 @@ class FreadScreen : BaseScreen() {
             ) {
                 TabNavigator(tab = tabs.first()) {
                     val tabNavigator = LocalTabNavigator.current
-                    val browserLauncher = LocalActivityBrowserLauncher.current
-                    RegisterDeeplinkAction(tabs, tabNavigator, browserLauncher)
+                    RegisterNotificationAction(tabs, tabNavigator)
                     inFeedsTab = tabNavigator.current.key == tabs.first().key
                     BackHandler(true) {
                         if (drawerState.isOpen) {
@@ -209,35 +205,31 @@ class FreadScreen : BaseScreen() {
     }
 
     @Composable
-    private fun RegisterDeeplinkAction(
+    private fun RegisterNotificationAction(
         tabs: List<Tab>,
         tabNavigator: TabNavigator,
-        browserLauncher: BrowserLauncher,
     ) {
         val composableActions = LocalComposableActions.current
-        val coroutineScope = rememberCoroutineScope()
         LaunchedEffect(tabs, composableActions) {
             composableActions.actionFlow.collect { action ->
-                composableActions.resetReplayCache()
-                handleNotificationAction(action, tabs, tabNavigator)
-                handleHttpUrl(action, browserLauncher, coroutineScope)
+                if (handleNotificationAction(action, tabs, tabNavigator)) {
+                    composableActions.resetReplayCache()
+                }
             }
         }
     }
 
-    private fun handleHttpUrl(action: String, browserLauncher: BrowserLauncher, coroutineScope: CoroutineScope) {
-        if (!action.lowercase().startsWith("http")) return
-        coroutineScope.launch {
-            browserLauncher.launchWebTabInApp(action)
-        }
-    }
-
-    private fun handleNotificationAction(action: String, tabs: List<Tab>, tabNavigator: TabNavigator) {
-        if (!action.startsWith(OpenNotificationPageAction.URI)) return
+    private fun handleNotificationAction(
+        action: String,
+        tabs: List<Tab>,
+        tabNavigator: TabNavigator,
+    ): Boolean {
+        if (!action.startsWith(OpenNotificationPageAction.URI)) return false
         val notificationTab =
-            tabs.firstNotNullOfOrNull { it as? NotificationsTab } ?: return
+            tabs.firstNotNullOfOrNull { it as? NotificationsTab } ?: return true
         if (tabNavigator.current != notificationTab) {
             tabNavigator.current = notificationTab
         }
+        return true
     }
 }

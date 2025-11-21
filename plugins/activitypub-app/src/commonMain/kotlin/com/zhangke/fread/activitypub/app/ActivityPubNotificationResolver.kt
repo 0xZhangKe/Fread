@@ -134,7 +134,7 @@ class ActivityPubNotificationResolver @Inject constructor(
             )
         }
         return when (entity.type) {
-            ActivityPubNotificationsEntity.Type.FAVORITE -> {
+            ActivityPubNotificationsEntity.FAVORITE -> {
                 if (status == null) {
                     StatusNotification.Unknown(
                         id = entity.id,
@@ -155,7 +155,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 }
             }
 
-            ActivityPubNotificationsEntity.Type.MENTION -> {
+            ActivityPubNotificationsEntity.MENTION -> {
                 StatusNotification.Mention(
                     id = entity.id,
                     author = author,
@@ -164,7 +164,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.FOLLOW -> {
+            ActivityPubNotificationsEntity.FOLLOW -> {
                 StatusNotification.Follow(
                     id = entity.id,
                     author = author,
@@ -174,7 +174,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.REBLOG -> {
+            ActivityPubNotificationsEntity.REBLOG -> {
                 StatusNotification.Repost(
                     id = entity.id,
                     author = author,
@@ -185,7 +185,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.STATUS -> {
+            ActivityPubNotificationsEntity.STATUS -> {
                 if (status == null) {
                     StatusNotification.Unknown(
                         id = entity.id,
@@ -202,7 +202,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 }
             }
 
-            ActivityPubNotificationsEntity.Type.FOLLOW_REQUEST -> {
+            ActivityPubNotificationsEntity.FOLLOW_REQUEST -> {
                 StatusNotification.FollowRequest(
                     id = entity.id,
                     createAt = createAt,
@@ -212,7 +212,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.POLL -> {
+            ActivityPubNotificationsEntity.POLL -> {
                 if (status == null) {
                     StatusNotification.Unknown(
                         id = entity.id,
@@ -232,16 +232,26 @@ class ActivityPubNotificationResolver @Inject constructor(
                 }
             }
 
-            ActivityPubNotificationsEntity.Type.UPDATE -> {
-                StatusNotification.Update(
-                    id = entity.id,
-                    createAt = createAt,
-                    status = status!!,
-                    unread = unread,
-                )
+            ActivityPubNotificationsEntity.UPDATE -> {
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        locator = locator,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.Update(
+                        id = entity.id,
+                        createAt = createAt,
+                        status = status,
+                        unread = unread,
+                    )
+                }
             }
 
-            ActivityPubNotificationsEntity.Type.SEVERED_RELATIONSHIPS -> {
+            ActivityPubNotificationsEntity.SEVERED_RELATIONSHIPS -> {
                 StatusNotification.SeveredRelationships(
                     id = entity.id,
                     createAt = createAt,
@@ -252,7 +262,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 )
             }
 
-            ActivityPubNotificationsEntity.Type.QUOTE -> {
+            ActivityPubNotificationsEntity.QUOTE -> {
                 if (status == null) {
                     StatusNotification.Unknown(
                         id = entity.id,
@@ -271,7 +281,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 }
             }
 
-            ActivityPubNotificationsEntity.Type.QUOTED_UPDATE -> {
+            ActivityPubNotificationsEntity.QUOTED_UPDATE -> {
                 if (status == null) {
                     StatusNotification.Unknown(
                         id = entity.id,

@@ -102,3 +102,27 @@ dependencies {
     implementation(libs.androidx.appcompat)
 //    ksp(libs.krouter.reducing.compiler)
 }
+
+listOf("assembleRelease", "assembleDebug").forEach { taskName ->
+    tasks.whenTaskAdded {
+        if (name == taskName) {
+            doLast {
+                val buildType = if (taskName.contains("Release")) "release" else "debug"
+                val apkDir = layout.buildDirectory.dir("outputs/apk/$buildType").get().asFile
+                val apkFile = apkDir.listFiles()?.firstOrNull { it.name.endsWith(".apk") }
+                if (apkFile != null) {
+                    val versionCode = android.defaultConfig.versionCode
+                    val enableFirebaseModule = gradle.extra["enableFirebaseModule"] == true
+                    val renamedApkName = if (enableFirebaseModule) {
+                        "fread-$versionCode-$buildType.apk"
+                    } else {
+                        "fread-$versionCode-fdroid.apk"
+                    }
+                    val newFile = File(apkDir, renamedApkName)
+                    apkFile.renameTo(newFile)
+                    println(">>> APK renamed to ${newFile.absolutePath}")
+                }
+            }
+        }
+    }
+}

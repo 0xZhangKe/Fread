@@ -150,3 +150,4 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
         callbacks[requestCode]?.invoke(resultCode, data)
     }
 }
+

@@ -1,20 +1,16 @@
 package com.zhangke.framework.composable
 
-import androidx.compose.foundation.Indication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalUseFallbackRippleImplementation
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -50,14 +46,9 @@ fun SimpleIconButton(
                 enabled = enabled,
                 role = Role.Button,
                 interactionSource = interactionSource,
-                indication =
-                    rippleOrFallbackImplementation(
-                        bounded = false,
-                        radius = iconSize / 2
-                    )
-            ) {
-                onClick()
-            },
+                indication = ripple(),
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center
     ) {
         val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
@@ -127,20 +118,5 @@ fun SimpleIconButton(
             contentDescription = contentDescription,
             tint = icTint,
         )
-    }
-}
-
-@Suppress("DEPRECATION_ERROR")
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun rippleOrFallbackImplementation(
-    bounded: Boolean = true,
-    radius: Dp = Dp.Unspecified,
-    color: Color = Color.Unspecified
-): Indication {
-    return if (LocalUseFallbackRippleImplementation.current) {
-        rememberRipple(bounded, radius, color)
-    } else {
-        ripple(bounded, radius, color)
     }
 }

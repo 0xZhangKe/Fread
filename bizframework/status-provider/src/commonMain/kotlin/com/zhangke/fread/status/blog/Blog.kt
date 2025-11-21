@@ -10,8 +10,12 @@ import com.zhangke.fread.status.model.FormattingTime
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.model.isActivityPub
+import com.zhangke.fread.status.model.isBluesky
+import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.richtext.RichTextType
 import com.zhangke.fread.status.richtext.buildRichText
 import kotlinx.serialization.Serializable
 
@@ -58,9 +62,18 @@ data class Blog(
     val isReply: Boolean = false,
 ) : PlatformSerializable {
 
+    val richTextType: RichTextType
+        get() {
+            if (platform.protocol.isActivityPub) return RichTextType.HTML
+            if (platform.protocol.isBluesky) return RichTextType.PLAINTEXT
+            if (platform.protocol.isRss) return RichTextType.HTML
+            return RichTextType.UNKNOWN
+        }
+
     val humanizedSpoilerText: RichText by lazy {
         buildRichText(
             document = spoilerText,
+            type = richTextType,
             mentions = mentions,
             emojis = emojis,
             hashTags = tags,
@@ -70,6 +83,7 @@ data class Blog(
     val humanizedContent: RichText by lazy {
         buildRichText(
             document = content,
+            type = richTextType,
             mentions = mentions,
             emojis = emojis,
             hashTags = tags,
@@ -80,6 +94,7 @@ data class Blog(
     val humanizedDescription: RichText by lazy {
         buildRichText(
             document = description.orEmpty(),
+            type = richTextType,
             mentions = mentions,
             emojis = emojis,
             hashTags = tags,

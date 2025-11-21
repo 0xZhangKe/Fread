@@ -41,6 +41,7 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.ui.common.BlogTranslateLabel
 import com.zhangke.fread.status.ui.embed.BlogEmbedsUi
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -224,7 +225,7 @@ fun BlogTextContentSection(
                     LocalizedString.statusUiSensitiveByFilter,
                     blog.filtered!!.first().title,
                 )
-            remember { RichText(text) }
+            remember { buildRichText(document = text, type = blog.richTextType) }
         }
         SpoilerText(
             modifier = Modifier,

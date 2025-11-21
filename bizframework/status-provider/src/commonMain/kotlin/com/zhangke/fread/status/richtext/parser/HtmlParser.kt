@@ -20,22 +20,31 @@ import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.OnLinkTargetClick
+import com.zhangke.fread.status.richtext.RichTextType
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 
 object HtmlParser {
 
     private const val QUOTE_INLINE_CLASS = "quote-inline"
+    private val simpleHtmlRegex = "<[^>]+>".toRegex()
 
     fun parse(
         document: String,
+        type: RichTextType,
         emojis: List<Emoji> = emptyList(),
         mentions: List<Mention> = emptyList(),
         hashTags: List<HashtagInStatus> = emptyList(),
         facets: List<Facet> = emptyList(),
         onLinkTargetClick: OnLinkTargetClick = {},
     ): AnnotatedString {
-        if (facets.isNotEmpty()) {
-            return FacetHtmlParser().parse(document, facets, onLinkTargetClick)
+        var isPlaintext = type == RichTextType.PLAINTEXT || facets.isNotEmpty()
+        if (type == RichTextType.UNKNOWN) {
+            if (!simpleHtmlRegex.containsMatchIn(document)) {
+                isPlaintext = true
+            }
+        }
+        if (isPlaintext) {
+            return PlaintextParser.parse(document, facets, onLinkTargetClick)
         }
         return buildAnnotatedString {
             Ksoup.parseBodyFragment(document)

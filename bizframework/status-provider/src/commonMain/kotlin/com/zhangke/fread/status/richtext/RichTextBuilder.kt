@@ -10,6 +10,7 @@ import com.zhangke.fread.status.status.model.Status
 
 fun buildRichText(
     document: String,
+    type: RichTextType = RichTextType.UNKNOWN,
     mentions: List<Mention> = emptyList(),
     hashTags: List<HashtagInStatus> = emptyList(),
     emojis: List<Emoji> = emptyList(),
@@ -17,6 +18,7 @@ fun buildRichText(
 ): RichText {
     return RichText(
         document = document,
+        type = type,
         mentions = mentions,
         hashTags = hashTags,
         emojis = emojis,

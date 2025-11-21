@@ -12,7 +12,7 @@ import com.zhangke.fread.status.richtext.OnLinkTargetClick
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import okio.utf8Size
 
-class FacetHtmlParser {
+object PlaintextParser {
 
     fun parse(
         document: String,

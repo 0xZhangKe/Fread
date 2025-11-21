@@ -5,6 +5,7 @@ import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.uri.FormalUri
 
 interface LoggedAccount {
@@ -19,13 +20,13 @@ interface LoggedAccount {
     val prettyHandle: String
 
     val humanizedName: RichText
-        get() = RichText(
+        get() = buildRichText(
             document = userName,
             emojis = emojis,
         )
 
     val humanizedDescription: RichText
-        get() = RichText(
+        get() = buildRichText(
             document = description.orEmpty(),
             emojis = emojis,
         )

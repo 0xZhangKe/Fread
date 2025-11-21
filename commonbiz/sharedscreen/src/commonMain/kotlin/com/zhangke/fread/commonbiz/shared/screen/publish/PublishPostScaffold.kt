@@ -41,11 +41,11 @@ import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.framework.utils.toPx
-import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.ui.embed.BlogInEmbedding
 import com.zhangke.fread.status.ui.publish.NameAndAccountInfo
 import com.zhangke.fread.status.ui.publish.PublishBlogStyle
@@ -167,7 +167,7 @@ fun PublishPostScaffold(
                 ) {
                     NameAndAccountInfo(
                         modifier = Modifier.fillMaxWidth(),
-                        humanizedName = RichText(account?.userName.orEmpty()),
+                        humanizedName = buildRichText(document = account?.userName.orEmpty()),
                         handle = account?.prettyHandle.orEmpty(),
                         style = style.statusStyle,
                     )

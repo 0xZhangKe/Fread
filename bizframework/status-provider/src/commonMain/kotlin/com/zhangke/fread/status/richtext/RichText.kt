@@ -19,6 +19,7 @@ class RichText(
     private val hashTags: List<HashtagInStatus> = emptyList(),
     val emojis: List<Emoji> = emptyList(),
     val facets: List<Facet> = emptyList(),
+    val type: RichTextType,
 ) : PlatformSerializable {
 
     @PlatformTransient
@@ -37,6 +38,7 @@ class RichText(
         richText?.let { return it }
         return HtmlParser.parse(
             document = document,
+            type = type,
             emojis = emojis,
             mentions = mentions,
             hashTags = hashTags,
@@ -50,4 +52,12 @@ class RichText(
     companion object {
         val empty by lazy { buildRichText("") }
     }
+}
+
+@Serializable
+enum class RichTextType {
+
+    HTML,
+    PLAINTEXT,
+    UNKNOWN,
 }

@@ -28,6 +28,21 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
+      - name: Decode keystore
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > fread-keystore.jks
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.FREADKEYSTORE }}
+
+      - name: Create keystore.properties
+        run: |
+          cat > keystore.properties <<EOF
+          storePassword=${{ secrets.STOREPASSWORD }}
+          keyPassword=${{ secrets.KEYPASSWORD }}
+          keyAlias=${{ secrets.KEYALIAS }}
+          storeFile=fread-keystore.jks
+          EOF
+
       - name: Build with Gradle
         run: bash ./gradlew assembleRelease
 

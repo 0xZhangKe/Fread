@@ -30,9 +30,7 @@ jobs:
 
       - name: Decode keystore
         run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > fread-keystore.jks
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.FREADKEYSTORE }}
+          echo "${{ secrets.FREADKEYSTORE }}" | tr -d '\n' | base64 --decode > fread-keystore.jks
 
       - name: Debug keystore
         run: keytool -list -v -keystore fread-keystore.jks -storepass "${{ secrets.STOREPASSWORD }}"

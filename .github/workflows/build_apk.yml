@@ -28,9 +28,13 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Decode keystore
+      - name: Check secret length
         run: |
-          echo "${{ secrets.FREADKEYSTORE }}" | tr -d '\n' | base64 --decode > fread-keystore.jks
+          echo -n "Length: "
+          echo -n "${{ secrets.FREADKEYSTORE }}" | wc -c
+
+      - name: Decode keystore
+        run: printf "%s" "${{ secrets.FREADKEYSTORE }}" | base64 --decode > fread-keystore.jks
 
       - name: Debug keystore
         run: keytool -list -v -keystore fread-keystore.jks -storepass "${{ secrets.STOREPASSWORD }}"

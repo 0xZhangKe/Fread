@@ -40,7 +40,7 @@ jobs:
           storePassword=${{ secrets.STOREPASSWORD }}
           keyPassword=${{ secrets.KEYPASSWORD }}
           keyAlias=${{ secrets.KEYALIAS }}
-          storeFile=fread-keystore.jks
+          storeFile=../fread-keystore.jks
           EOF
 
       - name: Build with Gradle
@@ -50,4 +50,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/release/fread-*.apk

@@ -36,6 +36,32 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data android:host="mastodon.social" />
+                <data android:host="mastodon.online" />
+                <data android:host="androiddev.social" />
+                <data android:host="m.cmx.im" />
+                <data android:host="alive.bar" />
+                <data android:host="wxw.moe" />
+                <data android:host="o3o.ca" />
+                <data android:host="pawoo.net" />
+                <data android:host="mstdn.jp" />
+                <data android:host="infosec.exchange" />
+                <data android:host="mstdn.social" />
+                <data android:host="planet.moe" />
+                <data android:host="mas.to" />
+                <data android:host="fosstodon.org" />
+                <data android:host="hachyderm.io" />
+                <data android:host="piaille.fr" />
+                <data android:host="mastodon.world" />
+                <data android:host="social.vivaldi.net" />
+                <data android:host="aethy.com" />
+
+                <data android:host="bsky.app" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="dev.zwander.mastodonredirect.intent.action.OPEN_FEDI_LINK" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
     </application>

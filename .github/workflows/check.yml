@@ -32,10 +32,7 @@ jobs:
           java-version: 17
 
       - name: Decode keystore
-        run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > fread-keystore.jks
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.FREADKEYSTORE }}
+        run: printf "%s" "${{ secrets.FREADKEYSTORE }}" | base64 --decode > fread-keystore.jks
 
       - name: Create keystore.properties
         run: |
@@ -43,7 +40,7 @@ jobs:
           storePassword=${{ secrets.STOREPASSWORD }}
           keyPassword=${{ secrets.KEYPASSWORD }}
           keyAlias=${{ secrets.KEYALIAS }}
-          storeFile=fread-keystore.jks
+          storeFile=../fread-keystore.jks
           EOF
 
       - name: Assemble

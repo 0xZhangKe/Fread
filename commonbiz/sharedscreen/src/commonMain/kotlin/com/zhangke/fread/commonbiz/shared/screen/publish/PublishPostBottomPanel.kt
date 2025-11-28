@@ -1,5 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.screen.publish
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -80,10 +82,12 @@ fun PublishPostFeaturesPanel(
                     onResult = onMediaSelected,
                     maxItems = mediaAvailableCount,
                 ) {
+                    val enabled = mediaSelectEnabled && mediaAvailableCount > 0
                     SimpleIconButton(
                         modifier = Modifier,
                         onClick = { launchImage() },
-                        enabled = mediaSelectEnabled && mediaAvailableCount > 0,
+                        onLongClick = { launchImageFile() },
+                        enabled = enabled,
                         imageVector = Icons.Default.Image,
                         contentDescription = "Add Image",
                     )
@@ -92,10 +96,12 @@ fun PublishPostFeaturesPanel(
                     onResult = onMediaSelected,
                     maxItems = 1,
                 ) {
+                    val enabled = mediaSelectEnabled && mediaAvailableCount > 0
                     SimpleIconButton(
-                        modifier = Modifier.padding(start = 4.dp),
+                        modifier = Modifier,
                         onClick = { launchVideo() },
-                        enabled = mediaSelectEnabled && mediaAvailableCount > 0,
+                        onLongClick = { launchVideoFile() },
+                        enabled = enabled,
                         imageVector = Icons.Default.SmartDisplay,
                         contentDescription = "Add Video",
                     )

@@ -18,6 +18,24 @@ actual fun PickVisualMediaLauncherContainer(
     maxItems: Int,
     content: @Composable PickVisualMediaLauncherContainerScope.() -> Unit,
 ) {
+    val fileLauncher = when {
+        maxItems > 1 -> {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenMultipleDocuments(),
+                onResult = { uri ->
+                    onResult(uri.take(maxItems).map { it.toPlatformUri() })
+                },
+            )
+        }
+
+        else -> {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenDocument(),
+                onResult = { uri -> uri?.let { onResult(listOf(it.toPlatformUri())) } },
+            )
+        }
+    }
+
     val launcher = when {
         maxItems > 1 -> rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = maxItems),
@@ -34,7 +52,7 @@ actual fun PickVisualMediaLauncherContainer(
         )
     }
     val scope = remember(launcher) {
-        PickVisualMediaLauncherContainerScope(launcher)
+        PickVisualMediaLauncherContainerScope(launcher, fileLauncher)
     }
     with(scope) {
         content()
@@ -43,7 +61,9 @@ actual fun PickVisualMediaLauncherContainer(
 
 actual class PickVisualMediaLauncherContainerScope(
     private val launcher: ManagedActivityResultLauncher<PickVisualMediaRequest, *>,
+    private val fileLauncher: ManagedActivityResultLauncher<Array<String>, *>,
 ) {
+
     actual fun launchImage() {
         launcher.launch(buildPickVisualImageRequest())
     }
@@ -52,7 +72,15 @@ actual class PickVisualMediaLauncherContainerScope(
         launcher.launch(buildPickVisualMediaRequest())
     }
 
-    actual fun launchVideo(){
+    actual fun launchVideo() {
         launcher.launch(buildPickVisualVideoRequest())
+    }
+
+    actual fun launchImageFile() {
+        fileLauncher.launch(arrayOf("image/*"))
+    }
+
+    actual fun launchVideoFile() {
+        fileLauncher.launch(arrayOf("video/*"))
     }
 }

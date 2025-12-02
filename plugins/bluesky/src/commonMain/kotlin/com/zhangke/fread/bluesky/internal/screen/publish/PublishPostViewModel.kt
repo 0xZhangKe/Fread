@@ -48,6 +48,7 @@ class PublishPostViewModel @Inject constructor(
     private val configManager: FreadConfigManager,
     private val publishingPost: PublishingPostUseCase,
     @Assisted private val locator: PlatformLocator,
+    @Assisted private val defaultText: String?,
     @Assisted replyBlogJsonString: String?,
     @Assisted quoteBlogJsonString: String?,
 ) : ViewModel() {
@@ -56,12 +57,13 @@ class PublishPostViewModel @Inject constructor(
 
         fun create(
             locator: PlatformLocator,
+            defaultText: String?,
             replyBlogJsonString: String?,
             quoteBlogJsonString: String?,
         ): PublishPostViewModel
     }
 
-    private val _uiState = MutableStateFlow(PublishPostUiState.default())
+    private val _uiState = MutableStateFlow(PublishPostUiState.default(defaultText))
     val uiState = _uiState.asStateFlow()
 
     private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
@@ -94,9 +96,7 @@ class PublishPostViewModel @Inject constructor(
         launchInViewModel {
             configManager.getBskyPublishLanguage().let {
                 _uiState.update { state ->
-                    val selectedLanguages = it.ifEmpty {
-                        listOf("en")
-                    }
+                    val selectedLanguages = it.ifEmpty { listOf("en") }
                     state.copy(selectedLanguages = selectedLanguages)
                 }
             }

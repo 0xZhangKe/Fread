@@ -1,5 +1,6 @@
 package com.zhangke.framework.architect.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF3880F2)
@@ -73,3 +74,5 @@ val surfaceContainerLowDark = Color(0xFF191B22)
 val surfaceContainerDark = Color(0xFF1D2027)
 val surfaceContainerHighDark = Color(0xFF272A31)
 val surfaceContainerHighestDark = Color(0xFF32353C)
+
+val ColorScheme.dialogScrim: Color get() = Color(0x66000000)

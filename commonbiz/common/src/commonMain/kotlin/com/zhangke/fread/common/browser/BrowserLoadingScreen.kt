@@ -7,17 +7,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.architect.theme.dialogScrim
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.di.ViewModelFactory
@@ -55,7 +56,7 @@ class BrowserLoadingScreen(
             }
         }
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3F)),
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.dialogScrim),
             contentAlignment = Alignment.Center,
         ) {
             Surface(

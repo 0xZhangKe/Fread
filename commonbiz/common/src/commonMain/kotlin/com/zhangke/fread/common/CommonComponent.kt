@@ -7,6 +7,7 @@ import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserLoadingViewModel
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
+import com.zhangke.fread.common.deeplink.SelectAccountForPublishViewModel
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
@@ -70,6 +71,11 @@ interface CommonComponent : CommonPlatformComponent {
         }
     }
 
+    @IntoMap
+    @Provides
+    fun provideSelectAccountForPublishViewModel(creator: () -> SelectAccountForPublishViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return SelectAccountForPublishViewModel::class to creator
+    }
 }
 
 interface CommonComponentProvider {

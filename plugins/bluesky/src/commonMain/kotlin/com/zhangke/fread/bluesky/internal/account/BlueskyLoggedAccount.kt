@@ -29,7 +29,7 @@ data class BlueskyLoggedAccount(
 
     override val platform = fromPlatform
 
-    override val id: String? = did
+    override val id: String = did
 
     override val userName = user.name
 

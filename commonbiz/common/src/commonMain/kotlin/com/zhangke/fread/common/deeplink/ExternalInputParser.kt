@@ -4,6 +4,11 @@ import com.eygraber.uri.Uri
 
 object ExternalInputParser {
 
+    /**
+     * Parsing text for external input, such as from Chrome.
+     * “Copied Text”
+     * http://example.com/#:~:text=Copied%20Text
+     */
     fun parseExternalText(text: String): String {
         if (text.isEmpty() || text.isBlank()) return text
         if (!text.contains("http")) return text.trim()

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModelProvider
 import cafe.adriel.voyager.hilt.KotlinInjectViewModelProviderFactory
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.module.ModuleStartup
-import com.zhangke.fread.common.browser.BrowserLoadingViewModel
+import com.zhangke.fread.common.browser.UrlRedirectViewModel
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.deeplink.SelectAccountForPublishViewModel
@@ -65,9 +65,9 @@ interface CommonComponent : CommonPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideBrowserLoadingViewModel(creator: (String, PlatformLocator?) -> BrowserLoadingViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return BrowserLoadingViewModel::class to BrowserLoadingViewModel.Factory { uri, locator ->
-            creator(uri, locator)
+    fun provideBrowserLoadingViewModel(creator: (String, PlatformLocator?, Boolean) -> UrlRedirectViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return UrlRedirectViewModel::class to UrlRedirectViewModel.Factory { uri, locator, isFromExternal ->
+            creator(uri, locator, isFromExternal)
         }
     }
 

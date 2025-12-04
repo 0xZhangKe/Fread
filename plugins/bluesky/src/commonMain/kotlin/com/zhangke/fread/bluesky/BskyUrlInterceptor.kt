@@ -14,10 +14,12 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.client.BskyCollections
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.InterceptorResult
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.status.model.PlatformLocator
 import me.tatarka.inject.annotations.Inject
@@ -29,14 +31,42 @@ class BskyUrlInterceptor @Inject constructor(
     private val clientManager: BlueskyClientManager,
     private val statusAdapter: BlueskyStatusAdapter,
     private val platformRepo: BlueskyPlatformRepo,
+    private val contentRepo: FreadContentRepo,
 ) : BrowserInterceptor {
 
-    override suspend fun intercept(locator: PlatformLocator?, url: String): InterceptorResult {
+    override suspend fun intercept(
+        locator: PlatformLocator?,
+        url: String,
+        isFromExternal: Boolean,
+    ): InterceptorResult {
         var uri = SimpleUri.parse(url) ?: return InterceptorResult.CanNotIntercept
         if (!HttpScheme.validate(uri.scheme.orEmpty().addProtocolSuffixIfNecessary())) {
             return InterceptorResult.CanNotIntercept
         }
+        if (uri.host.isNullOrEmpty()) return InterceptorResult.CanNotIntercept
+        val isProfileUrl = isProfileUrl(uri)
+        val isPostUrl = isPostUrl(uri)
+        if (!isProfileUrl && !isPostUrl) {
+            if (platformRepo.appViewDomains.any { uri.host == it }) {
+                val baseUrl = FormalBaseUrl.parse(url) ?: return InterceptorResult.CanNotIntercept
+                val content = contentRepo.getAllContent()
+                    .mapNotNull { it as? BlueskyContent }
+                    .firstOrNull { it.baseUrl == baseUrl }
+                if (content != null) {
+                    return InterceptorResult.SwitchHomeContent(content)
+                }
+            }
+        }
         uri = uri.copy(host = platformRepo.mapAppToBackendDomain(uri.host!!))
+        val baseUrl = locator?.baseUrl ?: FormalBaseUrl.parse(uri.host!!)
+        ?: return InterceptorResult.CanNotIntercept
+        if (locator?.accountUri == null) {
+            // 1. query account by base url is need
+            // 2. select account if have multi account
+            accountManager.getAccount(PlatformLocator(baseUrl = baseUrl))
+        }
+
+
         val (finalLocator, account) = if (locator == null) {
             val baseUrl =
                 FormalBaseUrl.parse(uri.toString()) ?: return InterceptorResult.CanNotIntercept
@@ -52,16 +82,32 @@ class BskyUrlInterceptor @Inject constructor(
         parsePost(finalLocator, uri, account)?.let {
             return InterceptorResult.SuccessWithOpenNewScreen(it)
         }
+        if (platformRepo.appViewDomains.any { uri.host == it }) {
+            val baseUrl = FormalBaseUrl.parse(url) ?: return InterceptorResult.CanNotIntercept
+            val content = contentRepo.getAllContent()
+                .mapNotNull { it as? BlueskyContent }
+                .firstOrNull { it.baseUrl == baseUrl }
+            if (content != null) {
+                return InterceptorResult.SwitchHomeContent(content)
+            }
+        }
         return InterceptorResult.CanNotIntercept
     }
 
-    private suspend fun parseProfile(locator: PlatformLocator, uri: SimpleUri): Screen? {
+    private fun isProfileUrl(uri: SimpleUri): Boolean {
         val path = uri.path
-        if (path.isNullOrEmpty()) return null
-        if (!path.startsWith("/profile/")) return null
+        if (path.isNullOrEmpty()) return false
+        if (!path.startsWith("/profile/")) return false
         val handle = path.split('/').lastOrNull()
+        if (handle.isNullOrEmpty()) return false
+        if (!handle.contains('.')) return false
+        return true
+    }
+
+    private suspend fun parseProfile(locator: PlatformLocator, uri: SimpleUri): Screen? {
+        if (!isProfileUrl(uri)) return null
+        val handle = uri.path?.split('/')?.lastOrNull()
         if (handle.isNullOrEmpty()) return null
-        if (!handle.contains('.')) return null
         val profile = clientManager.getClient(locator)
             .getProfileCatching(GetProfileQueryParams(Handle(handle)))
             .getOrNull()
@@ -69,17 +115,27 @@ class BskyUrlInterceptor @Inject constructor(
         return BskyUserDetailScreen(locator = locator, did = profile.did.did)
     }
 
+    private fun isPostUrl(uri: SimpleUri): Boolean {
+        val path = uri.path
+        if (path.isNullOrEmpty()) return false
+        val groupedPath = path.removePrefix("/").removeSuffix("/").split('/')
+        if (groupedPath.size != 4) return false
+        if (groupedPath[0] != "profile") return false
+        if (groupedPath[2] != "post") return false
+        return true
+    }
+
     private suspend fun parsePost(
         locator: PlatformLocator,
         uri: SimpleUri,
         account: BlueskyLoggedAccount?
     ): Screen? {
-        val path = uri.path
-        if (path.isNullOrEmpty()) return null
-        val groupedPath = path.removePrefix("/").removeSuffix("/").split('/')
-        if (groupedPath.size != 4) return null
-        if (groupedPath[0] != "profile") return null
-        if (groupedPath[2] != "post") return null
+        if (!isPostUrl(uri)) return null
+        val groupedPath = uri.path
+            ?.removePrefix("/")
+            ?.removeSuffix("/")
+            ?.split('/')
+            ?: return null
         val client = clientManager.getClient(locator)
         val statusUiState = client.getRecordCatching(
             GetRecordQueryParams(

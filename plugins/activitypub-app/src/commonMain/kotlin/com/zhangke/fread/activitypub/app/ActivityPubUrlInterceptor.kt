@@ -29,7 +29,10 @@ class ActivityPubUrlInterceptor @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : BrowserInterceptor {
 
-    override suspend fun intercept(locator: PlatformLocator?, url: String): InterceptorResult {
+    override suspend fun intercept(
+        locator: PlatformLocator?, url: String,
+        isFromExternal: Boolean,
+    ): InterceptorResult {
         val uri = SimpleUri.parse(url) ?: return InterceptorResult.CanNotIntercept
         if (!HttpScheme.validate(uri.scheme.orEmpty().addProtocolSuffixIfNecessary())) {
             return InterceptorResult.CanNotIntercept
@@ -54,14 +57,16 @@ class ActivityPubUrlInterceptor @Inject constructor(
                 UserDetailScreen(locator = finalLocator, webFinger = webFinger)
             )
         }
-        val platform = parsePlatform(uri)
-        if (platform != null) {
-            return InterceptorResult.SuccessWithOpenNewScreen(
-                InstanceDetailScreen(
-                    finalLocator,
-                    platform.baseUrl
+        if (isFromExternal) {
+            val baseUrl = FormalBaseUrl.parse(url) ?: return InterceptorResult.CanNotIntercept
+
+        } else {
+            val platform = parsePlatform(uri)
+            if (platform != null) {
+                return InterceptorResult.SuccessWithOpenNewScreen(
+                    InstanceDetailScreen(finalLocator, platform.baseUrl)
                 )
-            )
+            }
         }
         return InterceptorResult.CanNotIntercept
     }

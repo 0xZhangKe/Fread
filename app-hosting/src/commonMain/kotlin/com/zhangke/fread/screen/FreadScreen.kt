@@ -133,7 +133,7 @@ class FreadScreen : BaseScreen() {
                             NavigationBar(
                                 modifier = Modifier,
                             ) {
-                                tabs.forEachIndexed { index, tab ->
+                                tabs.forEachIndexed { _, tab ->
                                     TabNavigationItem(
                                         tab = tab,
                                         detectDoubleTap = inFeedsTab,

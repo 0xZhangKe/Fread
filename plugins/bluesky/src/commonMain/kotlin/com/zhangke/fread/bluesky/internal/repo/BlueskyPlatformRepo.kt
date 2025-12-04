@@ -14,6 +14,8 @@ class BlueskyPlatformRepo @Inject constructor(
         "bsky.app" to "bsky.social"
     )
 
+    val appViewDomains: Set<String> = appToBackendDomainMap.keys.toSet()
+
     fun getAllPlatform(): List<BlogPlatform> {
         val baseUrl = FormalBaseUrl.parse("https://bsky.social")!!
         return listOf(createBlueskyPlatform(baseUrl))

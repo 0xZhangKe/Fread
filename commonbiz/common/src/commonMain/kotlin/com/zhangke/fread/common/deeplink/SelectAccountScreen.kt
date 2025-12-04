@@ -46,6 +46,7 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.composable.SelectableAccount
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.localization.LocalizedString
@@ -126,45 +127,6 @@ class SelectAccountForPublishScreen(
                 else -> {
                     navigator.pop()
                 }
-            }
-        }
-    }
-
-    @Composable
-    private fun SelectableAccount(
-        account: LoggedAccount,
-        onClick: (LoggedAccount) -> Unit,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().noRippleClick { onClick(account) },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AutoSizeBox(
-                request = remember(account.avatar) {
-                    ImageRequest(account.avatar.orEmpty())
-                },
-            ) { action ->
-                Image(
-                    painter = rememberImageActionPainter(action),
-                    contentDescription = "Avatar",
-                    modifier = Modifier.size(42.dp)
-                        .clip(CircleShape)
-                        .freadPlaceholder(action !is ImageAction.Success)
-                        .clickable { onClick(account) },
-                )
-            }
-            Column(modifier = Modifier.padding(start = 16.dp).weight(1F)) {
-                Text(
-                    text = account.userName,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = account.prettyHandle,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
             }
         }
     }

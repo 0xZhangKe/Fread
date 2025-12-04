@@ -17,7 +17,8 @@ object ExternalInputHandler {
             // goto publish screen
             GlobalScreenNavigation.navigateByTransparent(SelectAccountForPublishScreen(fixedText))
         } else {
-            KRouter.route<RouteAction>(fixedText)?.execute()
+            val action = KRouter.route<RouteAction>(fixedText)
+            if (action?.execute() == true) return
             ComposableActions.post(fixedText)
         }
     }

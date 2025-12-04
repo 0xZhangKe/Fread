@@ -24,6 +24,7 @@ class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: Sys
         url: String,
         locator: PlatformLocator? = null,
         checkAppSupportPage: Boolean = true,
+        isFromExternal: Boolean = false,
     ) {
         launchWebTabInApp(
             uri = url.toPlatformUri(),
@@ -36,9 +37,16 @@ class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: Sys
         uri: PlatformUri,
         locator: PlatformLocator? = null,
         checkAppSupportPage: Boolean = true,
+        isFromExternal: Boolean = false,
     ) {
         if (checkAppSupportPage) {
-            GlobalScreenNavigation.navigateByTransparent(BrowserLoadingScreen(uri.toString(), locator))
+            GlobalScreenNavigation.navigateByTransparent(
+                screen = UrlRedirectScreen(
+                    uri = uri.toString(),
+                    locator = locator,
+                    isFromExternal = isFromExternal,
+                ),
+            )
         } else {
             systemBrowserLauncher.launchWebTabInApp(uri)
         }
@@ -57,7 +65,6 @@ val LocalActivityBrowserLauncher = staticCompositionLocalOf<BrowserLauncher> {
     error("No ActivityBrowserLauncher provided")
 }
 
-
 fun BrowserLauncher.launchWebTabInApp(
     scope: CoroutineScope,
     url: PlatformUri,
@@ -66,7 +73,6 @@ fun BrowserLauncher.launchWebTabInApp(
 ) {
     scope.launch { this@launchWebTabInApp.launchWebTabInApp(url, locator, checkAppSupportPage) }
 }
-
 
 fun BrowserLauncher.launchWebTabInApp(
     scope: CoroutineScope,

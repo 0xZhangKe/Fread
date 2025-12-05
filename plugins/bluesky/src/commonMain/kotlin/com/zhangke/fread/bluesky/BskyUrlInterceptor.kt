@@ -22,6 +22,7 @@ import com.zhangke.fread.common.browser.InterceptorResult
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.model.createBlueskyProtocol
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Handle
 import sh.christian.ozone.api.RKey
@@ -46,50 +47,39 @@ class BskyUrlInterceptor @Inject constructor(
         if (uri.host.isNullOrEmpty()) return InterceptorResult.CanNotIntercept
         val isProfileUrl = isProfileUrl(uri)
         val isPostUrl = isPostUrl(uri)
-        if (!isProfileUrl && !isPostUrl) {
+        if (isFromExternal && !isProfileUrl && !isPostUrl) {
             if (platformRepo.appViewDomains.any { uri.host == it }) {
-                val baseUrl = FormalBaseUrl.parse(url) ?: return InterceptorResult.CanNotIntercept
                 val content = contentRepo.getAllContent()
-                    .mapNotNull { it as? BlueskyContent }
-                    .firstOrNull { it.baseUrl == baseUrl }
+                    .firstNotNullOfOrNull { it as? BlueskyContent }
                 if (content != null) {
                     return InterceptorResult.SwitchHomeContent(content)
                 }
             }
+            return InterceptorResult.CanNotIntercept
         }
         uri = uri.copy(host = platformRepo.mapAppToBackendDomain(uri.host!!))
         val baseUrl = locator?.baseUrl ?: FormalBaseUrl.parse(uri.host!!)
         ?: return InterceptorResult.CanNotIntercept
-        if (locator?.accountUri == null) {
-            // 1. query account by base url is need
-            // 2. select account if have multi account
-            accountManager.getAccount(PlatformLocator(baseUrl = baseUrl))
-        }
-
-
-        val (finalLocator, account) = if (locator == null) {
-            val baseUrl =
-                FormalBaseUrl.parse(uri.toString()) ?: return InterceptorResult.CanNotIntercept
-            val account = accountManager.getAccount(PlatformLocator(baseUrl = baseUrl))
-            PlatformLocator(baseUrl = baseUrl, accountUri = account?.uri) to account
+        var account: BlueskyLoggedAccount? = null
+        val fixedLocator = if (locator?.accountUri != null) {
+            locator
         } else {
-            val account = accountManager.getAccount(locator)
-            locator to account
-        }
-        parseProfile(finalLocator, uri)?.let {
-            return InterceptorResult.SuccessWithOpenNewScreen(it)
-        }
-        parsePost(finalLocator, uri, account)?.let {
-            return InterceptorResult.SuccessWithOpenNewScreen(it)
-        }
-        if (platformRepo.appViewDomains.any { uri.host == it }) {
-            val baseUrl = FormalBaseUrl.parse(url) ?: return InterceptorResult.CanNotIntercept
-            val content = contentRepo.getAllContent()
-                .mapNotNull { it as? BlueskyContent }
-                .firstOrNull { it.baseUrl == baseUrl }
-            if (content != null) {
-                return InterceptorResult.SwitchHomeContent(content)
+            val accounts = accountManager.getAllAccount()
+                .filter { it.fromPlatform.baseUrl == baseUrl }
+            if (accounts.isEmpty()) {
+                locator ?: PlatformLocator(baseUrl)
+            } else if (accounts.size == 1) {
+                account = accounts.first()
+                PlatformLocator(account.platform.baseUrl, account.uri)
+            } else {
+                return InterceptorResult.RequireSelectAccount(createBlueskyProtocol())
             }
+        }
+        parseProfile(fixedLocator, uri)?.let {
+            return InterceptorResult.SuccessWithOpenNewScreen(it)
+        }
+        parsePost(fixedLocator, uri, account)?.let {
+            return InterceptorResult.SuccessWithOpenNewScreen(it)
         }
         return InterceptorResult.CanNotIntercept
     }

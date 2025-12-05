@@ -15,6 +15,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.utils.Log
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreen
@@ -61,6 +62,7 @@ class FeedsContentHomeScreen : BaseScreen() {
                     }
                 }
                 ConsumeFlow(viewModel.switchPageFlow) {
+                    Log.d("Z_TEST") { "animate scroll to $it" }
                     coroutineScope.launch {
                         viewModel.onSwitchPageFlowUsed()
                         pagerState.animateScrollToPage(it)

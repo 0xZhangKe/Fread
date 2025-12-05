@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -28,10 +29,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.architect.theme.dialogScrim
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.composable.SelectableAccount
+import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
@@ -44,6 +47,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
@@ -61,11 +65,21 @@ class UrlRedirectScreen(
             it.create(uri, locator, isFromExternal)
         }
         val transparentNavigator = LocalNavigator.currentOrThrow
+        val browserLauncher = LocalActivityBrowserLauncher.current
         ConsumeFlow(viewModel.finishPageFlow) { transparentNavigator.pop() }
         ConsumeFlow(viewModel.openNewPageFlow) { GlobalScreenNavigation.navigate(it) }
+        ConsumeFlow(viewModel.finishAndOpenUrlTab) {
+            transparentNavigator.pop()
+            browserLauncher.launchWebTabInApp(
+                url = uri,
+                locator = null,
+                checkAppSupportPage = false,
+            )
+        }
         val pageState by viewModel.pageState.collectAsState()
         Box(
-            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.dialogScrim),
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.dialogScrim),
             contentAlignment = Alignment.Center,
         ) {
             when (pageState) {
@@ -85,6 +99,7 @@ class UrlRedirectScreen(
                 is UrlRedirectPageState.SelectAccount -> {
                     val accountList = (pageState as UrlRedirectPageState.SelectAccount).accounts
                     Surface(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         shape = RoundedCornerShape(16.dp),
                         shadowElevation = 2.dp,
                     ) {
@@ -111,6 +126,7 @@ class UrlRedirectScreen(
                 }
             }
         }
+        LaunchedEffect(Unit) { viewModel.onPageResumed() }
     }
 }
 
@@ -125,6 +141,7 @@ class UrlRedirectViewModel @Inject constructor(
     private val browserInterceptorSet: Set<BrowserInterceptor>,
     val browserLauncher: BrowserLauncher,
     private val statusProvider: StatusProvider,
+    private val selectedContentSwitcher: SelectedContentSwitcher,
     @Assisted private val uri: String,
     @Assisted private val locator: PlatformLocator?,
     @Assisted private val isFromExternal: Boolean,
@@ -145,12 +162,15 @@ class UrlRedirectViewModel @Inject constructor(
     private val _finishPageFlow = MutableSharedFlow<Unit>()
     val finishPageFlow = _finishPageFlow.asSharedFlow()
 
+    private val _finishAndOpenUrlTab = MutableSharedFlow<String>()
+    val finishAndOpenUrlTab = _finishAndOpenUrlTab.asSharedFlow()
+
     private val _pageState = MutableStateFlow<UrlRedirectPageState>(UrlRedirectPageState.Loading)
     val pageState = _pageState.asStateFlow()
 
     private var accountSelectCount = 0
 
-    init {
+    fun onPageResumed() {
         parseUrl(locator)
     }
 
@@ -169,7 +189,7 @@ class UrlRedirectViewModel @Inject constructor(
                 ).takeIf { it !is InterceptorResult.CanNotIntercept }
             }
             if (result == null) {
-                _finishPageFlow.emit(Unit)
+                _finishAndOpenUrlTab.emit(uri)
             } else {
                 when (result) {
                     is InterceptorResult.SuccessWithOpenNewScreen -> {
@@ -178,7 +198,8 @@ class UrlRedirectViewModel @Inject constructor(
                     }
 
                     is InterceptorResult.SwitchHomeContent -> {
-                        // TODO
+                        selectedContentSwitcher.switchToContent(result.content)
+                        _finishPageFlow.emit(Unit)
                     }
 
                     is InterceptorResult.RequireSelectAccount -> {

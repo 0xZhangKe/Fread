@@ -73,8 +73,10 @@ interface CommonComponent : CommonPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideSelectAccountForPublishViewModel(creator: () -> SelectAccountForPublishViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return SelectAccountForPublishViewModel::class to creator
+    fun provideSelectAccountForPublishViewModel(creator: (String) -> SelectAccountForPublishViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return SelectAccountForPublishViewModel::class to SelectAccountForPublishViewModel.Factory { text ->
+            creator(text)
+        }
     }
 }
 

@@ -30,6 +30,7 @@ class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: Sys
             uri = url.toPlatformUri(),
             locator = locator,
             checkAppSupportPage = checkAppSupportPage,
+            isFromExternal = isFromExternal,
         )
     }
 

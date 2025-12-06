@@ -235,4 +235,6 @@
     <string name="main_request_notification_dialog_reject_button">Отклонить</string>
     <string name="main_request_notification_dialog_allow_button">Разрешить</string>
     <string name="main_request_notification_dialog_content">Чтобы получать сообщения об интеракциях, разрешите уведомления.</string>
+    <string name="setting_item_amoled_mode">Режим AMOLED</string>
+    <string name="setting_item_amoled_mode_description">При включении фон в тёмном режиме становится полностью чёрным, что снижает энергопотребление и повышает контраст в тёмных условиях.</string>
 </resources>

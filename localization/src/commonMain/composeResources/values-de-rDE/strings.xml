@@ -235,4 +235,6 @@
     <string name="main_request_notification_dialog_reject_button">Ablehnen</string>
     <string name="main_request_notification_dialog_allow_button">Zulassen</string>
     <string name="main_request_notification_dialog_content">Um Interaktions-Benachrichtigungen zu erhalten, bitte Berechtigung für Benachrichtigungen erteilen.</string>
+    <string name="setting_item_amoled_mode">AMOLED-Modus</string>
+    <string name="setting_item_amoled_mode_description">Wenn aktiviert, wechselt der Hintergrund im Dunkelmodus zu reinem Schwarz, um Energie zu sparen und den Kontrast in dunklen Umgebungen zu erhöhen.</string>
 </resources>

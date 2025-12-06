@@ -235,4 +235,6 @@
     <string name="main_request_notification_dialog_reject_button">Refuser</string>
     <string name="main_request_notification_dialog_allow_button">Autoriser</string>
     <string name="main_request_notification_dialog_content">Pour recevoir les messages d’interaction, veuillez autoriser les notifications.</string>
+    <string name="setting_item_amoled_mode">Mode AMOLED</string>
+    <string name="setting_item_amoled_mode_description">Une fois activé, l’arrière-plan devient noir pur en mode sombre afin de réduire la consommation d’énergie et d’améliorer le contraste dans les environnements sombres.</string>
 </resources>

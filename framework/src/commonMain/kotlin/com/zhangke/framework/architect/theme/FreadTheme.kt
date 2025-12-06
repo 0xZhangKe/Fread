@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 val freadLightScheme = lightColorScheme(
     primary = primaryLight,
@@ -87,10 +88,23 @@ val freadDarkScheme = darkColorScheme(
 @Composable
 fun FreadTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    amoledMode: Boolean = false,
     dynamicColors: ColorScheme? = null,
     content: @Composable () -> Unit
 ) {
-    val freadTheme = if (darkTheme) freadDarkScheme else freadLightScheme
+    val freadTheme = if (darkTheme) {
+        if (amoledMode) {
+            freadDarkScheme.copy(
+                background = Color.Black,
+                surface = Color.Black,
+                surfaceContainer = Color.Black,
+            )
+        } else {
+            freadDarkScheme
+        }
+    } else {
+        freadLightScheme
+    }
     val colorScheme = dynamicColors?.copy(
         tertiary = freadTheme.tertiary,
         onTertiary = freadTheme.onTertiary,

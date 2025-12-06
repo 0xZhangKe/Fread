@@ -23,9 +23,6 @@ import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
-import com.zhangke.framework.network.SimpleUri
-import com.zhangke.fread.common.action.ComposableActions
-import com.zhangke.fread.common.action.RouteAction
 import com.zhangke.fread.common.deeplink.ExternalInputHandler
 import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.utils.ActivityResultCallback
@@ -33,8 +30,6 @@ import com.zhangke.fread.common.utils.CallbackableActivity
 import com.zhangke.fread.di.AndroidActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
-import com.zhangke.krouter.KRouter
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class FreadActivity : AppCompatActivity(), CallbackableActivity {
@@ -74,9 +69,11 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
         setContent {
             val themeType by freadConfigManager.themeTypeFlow.collectAsState()
             val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
+            val amoledMode by activityDayNightHelper.amoledModeFlow.collectAsState()
             val darkTheme = dayNightMode.isNight
             FreadTheme(
                 darkTheme = darkTheme,
+                amoledMode = amoledMode,
                 dynamicColors = getDynamicColorScheme(darkTheme, themeType),
             ) {
                 val videoPlayerManager = remember { ExoPlayerManager() }

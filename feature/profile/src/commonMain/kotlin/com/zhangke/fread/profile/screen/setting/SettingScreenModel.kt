@@ -28,6 +28,7 @@ class SettingScreenModel @Inject constructor(
             autoPlayInlineVideo = freadConfigManager.autoPlayInlineVideo,
             dayNightMode = dayNightHelper.dayNightModeFlow.value,
             immersiveNavBar = false,
+            amoledEnabled = dayNightHelper.amoledModeFlow.value,
             settingInfo = getAppVersionInfo(),
             contentSize = StatusContentSize.default(),
             alwaysShowSensitiveContent = false,
@@ -54,6 +55,11 @@ class SettingScreenModel @Inject constructor(
                 .collect { dayNightMode ->
                     _uiState.update { it.copy(dayNightMode = dayNightMode) }
                 }
+        }
+        viewModelScope.launch {
+            dayNightHelper.amoledModeFlow.collect { enabled ->
+                _uiState.update { it.copy(amoledEnabled = enabled) }
+            }
         }
         viewModelScope.launch {
             freadConfigManager.statusConfigFlow

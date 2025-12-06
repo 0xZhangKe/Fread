@@ -235,4 +235,6 @@
     <string name="main_request_notification_dialog_reject_button">Recusar</string>
     <string name="main_request_notification_dialog_allow_button">Permitir</string>
     <string name="main_request_notification_dialog_content">Para receber mensagens de interação, permita as notificações.</string>
+    <string name="setting_item_amoled_mode">Modo AMOLED</string>
+    <string name="setting_item_amoled_mode_description">Quando ativado, o fundo muda para preto puro no modo escuro para reduzir o consumo de energia e aumentar o contraste em ambientes escuros.</string>
 </resources>

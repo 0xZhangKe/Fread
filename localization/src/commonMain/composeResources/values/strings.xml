@@ -235,4 +235,6 @@
     <string name="main_request_notification_dialog_reject_button">Reject</string>
     <string name="main_request_notification_dialog_allow_button">Allow</string>
     <string name="main_request_notification_dialog_content">To receive interaction messages, please allow notification permissions.</string>
+    <string name="setting_item_amoled_mode">AMOLED Mode</string>
+    <string name="setting_item_amoled_mode_description">When enabled, the background will switch to pure black in dark mode to reduce power consumption and improve contrast in dark environments.</string>
 </resources>

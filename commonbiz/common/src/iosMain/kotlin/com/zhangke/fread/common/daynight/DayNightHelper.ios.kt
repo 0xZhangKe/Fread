@@ -10,8 +10,15 @@ actual class ActivityDayNightHelper @Inject constructor(
 ) {
     actual val dayNightModeFlow: StateFlow<DayNightMode> get() = dayNightHelper.dayNightModeFlow
 
+    actual val amoledModeFlow: StateFlow<Boolean> get() = dayNightHelper.amoledModeFlow
+
     actual fun setMode(mode: DayNightMode) {
         // dayNightHelper.setMode(mode)
+        TODO("Not yet implemented")
+    }
+
+    actual fun setAmoledMode(enabled: Boolean) {
+        // dayNightHelper.setAmoledMode(enabled)
         TODO("Not yet implemented")
     }
 }

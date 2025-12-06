@@ -235,4 +235,6 @@
     <string name="main_request_notification_dialog_reject_button">拒絕</string>
     <string name="main_request_notification_dialog_allow_button">允許</string>
     <string name="main_request_notification_dialog_content">為接收互動訊息，請允許通知權限。</string>
+    <string name="setting_item_amoled_mode">Amoled 模式</string>
+    <string name="setting_item_amoled_mode_description">啟用此功能後，深色模式下會把背景變成純黑，以減低耗電量，並在昏暗環境中提升對比度。</string>
 </resources>

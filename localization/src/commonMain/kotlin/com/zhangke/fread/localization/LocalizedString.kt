@@ -633,4 +633,6 @@ object LocalizedString {
     val status_ui_quote_approval_follower = localizedString.status_ui_quote_approval_follower
     val status_ui_quote_approval_nobody = localizedString.status_ui_quote_approval_nobody
     val status_ui_visibility = localizedString.status_ui_visibility
+    val setting_item_amoled_mode = localizedString.setting_item_amoled_mode
+    val setting_item_amoled_mode_description = localizedString.setting_item_amoled_mode_description
 }

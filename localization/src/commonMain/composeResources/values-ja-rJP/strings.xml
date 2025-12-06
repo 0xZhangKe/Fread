@@ -235,4 +235,6 @@
     <string name="main_request_notification_dialog_reject_button">拒否</string>
     <string name="main_request_notification_dialog_allow_button">許可</string>
     <string name="main_request_notification_dialog_content">交流に関する通知を受け取るには、通知を許可してください。</string>
+    <string name="setting_item_amoled_mode">AMOLEDモード</string>
+    <string name="setting_item_amoled_mode_description">有効にすると、ダークモードで背景が純黒になり、消費電力を抑えつつ暗い環境でのコントラストが向上します。</string>
 </resources>

@@ -15,6 +15,8 @@ actual class ActivityDayNightHelper @Inject constructor(
 
     actual val dayNightModeFlow get() = dayNightHelper.dayNightModeFlow
 
+    actual val amoledModeFlow get() = dayNightHelper.amoledModeFlow
+
     fun setDefaultMode() {
         AppCompatDelegate.setDefaultNightMode(dayNightModeFlow.value.modeValue)
     }
@@ -22,6 +24,13 @@ actual class ActivityDayNightHelper @Inject constructor(
     actual fun setMode(mode: DayNightMode) {
         activity.lifecycleScope.launch {
             dayNightHelper.setMode(mode)
+            activity.recreate()
+        }
+    }
+
+    actual fun setAmoledMode(enabled: Boolean) {
+        activity.lifecycleScope.launch {
+            dayNightHelper.setAmoledMode(enabled)
             activity.recreate()
         }
     }

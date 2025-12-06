@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Contrast
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PlayCircleOutline
@@ -63,7 +64,6 @@ import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_code
 import com.zhangke.fread.feature.profile.ic_ratting
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.localization.displayName
 import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
@@ -104,6 +104,7 @@ class SettingScreen : BaseScreen() {
                 activityDayNightHelper.setMode(it)
             },
             onThemeTypeChanged = viewModel::onThemeTypeChanged,
+            onAmoledChanged = activityDayNightHelper::setAmoledMode,
             onLanguageClick = {
                 activityLanguageHelper.setLanguage(it)
             },
@@ -135,6 +136,7 @@ class SettingScreen : BaseScreen() {
         onThemeTypeChanged: (ThemeType) -> Unit,
         onLanguageClick: (LanguageSettingItem) -> Unit,
         onImmersiveBarChanged: (on: Boolean) -> Unit,
+        onAmoledChanged: (on: Boolean) -> Unit,
         onRatingClick: () -> Unit,
         onAboutClick: () -> Unit,
         onDonateClick: () -> Unit,
@@ -167,6 +169,14 @@ class SettingScreen : BaseScreen() {
                     immersive = uiState.immersiveNavBar,
                     onImmersiveBarChanged = onImmersiveBarChanged,
                 )
+                AmoledMode(
+                    enabled = uiState.amoledEnabled,
+                    onAmoledChanged = onAmoledChanged,
+                )
+                DayNightItem(
+                    uiState = uiState,
+                    onDayNightModeClick = onDayNightModeClick,
+                )
                 ContentSizeItem(
                     contentSize = uiState.contentSize,
                     onContentSizeChanged = onContentSizeChanged,
@@ -174,10 +184,6 @@ class SettingScreen : BaseScreen() {
                 TimelinePositionItem(
                     position = uiState.timelineDefaultPosition,
                     onPositionChanged = onTimelineDefaultPositionChanged,
-                )
-                DayNightItem(
-                    uiState = uiState,
-                    onDayNightModeClick = onDayNightModeClick,
                 )
                 ThemeTypeItem(
                     themeType = uiState.themeType,
@@ -263,6 +269,20 @@ class SettingScreen : BaseScreen() {
             subtitle = stringResource(LocalizedString.profileSettingImmersiveNavBarDesc),
             checked = immersive,
             onCheckedChangeRequest = onImmersiveBarChanged,
+        )
+    }
+
+    @Composable
+    private fun AmoledMode(
+        enabled: Boolean,
+        onAmoledChanged: (on: Boolean) -> Unit,
+    ) {
+        SettingItemWithSwitch(
+            icon = Icons.Default.DarkMode,
+            title = stringResource(LocalizedString.setting_item_amoled_mode),
+            subtitle = stringResource(LocalizedString.setting_item_amoled_mode_description),
+            checked = enabled,
+            onCheckedChangeRequest = onAmoledChanged,
         )
     }
 

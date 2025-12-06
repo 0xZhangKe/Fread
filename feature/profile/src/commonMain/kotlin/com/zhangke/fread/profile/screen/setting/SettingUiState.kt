@@ -9,6 +9,7 @@ data class SettingUiState(
     val autoPlayInlineVideo: Boolean,
     val alwaysShowSensitiveContent: Boolean,
     val immersiveNavBar: Boolean,
+    val amoledEnabled: Boolean,
     val dayNightMode: DayNightMode,
     val settingInfo: String,
     val contentSize: StatusContentSize,

@@ -135,6 +135,13 @@ class StatusScreenProvider(
             it.getAddContentScreen(protocol)
         }
     }
+
+    fun getPublishScreen(
+        account: LoggedAccount,
+        text: String,
+    ): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getPublishScreen(account, text) }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -196,6 +203,10 @@ interface IStatusScreenProvider {
     fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab?
 
     fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
+        return null
+    }
+
+    fun getPublishScreen(account: LoggedAccount, text: String): Screen? {
         return null
     }
 }

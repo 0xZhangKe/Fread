@@ -174,7 +174,7 @@ private fun handleHttpUrl(
 ): Boolean {
     if (!action.lowercase().startsWith("http")) return false
     coroutineScope.launch {
-        browserLauncher.launchWebTabInApp(action)
+        browserLauncher.launchWebTabInApp(url = action, isFromExternal = true)
     }
     return true
 }

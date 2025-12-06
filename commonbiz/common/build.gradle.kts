@@ -47,6 +47,8 @@ kotlin {
                 implementation(libs.bundles.voyager)
                 implementation(libs.uri.kmp)
 
+                implementation(libs.imageLoader)
+
                 implementation(libs.krouter.runtime)
 
                 implementation(libs.multiplatformsettings.core)

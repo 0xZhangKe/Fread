@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import app.bsky.actor.ProfileView
 import com.zhangke.framework.composable.LoadableState
@@ -49,9 +50,14 @@ data class PublishPostUiState(
 
     companion object {
 
-        fun default(): PublishPostUiState {
+        fun default(
+            defaultContent: String? = null,
+        ): PublishPostUiState {
             return PublishPostUiState(
-                content = TextFieldValue(),
+                content = TextFieldValue(
+                    text = defaultContent.orEmpty(),
+                    selection = TextRange(defaultContent?.length ?: 0),
+                ),
                 maxCharacters = 300,
                 mediaAltMaxCharacters = 2000,
                 maxMediaCount = 4,

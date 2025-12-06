@@ -3,8 +3,10 @@ package com.zhangke.fread.feeds.pages.home
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
+import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
@@ -23,6 +25,7 @@ class ContentHomeViewModel @Inject constructor(
     private val contentRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
     private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
+    private val selectedContentSwitcher: SelectedContentSwitcher,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ContentHomeUiState.default)
@@ -73,6 +76,16 @@ class ContentHomeViewModel @Inject constructor(
                     }
                 }
         }
+        launchInViewModel {
+            selectedContentSwitcher.selectedContentFlow.collect {
+                val targetIndex = _uiState.value.contentAndTabList.indexOfFirst { pair ->
+                    pair.first.id == it.id
+                }
+                if (targetIndex >= 0 && targetIndex != _uiState.value.currentPageIndex) {
+                    _switchPageFlow.emit(targetIndex)
+                }
+            }
+        }
     }
 
     fun onCurrentPageChanged(currentPage: Int) {
@@ -108,5 +121,6 @@ class ContentHomeViewModel @Inject constructor(
 
     fun onSwitchPageFlowUsed() {
         _switchPageFlow.resetReplayCache()
+        selectedContentSwitcher.resetReplayCache()
     }
 }

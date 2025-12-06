@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
@@ -16,6 +17,7 @@ import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScree
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.PlatformLocator
@@ -141,5 +143,10 @@ class BlueskyScreenProvider @Inject constructor(
     override fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
         if (protocol.notBluesky) return null
         return AddBlueskyContentScreen()
+    }
+
+    override fun getPublishScreen(account: LoggedAccount, text: String): Screen? {
+        if (account !is BlueskyLoggedAccount) return null
+        return PublishPostScreen(locator = account.locator, defaultText = text)
     }
 }

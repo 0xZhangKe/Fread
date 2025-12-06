@@ -6,17 +6,20 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.add.select.SelectPlatformScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
 import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.PlatformLocator
@@ -173,5 +176,10 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
         if (protocol.notActivityPub) return null
         return SelectPlatformScreen()
+    }
+
+    override fun getPublishScreen(account: LoggedAccount, text: String): Screen? {
+        if (account !is ActivityPubLoggedAccount) return null
+        return PostStatusScreen(accountUri = account.uri, defaultContent = text)
     }
 }

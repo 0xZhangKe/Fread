@@ -56,6 +56,7 @@ import kotlin.time.Duration
 
 class PostStatusScreen(
     private val accountUri: FormalUri,
+    private val defaultContent: String? = null,
     private val editBlogJsonString: String? = null,
     private val replyingBlogJsonString: String? = null,
     private val quoteBlogJsonString: String? = null,
@@ -70,6 +71,7 @@ class PostStatusScreen(
             it.create(
                 PostStatusScreenRoute.buildParams(
                     accountUri = accountUri,
+                    defaultContent = defaultContent,
                     editBlog = editBlogJsonString,
                     replyToBlogJsonString = replyingBlogJsonString,
                     quoteBlogJsonString = quoteBlogJsonString,

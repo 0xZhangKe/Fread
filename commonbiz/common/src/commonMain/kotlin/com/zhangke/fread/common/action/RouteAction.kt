@@ -2,5 +2,5 @@ package com.zhangke.fread.common.action
 
 interface RouteAction {
 
-    fun execute()
+    fun execute(): Boolean
 }

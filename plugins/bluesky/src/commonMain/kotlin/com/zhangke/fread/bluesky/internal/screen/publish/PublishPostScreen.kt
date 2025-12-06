@@ -30,6 +30,7 @@ import com.zhangke.fread.status.ui.publish.BlogInQuoting
 
 class PublishPostScreen(
     private val locator: PlatformLocator,
+    private val defaultText: String? = null,
     private val replyToJsonString: String? = null,
     private val quoteJsonString: String? = null,
 ) : BaseScreen() {
@@ -39,7 +40,7 @@ class PublishPostScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PublishPostViewModel, PublishPostViewModel.Factory> {
-            it.create(locator, replyToJsonString, quoteJsonString)
+            it.create(locator, defaultText, replyToJsonString, quoteJsonString)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()

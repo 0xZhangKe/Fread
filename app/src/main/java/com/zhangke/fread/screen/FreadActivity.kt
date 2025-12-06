@@ -23,8 +23,10 @@ import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
+import com.zhangke.framework.network.SimpleUri
 import com.zhangke.fread.common.action.ComposableActions
 import com.zhangke.fread.common.action.RouteAction
+import com.zhangke.fread.common.deeplink.ExternalInputHandler
 import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.utils.ActivityResultCallback
 import com.zhangke.fread.common.utils.CallbackableActivity
@@ -131,13 +133,20 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
     }
 
     private fun handleIntent(intent: Intent) {
-        val uri = intent.data?.toString() ?: return
-        KRouter.route<RouteAction>(uri)?.execute()
         lifecycleScope.launch {
-            delay(500) // delay for waiting page resumed
-            ComposableActions.post(uri)
+            if (intent.action == Intent.ACTION_SEND) {
+                if (intent.type?.startsWith("text/") == true) {
+                    intent.getStringExtra(Intent.EXTRA_TEXT)
+                        ?.takeIf { it.isNotEmpty() }
+                        ?.let { ExternalInputHandler.handle(it) }
+                }
+            } else {
+                intent.data?.toString()
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.let { ExternalInputHandler.handle(it) }
+            }
+            setIntent(Intent())
         }
-        setIntent(Intent())
     }
 
     override fun registerCallback(requestCode: Int, callback: ActivityResultCallback) {

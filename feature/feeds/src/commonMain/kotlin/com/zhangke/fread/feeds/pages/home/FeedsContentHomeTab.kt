@@ -33,9 +33,9 @@ class FeedsContentHomeScreen : BaseScreen() {
             val uiState by viewModel.uiState.collectAsState()
             if (uiState.contentAndTabList.isEmpty()) {
                 if (uiState.loading) {
-                    Box(modifier = Modifier.Companion.fillMaxSize())
+                    Box(modifier = Modifier.fillMaxSize())
                 } else {
-                    EmptyContent(modifier = Modifier.Companion.fillMaxSize()) {
+                    EmptyContent(modifier = Modifier.fillMaxSize()) {
                         navigator.push(SelectContentTypeScreen())
                     }
                 }

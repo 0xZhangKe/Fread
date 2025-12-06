@@ -38,6 +38,14 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
                 allLoggedAccount = allLoggedAccount,
                 visibility = StatusVisibility.PUBLIC,
                 replyingToBlog = null,
+                content = if (screenParams.defaultContent.isNullOrEmpty()) {
+                    TextFieldValue("")
+                } else {
+                    TextFieldValue(
+                        text = screenParams.defaultContent,
+                        selection = TextRange(screenParams.defaultContent.length),
+                    )
+                },
             )
 
             is PostStatusScreenParams.ReplyStatusParams -> buildReplyUiState(

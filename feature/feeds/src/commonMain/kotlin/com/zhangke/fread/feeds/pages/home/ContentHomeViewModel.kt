@@ -77,15 +77,12 @@ class ContentHomeViewModel @Inject constructor(
                 }
         }
         launchInViewModel {
-            Log.d("Z_TEST") { "start collecting" }
             selectedContentSwitcher.selectedContentFlow.collect {
-                Log.d("Z_TEST") { "collect: $it" }
                 val targetIndex = _uiState.value.contentAndTabList.indexOfFirst { pair ->
                     pair.first.id == it.id
                 }
                 if (targetIndex >= 0 && targetIndex != _uiState.value.currentPageIndex) {
                     _switchPageFlow.emit(targetIndex)
-                    Log.d("Z_TEST") { "switch page to $targetIndex" }
                 }
             }
         }

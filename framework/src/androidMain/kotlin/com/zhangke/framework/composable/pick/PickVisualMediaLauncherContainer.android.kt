@@ -1,5 +1,8 @@
 package com.zhangke.framework.composable.pick
 
+import android.content.Context
+import android.content.Intent
+import android.provider.DocumentsContract
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -21,7 +24,7 @@ actual fun PickVisualMediaLauncherContainer(
     val fileLauncher = when {
         maxItems > 1 -> {
             rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.OpenMultipleDocuments(),
+                contract = OpenMultipleDocumentsWithDrawer(),
                 onResult = { uri ->
                     onResult(uri.take(maxItems).map { it.toPlatformUri() })
                 },
@@ -30,7 +33,7 @@ actual fun PickVisualMediaLauncherContainer(
 
         else -> {
             rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.OpenDocument(),
+                contract = OpenDocumentWithDrawer(),
                 onResult = { uri -> uri?.let { onResult(listOf(it.toPlatformUri())) } },
             )
         }
@@ -51,7 +54,7 @@ actual fun PickVisualMediaLauncherContainer(
             },
         )
     }
-    val scope = remember(launcher) {
+    val scope = remember(launcher, fileLauncher) {
         PickVisualMediaLauncherContainerScope(launcher, fileLauncher)
     }
     with(scope) {
@@ -82,5 +85,21 @@ actual class PickVisualMediaLauncherContainerScope(
 
     actual fun launchVideoFile() {
         fileLauncher.launch(arrayOf("video/*"))
+    }
+}
+
+private class OpenDocumentWithDrawer : ActivityResultContracts.OpenDocument() {
+    override fun createIntent(context: Context, input: Array<String>): Intent {
+        return super.createIntent(context, input).apply {
+            putExtra(DocumentsContract.EXTRA_SHOW_ADVANCED, true)
+        }
+    }
+}
+
+private class OpenMultipleDocumentsWithDrawer : ActivityResultContracts.OpenMultipleDocuments() {
+    override fun createIntent(context: Context, input: Array<String>): Intent {
+        return super.createIntent(context, input).apply {
+            putExtra(DocumentsContract.EXTRA_SHOW_ADVANCED, true)
+        }
     }
 }

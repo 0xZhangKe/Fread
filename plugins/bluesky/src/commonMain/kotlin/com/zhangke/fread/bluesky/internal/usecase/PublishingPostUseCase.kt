@@ -300,7 +300,9 @@ class PublishingPostUseCase @Inject constructor(
         val facetList = mutableListOf<Facet>()
         val hashtags = HashtagTextUtils.findHashtags(content)
         for (hashtag in hashtags) {
-            val tag = content.substring(hashtag.start, hashtag.end)
+            // bsky doesn't handle empty hashtags elegantly
+            if (hashtag.start + 1 >= hashtag.end) continue
+            val tag = content.substring(hashtag.start + 1, hashtag.end)
             val facet = Facet(
                 index = convertIndex(hashtag, content),
                 features = listOf(

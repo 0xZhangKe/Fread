@@ -34,6 +34,7 @@ import com.zhangke.framework.architect.theme.dialogScrim
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.composable.SelectableAccount
+import com.zhangke.fread.common.deeplink.SelectAccountForPublishScreen
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.page.BaseScreen
@@ -75,6 +76,10 @@ class UrlRedirectScreen(
                 locator = null,
                 checkAppSupportPage = false,
             )
+        }
+        ConsumeFlow(viewModel.finishAndOpenPublishScreen) {
+            transparentNavigator.pop()
+            GlobalScreenNavigation.navigateByTransparent(SelectAccountForPublishScreen(uri))
         }
         val pageState by viewModel.pageState.collectAsState()
         Box(
@@ -165,6 +170,9 @@ class UrlRedirectViewModel @Inject constructor(
     private val _finishAndOpenUrlTab = MutableSharedFlow<String>()
     val finishAndOpenUrlTab = _finishAndOpenUrlTab.asSharedFlow()
 
+    private val _finishAndOpenPublishScreen = MutableSharedFlow<String>()
+    val finishAndOpenPublishScreen = _finishAndOpenPublishScreen.asSharedFlow()
+
     private val _pageState = MutableStateFlow<UrlRedirectPageState>(UrlRedirectPageState.Loading)
     val pageState = _pageState.asStateFlow()
 
@@ -189,7 +197,11 @@ class UrlRedirectViewModel @Inject constructor(
                 ).takeIf { it !is InterceptorResult.CanNotIntercept }
             }
             if (result == null) {
-                _finishAndOpenUrlTab.emit(uri)
+                if (isFromExternal) {
+                    _finishAndOpenPublishScreen.emit(uri)
+                } else {
+                    _finishAndOpenUrlTab.emit(uri)
+                }
             } else {
                 when (result) {
                     is InterceptorResult.SuccessWithOpenNewScreen -> {

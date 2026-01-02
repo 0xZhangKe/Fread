@@ -21,9 +21,7 @@ import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
-import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.fread.activitypub.app.internal.adapter.toQuoteApprovalPolicy
 import com.zhangke.fread.activitypub.app.internal.adapter.toStatusVisibility
@@ -132,12 +130,17 @@ class PostStatusViewModel @Inject constructor(
         state: PostStatusUiState,
         preferences: ActivityPubPreferencesEntity,
     ): PostStatusUiState {
+        val keepInitVisibility = state.replyToBlog != null || state.isQuotingBlogMode
         return state.copy(
-            visibility = preferences.postingDefaultVisibility.toStatusVisibility(),
+            visibility = if (keepInitVisibility) {
+                state.visibility
+            } else {
+                preferences.postingDefaultVisibility.toStatusVisibility()
+            },
             quoteApprovalPolicy = preferences.postingDefaultQuotePolicy?.toQuoteApprovalPolicy()
-                ?: QuoteApprovalPolicy.PUBLIC,
+                ?: state.quoteApprovalPolicy,
             language = preferences.postingDefaultLanguage?.let { initLocale(it) }
-                ?: getDefaultLocale(),
+                ?: state.language,
         )
     }
 

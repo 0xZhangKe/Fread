@@ -21,6 +21,7 @@ import com.zhangke.fread.status.richtext.parser.HtmlParser
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
 
 class GenerateInitPostStatusUiStateUseCase @Inject constructor(
     private val accountManager: ActivityPubAccountManager,
@@ -142,6 +143,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         )
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun Blog.generateAttachment(): PostStatusAttachment? {
         if (mediaList.isNotEmpty()) {
             if (mediaList.first().type == BlogMediaType.VIDEO) {

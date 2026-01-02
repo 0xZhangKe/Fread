@@ -37,10 +37,7 @@ data class PostStatusUiState(
     val quoteApprovalPolicy: QuoteApprovalPolicy,
 ) {
 
-    val allowedInputCount: Int get() = rules.maxCharacters - content.text.length
-
-    val showAddAccountIcon: Boolean
-        get() = accountChangeable && replyToBlog == null
+    val showAddAccountIcon: Boolean get() = accountChangeable && replyToBlog == null
 
     val isQuotingBlogMode: Boolean get() = quotingBlog != null || unavailableQuote != null
 

@@ -23,7 +23,7 @@ object HashtagTextUtils {
                 char == '#' -> {
                     if (start.isStartMark) {
                         start = index
-                    } else if (!end.isEndMark) {
+                    } else {
                         // abc#cde#
                         end = index
                     }
@@ -36,8 +36,9 @@ object HashtagTextUtils {
                 }
             }
             if (!start.isStartMark && !end.isEndMark) {
-                list += TextRange(start = start, end = end + 1)
-                start = MARK_START
+                list += TextRange(start = start, end = end)
+                // parse #abc#def as #abc and #def
+                start = if (char == '#') index else MARK_START
                 end = MARK_END
             }
             index++

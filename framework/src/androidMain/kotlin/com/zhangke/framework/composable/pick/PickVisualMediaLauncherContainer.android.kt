@@ -21,7 +21,7 @@ actual fun PickVisualMediaLauncherContainer(
     val fileLauncher = when {
         maxItems > 1 -> {
             rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.OpenMultipleDocuments(),
+                contract = ActivityResultContracts.GetMultipleContents(),
                 onResult = { uri ->
                     onResult(uri.take(maxItems).map { it.toPlatformUri() })
                 },
@@ -30,7 +30,7 @@ actual fun PickVisualMediaLauncherContainer(
 
         else -> {
             rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.OpenDocument(),
+                contract = ActivityResultContracts.GetContent(),
                 onResult = { uri -> uri?.let { onResult(listOf(it.toPlatformUri())) } },
             )
         }
@@ -61,7 +61,7 @@ actual fun PickVisualMediaLauncherContainer(
 
 actual class PickVisualMediaLauncherContainerScope(
     private val launcher: ManagedActivityResultLauncher<PickVisualMediaRequest, *>,
-    private val fileLauncher: ManagedActivityResultLauncher<Array<String>, *>,
+    private val fileLauncher: ManagedActivityResultLauncher<String, *>,
 ) {
 
     actual fun launchImage() {
@@ -77,10 +77,10 @@ actual class PickVisualMediaLauncherContainerScope(
     }
 
     actual fun launchImageFile() {
-        fileLauncher.launch(arrayOf("image/*"))
+        fileLauncher.launch("image/*")
     }
 
     actual fun launchVideoFile() {
-        fileLauncher.launch(arrayOf("video/*"))
+        fileLauncher.launch("video/*")
     }
 }

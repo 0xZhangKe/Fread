@@ -94,9 +94,7 @@ object HashtagTextUtils {
                         end = index
                     }
 
-                    if (char == '/' || char == ')') {
-                        prevIsSep = false
-                    }
+                    prevIsSep = (char != '/' && char != ')')
                 }
             }
             if (!start.isStartMark && !end.isEndMark) {

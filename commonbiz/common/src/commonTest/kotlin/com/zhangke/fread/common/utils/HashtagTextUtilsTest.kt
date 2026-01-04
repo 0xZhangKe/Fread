@@ -45,6 +45,7 @@ class HashtagTextUtilsTest {
         assertContentEquals(
             HashtagTextUtils.findHashtags("#a!#b_c!##d"), listOf(
                 TextRange(0, 2),
+                TextRange(3, 7),
                 TextRange(9, 11),
             )
         )
@@ -69,6 +70,12 @@ class HashtagTextUtilsTest {
         assertContentEquals(
             HashtagTextUtils.findHashtags("()#a"),
             listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils.findHashtags(")(#a"),
+            listOf(
+                TextRange(2, 4),
+            )
         )
         assertContentEquals(
             HashtagTextUtils.findHashtags("/#a"),

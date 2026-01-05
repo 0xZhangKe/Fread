@@ -90,4 +90,137 @@ class HashtagTextUtilsTest {
             )
         )*/
     }
+
+    @Test
+    fun testBlueskyHashtags() {
+        // for Bluesky hashtag behavior see:
+        // https://github.com/bluesky-social/atproto/blob/3cf5b31a2d8194dcfbfb8c3cc8e61282e48c9a82/packages/api/src/rich-text/util.ts#L10-L12
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("abc"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#abc"),
+            listOf(
+                TextRange(0, 4),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#abc#def"),
+            listOf(
+                TextRange(0, 8),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#abc #def"), listOf(
+                TextRange(0, 4),
+                TextRange(5, 9),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("##abc"), listOf(
+                TextRange(0, 5),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a##abc"), listOf(
+                TextRange(0, 7),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a!#b_c!##d"), listOf(
+                TextRange(0, 11),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("foo #"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("foo #_"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("# a"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("(#a)"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("()#a"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags(")(#a"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("/#a"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a! b"),
+            listOf(
+                TextRange(0, 2),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a!"),
+            listOf(
+                TextRange(0, 2),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a!b"),
+            listOf(
+                TextRange(0, 4),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a!b!c"),
+            listOf(
+                TextRange(0, 6),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a!b!c!"),
+            listOf(
+                TextRange(0, 6),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a!!b"),
+            listOf(
+                TextRange(0, 5),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#!! "),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#!!a"),
+            listOf(
+                TextRange(0, 4),
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#"),
+            listOf()
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#a=b"),
+            listOf(
+                TextRange(0, 4)
+            )
+        )
+        assertContentEquals(
+            HashtagTextUtils2.findHashtags("#="),
+            listOf(
+                TextRange(0, 2)
+            )
+        )
+    }
 }

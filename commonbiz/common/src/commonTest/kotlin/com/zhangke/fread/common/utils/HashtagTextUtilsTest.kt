@@ -11,39 +11,39 @@ class HashtagTextUtilsTest {
         // https://github.com/mastodon/mastodon/blob/e89acc2302df49cbd7815b031e9c2939632bd204/app/javascript/mastodon/utils/hashtags.ts
         assertContentEquals(
             listOf(),
-            HashtagTextUtils.findHashtags("abc")
+            HashtagTextUtils.findHashtags("abc", false)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 4),
             ),
-            HashtagTextUtils.findHashtags("#abc")
+            HashtagTextUtils.findHashtags("#abc", false)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 4),
             ),
-            HashtagTextUtils.findHashtags("#abc#def")
+            HashtagTextUtils.findHashtags("#abc#def", false)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 4),
                 TextRange(5, 9),
             ),
-            HashtagTextUtils.findHashtags("#abc #def")
+            HashtagTextUtils.findHashtags("#abc #def", false)
         )
         assertContentEquals(
             listOf(
                 TextRange(1, 5),
             ),
-            HashtagTextUtils.findHashtags("##abc")
+            HashtagTextUtils.findHashtags("##abc", false)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 2),
                 TextRange(3, 7),
             ),
-            HashtagTextUtils.findHashtags("#a##abc")
+            HashtagTextUtils.findHashtags("#a##abc", false)
         )
         assertContentEquals(
             listOf(
@@ -51,39 +51,39 @@ class HashtagTextUtilsTest {
                 TextRange(3, 7),
                 TextRange(9, 11),
             ),
-            HashtagTextUtils.findHashtags("#a!#b_c!##d")
+            HashtagTextUtils.findHashtags("#a!#b_c!##d", false)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils.findHashtags("foo #")
+            HashtagTextUtils.findHashtags("foo #", false)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils.findHashtags("foo #_")
+            HashtagTextUtils.findHashtags("foo #_", false)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils.findHashtags("# a")
+            HashtagTextUtils.findHashtags("# a", false)
         )
         assertContentEquals(
             listOf(
                 TextRange(1, 3),
             ),
-            HashtagTextUtils.findHashtags("(#a)")
+            HashtagTextUtils.findHashtags("(#a)", false)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils.findHashtags("()#a")
+            HashtagTextUtils.findHashtags("()#a", false)
         )
         assertContentEquals(
             listOf(
                 TextRange(2, 4),
             ),
-            HashtagTextUtils.findHashtags(")(#a")
+            HashtagTextUtils.findHashtags(")(#a", false)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils.findHashtags("/#a")
+            HashtagTextUtils.findHashtags("/#a", false)
         )
         /*
         // this will fail. the Mastodon client will process this as a hashtag, but this seems
@@ -92,7 +92,7 @@ class HashtagTextUtilsTest {
             listOf(
                 TextRange(0, 4),
             ),
-            HashtagTextUtils.findHashtags("#___")
+            HashtagTextUtils.findHashtags("#___", false)
         )*/
     }
 
@@ -102,142 +102,142 @@ class HashtagTextUtilsTest {
         // https://github.com/bluesky-social/atproto/blob/3cf5b31a2d8194dcfbfb8c3cc8e61282e48c9a82/packages/api/src/rich-text/util.ts#L10-L12
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("abc"),
+            HashtagTextUtils.findHashtags("abc", true),
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 4),
             ),
-            HashtagTextUtils2.findHashtags("#abc"),
+            HashtagTextUtils.findHashtags("#abc", true),
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 8),
             ),
-            HashtagTextUtils2.findHashtags("#abc#def")
+            HashtagTextUtils.findHashtags("#abc#def", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 4),
                 TextRange(5, 9),
             ),
-            HashtagTextUtils2.findHashtags("#abc #def")
+            HashtagTextUtils.findHashtags("#abc #def", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 5),
             ),
-            HashtagTextUtils2.findHashtags("##abc")
+            HashtagTextUtils.findHashtags("##abc", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 7),
             ),
-            HashtagTextUtils2.findHashtags("#a##abc")
+            HashtagTextUtils.findHashtags("#a##abc", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 11),
             ),
-            HashtagTextUtils2.findHashtags("#a!#b_c!##d")
+            HashtagTextUtils.findHashtags("#a!#b_c!##d", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("foo #")
+            HashtagTextUtils.findHashtags("foo #", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("foo #_")
+            HashtagTextUtils.findHashtags("foo #_", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("# a")
+            HashtagTextUtils.findHashtags("# a", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("(#a)")
+            HashtagTextUtils.findHashtags("(#a)", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("()#a")
+            HashtagTextUtils.findHashtags("()#a", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags(")(#a")
+            HashtagTextUtils.findHashtags(")(#a", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("/#a")
+            HashtagTextUtils.findHashtags("/#a", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 2),
             ),
-            HashtagTextUtils2.findHashtags("#a! b")
+            HashtagTextUtils.findHashtags("#a! b", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 2),
             ),
-            HashtagTextUtils2.findHashtags("#a!")
+            HashtagTextUtils.findHashtags("#a!", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 4),
             ),
-            HashtagTextUtils2.findHashtags("#a!b")
+            HashtagTextUtils.findHashtags("#a!b", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 6),
             ),
-            HashtagTextUtils2.findHashtags("#a!b!c")
+            HashtagTextUtils.findHashtags("#a!b!c", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 6),
             ),
-            HashtagTextUtils2.findHashtags("#a!b!c!")
+            HashtagTextUtils.findHashtags("#a!b!c!", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 5),
             ),
-            HashtagTextUtils2.findHashtags("#a!!b")
+            HashtagTextUtils.findHashtags("#a!!b", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("#!! ")
+            HashtagTextUtils.findHashtags("#!! ", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 4),
             ),
-            HashtagTextUtils2.findHashtags("#!!a")
+            HashtagTextUtils.findHashtags("#!!a", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("#")
+            HashtagTextUtils.findHashtags("#", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 4)
             ),
-            HashtagTextUtils2.findHashtags("#a=b")
+            HashtagTextUtils.findHashtags("#a=b", true)
         )
         assertContentEquals(
             listOf(
                 TextRange(0, 2)
             ),
-            HashtagTextUtils2.findHashtags("#=")
+            HashtagTextUtils.findHashtags("#=", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("a#b")
+            HashtagTextUtils.findHashtags("a#b", true)
         )
         assertContentEquals(
             listOf(),
-            HashtagTextUtils2.findHashtags("a#b c")
+            HashtagTextUtils.findHashtags("a#b c", true)
         )
     }
 }

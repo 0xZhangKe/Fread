@@ -7,6 +7,9 @@ object HashtagTextUtils {
     private const val MARK_START = Int.MIN_VALUE
     private const val MARK_END = Int.MAX_VALUE
 
+    private val BLUESKY_EXCLUDED_CHARS =
+        setOf('\u00AD', '\u2060', '\u200A', '\u200B', '\u200C', '\u200D', '\u20E2')
+
     private val Int.isStartMark: Boolean get() = this == MARK_START
     private val Int.isEndMark: Boolean get() = this == MARK_END
 
@@ -50,65 +53,159 @@ object HashtagTextUtils {
         }
     }
 
+    /**
+     * Returns `true` if this character is a Unicode symbol.
+     *
+     * Equivalent to testing if the char would be matched by the regular expression
+     * `\p{S}` or `\p{Symbol}` (with Unicode enabled).
+     *
+     * Specifically, a character is a Unicode symbol if its [category] is one of
+     * [CharCategory.MATH_SYMBOL], [CharCategory.CURRENCY_SYMBOL],
+     * [CharCategory.MODIFIER_SYMBOL], and [CharCategory.OTHER_SYMBOL].
+     */
+    private fun Char.isSymbol(): Boolean {
+        return when (this.category) {
+            CharCategory.MATH_SYMBOL,
+            CharCategory.CURRENCY_SYMBOL,
+            CharCategory.MODIFIER_SYMBOL,
+            CharCategory.OTHER_SYMBOL
+                -> true
+            else -> false
+        }
+    }
 
-    fun findHashtags(text: String): List<TextRange> {
+    /**
+     * @param text The text to search for hashtags
+     *
+     * @param allowHashtagInHashtag If `false`, use a Mastodon-like method to parse hashtags. If
+     * `true`, use a Bluesky-style parsing method.
+     *
+     * @see "commonbiz/common/src/commonTest/kotlin/com/zhangke/fread/common/utils/HashtagTextUtilsTest.kt"
+     * for examples of differences between Mastodon and Bluesky-style hashtag processing
+     */
+    fun findHashtags(text: String, allowHashtagInHashtag: Boolean = false): List<TextRange> {
         if (text.isEmpty()) return emptyList()
         val list = mutableListOf<TextRange>()
         val chars = text.toCharArray()
         var index = 0
         var start = MARK_START
         var end = MARK_END
+        var lastEnd = MARK_END
         var prevIsSep = true
         var hasAlpha = false
-        while (index < text.length) {
-            val char = chars[index]
-            when {
-                char == '#' -> {
-                    if (prevIsSep) {
-                        start = index
+        if (allowHashtagInHashtag) {
+            // bluesky-style
+            while (index < text.length) {
+                val char = chars[index]
+                when {
+                    char == '#' -> {
+                        if (prevIsSep) {
+                            start = index
+                            hasAlpha = false
+                            lastEnd = MARK_END
+                        } else if (!start.isStartMark) {
+                            hasAlpha = false
+                        }
+                        prevIsSep = false
+                    }
+
+                    char.isWhitespace() -> {
+                        if (!start.isStartMark && end.isEndMark) {
+                            end = if (hasAlpha) index else lastEnd
+                            if (end.isEndMark) {
+                                start = MARK_START
+                            }
+                        }
+                        prevIsSep = true
+                    }
+
+                    BLUESKY_EXCLUDED_CHARS.contains(char) -> {
+                        if (!start.isStartMark && end.isEndMark) {
+                            end = if (hasAlpha) index else lastEnd
+                            if (end.isEndMark) {
+                                start = MARK_START
+                            }
+                        }
+                        prevIsSep = false
+                    }
+
+                    char.isLetter() || char.isMark() || char.isSymbol() -> {
+                        prevIsSep = false
+                        hasAlpha = true
+                        lastEnd = index + 1
+                    }
+
+                    else -> {
+                        prevIsSep = false
                         hasAlpha = false
-                    } else if (!start.isStartMark) {
-                        end = index
                     }
-                    prevIsSep = true
                 }
-
-                char.isWhitespace() -> {
-                    if (!start.isStartMark && end.isEndMark) {
-                        end = index
-                    }
-                    prevIsSep = true
-                }
-
-                char.isLetter() || char.isMark() -> {
-                    prevIsSep = false
-                    hasAlpha = true
-                }
-
-                char.isNumber() || char.category == CharCategory.CONNECTOR_PUNCTUATION -> {
-                    prevIsSep = false
-                }
-
-                char != '\u00b7' && char != '\u200c' -> {
-                    if (!start.isStartMark && end.isEndMark) {
-                        end = index
-                    }
-
-                    prevIsSep = (char != '/' && char != ')')
-                }
-            }
-            if (!start.isStartMark && !end.isEndMark) {
-                if (hasAlpha) {
+                if (!start.isStartMark && !end.isEndMark) {
                     list += TextRange(start = start, end = end)
+                    start = MARK_START
+                    end = MARK_END
                 }
-                start = MARK_START
-                end = MARK_END
+                index++
             }
-            index++
+        } else {
+            // mastodon-style
+            while (index < text.length) {
+                val char = chars[index]
+                when {
+                    char == '#' -> {
+                        if (prevIsSep) {
+                            start = index
+                            hasAlpha = false
+                        } else if (!start.isStartMark) {
+                            end = index
+                        }
+                        prevIsSep = true
+                    }
+    
+                    char.isWhitespace() -> {
+                        if (!start.isStartMark && end.isEndMark) {
+                            end = index
+                        }
+                        prevIsSep = true
+                    }
+    
+                    char.isLetter() || char.isMark() -> {
+                        prevIsSep = false
+                        hasAlpha = true
+                    }
+    
+                    char.isNumber() || char.category == CharCategory.CONNECTOR_PUNCTUATION -> {
+                        prevIsSep = false
+                    }
+    
+                    char != '\u00b7' && char != '\u200c' -> {
+                        if (!start.isStartMark && end.isEndMark) {
+                            end = index
+                        }
+    
+                        prevIsSep = (char != '/' && char != ')')
+                    }
+                }
+                if (!start.isStartMark && !end.isEndMark) {
+                    if (hasAlpha) {
+                        list += TextRange(start = start, end = end)
+                    }
+                    start = MARK_START
+                    end = MARK_END
+                }
+                index++
+            }
         }
 
-        if (index == text.length && !start.isStartMark && end.isEndMark && hasAlpha) {
-            list += TextRange(start = start, end = index)
+        if (index == text.length && !start.isStartMark && end.isEndMark) {
+            if (allowHashtagInHashtag) {
+                end = if (hasAlpha) index else lastEnd
+                if (!end.isEndMark) {
+                    list += TextRange(start = start, end = end)
+                }
+            } else if (hasAlpha) {
+                list += TextRange(start = start, end = index)
+            }
         }
         return list
     }

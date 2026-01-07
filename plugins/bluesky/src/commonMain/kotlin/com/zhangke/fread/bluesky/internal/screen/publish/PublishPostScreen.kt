@@ -152,6 +152,7 @@ class PublishPostScreen(
                     )
                 }
             },
+            allowHashtagInHashtag = true,
         )
     }
 }

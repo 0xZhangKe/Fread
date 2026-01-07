@@ -74,6 +74,7 @@ fun PublishPostScaffold(
     postSettingLabel: @Composable () -> Unit,
     bottomPanel: @Composable () -> Unit,
     attachment: @Composable (PublishBlogStyle) -> Unit,
+    allowHashtagInHashtag: Boolean = false,
 ) {
     val density = LocalDensity.current
     val style = PublishBlogStyleDefault.defaultStyle()
@@ -213,6 +214,7 @@ fun PublishPostScaffold(
                         append(stringResource(LocalizedString.sharedPublishBlogTextHint))
                     }
                 },
+                allowHashtagInHashtag = allowHashtagInHashtag,
             )
 
             Spacer(modifier = Modifier.height(8.dp))

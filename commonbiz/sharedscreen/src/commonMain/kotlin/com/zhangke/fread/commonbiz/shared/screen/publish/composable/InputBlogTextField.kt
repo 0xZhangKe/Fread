@@ -24,6 +24,7 @@ fun InputBlogTextField(
     placeholder: AnnotatedString,
     onContentChanged: (TextFieldValue) -> Unit,
     mentionHighlightEnabled: Boolean = true,
+    allowHashtagInHashtag: Boolean = false,
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
@@ -43,6 +44,7 @@ fun InputBlogTextField(
         visualTransformation = PostStatusTextVisualTransformation(
             highLightColor = MaterialTheme.colorScheme.primary,
             enableMentions = mentionHighlightEnabled,
+            allowHashtagInHashtag = allowHashtagInHashtag,
         ),
         value = textFieldValue,
         colors = TextFieldDefaults.transparentIndicatorColors,

@@ -14,10 +14,11 @@ import com.zhangke.fread.common.utils.MentionTextUtil
 class PostStatusTextVisualTransformation(
     private val highLightColor: Color,
     private val enableMentions: Boolean = true,
+    private val allowHashtagInHashtag: Boolean = false,
 ) : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
-        val hashtags = HashtagTextUtils.findHashtags(text.text)
+        val hashtags = HashtagTextUtils.findHashtags(text.text, allowHashtagInHashtag)
         val mentions =
             if (enableMentions) MentionTextUtil.findMentionList(text.text) else emptyList()
         val links = LinkTextUtils.findLinks(text.text)

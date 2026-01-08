@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,7 +35,7 @@ import com.zhangke.fread.di.create
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
-class FreadActivity : AppCompatActivity(), CallbackableActivity {
+class FreadActivity : ComponentActivity(), CallbackableActivity {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),

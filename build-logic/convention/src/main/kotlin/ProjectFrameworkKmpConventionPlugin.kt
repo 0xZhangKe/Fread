@@ -31,6 +31,7 @@ class ProjectFrameworkKmpConventionPlugin : Plugin<Project> {
                             implementation(libs.findLibrary("koin-compose-nav3").get())
 
                             implementation(libs.findLibrary("kotlinx-datetime").get())
+                            implementation(libs.findBundle("androidx-nav3").get())
                         }
                     }
                     androidMain {

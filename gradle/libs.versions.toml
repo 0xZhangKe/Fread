@@ -10,11 +10,11 @@ arrow = "2.1.2"
 
 compose-multiplatform = "1.9.3"
 
-androidx-core = "1.13.1"
+androidx-core = "1.17.0"
 androidx-fragment = "1.7.1"
 androidx-appcompat = "1.6.1"
 androidx-annotation = "1.9.1"
-androidxActivity = "1.11.0"
+androidxActivity = "1.11.1"
 androidx-preference = "1.2.1"
 androidx-collection = "1.3.0"
 androidx-sqlite = "2.6.1"
@@ -23,6 +23,10 @@ androidx-datastore = "1.1.7"
 androidx-browser = "1.4.0"
 androidx-paging = "3.3.6"
 androidx-media3 = "1.5.1"
+
+nav3Core = "1.0.0"
+jetbrainsNav3 = "1.0.0-alpha06"
+lifecycleViewmodelNav3 = "2.10.0-alpha07"
 
 compose-runtime-tracing = "1.9.2"
 
@@ -91,6 +95,8 @@ voyager = [
 
 googlePlayReview = ["googlePlayReview", "googlePlayReviewKtx"]
 
+androidx-nav3 = ["androidx-nav3-runtime", "jetbrains-nav3-ui", "lifecycle-viewmodel-nav3"]
+
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx.core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx.core" }
@@ -127,6 +133,11 @@ androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", 
 androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "androidx.media3"}
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3"}
 androidx-media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "androidx.media3"}
+
+lifecycle-viewmodel-nav3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+androidx-nav3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
+androidx-nav3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+jetbrains-nav3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "jetbrainsNav3" }
 
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 

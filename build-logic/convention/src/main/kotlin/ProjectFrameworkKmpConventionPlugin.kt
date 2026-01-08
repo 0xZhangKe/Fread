@@ -25,6 +25,7 @@ class ProjectFrameworkKmpConventionPlugin: Plugin<Project> {
                             implementation(compose.material3)
 
                             implementation(libs.findLibrary("kotlinx-datetime").get())
+                            implementation(libs.findBundle("androidx-nav3").get())
                         }
                     }
                     targets.configureEach {

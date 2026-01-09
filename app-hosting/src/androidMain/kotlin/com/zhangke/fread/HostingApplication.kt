@@ -10,6 +10,7 @@ import com.zhangke.framework.utils.isDebugMode
 import com.zhangke.fread.common.commonComponentProvider
 import com.zhangke.fread.di.AndroidApplicationComponent
 import com.zhangke.fread.di.ApplicationComponentProvider
+import com.zhangke.fread.di.FreadApplication
 import com.zhangke.fread.di.create
 
 abstract class HostingApplication : Application(),
@@ -27,7 +28,9 @@ abstract class HostingApplication : Application(),
         commonComponentProvider = this
         initModuleStartups()
         TopActivityManager.init(this)
-        component.dayNightHelper // Initialize the DayNightHelper to set the default mode¬
+        component.dayNightHelper // Initialize the DayNightHelper to set the default mode
+
+        FreadApplication.initialize()
     }
 
     override fun newImageLoader(): ImageLoader {

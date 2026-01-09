@@ -28,6 +28,8 @@ compose-runtime-tracing = "1.9.2"
 
 jetbrains-lifecycle = "2.9.4"
 
+koin = "4.1.1"
+
 accompanist = "0.37.3"
 
 kotlinInject = "0.8.0"
@@ -215,6 +217,13 @@ googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", 
 composeRuntimeTracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "compose-runtime-tracing" }
 
 bluesky = { module = "sh.christian.ozone:bluesky", version.ref = "bluesky" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+koin-compose-nav3 = { module = "io.insert-koin:koin-compose-navigation3", version = "4.2.0-alpha3" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

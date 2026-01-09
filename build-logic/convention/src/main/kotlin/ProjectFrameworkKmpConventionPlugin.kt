@@ -4,8 +4,9 @@ import com.zhangke.fread.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import kotlin.text.get
 
-class ProjectFrameworkKmpConventionPlugin: Plugin<Project> {
+class ProjectFrameworkKmpConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
@@ -24,7 +25,17 @@ class ProjectFrameworkKmpConventionPlugin: Plugin<Project> {
                             implementation(compose.materialIconsExtended)
                             implementation(compose.material3)
 
+                            implementation(libs.findLibrary("koin-core").get())
+                            implementation(libs.findLibrary("koin-compose").get())
+                            implementation(libs.findLibrary("koin-compose-viewmodel").get())
+                            implementation(libs.findLibrary("koin-compose-nav3").get())
+
                             implementation(libs.findLibrary("kotlinx-datetime").get())
+                        }
+                    }
+                    androidMain {
+                        dependencies {
+                            implementation(libs.findLibrary("koin-android").get())
                         }
                     }
                     targets.configureEach {

@@ -30,6 +30,8 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.LocalSharedTransitionScope
 import com.zhangke.framework.voyager.FreadScreenTransition
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
@@ -119,8 +121,6 @@ internal fun FreadApp(
         LocalModuleScreenVisitor provides moduleScreenVisitor,
         LocalBubbleManager provides bubbleManager,
     ) {
-
-
         val backStack = rememberNavBackStack(
             configuration = SavedStateConfiguration {
                 serializersModule = SerializersModule {
@@ -138,35 +138,39 @@ internal fun FreadApp(
             }
         }
         SharedTransitionLayout {
-            NavDisplay(
-                backStack = backStack,
-                onBack = popBackStack,
-                entryDecorators = listOf(
-                    // Add the default decorators for managing scenes and saving state
-                    rememberSaveableStateHolderNavEntryDecorator(),
-                    // Then add the view model store decorator
-                    rememberViewModelStoreNavEntryDecorator()
-                ),
-                entryProvider = entryProvider {
-                    entry<SharedElementDemoList> {
-                        SharedElementDemoListPage(
-                            sharedScope = this@SharedTransitionLayout,
-                            onImageClick = { imageId ->
-                                backStack.add(SharedElementDemoDetail(imageId))
-                            },
-                        )
-                    }
-                    entry<SharedElementDemoDetail> { args ->
-                        SharedElementDemoDetailPage(
-                            sharedScope = this@SharedTransitionLayout,
-                            imageId = args.imageId,
-                            onBack = popBackStack,
-                        )
-                    }
-                },
-            )
+            CompositionLocalProvider(
+                LocalSharedTransitionScope provides this,
+                LocalNavBackStack provides backStack,
+            ) {
+                NavDisplay(
+                    backStack = backStack,
+                    onBack = popBackStack,
+                    entryDecorators = listOf(
+                        // Add the default decorators for managing scenes and saving state
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        // Then add the view model store decorator
+                        rememberViewModelStoreNavEntryDecorator()
+                    ),
+                    entryProvider = entryProvider {
+                        entry<SharedElementDemoList> {
+                            SharedElementDemoListPage(
+                                sharedScope = this@SharedTransitionLayout,
+                                onImageClick = { imageId ->
+                                    backStack.add(SharedElementDemoDetail(imageId))
+                                },
+                            )
+                        }
+                        entry<SharedElementDemoDetail> { args ->
+                            SharedElementDemoDetailPage(
+                                sharedScope = this@SharedTransitionLayout,
+                                imageId = args.imageId,
+                                onBack = popBackStack,
+                            )
+                        }
+                    },
+                )
+            }
         }
-
 
 
 //        ProvideNavigatorLifecycleKMPSupport {

@@ -1,34 +1,31 @@
 package com.zhangke.fread.screen
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.LocalViewModelProviderFactory
-import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import com.zhangke.framework.voyager.FreadScreenTransition
-import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
-import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.LocalSharedTransitionScope
+import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.bubble.BubbleManager
 import com.zhangke.fread.common.bubble.LocalBubbleManager
 import com.zhangke.fread.common.config.FreadConfigManager
@@ -43,7 +40,6 @@ import com.zhangke.fread.common.language.ActivityLanguageHelper
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.review.LocalFreadReviewManager
-import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.common.utils.LocalPlatformUriHelper
 import com.zhangke.fread.common.utils.LocalThumbnailHelper
@@ -59,8 +55,10 @@ import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
 import com.zhangke.fread.utils.LocalActivityHelper
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import me.tatarka.inject.annotations.Inject
 
 typealias FreadApp = @Composable () -> Unit
@@ -88,6 +86,7 @@ internal fun FreadApp(
     activityHelper: ActivityHelper,
     moduleScreenVisitor: ModuleScreenVisitor,
     bubbleManager: BubbleManager,
+    navEntryProviders: Set<NavEntryProvider>,
 ) {
     val statusConfig by freadConfigManager.statusConfigFlow.collectAsState()
     CompositionLocalProvider(
@@ -108,47 +107,98 @@ internal fun FreadApp(
         LocalModuleScreenVisitor provides moduleScreenVisitor,
         LocalBubbleManager provides bubbleManager,
     ) {
-        ProvideNavigatorLifecycleKMPSupport {
-            BottomSheetNavigator(
-                modifier = Modifier,
-                sheetShape = RoundedCornerShape(12.dp),
-            ) {
-                TransparentNavigator {
-                    Navigator(
-                        screen = remember { FreadScreen() },
-                        key = ROOT_NAVIGATOR_KEY,
-                    ) { navigator ->
-                        FreadScreenTransition(
-                            navigator = navigator,
-                            disposeScreenAfterTransitionEnd = false,
-                        )
-                        LaunchedEffect(Unit) {
-                            GlobalScreenNavigation.openScreenFlow
-                                .debounce(300)
-                                .collect { screen -> navigator.push(screen) }
-                        }
-                        val transparentNavigator = LocalTransparentNavigator.current
-                        LaunchedEffect(Unit) {
-                            GlobalScreenNavigation.openTransparentScreenFlow
-                                .debounce(300)
-                                .collect {
-                                    transparentNavigator.push(it)
-                                }
-                        }
-                        val browserLauncher = LocalActivityBrowserLauncher.current
-                        RegisterNotificationAction(browserLauncher)
-                        val bubbles by bubbleManager.bubbleListFlow.collectAsState()
-                        if (bubbles.isNotEmpty()) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                for (bubble in bubbles) {
-                                    with(bubble) { Content() }
-                                }
-                            }
-                        }
+        val backStack = rememberNavBackStack(
+            configuration = SavedStateConfiguration {
+                serializersModule = SerializersModule {
+                    polymorphic(NavKey::class) {
+                        subclass(FreadScreenNavKey::class)
                     }
                 }
+            },
+            FreadScreenNavKey,
+        )
+        val popBackStack: () -> Unit = {
+            if (backStack.size > 1) {
+                backStack.removeAt(backStack.lastIndex)
             }
         }
+        SharedTransitionLayout {
+            CompositionLocalProvider(
+                LocalSharedTransitionScope provides this,
+                LocalNavBackStack provides backStack,
+            ) {
+                NavDisplay(
+                    backStack = backStack,
+                    onBack = popBackStack,
+                    entryDecorators = listOf(
+                        // Add the default decorators for managing scenes and saving state
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        // Then add the view model store decorator
+                        rememberViewModelStoreNavEntryDecorator()
+                    ),
+                    entryProvider = entryProvider {
+                        entry<FreadScreenNavKey> {
+                            SharedElementDemoListPage(
+                                sharedScope = this@SharedTransitionLayout,
+                                onImageClick = { imageId ->
+                                    backStack.add(SharedElementDemoDetail(imageId))
+                                },
+                            )
+                        }
+                        entry<SharedElementDemoDetail> { args ->
+                            SharedElementDemoDetailPage(
+                                sharedScope = this@SharedTransitionLayout,
+                                imageId = args.imageId,
+                                onBack = popBackStack,
+                            )
+                        }
+                    },
+                )
+            }
+        }
+
+
+//        ProvideNavigatorLifecycleKMPSupport {
+//            BottomSheetNavigator(
+//                modifier = Modifier,
+//                sheetShape = RoundedCornerShape(12.dp),
+//            ) {
+//                TransparentNavigator {
+//                    Navigator(
+//                        screen = remember { FreadScreen() },
+//                        key = ROOT_NAVIGATOR_KEY,
+//                    ) { navigator ->
+//                        FreadScreenTransition(
+//                            navigator = navigator,
+//                            disposeScreenAfterTransitionEnd = false,
+//                        )
+//                        LaunchedEffect(Unit) {
+//                            GlobalScreenNavigation.openScreenFlow
+//                                .debounce(300)
+//                                .collect { screen -> navigator.push(screen) }
+//                        }
+//                        val transparentNavigator = LocalTransparentNavigator.current
+//                        LaunchedEffect(Unit) {
+//                            GlobalScreenNavigation.openTransparentScreenFlow
+//                                .debounce(300)
+//                                .collect {
+//                                    transparentNavigator.push(it)
+//                                }
+//                        }
+//                        val browserLauncher = LocalActivityBrowserLauncher.current
+//                        RegisterNotificationAction(browserLauncher)
+//                        val bubbles by bubbleManager.bubbleListFlow.collectAsState()
+//                        if (bubbles.isNotEmpty()) {
+//                            Column(modifier = Modifier.fillMaxWidth()) {
+//                                for (bubble in bubbles) {
+//                                    with(bubble) { Content() }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
@@ -178,3 +228,4 @@ private fun handleHttpUrl(
     }
     return true
 }
+

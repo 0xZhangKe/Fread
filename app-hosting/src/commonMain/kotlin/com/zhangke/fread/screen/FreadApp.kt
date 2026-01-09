@@ -2,19 +2,13 @@ package com.zhangke.fread.screen
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
@@ -25,20 +19,13 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.LocalViewModelProviderFactory
-import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.LocalSharedTransitionScope
-import com.zhangke.framework.voyager.FreadScreenTransition
-import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
-import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.bubble.BubbleManager
 import com.zhangke.fread.common.bubble.LocalBubbleManager
 import com.zhangke.fread.common.config.FreadConfigManager
@@ -53,7 +40,6 @@ import com.zhangke.fread.common.language.ActivityLanguageHelper
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.review.LocalFreadReviewManager
-import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.common.utils.LocalPlatformUriHelper
 import com.zhangke.fread.common.utils.LocalThumbnailHelper
@@ -69,7 +55,6 @@ import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
 import com.zhangke.fread.utils.LocalActivityHelper
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -101,6 +86,7 @@ internal fun FreadApp(
     activityHelper: ActivityHelper,
     moduleScreenVisitor: ModuleScreenVisitor,
     bubbleManager: BubbleManager,
+    navEntryProviders: Set<NavEntryProvider>,
 ) {
     val statusConfig by freadConfigManager.statusConfigFlow.collectAsState()
     CompositionLocalProvider(
@@ -125,12 +111,11 @@ internal fun FreadApp(
             configuration = SavedStateConfiguration {
                 serializersModule = SerializersModule {
                     polymorphic(NavKey::class) {
-                        subclass(SharedElementDemoList::class)
-                        subclass(SharedElementDemoDetail::class)
+                        subclass(FreadScreenNavKey::class)
                     }
                 }
             },
-            SharedElementDemoList,
+            FreadScreenNavKey,
         )
         val popBackStack: () -> Unit = {
             if (backStack.size > 1) {
@@ -152,7 +137,7 @@ internal fun FreadApp(
                         rememberViewModelStoreNavEntryDecorator()
                     ),
                     entryProvider = entryProvider {
-                        entry<SharedElementDemoList> {
+                        entry<FreadScreenNavKey> {
                             SharedElementDemoListPage(
                                 sharedScope = this@SharedTransitionLayout,
                                 onImageClick = { imageId ->

@@ -38,6 +38,7 @@ class UserListViewModel @Inject constructor(
     @Assisted private val locator: PlatformLocator,
     @Assisted private val type: UserListType,
     @Assisted private val postUri: String?,
+    @Assisted private val userDid: String?
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
@@ -46,6 +47,7 @@ class UserListViewModel @Inject constructor(
             locator: PlatformLocator,
             type: UserListType,
             postUri: String?,
+            userDid: String?,
         ): UserListViewModel
     }
 
@@ -207,7 +209,7 @@ class UserListViewModel @Inject constructor(
             }
 
             UserListType.FOLLOWERS -> {
-                val did = client.loggedAccountProvider()?.did?.let { Did(it) }
+                val did = userDid?.let { Did(it) }
                 if (did == null) return Result.success(emptyList())
                 client.getFollowersCatching(
                     GetFollowersQueryParams(
@@ -218,7 +220,7 @@ class UserListViewModel @Inject constructor(
             }
 
             UserListType.FOLLOWING -> {
-                val did = client.loggedAccountProvider()?.did?.let { Did(it) }
+                val did = userDid?.let { Did(it) }
                 if (did == null) return Result.success(emptyList())
                 client.getFollowsCatching(GetFollowsQueryParams(actor = did, cursor = cursor))
             }

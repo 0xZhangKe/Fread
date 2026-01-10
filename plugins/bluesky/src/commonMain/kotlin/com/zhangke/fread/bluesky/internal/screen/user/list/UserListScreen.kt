@@ -48,6 +48,7 @@ class UserListScreen(
     private val locator: PlatformLocator,
     private val type: UserListType,
     private val postUri: String? = null,
+    private val did: String? = null,
 ) : BaseScreen() {
 
     @Composable
@@ -56,7 +57,7 @@ class UserListScreen(
         val navigator = LocalNavigator.currentOrThrow
         val snackbarHostState = rememberSnackbarHostState()
         val viewModel = getViewModel<UserListViewModel, UserListViewModel.Factory>() {
-            it.create(locator, type, postUri)
+            it.create(locator, type, postUri, did)
         }
         val uiState by viewModel.uiState.collectAsState()
 
@@ -72,7 +73,7 @@ class UserListScreen(
             onUnmuteClick = viewModel::onUnmuteClick,
             onBlockClick = viewModel::onBlockClick,
             onUnblockClick = viewModel::onUnblockClick,
-            onUserClick = { navigator.push(BskyUserDetailScreen(locator, it.did)) },
+            onUserClick = fun(item: UserListItemUiState): Unit {navigator.push(BskyUserDetailScreen(locator, item.did))},
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
     }

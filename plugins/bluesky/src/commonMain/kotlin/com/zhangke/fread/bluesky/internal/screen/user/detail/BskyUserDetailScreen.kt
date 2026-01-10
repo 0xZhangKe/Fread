@@ -99,10 +99,10 @@ class BskyUserDetailScreen(
             onUnblockClick = viewModel::onUnblockClick,
             onUnfollowClick = viewModel::onUnfollowClick,
             onFollowerClick = {
-                navigator.push(UserListScreen(locator = locator, type = UserListType.FOLLOWERS))
+                navigator.push(UserListScreen(locator = locator, type = UserListType.FOLLOWERS, did = did))
             },
             onFollowingClick = {
-                navigator.push(UserListScreen(locator = locator, type = UserListType.FOLLOWING))
+                navigator.push(UserListScreen(locator = locator, type = UserListType.FOLLOWING, did = did))
             },
             onOpenInBrowserClick = {
                 uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(coroutineScope, it) }

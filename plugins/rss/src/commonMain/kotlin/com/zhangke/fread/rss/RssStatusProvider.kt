@@ -19,7 +19,6 @@ class RssStatusProvider @Inject constructor(
     rssAccountManager: RssAccountManager,
     rssStatusResolver: RssStatusResolver,
     rssStatusSourceResolver: RssStatusSourceResolver,
-    rssPlatformResolver: RssPlatformResolver,
     rssNotificationResolver: RssNotificationResolver,
     rssPublishManager: RssPublishManager,
 ) : IStatusProvider {
@@ -27,8 +26,6 @@ class RssStatusProvider @Inject constructor(
     override val contentManager: IContentManager = contentManager
 
     override val screenProvider: IStatusScreenProvider = rssScreenProvider
-
-    override val platformResolver: IPlatformResolver = rssPlatformResolver
 
     override val searchEngine: ISearchEngine = rssSearchEngine
 

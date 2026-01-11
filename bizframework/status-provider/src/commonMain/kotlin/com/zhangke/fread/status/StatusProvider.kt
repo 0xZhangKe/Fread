@@ -22,17 +22,13 @@ import com.zhangke.fread.status.status.StatusResolver
 /**
  * Created by ZhangKe on 2022/12/9.
  */
-class StatusProvider constructor(
-    providers: Set<IStatusProvider>,
-) {
+class StatusProvider(private val providers: List<IStatusProvider>) {
 
     val contentManager = ContentManager(providers.map { it.contentManager })
 
     val screenProvider = StatusScreenProvider(providers.map { it.screenProvider })
 
     val searchEngine = SearchEngine(providers.map { it.searchEngine })
-
-    val platformResolver = PlatformResolver(providers.map { it.platformResolver })
 
     val statusResolver = StatusResolver(providers.map { it.statusResolver })
 
@@ -50,8 +46,6 @@ interface IStatusProvider {
     val contentManager: IContentManager
 
     val screenProvider: IStatusScreenProvider
-
-    val platformResolver: IPlatformResolver
 
     val searchEngine: ISearchEngine
 

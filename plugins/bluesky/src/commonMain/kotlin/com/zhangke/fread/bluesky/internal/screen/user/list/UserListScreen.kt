@@ -73,7 +73,7 @@ class UserListScreen(
             onUnmuteClick = viewModel::onUnmuteClick,
             onBlockClick = viewModel::onBlockClick,
             onUnblockClick = viewModel::onUnblockClick,
-            onUserClick = fun(item: UserListItemUiState): Unit {navigator.push(BskyUserDetailScreen(locator, item.did))},
+            onUserClick = {navigator.push(BskyUserDetailScreen(locator, it.did))},
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
     }

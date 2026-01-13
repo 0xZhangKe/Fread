@@ -50,6 +50,7 @@ import com.zhangke.fread.status.IStatusProvider
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -103,17 +104,18 @@ val blueskyModule = module {
     factoryOf(::UpdateProfileRecordUseCase)
     factoryOf(::PinFeedsUseCase)
     factoryOf(::RefreshSessionUseCase)
-    factoryOf(::AddBlueskyContentViewModel)
-    factoryOf(::BlueskyHomeContainerViewModel)
-    factoryOf(::HomeFeedsContainerViewModel)
-    factoryOf(::BskyFollowingFeedsViewModel)
-    factoryOf(::ExplorerFeedsViewModel)
-    factoryOf(::FeedsDetailViewModel)
-    factoryOf(::SearchStatusViewModel)
-    factoryOf(::BskyUserDetailViewModel)
-    factoryOf(::EditProfileViewModel)
-    factoryOf(::UserListViewModel)
-    factoryOf(::PublishPostViewModel)
+
+    viewModelOf(::AddBlueskyContentViewModel)
+    viewModelOf(::BlueskyHomeContainerViewModel)
+    viewModelOf(::HomeFeedsContainerViewModel)
+    viewModelOf(::BskyFollowingFeedsViewModel)
+    viewModelOf(::ExplorerFeedsViewModel)
+    viewModelOf(::FeedsDetailViewModel)
+    viewModelOf(::SearchStatusViewModel)
+    viewModelOf(::BskyUserDetailViewModel)
+    viewModelOf(::EditProfileViewModel)
+    viewModelOf(::UserListViewModel)
+    viewModelOf(::PublishPostViewModel)
 
     factoryOf(::BlueskyProvider) bind IStatusProvider::class
 }

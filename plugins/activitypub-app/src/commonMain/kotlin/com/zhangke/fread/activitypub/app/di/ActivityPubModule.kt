@@ -30,7 +30,6 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.migrate.ActivityPubContentMigrator
-import com.zhangke.fread.activitypub.app.internal.push.ActivityPubPushManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
@@ -92,6 +91,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.fread.activitypub.app.internal.utils.MastodonHelper
 import com.zhangke.fread.status.IStatusProvider
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -169,32 +169,32 @@ val activityPubModule = module {
     factoryOf(::GenerateInitPostStatusUiStateUseCase)
     factoryOf(::PublishPostUseCase)
 
-    factoryOf(::EditAccountInfoViewModel)
-    factoryOf(::AddActivityPubContentViewModel)
-    factoryOf(::SelectPlatformViewModel)
-    factoryOf(::ActivityPubContentViewModel)
-    factoryOf(::EditContentConfigViewModel)
-    factoryOf(::ActivityPubTimelineContainerViewModel)
-    factoryOf(::ExplorerContainerViewModel)
-    factoryOf(::EditFilterViewModel)
-    factoryOf(::FiltersListViewModel)
-    factoryOf(::HashtagTimelineContainerViewModel)
-    factoryOf(::InstanceDetailViewModel)
-    factoryOf(::ServerAboutViewModel)
-    factoryOf(::ServerTrendsTagsViewModel)
-    factoryOf(::CreatedListsViewModel)
-    factoryOf(::AddListViewModel)
-    factoryOf(::EditListViewModel)
-    factoryOf(::SearchStatusViewModel)
-    factoryOf(::PostStatusViewModel)
-    factoryOf(::TrendingStatusViewModel)
-    factoryOf(::UserDetailContainerViewModel)
-    factoryOf(::UserAboutContainerViewModel)
-    factoryOf(::UserListViewModel)
-    factoryOf(::SearchUserViewModel)
-    factoryOf(::StatusListContainerViewModel)
-    factoryOf(::TagListViewModel)
-    factoryOf(::UserTimelineContainerViewModel)
+    viewModelOf(::EditAccountInfoViewModel)
+    viewModelOf(::AddActivityPubContentViewModel)
+    viewModelOf(::SelectPlatformViewModel)
+    viewModelOf(::ActivityPubContentViewModel)
+    viewModelOf(::EditContentConfigViewModel)
+    viewModelOf(::ActivityPubTimelineContainerViewModel)
+    viewModelOf(::ExplorerContainerViewModel)
+    viewModelOf(::EditFilterViewModel)
+    viewModelOf(::FiltersListViewModel)
+    viewModelOf(::HashtagTimelineContainerViewModel)
+    viewModelOf(::InstanceDetailViewModel)
+    viewModelOf(::ServerAboutViewModel)
+    viewModelOf(::ServerTrendsTagsViewModel)
+    viewModelOf(::CreatedListsViewModel)
+    viewModelOf(::AddListViewModel)
+    viewModelOf(::EditListViewModel)
+    viewModelOf(::SearchStatusViewModel)
+    viewModelOf(::PostStatusViewModel)
+    viewModelOf(::TrendingStatusViewModel)
+    viewModelOf(::UserDetailContainerViewModel)
+    viewModelOf(::UserAboutContainerViewModel)
+    viewModelOf(::UserListViewModel)
+    viewModelOf(::SearchUserViewModel)
+    viewModelOf(::StatusListContainerViewModel)
+    viewModelOf(::TagListViewModel)
+    viewModelOf(::UserTimelineContainerViewModel)
 
     factoryOf(::ActivityPubProvider) bind IStatusProvider::class
 }

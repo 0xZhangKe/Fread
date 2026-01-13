@@ -2,7 +2,7 @@ package com.zhangke.fread.di
 
 import org.koin.core.KoinApplication
 
-actual class PlatformedMemApplication {
+actual class PlatformedFreadApplication {
 
     actual fun KoinApplication.initKoin() {
 

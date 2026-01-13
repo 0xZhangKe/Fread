@@ -71,7 +71,6 @@ kotlin {
 }
 
 dependencies {
-    kspAll(libs.kotlinInject.compiler)
     kspAll(libs.krouter.reducing.compiler)
 }
 

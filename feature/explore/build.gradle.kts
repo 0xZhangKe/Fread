@@ -42,7 +42,6 @@ kotlin {
 }
 
 dependencies {
-    add("kspAndroid", libs.kotlinInject.compiler)
     kspAll(libs.krouter.collecting.compiler)
 }
 

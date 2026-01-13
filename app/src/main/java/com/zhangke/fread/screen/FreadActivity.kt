@@ -23,12 +23,12 @@ import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.deeplink.ExternalInputHandler
 import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.utils.ActivityResultCallback
 import com.zhangke.fread.common.utils.CallbackableActivity
-import com.zhangke.fread.di.AndroidActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
 import kotlinx.coroutines.launch
@@ -47,6 +47,7 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
     private val callbacks = mutableMapOf<Int, ActivityResultCallback>()
 
     private val dayNightHelper by inject<DayNightHelper>()
+    private val freadConfigManager by inject<FreadConfigManager>()
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -55,14 +56,7 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         dayNightHelper.setDefaultMode()
-
-        val component = applicationContext.component
-        val activityComponent = AndroidActivityComponent.create(component, this)
-
         enableEdgeToEdge()
-
-        val freadConfigManager = component.freadConfigManager
-
         super.onCreate(savedInstanceState)
 
         initNotification()

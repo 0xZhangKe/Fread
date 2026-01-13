@@ -6,36 +6,17 @@ import com.seiko.imageloader.intercept.bitmapMemoryCacheConfig
 import com.seiko.imageloader.intercept.imageMemoryCacheConfig
 import com.seiko.imageloader.intercept.painterMemoryCacheConfig
 import com.zhangke.framework.module.ModuleStartup
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.StorageHelper
 import com.zhangke.fread.startup.KRouterStartup
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.IntoSet
-import me.tatarka.inject.annotations.Provides
-import platform.Foundation.NSUserDefaults
+import com.zhangke.fread.utils.ActivityHelper
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 import platform.UIKit.UIApplication
-import platform.UIKit.UIApplicationDelegateProtocol
 
-@Component
-@ApplicationScope
-abstract class IosApplicationComponent(
-    @get:Provides val applicationDelegate: UIApplicationDelegateProtocol,
-) : HostingApplicationComponent {
-
-    @Provides
-    fun provideApplication(): UIApplication {
-        return UIApplication.sharedApplication
-    }
-
-    @Provides
-    fun provideNsUserDefaults(): NSUserDefaults {
-        return NSUserDefaults.standardUserDefaults
-    }
-
-    @ApplicationScope
-    @Provides
-    fun provideImageLoader(storageHelper: StorageHelper): ImageLoader {
-        return ImageLoader {
+actual fun Module.createPlatformModule() {
+    singleOf(::ActivityHelper)
+    single<ImageLoader> {
+        ImageLoader {
             components {
                 setupDefaultComponents()
             }
@@ -53,16 +34,12 @@ abstract class IosApplicationComponent(
                     maxSize(50)
                 }
                 diskCacheConfig {
-                    directory(storageHelper.cacheDir.resolve("image_cache"))
+                    directory(get<StorageHelper>().cacheDir.resolve("image_cache"))
                     maxSizeBytes(512L * 1024 * 1024) // 512MB
                 }
             }
         }
     }
-
-    @IntoSet
-    @Provides
-    fun KRouterStartup.binds(): ModuleStartup = this
-
-    companion object
+    factory<UIApplication> { UIApplication.sharedApplication }
+    factory<ModuleStartup> { KRouterStartup() }
 }

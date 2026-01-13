@@ -31,25 +31,4 @@ interface HostingApplicationComponent : CommonComponent,
     RssComponent,
     BlueskyComponent {
 
-    val imageLoader: ImageLoader
-
-    @Provides
-    @ApplicationScope
-    fun provideProvideStatusProvider(
-        providers: Set<@JvmSuppressWildcards IStatusProvider>,
-    ): StatusProvider {
-        return StatusProvider(providers)
-    }
-
-    @IntoMap
-    @Provides
-    fun provideMainDrawerMainDrawerViewModel(creator: () -> MainDrawerViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return MainDrawerViewModel::class to creator
-    }
-
-    @IntoMap
-    @Provides
-    fun provideMainPageViewModel(creator: () -> MainViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return MainViewModel::class to creator
-    }
 }

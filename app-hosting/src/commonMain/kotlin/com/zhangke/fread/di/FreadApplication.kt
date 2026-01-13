@@ -21,10 +21,11 @@ object FreadApplication {
 
     fun initialize() {
         val koin = startKoin {
-            PlatformedMemApplication().apply {
+            PlatformedFreadApplication().apply {
                 initKoin()
             }
             modules(
+                hostingModule,
                 commonModule,
                 profileModule,
                 activityPubModule,
@@ -44,7 +45,7 @@ object FreadApplication {
     }
 }
 
-expect class PlatformedMemApplication() {
+expect class PlatformedFreadApplication() {
 
     fun KoinApplication.initKoin()
 }

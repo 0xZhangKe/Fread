@@ -51,7 +51,6 @@ kotlin {
 
 dependencies {
     kspAll(libs.auto.service.ksp)
-    kspAll(libs.kotlinInject.compiler)
     kspAll(libs.krouter.collecting.compiler)
     kspAll(libs.androidx.room.compiler)
 }

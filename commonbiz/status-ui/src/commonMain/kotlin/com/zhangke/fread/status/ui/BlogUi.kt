@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
@@ -63,7 +63,7 @@ fun BlogUi(
     onOpenBlogWithOtherAccountClick: (Blog) -> Unit = {},
     onUnavailableQuoteClick: (String) -> Unit = {},
 ) {
-    val textHandler = LocalActivityTextHandler.current
+    val textHandler = LocalTextHandler.current
     var infoToTopSpacing: Float? by remember { mutableStateOf(null) }
     Column(
         modifier = modifier

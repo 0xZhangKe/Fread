@@ -88,7 +88,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimel
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.formatDate
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
@@ -131,7 +131,7 @@ data class UserDetailScreen(
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
         val browserLauncher = LocalActivityBrowserLauncher.current
-        val activityTextHandler = LocalActivityTextHandler.current
+        val activityTextHandler = LocalTextHandler.current
         val viewModel = getViewModel<UserDetailContainerViewModel>()
             .getViewModel(locator, userUri, webFinger, userId)
         val uiState by viewModel.uiState.collectAsState()

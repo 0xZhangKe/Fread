@@ -35,10 +35,10 @@ import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
-import com.zhangke.fread.common.daynight.ActivityDayNightHelper
+import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
-import com.zhangke.fread.common.handler.ActivityTextHandler
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
+import com.zhangke.fread.common.handler.TextHandler
 import com.zhangke.fread.common.language.ActivityLanguageHelper
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.FreadReviewManager
@@ -46,11 +46,9 @@ import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.common.utils.LocalPlatformUriHelper
-import com.zhangke.fread.common.utils.LocalThumbnailHelper
 import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.common.utils.MediaFileHelper
 import com.zhangke.fread.common.utils.PlatformUriHelper
-import com.zhangke.fread.common.utils.ThumbnailHelper
 import com.zhangke.fread.common.utils.ToastHelper
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.ModuleScreenVisitor
@@ -80,11 +78,10 @@ internal fun FreadApp(
     localConfigManager: LocalConfigManager,
     platformUriHelper: PlatformUriHelper,
     mediaFileHelper: MediaFileHelper,
-    thumbnailHelper: ThumbnailHelper,
     toastHelper: ToastHelper,
-    activityDayNightHelper: ActivityDayNightHelper,
+    activityDayNightHelper: DayNightHelper,
     activityLanguageHelper: ActivityLanguageHelper,
-    activityTextHandler: ActivityTextHandler,
+    textHandler: TextHandler,
     activityHelper: ActivityHelper,
     moduleScreenVisitor: ModuleScreenVisitor,
     bubbleManager: BubbleManager,
@@ -98,11 +95,10 @@ internal fun FreadApp(
         LocalFreadConfigManager provides freadConfigManager,
         LocalPlatformUriHelper provides platformUriHelper,
         LocalMediaFileHelper provides mediaFileHelper,
-        LocalThumbnailHelper provides thumbnailHelper,
         LocalFreadReviewManager provides freadReviewManager,
         LocalActivityLanguageHelper provides activityLanguageHelper,
         LocalActivityDayNightHelper provides activityDayNightHelper,
-        LocalActivityTextHandler provides activityTextHandler,
+        LocalTextHandler provides textHandler,
         LocalToastHelper provides toastHelper,
         LocalActivityHelper provides activityHelper,
         LocalModuleScreenVisitor provides moduleScreenVisitor,

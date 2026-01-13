@@ -16,6 +16,10 @@ class LanguageHelper @Inject constructor(
     var currentLanguage = readLocalFromStorage()
         private set
 
+    fun initialize(){
+
+    }
+
     private fun readLocalFromStorage(): LanguageSettingItem {
         return runBlocking {
             localConfigManager.getString(LOCAL_KEY_LANGUAGE)
@@ -42,6 +46,10 @@ actual class ActivityLanguageHelper @Inject constructor(
 ) {
 
     actual val currentLanguage get() = languageHelper.currentLanguage
+
+    actual fun initialize(){
+        languageHelper.initialize()
+    }
 
     actual fun setLanguage(item: LanguageSettingItem) {
         languageHelper.setLanguage(item)

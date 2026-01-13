@@ -23,6 +23,7 @@ import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
+import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.deeplink.ExternalInputHandler
 import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.utils.ActivityResultCallback
@@ -31,6 +32,7 @@ import com.zhangke.fread.di.AndroidActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class FreadActivity : AppCompatActivity(), CallbackableActivity {
 
@@ -44,17 +46,18 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
 
     private val callbacks = mutableMapOf<Int, ActivityResultCallback>()
 
+    private val dayNightHelper by inject<DayNightHelper>()
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        dayNightHelper.setDefaultMode()
+
         val component = applicationContext.component
         val activityComponent = AndroidActivityComponent.create(component, this)
-
-        val activityDayNightHelper = activityComponent.activityDayNightHelper
-        activityDayNightHelper.setDefaultMode()
 
         enableEdgeToEdge()
 
@@ -68,8 +71,8 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
 
         setContent {
             val themeType by freadConfigManager.themeTypeFlow.collectAsState()
-            val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
-            val amoledMode by activityDayNightHelper.amoledModeFlow.collectAsState()
+            val dayNightMode by dayNightHelper.dayNightModeFlow.collectAsState()
+            val amoledMode by dayNightHelper.amoledModeFlow.collectAsState()
             val darkTheme = dayNightMode.isNight
             FreadTheme(
                 darkTheme = darkTheme,

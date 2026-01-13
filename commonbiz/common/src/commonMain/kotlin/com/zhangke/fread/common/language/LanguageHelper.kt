@@ -16,6 +16,8 @@ expect class ActivityLanguageHelper {
 
     val currentLanguage: LanguageSettingItem
 
+    fun initialize()
+
     fun setLanguage(item: LanguageSettingItem)
 }
 

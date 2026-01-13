@@ -45,7 +45,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -265,7 +265,7 @@ class InstanceDetailScreen(
 
     @Composable
     private fun InstanceDetailActions(baseUrl: FormalBaseUrl) {
-        val activityTextHandler = LocalActivityTextHandler.current
+        val activityTextHandler = LocalTextHandler.current
         val browserLauncher = LocalActivityBrowserLauncher.current
         var showMorePopup by remember {
             mutableStateOf(false)

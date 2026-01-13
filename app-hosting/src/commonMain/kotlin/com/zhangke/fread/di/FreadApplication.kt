@@ -3,6 +3,7 @@ package com.zhangke.fread.di
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.activitypub.app.di.activityPubModule
 import com.zhangke.fread.bluesky.blueskyModule
+import com.zhangke.fread.common.commonModule
 import com.zhangke.fread.commonbiz.shared.sharedScreenModule
 import com.zhangke.fread.explore.di.exploreModule
 import com.zhangke.fread.feature.message.di.notificationsModule
@@ -24,6 +25,7 @@ object FreadApplication {
                 initKoin()
             }
             modules(
+                commonModule,
                 profileModule,
                 activityPubModule,
                 statusProviderModel,

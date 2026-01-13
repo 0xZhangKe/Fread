@@ -47,7 +47,7 @@ import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.localization.LocalizedString
@@ -78,7 +78,7 @@ class BskyUserDetailScreen(
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
         val browserLauncher = LocalActivityBrowserLauncher.current
-        val activityTextHandler = LocalActivityTextHandler.current
+        val activityTextHandler = LocalTextHandler.current
         val viewModel = getViewModel<BskyUserDetailViewModel, BskyUserDetailViewModel.Factory> {
             it.create(locator, did)
         }

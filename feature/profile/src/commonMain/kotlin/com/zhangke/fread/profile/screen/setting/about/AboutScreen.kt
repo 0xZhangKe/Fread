@@ -48,7 +48,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.ic_fread_logo
 import com.zhangke.fread.localization.LocalizedString
@@ -103,7 +103,7 @@ class AboutScreen : BaseScreen() {
         onUpdateClick: () -> Unit,
         onCheckUpdateClick: () -> Unit,
     ) {
-        val textHandler = LocalActivityTextHandler.current
+        val textHandler = LocalTextHandler.current
         val browserLauncher = LocalActivityBrowserLauncher.current
         val coroutineScope = rememberCoroutineScope()
         Scaffold(

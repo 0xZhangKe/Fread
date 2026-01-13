@@ -28,9 +28,9 @@ object SystemPageUtils {
         }
         return try {
             if (activity == null) {
-                context.startActivity(intent)
+                context.startActivityCompat(intent)
             } else {
-                activity.startActivity(intent)
+                activity.startActivityCompat(intent)
             }
             true
         } catch (_: ActivityNotFoundException) {

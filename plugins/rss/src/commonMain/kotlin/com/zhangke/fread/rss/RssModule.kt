@@ -1,5 +1,6 @@
 package com.zhangke.fread.rss
 
+import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.rss.internal.adapter.BlogAuthorAdapter
 import com.zhangke.fread.rss.internal.adapter.RssStatusAdapter
 import com.zhangke.fread.rss.internal.platform.RssPlatformTransformer
@@ -22,6 +23,8 @@ import org.koin.dsl.module
 val rssModule = module {
 
     createPlatformModule()
+
+    factoryOf(::RssNavEntryProvider) bind NavEntryProvider::class
 
     singleOf(::RssRepo)
     singleOf(::RssParserWrapper)

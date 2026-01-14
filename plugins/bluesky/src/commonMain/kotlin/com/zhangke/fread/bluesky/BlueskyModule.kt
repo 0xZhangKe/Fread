@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky
 
+import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyFeedsAdapter
@@ -57,6 +58,8 @@ import org.koin.dsl.module
 val blueskyModule = module {
 
     createPlatformModule()
+
+    factoryOf(::BlueskyNavEntryProvider) bind NavEntryProvider::class
 
     singleOf(::BlueskyContentManager)
     singleOf(::BlueskyScreenProvider)

@@ -1,6 +1,7 @@
 package com.zhangke.fread.common
 
 import com.zhangke.framework.architect.coroutines.ApplicationScope
+import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
@@ -36,6 +37,7 @@ import org.koin.dsl.module
 
 val commonModule = module {
     createPlatformModule()
+    factoryOf(::CommonNavEntryProvider) bind NavEntryProvider::class
     factory<ApplicationCoroutineScope> { ApplicationScope }
     singleOf(::ActiveAccountsSynchronizer)
     singleOf(::BubbleManager)

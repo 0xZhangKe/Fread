@@ -1,8 +1,10 @@
 package com.zhangke.fread.activitypub.app.di
 
+import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.ActivityPubContentManager
 import com.zhangke.fread.activitypub.app.ActivityPubNotificationResolver
+import com.zhangke.fread.activitypub.app.ActivityPubNavEntryProvider
 import com.zhangke.fread.activitypub.app.ActivityPubProvider
 import com.zhangke.fread.activitypub.app.ActivityPubPublishManager
 import com.zhangke.fread.activitypub.app.ActivityPubScreenProvider
@@ -100,6 +102,8 @@ import org.koin.dsl.module
 val activityPubModule = module {
 
     createPlatformModule()
+
+    factoryOf(::ActivityPubNavEntryProvider) bind NavEntryProvider::class
 
     singleOf(::ActivityPubAccountManager)
     singleOf(::ActivityPubClientManager)

@@ -1,6 +1,5 @@
 package com.zhangke.fread.screen
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,9 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.hilt.LocalViewModelProviderFactory
 import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
@@ -59,38 +56,33 @@ import com.zhangke.fread.utils.LocalActivityHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
+import org.koin.compose.getKoin
 
 typealias FreadApp = @Composable () -> Unit
 
-@OptIn(
-    ExperimentalVoyagerApi::class,
-    ExperimentalMaterialApi::class,
-    ExperimentalSharedTransitionApi::class
-)
-@Inject
+@OptIn(ExperimentalVoyagerApi::class, ExperimentalMaterialApi::class)
 @Composable
-internal fun FreadApp(
-    imageLoader: ImageLoader,
-    viewModelProviderFactory: ViewModelProvider.Factory,
-    freadReviewManager: FreadReviewManager,
-    freadConfigManager: FreadConfigManager,
-    localConfigManager: LocalConfigManager,
-    platformUriHelper: PlatformUriHelper,
-    mediaFileHelper: MediaFileHelper,
-    toastHelper: ToastHelper,
-    activityDayNightHelper: DayNightHelper,
-    activityLanguageHelper: ActivityLanguageHelper,
-    textHandler: TextHandler,
-    activityHelper: ActivityHelper,
-    moduleScreenVisitor: ModuleScreenVisitor,
-    bubbleManager: BubbleManager,
-) {
+fun FreadApp() {
+    val koin = getKoin()
+    val freadConfigManager: FreadConfigManager = koin.get()
     val statusConfig by freadConfigManager.statusConfigFlow.collectAsState()
+    val browserLauncher = koin.get<BrowserLauncher>()
+    val imageLoader: ImageLoader = koin.get()
+    val freadReviewManager: FreadReviewManager = koin.get()
+
+    val localConfigManager: LocalConfigManager = koin.get()
+    val platformUriHelper: PlatformUriHelper = koin.get()
+    val mediaFileHelper: MediaFileHelper = koin.get()
+    val toastHelper: ToastHelper = koin.get()
+    val activityDayNightHelper: DayNightHelper = koin.get()
+    val activityLanguageHelper: ActivityLanguageHelper = koin.get()
+    val textHandler: TextHandler = koin.get()
+    val activityHelper: ActivityHelper = koin.get()
+    val moduleScreenVisitor: ModuleScreenVisitor = koin.get()
+    val bubbleManager: BubbleManager = koin.get()
     CompositionLocalProvider(
         LocalStatusUiConfig provides StatusUiConfig.create(config = statusConfig),
         LocalImageLoader provides imageLoader,
-        LocalViewModelProviderFactory provides viewModelProviderFactory,
         LocalLocalConfigManager provides localConfigManager,
         LocalFreadConfigManager provides freadConfigManager,
         LocalPlatformUriHelper provides platformUriHelper,
@@ -103,6 +95,7 @@ internal fun FreadApp(
         LocalActivityHelper provides activityHelper,
         LocalModuleScreenVisitor provides moduleScreenVisitor,
         LocalBubbleManager provides bubbleManager,
+        LocalActivityBrowserLauncher provides browserLauncher,
     ) {
         ProvideNavigatorLifecycleKMPSupport {
             BottomSheetNavigator(

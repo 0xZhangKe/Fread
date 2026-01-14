@@ -82,7 +82,7 @@ class FreadActivity : AppCompatActivity(), CallbackableActivity {
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
                 ) {
-                    activityComponent.freadContent()
+                    FreadApp()
                 }
             }
         }

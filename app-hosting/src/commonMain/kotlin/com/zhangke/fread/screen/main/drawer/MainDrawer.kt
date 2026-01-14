@@ -38,8 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -60,15 +58,14 @@ import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun Screen.MainDrawer(
-    onDismissRequest: () -> Unit,
-) {
+fun MainDrawer(onDismissRequest: () -> Unit) {
     val navigator = LocalNavigator.currentOrThrow
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
     val screenVisitor = LocalModuleScreenVisitor.current
-    val viewModel = getViewModel<MainDrawerViewModel>()
+    val viewModel = koinViewModel<MainDrawerViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val mainTabConnection = LocalNestedTabConnection.current
     val coroutineScope = rememberCoroutineScope()

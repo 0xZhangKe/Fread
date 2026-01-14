@@ -1,8 +1,9 @@
 package com.zhangke.fread.screen
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -12,17 +13,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import com.zhangke.framework.voyager.FreadScreenTransition
-import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
-import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.LocalSharedTransitionScope
+import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
@@ -56,11 +59,15 @@ import com.zhangke.fread.utils.LocalActivityHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.getKoin
 
-typealias FreadApp = @Composable () -> Unit
-
-@OptIn(ExperimentalVoyagerApi::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalVoyagerApi::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
 fun FreadApp() {
     val koin = getKoin()
@@ -97,42 +104,56 @@ fun FreadApp() {
         LocalBubbleManager provides bubbleManager,
         LocalActivityBrowserLauncher provides browserLauncher,
     ) {
-        ProvideNavigatorLifecycleKMPSupport {
-            BottomSheetNavigator(
-                modifier = Modifier,
-                sheetShape = RoundedCornerShape(12.dp),
-            ) {
-                TransparentNavigator {
-                    Navigator(
-                        screen = remember { FreadScreen() },
-                        key = ROOT_NAVIGATOR_KEY,
-                    ) { navigator ->
-                        FreadScreenTransition(
-                            navigator = navigator,
-                            disposeScreenAfterTransitionEnd = false,
-                        )
-                        LaunchedEffect(Unit) {
-                            GlobalScreenNavigation.openScreenFlow
-                                .debounce(300)
-                                .collect { screen -> navigator.push(screen) }
-                        }
-                        val transparentNavigator = LocalTransparentNavigator.current
-                        LaunchedEffect(Unit) {
-                            GlobalScreenNavigation.openTransparentScreenFlow
-                                .debounce(300)
-                                .collect {
-                                    transparentNavigator.push(it)
-                                }
-                        }
-                        val browserLauncher = LocalActivityBrowserLauncher.current
-                        RegisterNotificationAction(browserLauncher)
-                        val bubbles by bubbleManager.bubbleListFlow.collectAsState()
-                        if (bubbles.isNotEmpty()) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                for (bubble in bubbles) {
-                                    with(bubble) { Content() }
-                                }
+        val navEntryProviders = remember(koin) { koin.getAll<NavEntryProvider>() }
+        val backStack = rememberNavBackStack(
+            configuration = SavedStateConfiguration {
+                serializersModule = SerializersModule {
+                    polymorphic(NavKey::class) {
+                        for (provider in navEntryProviders) {
+                            with(provider) {
+                                polymorph()
                             }
+                        }
+                    }
+                }
+            },
+            FreadHomeScreenNavKey,
+        )
+        SharedTransitionLayout {
+            CompositionLocalProvider(
+                LocalSharedTransitionScope provides this,
+                LocalNavBackStack provides backStack,
+            ) {
+                NavDisplay(
+                    backStack = backStack,
+                    onBack = { backStack.removeLastOrNull() },
+                    entryDecorators = listOf(
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        rememberViewModelStoreNavEntryDecorator()
+                    ),
+                    entryProvider = entryProvider {
+                        for (provider in navEntryProviders) {
+                            with(provider) { build() }
+                        }
+                    },
+                )
+                LaunchedEffect(Unit) {
+                    GlobalScreenNavigation.openScreenFlow
+                        .debounce(300)
+                        .collect { key -> backStack.add(key) }
+                }
+                LaunchedEffect(Unit) {
+                    GlobalScreenNavigation.openTransparentScreenFlow
+                        .debounce(300)
+                        .collect { backStack.add(it) }
+                }
+                val browserLauncher = LocalActivityBrowserLauncher.current
+                RegisterNotificationAction(browserLauncher)
+                val bubbles by bubbleManager.bubbleListFlow.collectAsState()
+                if (bubbles.isNotEmpty()) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        for (bubble in bubbles) {
+                            with(bubble) { Content() }
                         }
                     }
                 }

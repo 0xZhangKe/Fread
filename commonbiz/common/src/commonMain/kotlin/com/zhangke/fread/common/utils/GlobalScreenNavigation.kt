@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.utils
 
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -7,17 +8,17 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 object GlobalScreenNavigation {
 
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
-    val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow.asSharedFlow()
+    private val _openScreenFlow = MutableSharedFlow<NavKey>()
+    val openScreenFlow: SharedFlow<NavKey> get() = _openScreenFlow.asSharedFlow()
 
-    private val _openTransparentScreenFlow = MutableSharedFlow<Screen>()
-    val openTransparentScreenFlow: SharedFlow<Screen> get() = _openTransparentScreenFlow.asSharedFlow()
+    private val _openTransparentScreenFlow = MutableSharedFlow<NavKey>()
+    val openTransparentScreenFlow: SharedFlow<NavKey> get() = _openTransparentScreenFlow.asSharedFlow()
 
-    suspend fun navigate(screen: Screen) {
+    suspend fun navigate(screen: NavKey) {
         _openScreenFlow.emit(screen)
     }
 
-    suspend fun navigateByTransparent(screen: Screen) {
+    suspend fun navigateByTransparent(screen: NavKey) {
         _openTransparentScreenFlow.emit(screen)
     }
 }

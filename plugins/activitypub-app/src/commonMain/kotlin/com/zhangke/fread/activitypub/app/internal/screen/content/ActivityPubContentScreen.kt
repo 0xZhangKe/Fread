@@ -31,19 +31,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTab
-import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.TopBarWithTabLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.Tab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
@@ -51,32 +48,27 @@ import com.zhangke.fread.activitypub.app.internal.screen.content.timeline.Activi
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusTab
-import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 internal class ActivityPubContentScreen(
     private val configId: String,
     private val isLatestContent: Boolean,
-) : BasePagerTab() {
+) : Tab {
 
-    override val options: PagerTabOptions?
+    override val options: TabOptions?
         @Composable get() = null
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = screen.getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
+        val viewModel = koinViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubContentUi(
-            screen = screen,
             uiState = uiState,
             onTitleClick = { content ->
                 uiState.locator?.let {
@@ -92,7 +84,6 @@ internal class ActivityPubContentScreen(
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ActivityPubContentUi(
-        screen: Screen,
         uiState: ActivityPubContentUiState,
         onTitleClick: (ActivityPubContent) -> Unit,
         onPostBlogClick: (ActivityPubLoggedAccount) -> Unit,
@@ -215,7 +206,7 @@ internal class ActivityPubContentScreen(
                                 state = pagerState,
                                 userScrollEnabled = !contentScrollInProgress,
                             ) { pageIndex ->
-                                tabList[pageIndex].TabContent(screen, null)
+                                tabList[pageIndex].Content()
                             }
                         }
                     } else if (!uiState.errorMessage.isNullOrBlank()) {
@@ -238,7 +229,7 @@ internal class ActivityPubContentScreen(
     private fun createTabs(
         locator: PlatformLocator,
         config: ActivityPubContent,
-    ): List<PagerTab> {
+    ): List<Tab> {
         return config
             .tabList
             .filter { !it.hide }
@@ -246,9 +237,7 @@ internal class ActivityPubContentScreen(
             .map { it.toPagerTab(locator) }
     }
 
-    private fun ActivityPubContent.ContentTab.toPagerTab(
-        locator: PlatformLocator,
-    ): PagerTab {
+    private fun ActivityPubContent.ContentTab.toPagerTab(locator: PlatformLocator): Tab {
         return when (this) {
             is ActivityPubContent.ContentTab.HomeTimeline -> {
                 ActivityPubTimelineTab(

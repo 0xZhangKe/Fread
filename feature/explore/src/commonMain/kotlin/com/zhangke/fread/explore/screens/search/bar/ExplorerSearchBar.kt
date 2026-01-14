@@ -36,16 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
@@ -63,18 +61,19 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
 import kotlinx.coroutines.flow.Flow
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class, InternalVoyagerApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun Screen.ExplorerSearchBar(
+fun ExplorerSearchBar(
     selectedAccount: LoggedAccount?,
     accountList: List<LoggedAccount>,
     onAccountSelected: (LoggedAccount) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     var active by rememberSaveable { mutableStateOf(false) }
-    val viewModel = getViewModel<SearchBarViewModel>()
+    val viewModel = koinViewModel<SearchBarViewModel>()
     LaunchedEffect(selectedAccount) {
         viewModel.selectedAccount = selectedAccount
     }

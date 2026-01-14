@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -29,13 +32,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
+import com.zhangke.framework.nav.Tab
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.action.OpenNotificationPageAction
 import com.zhangke.fread.common.review.LocalFreadReviewManager
@@ -93,26 +93,30 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
                 }
             },
         ) {
-            TabNavigator(tab = tabs.first()) {
-                val tabNavigator = LocalTabNavigator.current
-                RegisterNotificationAction(tabs, tabNavigator)
-                inFeedsTab = tabNavigator.current.key == tabs.first().key
-                BackHandler(true) {
-                    if (drawerState.isOpen) {
-                        coroutineScope.launch {
-                            drawerState.close()
-                        }
-                    } else if (inFeedsTab) {
-                        activityHelper.goHome()
-                    } else {
-                        tabNavigator.current = tabs.first()
+            val pagerState = rememberPagerState(pageCount = tabs::size)
+            BackHandler(true) {
+                if (drawerState.isOpen) {
+                    coroutineScope.launch {
+                        drawerState.close()
                     }
+                } else if (inFeedsTab) {
+                    activityHelper.goHome()
+                } else {
+                    pagerState.requestScrollToPage(0)
                 }
+            }
+            LaunchedEffect(pagerState.currentPage) {
+                inFeedsTab = pagerState.currentPage == 0
+            }
+            RegisterNotificationAction(tabs, pagerState)
+            HorizontalPager(
+                state = pagerState,
+            ) { page ->
                 Box(modifier = Modifier.fillMaxSize()) {
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        CurrentTab()
+                        tabs[page].Content()
                     }
                     val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
                     AnimatedVisibility(
@@ -130,9 +134,11 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
                         NavigationBar(
                             modifier = Modifier,
                         ) {
-                            tabs.forEachIndexed { _, tab ->
+                            tabs.forEachIndexed { index, tab ->
                                 TabNavigationItem(
                                     tab = tab,
+                                    index = index,
+                                    pagerState = pagerState,
                                     detectDoubleTap = inFeedsTab,
                                     onDoubleTap = {
                                         coroutineScope.launch {
@@ -158,21 +164,22 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
 
 private fun createMainTabs(): List<Tab> {
     return listOf(
-        FeedsHomeTab(0u),
-        ExploreTab(1u),
-        NotificationsTab(2u),
-        ProfileTab(3u),
+        FeedsHomeTab(),
+        ExploreTab(),
+        NotificationsTab(),
+        ProfileTab(),
     )
 }
 
 @Composable
 private fun RowScope.TabNavigationItem(
     tab: Tab,
+    index: Int,
+    pagerState: PagerState,
     detectDoubleTap: Boolean,
     onDoubleTap: () -> Unit,
 ) {
-    val tabNavigator = LocalTabNavigator.current
-    val selected = tabNavigator.current.key == tab.key
+    val selected = pagerState.currentPage == index
     val latestClickTime = remember { mutableLongStateOf(0L) }
     val freadReviewManager = LocalFreadReviewManager.current
     NavigationBarItem(
@@ -186,7 +193,7 @@ private fun RowScope.TabNavigationItem(
                 latestClickTime.value = currentTime
                 return@NavigationBarItem
             } else {
-                tabNavigator.current = tab
+                pagerState.requestScrollToPage(index)
                 latestClickTime.value = 0L
                 freadReviewManager.trigger()
             }
@@ -194,8 +201,8 @@ private fun RowScope.TabNavigationItem(
         alwaysShowLabel = false,
         icon = {
             Icon(
-                painter = tab.options.icon!!,
-                contentDescription = tab.options.title,
+                painter = tab.options!!.icon!!,
+                contentDescription = tab.options!!.title,
             )
         },
     )
@@ -204,12 +211,12 @@ private fun RowScope.TabNavigationItem(
 @Composable
 private fun RegisterNotificationAction(
     tabs: List<Tab>,
-    tabNavigator: TabNavigator,
+    pagerState: PagerState,
 ) {
     val composableActions = LocalComposableActions.current
     LaunchedEffect(tabs, composableActions) {
         composableActions.actionFlow.collect { action ->
-            if (handleNotificationAction(action, tabs, tabNavigator)) {
+            if (handleNotificationAction(action, tabs, pagerState)) {
                 composableActions.resetReplayCache()
             }
         }
@@ -219,13 +226,12 @@ private fun RegisterNotificationAction(
 private fun handleNotificationAction(
     action: String,
     tabs: List<Tab>,
-    tabNavigator: TabNavigator,
+    pagerState: PagerState,
 ): Boolean {
     if (!action.startsWith(OpenNotificationPageAction.URI)) return false
-    val notificationTab =
-        tabs.firstNotNullOfOrNull { it as? NotificationsTab } ?: return true
-    if (tabNavigator.current != notificationTab) {
-        tabNavigator.current = notificationTab
+    val notificationTabIndex = tabs.indexOfFirst { it is NotificationsTab }
+    if (pagerState.currentPage != notificationTabIndex) {
+        pagerState.requestScrollToPage(notificationTabIndex)
     }
     return true
 }

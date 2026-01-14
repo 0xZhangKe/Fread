@@ -2,6 +2,7 @@ package com.zhangke.fread.status.screen
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.account.LoggedAccount
@@ -32,7 +33,7 @@ class StatusScreenProvider(
         return providerList.firstNotNullOfOrNull { it.getQuoteBlogScreen(locator, blog) }
     }
 
-    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab {
+    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): Tab {
         return providerList.firstNotNullOf {
             it.getContentScreen(content, isLatestTab)
         }
@@ -126,7 +127,7 @@ class StatusScreenProvider(
         }
     }
 
-    fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
+    fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): Tab? {
         return providerList.firstNotNullOfOrNull { it.getExplorerTab(locator, platform) }
     }
 
@@ -152,7 +153,7 @@ interface IStatusScreenProvider {
 
     fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen?
 
-    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab?
+    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): Tab?
 
     fun getEditContentConfigScreenScreen(content: FreadContent): Screen?
 
@@ -200,7 +201,7 @@ interface IStatusScreenProvider {
         return null
     }
 
-    fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab?
+    fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): Tab?
 
     fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
         return null

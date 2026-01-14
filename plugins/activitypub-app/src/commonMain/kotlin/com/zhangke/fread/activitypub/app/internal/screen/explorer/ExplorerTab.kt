@@ -34,6 +34,9 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.localization.LocalizedString
@@ -45,15 +48,16 @@ import com.zhangke.fread.status.ui.StatusListPlaceholder
 import com.zhangke.fread.status.ui.common.ObserveScrollInProgressForConnection
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 class ExplorerTab(
     private val locator: PlatformLocator,
     private val platform: BlogPlatform,
     private val feedsTabType: ExplorerFeedsTabType,
-) : PagerTab {
+) : BaseTab() {
 
-    override val options: PagerTabOptions
-        @Composable get() = PagerTabOptions(
+    override val options: TabOptions
+        @Composable get() = TabOptions(
             title = when (feedsTabType) {
                 ExplorerFeedsTabType.STATUS -> stringResource(LocalizedString.activity_pub_explorer_tab_status_title)
                 ExplorerFeedsTabType.USERS -> stringResource(LocalizedString.activity_pub_explorer_tab_users_title)
@@ -62,18 +66,16 @@ class ExplorerTab(
         )
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = screen.getViewModel<ExplorerContainerViewModel>()
+    override fun Content() {
+        super.Content()
+        val backStack = LocalNavBackStack.currentOrThrow
+        val viewModel = koinViewModel<ExplorerContainerViewModel>()
             .getViewModel(locator, platform, feedsTabType)
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.push(it)
+            backStack.add(it)
         }
         ExplorerFeedsTabContent(
             uiState = uiState,

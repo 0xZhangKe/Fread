@@ -3,6 +3,7 @@ package com.zhangke.fread.feeds.pages.home
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
@@ -103,13 +104,13 @@ class ContentHomeViewModel @Inject constructor(
         }
     }
 
-    private fun convertContentsToWithTab(contents: List<FreadContent>): List<Pair<FreadContent, PagerTab>> {
+    private fun convertContentsToWithTab(contents: List<FreadContent>): List<Pair<FreadContent, Tab>> {
         return contents.mapIndexed { index, content ->
             content.convertToWithTab(index == contents.lastIndex)
         }
     }
 
-    private fun FreadContent.convertToWithTab(isLatestTab: Boolean): Pair<FreadContent, PagerTab> {
+    private fun FreadContent.convertToWithTab(isLatestTab: Boolean): Pair<FreadContent, Tab> {
         if (this is MixedContent) {
             return this to MixedContentScreen(
                 configId = id,

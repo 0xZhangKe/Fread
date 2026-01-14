@@ -1,13 +1,14 @@
 package com.zhangke.fread.explore.screens.home
 
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.nav.Tab
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 
 data class ExplorerHomeUiState(
     val selectedAccount: LoggedAccount?,
-    val accountWithTabList: List<Pair<LoggedAccount, PagerTab>>,
+    val accountWithTabList: List<Pair<LoggedAccount, Tab>>,
 ) {
 
     val locator: PlatformLocator?
@@ -21,7 +22,7 @@ data class ExplorerHomeUiState(
 
     val platform: BlogPlatform? get() = selectedAccount?.platform
 
-    val tab: PagerTab?
+    val tab: Tab?
         get() {
             return accountWithTabList.firstOrNull { it.first.uri == selectedAccount?.uri }?.second
         }

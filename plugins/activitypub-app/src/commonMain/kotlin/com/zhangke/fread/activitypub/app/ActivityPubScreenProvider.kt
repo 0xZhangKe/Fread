@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
@@ -85,7 +86,7 @@ class ActivityPubScreenProvider @Inject constructor(
         return builder(accountUri, blog)
     }
 
-    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
+    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): Tab? {
         if (content !is ActivityPubContent) return null
         return ActivityPubContentScreen(content.id, isLatestTab)
     }
@@ -168,7 +169,7 @@ class ActivityPubScreenProvider @Inject constructor(
         return InstanceDetailScreen(locator = locator, baseUrl = baseUrl)
     }
 
-    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
+    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): Tab? {
         if (platform.protocol.notActivityPub) return null
         return ExplorerContainerTab(locator = locator, platform = platform)
     }

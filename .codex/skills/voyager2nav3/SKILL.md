@@ -79,3 +79,11 @@ class ProfileNavEntryProvider : NavEntryProvider {
     }
 }
 ```
+然后跳转该页面的地方也需要同步修改,首先替换 LocalNavigator.currentOrThrow 为 LocalNavBackStack.currentOrThrow,然后通过 NavKey 跳转页面。
+
+你需要按照模块来完成工作。
+
+对于已经修改完成的类请不要再改。
+
+你只应该修改 Screen 和 navigation3 相关的代码，其他的代码不要改，即使你觉得有问题也不要改。
+

@@ -87,3 +87,11 @@ class ProfileNavEntryProvider : NavEntryProvider {
 
 你只应该修改 Screen 和 navigation3 相关的代码，其他的代码不要改，即使你觉得有问题也不要改。
 
+不要修改任何 Tab 以及其直接引用的页面。
+
+遇到不属于上述情况的页面请直接忽略，不要自己想办法解决。
+
+不要求改任何嵌套的 Navigator 页面，遇到嵌套的情况直接跳过。
+
+不要做任何超出我要求的事情。
+

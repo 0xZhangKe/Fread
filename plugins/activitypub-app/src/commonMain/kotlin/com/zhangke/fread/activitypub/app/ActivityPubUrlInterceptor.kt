@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app
 
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
@@ -97,7 +98,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
         return true
     }
 
-    private suspend fun parseMastodonProfile(locator: PlatformLocator, uri: SimpleUri): Screen? {
+    private suspend fun parseMastodonProfile(locator: PlatformLocator, uri: SimpleUri): NavKey? {
         if (!isProfileUrl(uri)) return null
         val path = uri.path?.removePrefix("/") ?: return null
         val baseUrl = FormalBaseUrl.parse(uri.toString()) ?: return null

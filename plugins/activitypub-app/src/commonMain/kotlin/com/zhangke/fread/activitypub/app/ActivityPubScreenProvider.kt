@@ -11,7 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.add.select.SelectPlatformScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
-import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
+import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
@@ -76,7 +76,7 @@ class ActivityPubScreenProvider @Inject constructor(
     private fun openPublishPostScreen(
         locator: PlatformLocator,
         blog: Blog,
-        builder: (FormalUri, Blog) -> Screen,
+        builder: (FormalUri, Blog) -> NavKey,
     ): NavKey? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = locator.accountUri
@@ -94,7 +94,7 @@ class ActivityPubScreenProvider @Inject constructor(
 
     override fun getEditContentConfigScreenScreen(content: FreadContent): NavKey? {
         if (content !is ActivityPubContent) return null
-        return EditContentConfigScreen(content.id)
+        return EditContentConfigScreenKey(content.id)
     }
 
     override fun getUserDetailScreen(

@@ -141,7 +141,7 @@ class StatusScreenProvider(
     fun getPublishScreen(
         account: LoggedAccount,
         text: String,
-    ): Screen? {
+    ): NavKey? {
         return providerList.firstNotNullOfOrNull { it.getPublishScreen(account, text) }
     }
 }

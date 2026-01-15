@@ -24,8 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.architect.theme.dialogScrim
@@ -36,7 +35,6 @@ import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.composable.SelectableAccount
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.StatusProvider
@@ -45,82 +43,76 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.serialization.Serializable
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
 
-class SelectAccountForPublishScreen(
-    private val text: String,
-) : BaseScreen() {
+@Serializable
+data class SelectAccountForPublishScreenKey(val text: String) : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val viewModel =
-            getViewModel<SelectAccountForPublishViewModel, SelectAccountForPublishViewModel.Factory>() {
-                it.create(text)
-            }
-        val loadingAccountList by viewModel.loggedAccounts.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
-        ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.pop()
-            GlobalScreenNavigation.navigate(it)
-        }
-        ConsumeFlow(viewModel.finishScreenFlow) {
-            navigator.pop()
-        }
-        Box(
-            modifier = Modifier.fillMaxSize()
-                .background(MaterialTheme.colorScheme.dialogScrim)
-                .padding(horizontal = 32.dp)
-                .noRippleClick { navigator.pop() },
-            contentAlignment = Alignment.Center,
-        ) {
-            when (loadingAccountList) {
-                is LoadableState.Loading -> {
-                    Surface(
-                        modifier = Modifier,
-                        shape = RoundedCornerShape(16.dp),
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(vertical = 24.dp, horizontal = 64.dp)
-                                .size(80.dp)
-                        )
-                    }
+@Composable
+fun SelectAccountForPublishScreen(viewModel: SelectAccountForPublishViewModel) {
+    val loadingAccountList by viewModel.loggedAccounts.collectAsState()
+    val navigator = LocalNavigator.currentOrThrow
+    ConsumeFlow(viewModel.openScreenFlow) {
+        navigator.pop()
+        GlobalScreenNavigation.navigate(it)
+    }
+    ConsumeFlow(viewModel.finishScreenFlow) {
+        navigator.pop()
+    }
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.dialogScrim)
+            .padding(horizontal = 32.dp)
+            .noRippleClick { navigator.pop() },
+        contentAlignment = Alignment.Center,
+    ) {
+        when (loadingAccountList) {
+            is LoadableState.Loading -> {
+                Surface(
+                    modifier = Modifier,
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(vertical = 24.dp, horizontal = 64.dp)
+                            .size(80.dp)
+                    )
                 }
+            }
 
-                is LoadableState.Success -> {
-                    val accountList = loadingAccountList.requireSuccessData()
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        shadowElevation = 6.dp,
+            is LoadableState.Success -> {
+                val accountList = loadingAccountList.requireSuccessData()
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    shadowElevation = 6.dp,
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState()),
                     ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(16.dp)
-                                .verticalScroll(rememberScrollState()),
-                        ) {
-                            Text(
-                                modifier = Modifier,
-                                text = stringResource(LocalizedString.statusUiSwitchAccountDialogTitle),
-                                style = MaterialTheme.typography.titleMedium
-                                    .copy(fontWeight = FontWeight.SemiBold),
+                        Text(
+                            modifier = Modifier,
+                            text = stringResource(LocalizedString.statusUiSwitchAccountDialogTitle),
+                            style = MaterialTheme.typography.titleMedium
+                                .copy(fontWeight = FontWeight.SemiBold),
+                        )
+                        for (account in accountList) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            SelectableAccount(
+                                account = account,
+                                onClick = { viewModel.onAccountSelected(it) },
                             )
-                            for (account in accountList) {
-                                Spacer(modifier = Modifier.height(16.dp))
-                                SelectableAccount(
-                                    account = account,
-                                    onClick = { viewModel.onAccountSelected(it) },
-                                )
-                            }
                         }
                     }
                 }
+            }
 
-                else -> {
-                    navigator.pop()
-                }
+            else -> {
+                navigator.pop()
             }
         }
     }
@@ -140,7 +132,7 @@ class SelectAccountForPublishViewModel @Inject constructor(
         MutableStateFlow<LoadableState<List<LoggedAccount>>>(LoadableState.idle())
     val loggedAccounts = _loggedAccounts.asStateFlow()
 
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
+    private val _openScreenFlow = MutableSharedFlow<NavKey>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
     private val _finishScreenFlow = MutableSharedFlow<Unit>()

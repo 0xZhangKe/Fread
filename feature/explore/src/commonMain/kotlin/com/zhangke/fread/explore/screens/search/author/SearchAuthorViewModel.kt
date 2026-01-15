@@ -2,6 +2,7 @@ package com.zhangke.fread.explore.screens.search.author
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
@@ -37,8 +38,8 @@ open class SearchAuthorViewModel @Inject constructor(
         })
     val uiState: StateFlow<CommonLoadableUiState<BlogAuthor>> get() = loadableController.uiState
 
-    private val _openScreenFlow = MutableSharedFlow<Any>()
-    val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
+    private val _openScreenFlow = MutableSharedFlow<NavKey>()
+    val openScreenFlow: SharedFlow<NavKey> get() = _openScreenFlow
 
     fun initQuery(query: String) {
         if (loadableController.uiState.value.dataList.isNotEmpty()) return

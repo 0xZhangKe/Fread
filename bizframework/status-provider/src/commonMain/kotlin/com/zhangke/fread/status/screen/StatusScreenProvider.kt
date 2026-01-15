@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.screen
 
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.nav.Tab
@@ -49,7 +50,7 @@ class StatusScreenProvider(
         locator: PlatformLocator,
         uri: FormalUri,
         userId: String?,
-    ): Screen? {
+    ): NavKey? {
         return providerList.firstNotNullOfOrNull { it.getUserDetailScreen(locator, uri, userId) }
     }
 
@@ -147,19 +148,19 @@ class StatusScreenProvider(
 
 interface IStatusScreenProvider {
 
-    fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): Screen?
+    fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): NavKey?
 
-    fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): Screen?
+    fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): NavKey?
 
-    fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen?
+    fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): NavKey?
 
     fun getContentScreen(content: FreadContent, isLatestTab: Boolean): Tab?
 
-    fun getEditContentConfigScreenScreen(content: FreadContent): Screen?
+    fun getEditContentConfigScreenScreen(content: FreadContent): NavKey?
 
-    fun getUserDetailScreen(locator: PlatformLocator, uri: FormalUri, userId: String?): Screen?
+    fun getUserDetailScreen(locator: PlatformLocator, uri: FormalUri, userId: String?): NavKey?
 
-    fun getUserDetailScreenWithoutAccount(uri: FormalUri): Screen? {
+    fun getUserDetailScreenWithoutAccount(uri: FormalUri): NavKey? {
         return null
     }
 
@@ -167,47 +168,47 @@ interface IStatusScreenProvider {
         locator: PlatformLocator,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol
-    ): Screen?
+    ): NavKey?
 
     fun getUserDetailScreen(
         locator: PlatformLocator,
         did: String,
         protocol: StatusProviderProtocol
-    ): Screen?
+    ): NavKey?
 
     fun getTagTimelineScreen(
         locator: PlatformLocator,
         tag: String,
         protocol: StatusProviderProtocol
-    ): Screen?
+    ): NavKey?
 
     fun getBlogFavouritedScreen(
         locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol,
-    ): Screen?
+    ): NavKey?
 
     fun getBlogBoostedScreen(
         locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol,
-    ): Screen?
+    ): NavKey?
 
     fun getInstanceDetailScreen(
         locator: PlatformLocator,
         protocol: StatusProviderProtocol,
         baseUrl: FormalBaseUrl,
-    ): Screen? {
+    ): NavKey? {
         return null
     }
 
     fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): Tab?
 
-    fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
+    fun getAddContentScreen(protocol: StatusProviderProtocol): NavKey? {
         return null
     }
 
-    fun getPublishScreen(account: LoggedAccount, text: String): Screen? {
+    fun getPublishScreen(account: LoggedAccount, text: String): NavKey? {
         return null
     }
 }

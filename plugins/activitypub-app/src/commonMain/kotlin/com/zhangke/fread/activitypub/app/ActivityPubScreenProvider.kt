@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app
 
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.nav.Tab
@@ -36,7 +37,7 @@ class ActivityPubScreenProvider @Inject constructor(
     private val loggedAccountProvider: LoggedAccountProvider,
 ) : IStatusScreenProvider {
 
-    override fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    override fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return openPublishPostScreen(
             locator = locator,
             blog = blog,
@@ -48,7 +49,7 @@ class ActivityPubScreenProvider @Inject constructor(
         }
     }
 
-    override fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    override fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return openPublishPostScreen(
             locator = locator,
             blog = blog,
@@ -60,7 +61,7 @@ class ActivityPubScreenProvider @Inject constructor(
         }
     }
 
-    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return openPublishPostScreen(
             locator = locator,
             blog = blog,
@@ -76,7 +77,7 @@ class ActivityPubScreenProvider @Inject constructor(
         locator: PlatformLocator,
         blog: Blog,
         builder: (FormalUri, Blog) -> Screen,
-    ): Screen? {
+    ): NavKey? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = locator.accountUri
         if (accountUri == null) {
@@ -91,7 +92,7 @@ class ActivityPubScreenProvider @Inject constructor(
         return ActivityPubContentScreen(content.id, isLatestTab)
     }
 
-    override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
+    override fun getEditContentConfigScreenScreen(content: FreadContent): NavKey? {
         if (content !is ActivityPubContent) return null
         return EditContentConfigScreen(content.id)
     }
@@ -100,7 +101,7 @@ class ActivityPubScreenProvider @Inject constructor(
         locator: PlatformLocator,
         uri: FormalUri,
         userId: String?,
-    ): Screen? {
+    ): NavKey? {
         userUriTransformer.parse(uri) ?: return null
         return UserDetailScreen(locator = locator, userUri = uri, userId = userId)
     }
@@ -109,7 +110,7 @@ class ActivityPubScreenProvider @Inject constructor(
         locator: PlatformLocator,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         if (protocol.notActivityPub) return null
         return UserDetailScreen(locator = locator, webFinger = webFinger)
     }
@@ -118,7 +119,7 @@ class ActivityPubScreenProvider @Inject constructor(
         locator: PlatformLocator,
         did: String,
         protocol: StatusProviderProtocol
-    ): Screen? {
+    ): NavKey? {
         return null
     }
 
@@ -126,7 +127,7 @@ class ActivityPubScreenProvider @Inject constructor(
         locator: PlatformLocator,
         tag: String,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         if (protocol.notActivityPub) return null
         return HashtagTimelineScreen(
             locator = locator,
@@ -138,7 +139,7 @@ class ActivityPubScreenProvider @Inject constructor(
         locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
-    ): Screen? {
+    ): NavKey? {
         if (protocol.notActivityPub) return null
         return UserListScreen(
             locator = locator,
@@ -151,7 +152,7 @@ class ActivityPubScreenProvider @Inject constructor(
         locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
-    ): Screen? {
+    ): NavKey? {
         if (protocol.notActivityPub) return null
         return UserListScreen(
             locator = locator,
@@ -164,7 +165,7 @@ class ActivityPubScreenProvider @Inject constructor(
         locator: PlatformLocator,
         protocol: StatusProviderProtocol,
         baseUrl: FormalBaseUrl,
-    ): Screen? {
+    ): NavKey? {
         if (protocol.notActivityPub) return null
         return InstanceDetailScreen(locator = locator, baseUrl = baseUrl)
     }
@@ -174,12 +175,12 @@ class ActivityPubScreenProvider @Inject constructor(
         return ExplorerContainerTab(locator = locator, platform = platform)
     }
 
-    override fun getAddContentScreen(protocol: StatusProviderProtocol): Screen? {
+    override fun getAddContentScreen(protocol: StatusProviderProtocol): NavKey? {
         if (protocol.notActivityPub) return null
         return SelectPlatformScreen()
     }
 
-    override fun getPublishScreen(account: LoggedAccount, text: String): Screen? {
+    override fun getPublishScreen(account: LoggedAccount, text: String): NavKey? {
         if (account !is ActivityPubLoggedAccount) return null
         return PostStatusScreen(accountUri = account.uri, defaultContent = text)
     }

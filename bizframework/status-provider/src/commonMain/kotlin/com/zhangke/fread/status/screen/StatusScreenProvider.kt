@@ -1,8 +1,6 @@
 package com.zhangke.fread.status.screen
 
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
@@ -18,19 +16,19 @@ class StatusScreenProvider(
     private val providerList: List<IStatusScreenProvider>
 ) {
 
-    fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getReplyBlogScreen(locator, blog)
         }
     }
 
-    fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getEditBlogScreen(locator, blog)
         }
     }
 
-    fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return providerList.firstNotNullOfOrNull { it.getQuoteBlogScreen(locator, blog) }
     }
 
@@ -40,7 +38,7 @@ class StatusScreenProvider(
         }
     }
 
-    fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
+    fun getEditContentConfigScreenScreen(content: FreadContent): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getEditContentConfigScreenScreen(content)
         }
@@ -58,7 +56,7 @@ class StatusScreenProvider(
         locator: PlatformLocator,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getUserDetailScreen(locator, webFinger, protocol)
         }
@@ -68,7 +66,7 @@ class StatusScreenProvider(
         locator: PlatformLocator,
         did: String,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getUserDetailScreen(locator, did, protocol)
         }
@@ -84,7 +82,7 @@ class StatusScreenProvider(
         locator: PlatformLocator,
         tag: String,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getTagTimelineScreen(
                 locator,
@@ -98,7 +96,7 @@ class StatusScreenProvider(
         locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getBlogFavouritedScreen(locator, blog, protocol)
         }
@@ -108,7 +106,7 @@ class StatusScreenProvider(
         locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getBlogBoostedScreen(
                 locator,
@@ -122,7 +120,7 @@ class StatusScreenProvider(
         locator: PlatformLocator,
         protocol: StatusProviderProtocol,
         baseUrl: FormalBaseUrl,
-    ): Screen? {
+    ): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getInstanceDetailScreen(locator, protocol, baseUrl)
         }
@@ -132,7 +130,7 @@ class StatusScreenProvider(
         return providerList.firstNotNullOfOrNull { it.getExplorerTab(locator, platform) }
     }
 
-    fun getAddContentScreen(protocol: StatusProviderProtocol): Screen {
+    fun getAddContentScreen(protocol: StatusProviderProtocol): NavKey {
         return providerList.firstNotNullOf {
             it.getAddContentScreen(protocol)
         }

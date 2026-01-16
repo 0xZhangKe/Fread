@@ -41,147 +41,160 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.ScreenEventFlow
 import com.zhangke.framework.utils.LanguageUtils
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.framework.utils.languageCode
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import kotlin.jvm.Transient
 
-class SelectLanguageScreen(
-    private val selectedLanguages: List<String> = emptyList(),
-    private val maxSelectCount: Int = 1,
-    @Transient private val onSelected: (List<String>) -> Unit,
-) : BaseScreen() {
+data class SelectLanguageScreenNavKey(
+    val selectedLanguages: List<String> = emptyList(),
+    val maxSelectCount: Int = 1,
+) : NavKey {
 
-    private val multipleSelection = maxSelectCount > 1
+    companion object {
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val languageList = remember {
-            val list = LanguageUtils.getAllLanguages().map { language ->
-                val selected = selectedLanguages.any { language.languageCode == it }
-                LanguageUiState(language, selected)
-            }
-            mutableStateListOf(*list.toTypedArray())
+        val selectedFlow = ScreenEventFlow<List<String>>()
+    }
+}
+
+@Composable
+fun SelectLanguageScreen(
+    selectedLanguages: List<String> = emptyList(),
+    maxSelectCount: Int = 1,
+) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val multipleSelection = maxSelectCount > 1
+    val languageList = remember {
+        val list = LanguageUtils.getAllLanguages().map { language ->
+            val selected = selectedLanguages.any { language.languageCode == it }
+            LanguageUiState(language, selected)
         }
-        val navigator = LocalNavigator.currentOrThrow
-        fun onLanguageSelected(languageUiState: LanguageUiState) {
-            if (!multipleSelection) {
-                onSelected(listOf(languageUiState.local.languageCode))
-                navigator.pop()
-                return
+        mutableStateListOf(*list.toTypedArray())
+    }
+    val coroutineScope = rememberCoroutineScope()
+    fun onLanguageSelected(languageUiState: LanguageUiState) {
+        if (!multipleSelection) {
+            coroutineScope.launch {
+                SelectLanguageScreenNavKey.selectedFlow.emit(listOf(languageUiState.local.languageCode))
+                backStack.removeLastOrNull()
             }
-            if (languageUiState.selected) {
+            return
+        }
+        if (languageUiState.selected) {
+            languageList[languageList.indexOf(languageUiState)] =
+                languageUiState.copy(selected = false)
+        } else {
+            if (languageList.count { it.selected } < maxSelectCount) {
                 languageList[languageList.indexOf(languageUiState)] =
-                    languageUiState.copy(selected = false)
-            } else {
-                if (languageList.count { it.selected } < maxSelectCount) {
-                    languageList[languageList.indexOf(languageUiState)] =
-                        languageUiState.copy(selected = true)
-                }
+                    languageUiState.copy(selected = true)
             }
         }
-        Scaffold(
-            topBar = {
-                var toolbarVisible by remember { mutableStateOf(true) }
-                AnimatedVisibility(
-                    visible = toolbarVisible,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                ) {
-                    Toolbar(
-                        title = stringResource(LocalizedString.sharedSelectLanguageTitle),
-                        onBackClick = navigator::pop,
-                        actions = {
+    }
+    Scaffold(
+        topBar = {
+            var toolbarVisible by remember { mutableStateOf(true) }
+            AnimatedVisibility(
+                visible = toolbarVisible,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                Toolbar(
+                    title = stringResource(LocalizedString.sharedSelectLanguageTitle),
+                    onBackClick = backStack::removeLastOrNull,
+                    actions = {
+                        IconButton(
+                            onClick = { toolbarVisible = false },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = stringResource(LocalizedString.search),
+                            )
+                        }
+                        if (multipleSelection) {
                             IconButton(
-                                onClick = { toolbarVisible = false },
+                                onClick = {
+                                    coroutineScope.launch {
+                                        SelectLanguageScreenNavKey.selectedFlow
+                                            .emit(languageList.filter { it.selected }
+                                                .map { it.local.languageCode })
+                                        backStack.removeLastOrNull()
+                                    }
+                                },
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = stringResource(LocalizedString.search),
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = stringResource(LocalizedString.ok),
                                 )
                             }
-                            if (multipleSelection) {
-                                IconButton(
-                                    onClick = {
-                                        onSelected(languageList.filter { it.selected }
-                                            .map { it.local.languageCode })
-                                        navigator.pop()
-                                    },
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = stringResource(LocalizedString.ok),
-                                    )
-                                }
-                            }
-                        }
-                    )
-                }
-                var query by rememberSaveable { mutableStateOf("") }
-                AnimatedVisibility(
-                    visible = !toolbarVisible,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                ) {
-                    SearchLanguageBar(
-                        query = query,
-                        onQueryChanged = { query = it },
-                        list = languageList,
-                        onClose = { toolbarVisible = true },
-                        onLanguageClicked = { onLanguageSelected(it) },
-                    )
-                }
-            },
-        ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxWidth(),
-            ) {
-                if (languageList.count { it.selected } > 0) {
-                    stickyHeader {
-                        LazyRow(
-                            verticalAlignment = Alignment.CenterVertically,
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
-                        ) {
-                            languageList.filter { it.selected }
-                                .reversed()
-                                .forEach { languageUiState ->
-                                    item {
-                                        SelectedLanguageItem(
-                                            languageUiState = languageUiState,
-                                            onRemoveClick = {
-                                                languageList[languageList.indexOf(languageUiState)] =
-                                                    languageUiState.copy(selected = false)
-                                            }
-                                        )
-                                    }
-                                    item {
-                                        Spacer(modifier = Modifier.width(16.dp))
-                                    }
-                                }
                         }
                     }
+                )
+            }
+            var query by rememberSaveable { mutableStateOf("") }
+            AnimatedVisibility(
+                visible = !toolbarVisible,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                SearchLanguageBar(
+                    query = query,
+                    onQueryChanged = { query = it },
+                    list = languageList,
+                    onClose = { toolbarVisible = true },
+                    onLanguageClicked = { onLanguageSelected(it) },
+                )
+            }
+        },
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxWidth(),
+        ) {
+            if (languageList.count { it.selected } > 0) {
+                stickyHeader {
+                    LazyRow(
+                        verticalAlignment = Alignment.CenterVertically,
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+                    ) {
+                        languageList.filter { it.selected }
+                            .reversed()
+                            .forEach { languageUiState ->
+                                item {
+                                    SelectedLanguageItem(
+                                        languageUiState = languageUiState,
+                                        onRemoveClick = {
+                                            languageList[languageList.indexOf(languageUiState)] =
+                                                languageUiState.copy(selected = false)
+                                        }
+                                    )
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                }
+                            }
+                    }
                 }
-                items(languageList) { languageUiState ->
-                    LanguageItem(
-                        languageUiState = languageUiState,
-                        onLanguageClicked = { onLanguageSelected(it) },
-                    )
-                }
+            }
+            items(languageList) { languageUiState ->
+                LanguageItem(
+                    languageUiState = languageUiState,
+                    onLanguageClicked = { onLanguageSelected(it) },
+                )
             }
         }
     }

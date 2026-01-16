@@ -5,6 +5,12 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreenNavKey
+import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreenNavKey
+import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
+import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreenNavKey
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishBlogScreen
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishBlogScreenNavKey
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreenKey
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
@@ -17,6 +23,22 @@ import org.koin.core.parameter.parametersOf
 class SharedScreenNavEntryProvider : NavEntryProvider {
 
     override fun EntryProviderScope<NavKey>.build() {
+        entry<ImageViewerScreenNavKey> {
+            ImageViewerScreen(
+                selectedIndex = it.selectedIndex,
+                imageList = it.imageList,
+                coordinatesList = it.coordinatesList,
+            )
+        }
+        entry<SelectLanguageScreenNavKey> {
+            SelectLanguageScreen(
+                selectedLanguages = it.selectedLanguages,
+                maxSelectCount = it.maxSelectCount,
+            )
+        }
+        entry<PublishBlogScreenNavKey> {
+            PublishBlogScreen()
+        }
         entry<MultiAccountPublishingScreenKey> {
             MultiAccountPublishingScreen(
                 viewModel = koinViewModel { parametersOf(it.userUrisJson) }
@@ -42,6 +64,9 @@ class SharedScreenNavEntryProvider : NavEntryProvider {
     }
 
     override fun PolymorphicModuleBuilder<NavKey>.polymorph() {
+        subclass(ImageViewerScreenNavKey::class)
+        subclass(SelectLanguageScreenNavKey::class)
+        subclass(PublishBlogScreenNavKey::class)
         subclass(MultiAccountPublishingScreenKey::class)
         subclass(StatusContextScreenNavKey::class)
         subclass(RssBlogDetailScreenNavKey::class)

@@ -1,6 +1,5 @@
 package com.zhangke.fread.commonbiz.shared.screen.publish
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,16 +27,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.framework.utils.initLocale
-import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
+import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreenNavKey
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
 import com.zhangke.fread.statusui.ic_post_status_spoiler
 import org.jetbrains.compose.resources.painterResource
@@ -131,13 +130,15 @@ private fun SelectLanguageIconButton(
     maxLanguageCount: Int,
     onLanguageSelected: (List<String>) -> Unit,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
+    val backStack = LocalNavBackStack.currentOrThrow
+    ConsumeFlow(SelectLanguageScreenNavKey.selectedFlow.flow) {
+        onLanguageSelected(it)
+    }
     fun selectLanguage() {
-        navigator.push(
-            SelectLanguageScreen(
+        backStack.add(
+            SelectLanguageScreenNavKey(
                 selectedLanguages = selectedLanguages,
                 maxSelectCount = maxLanguageCount,
-                onSelected = onLanguageSelected,
             )
         )
     }

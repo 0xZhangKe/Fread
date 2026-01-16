@@ -28,11 +28,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.toast.toast

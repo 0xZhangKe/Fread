@@ -4,7 +4,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.commonbiz.shared.screen.FullVideoScreenNavKey
-import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreenNavKey
 import com.zhangke.fread.commonbiz.shared.screen.toImages
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
@@ -20,8 +20,8 @@ actual fun onStatusMediaClick(
                 navigator.add(FullVideoScreenNavKey(event.mediaList[event.index].url))
                 return
             }
-            transparentNavigator.push(
-                ImageViewerScreen(
+            navigator.add(
+                ImageViewerScreenNavKey(
                     imageList = event.mediaList.toImages(),
                     selectedIndex = event.index,
                     coordinatesList = event.coordinatesList,

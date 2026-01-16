@@ -14,10 +14,12 @@ import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubCont
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
+import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
@@ -103,7 +105,7 @@ class ActivityPubScreenProvider @Inject constructor(
         userId: String?,
     ): NavKey? {
         userUriTransformer.parse(uri) ?: return null
-        return UserDetailScreen(locator = locator, userUri = uri, userId = userId)
+        return UserDetailScreenKey(locator = locator, userUri = uri, userId = userId)
     }
 
     override fun getUserDetailScreen(
@@ -112,7 +114,7 @@ class ActivityPubScreenProvider @Inject constructor(
         protocol: StatusProviderProtocol,
     ): NavKey? {
         if (protocol.notActivityPub) return null
-        return UserDetailScreen(locator = locator, webFinger = webFinger)
+        return UserDetailScreenKey(locator = locator, webFinger = webFinger)
     }
 
     override fun getUserDetailScreen(
@@ -129,7 +131,7 @@ class ActivityPubScreenProvider @Inject constructor(
         protocol: StatusProviderProtocol,
     ): NavKey? {
         if (protocol.notActivityPub) return null
-        return HashtagTimelineScreen(
+        return HashtagTimelineScreenKey(
             locator = locator,
             hashtag = tag.removePrefix("#"),
         )

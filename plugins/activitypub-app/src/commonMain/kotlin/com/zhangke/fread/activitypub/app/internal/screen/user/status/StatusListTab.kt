@@ -13,21 +13,24 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 class StatusListTabStatusListScreen(
     private val locator: PlatformLocator,
     private val type: StatusListType,
     private val contentCanScrollBackward: MutableState<Boolean>?,
-) : BasePagerTab() {
+) : BaseTab() {
 
-    override val options: PagerTabOptions?
+    override val options: TabOptions?
         @Composable
-        get() = PagerTabOptions(
+        get() = TabOptions(
             title = when (type) {
                 StatusListType.BOOKMARKS -> stringResource(LocalizedString.statusUiBookmarks)
                 StatusListType.FAVOURITES -> stringResource(LocalizedString.statusUiLikes)
@@ -35,12 +38,9 @@ class StatusListTabStatusListScreen(
         )
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?
-    ) {
-        val viewModel =
-            screen.getViewModel<StatusListContainerViewModel>().getViewModel(locator, type)
+    override fun Content() {
+        super.Content()
+        val viewModel = koinViewModel<StatusListContainerViewModel>().getViewModel(locator, type)
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = LocalSnackbarHostState.current
 

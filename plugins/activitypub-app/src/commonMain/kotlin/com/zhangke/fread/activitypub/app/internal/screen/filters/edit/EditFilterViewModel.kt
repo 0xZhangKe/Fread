@@ -18,10 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 class EditFilterViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     @Assisted private val locator: PlatformLocator,
@@ -52,6 +54,7 @@ class EditFilterViewModel @Inject constructor(
         _uiState.update { it.copy(title = title, hasInputtedSomething = true) }
     }
 
+    @OptIn(ExperimentalTime::class)
     fun onExpiredDateSelected(date: Instant?) {
         _uiState.update { it.copy(expiresDate = date, hasInputtedSomething = true) }
     }

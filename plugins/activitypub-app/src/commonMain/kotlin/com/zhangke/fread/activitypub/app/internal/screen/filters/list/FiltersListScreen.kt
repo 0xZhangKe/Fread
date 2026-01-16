@@ -26,150 +26,142 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.textString
-import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterScreen
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterScreenKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class FiltersListScreen(
-    private val locator: PlatformLocator,
-) : BaseScreen() {
+@Serializable
+data class FiltersListScreenKey(val locator: PlatformLocator) : NavKey
 
-    @OptIn(ExperimentalVoyagerApi::class)
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<FiltersListViewModel, FiltersListViewModel.Factory> {
-            it.create(locator)
-        }
-        val uiState by viewModel.uiState.collectAsState()
-        val snackBarHostState = rememberSnackbarHostState()
-        FiltersListContent(
-            uiState = uiState,
-            snackBarHostState = snackBarHostState,
-            onBackClick = navigator::pop,
-            onItemClick = {
-                navigator.push(EditFilterScreen(locator, it.id))
-            },
-            onAddClick = {
-                navigator.push(EditFilterScreen(locator, null))
-            },
-        )
-        LaunchedEffect(Unit) {
-            viewModel.onPageResume()
-        }
-        ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarFlow)
+@Composable
+fun FiltersListScreen(viewModel: FiltersListViewModel, locator: PlatformLocator) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    val snackBarHostState = rememberSnackbarHostState()
+    FiltersListContent(
+        uiState = uiState,
+        snackBarHostState = snackBarHostState,
+        onBackClick = backStack::removeLastOrNull,
+        onItemClick = {
+            backStack.add(EditFilterScreenKey(locator, it.id))
+        },
+        onAddClick = {
+            backStack.add(EditFilterScreenKey(locator, null))
+        },
+    )
+    LaunchedEffect(Unit) {
+        viewModel.onPageResume()
     }
+    ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarFlow)
+}
 
-    @Composable
-    private fun FiltersListContent(
-        uiState: FiltersListUiState,
-        snackBarHostState: SnackbarHostState,
-        onBackClick: () -> Unit,
-        onItemClick: (FilterItemUiState) -> Unit,
-        onAddClick: () -> Unit,
-    ) {
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(snackBarHostState)
-            },
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.activity_pub_filters_list_page_title),
-                    onBackClick = onBackClick,
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    onClick = {
-                        onAddClick()
-                    },
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-                }
-            },
-        ) { innerPadding ->
-            val state = rememberLazyListState()
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                state = state,
+@Composable
+private fun FiltersListContent(
+    uiState: FiltersListUiState,
+    snackBarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    onItemClick: (FilterItemUiState) -> Unit,
+    onAddClick: () -> Unit,
+) {
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackBarHostState)
+        },
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.activity_pub_filters_list_page_title),
+                onBackClick = onBackClick,
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.surface,
+                onClick = {
+                    onAddClick()
+                },
             ) {
-                if (uiState.initializing && uiState.list.isEmpty()) {
-                    items(30) {
-                        FilterItemPlaceholder()
-                    }
-                } else if (uiState.list.isNotEmpty()) {
-                    items(uiState.list) {
-                        FilterItem(
-                            filterEntity = it,
-                            onItemClick = onItemClick,
-                        )
-                    }
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+            }
+        },
+    ) { innerPadding ->
+        val state = rememberLazyListState()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            state = state,
+        ) {
+            if (uiState.initializing && uiState.list.isEmpty()) {
+                items(30) {
+                    FilterItemPlaceholder()
+                }
+            } else if (uiState.list.isNotEmpty()) {
+                items(uiState.list) {
+                    FilterItem(
+                        filterEntity = it,
+                        onItemClick = onItemClick,
+                    )
                 }
             }
         }
     }
+}
 
-    @Composable
-    private fun FilterItemPlaceholder() {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(width = 100.dp, height = 18.dp)
-                    .freadPlaceholder(true)
-            )
-
-            Box(
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .size(width = 180.dp, height = 16.dp)
-                    .freadPlaceholder(true)
-            )
-        }
-    }
-
-    @Composable
-    private fun FilterItem(
-        filterEntity: FilterItemUiState,
-        onItemClick: (FilterItemUiState) -> Unit,
+@Composable
+private fun FilterItemPlaceholder() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .clickable { onItemClick(filterEntity) }
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = filterEntity.title,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                modifier = Modifier.padding(top = 4.dp),
-                text = textString(text = filterEntity.validateDescription),
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+                .size(width = 100.dp, height = 18.dp)
+                .freadPlaceholder(true)
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .size(width = 180.dp, height = 16.dp)
+                .freadPlaceholder(true)
+        )
+    }
+}
+
+@Composable
+private fun FilterItem(
+    filterEntity: FilterItemUiState,
+    onItemClick: (FilterItemUiState) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .clickable { onItemClick(filterEntity) }
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = filterEntity.title,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = textString(text = filterEntity.validateDescription),
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }

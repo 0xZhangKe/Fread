@@ -22,8 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubListEntity
 import com.zhangke.framework.architect.json.globalJson
@@ -31,109 +30,109 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.activitypub.app.internal.screen.list.add.AddListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListScreen
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class CreatedListsScreen(
-    private val locator: PlatformLocator,
-) : BaseScreen() {
+@Serializable
+data class CreatedListsScreenKey(val locator: PlatformLocator) : NavKey
 
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<CreatedListsViewModel, CreatedListsViewModel.Factory> {
-            it.create(locator)
-        }
-        val uiState by viewModel.uiState.collectAsState()
-        val snackBarState = rememberSnackbarHostState()
-        CreatedListsContent(
-            uiState = uiState,
-            snackBarState = snackBarState,
-            onBackClick = navigator::pop,
-            onRetryClick = viewModel::onRetryClick,
-            onListClick = {
-                navigator.push(
-                    EditListScreen(locator = locator, serializedList = globalJson.encodeToString(it))
-                )
-            },
-            onAddListClick = { navigator.push(AddListScreen(locator)) },
-        )
-        LaunchedEffect(Unit) { viewModel.onPageResume() }
-        ConsumeSnackbarFlow(snackBarState, viewModel.snackBarFlow)
-    }
+@Composable
+fun CreatedListsScreen(
+    viewModel: CreatedListsViewModel,
+    locator: PlatformLocator,
+) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    val snackBarState = rememberSnackbarHostState()
+    CreatedListsContent(
+        uiState = uiState,
+        snackBarState = snackBarState,
+        onBackClick = backStack::removeLastOrNull,
+        onRetryClick = viewModel::onRetryClick,
+        onListClick = {
+            navigator.push(
+                EditListScreen(locator = locator, serializedList = globalJson.encodeToString(it))
+            )
+        },
+        onAddListClick = { navigator.push(AddListScreen(locator)) },
+    )
+    LaunchedEffect(Unit) { viewModel.onPageResume() }
+    ConsumeSnackbarFlow(snackBarState, viewModel.snackBarFlow)
+}
 
-    @Composable
-    private fun CreatedListsContent(
-        uiState: CreatedListsUiState,
-        snackBarState: SnackbarHostState,
-        onBackClick: () -> Unit,
-        onAddListClick: () -> Unit,
-        onListClick: (ActivityPubListEntity) -> Unit,
-        onRetryClick: () -> Unit,
-    ) {
-        Scaffold(
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.activity_pub_created_list_title),
-                    onBackClick = onBackClick,
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(snackBarState)
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    onClick = onAddListClick,
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Default.Add),
-                        contentDescription = "Create List",
-                    )
-                }
-            },
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+@Composable
+private fun CreatedListsContent(
+    uiState: CreatedListsUiState,
+    snackBarState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    onAddListClick: () -> Unit,
+    onListClick: (ActivityPubListEntity) -> Unit,
+    onRetryClick: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.activity_pub_created_list_title),
+                onBackClick = onBackClick,
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(snackBarState)
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.surface,
+                onClick = onAddListClick,
             ) {
-                when {
-                    uiState.lists.isNotEmpty() -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            items(uiState.lists) {
-                                ListItem(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .clickable { onListClick(it) },
-                                    list = it,
-                                )
-                            }
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Default.Add),
+                    contentDescription = "Create List",
+                )
+            }
+        },
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+        ) {
+            when {
+                uiState.lists.isNotEmpty() -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        items(uiState.lists) {
+                            ListItem(
+                                modifier = Modifier.fillMaxWidth()
+                                    .clickable { onListClick(it) },
+                                list = it,
+                            )
                         }
                     }
+                }
 
-                    uiState.loading -> {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            repeat(30) {
-                                ListItemPlaceholder()
-                            }
+                uiState.loading -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        repeat(30) {
+                            ListItemPlaceholder()
                         }
                     }
+                }
 
-                    uiState.pageError != null -> {
-                        DefaultFailed(
-                            modifier = Modifier.fillMaxSize(),
-                            exception = uiState.pageError,
-                            onRetryClick = onRetryClick,
-                        )
-                    }
+                uiState.pageError != null -> {
+                    DefaultFailed(
+                        modifier = Modifier.fillMaxSize(),
+                        exception = uiState.pageError,
+                        onRetryClick = onRetryClick,
+                    )
                 }
             }
         }
     }
+}
 }

@@ -30,10 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionScene
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.core.screen.ScreenKey
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -44,282 +41,282 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-data class HashtagTimelineScreen(
-    private val locator: PlatformLocator,
-    private val hashtag: String
-) : BaseScreen() {
+@Serializable
+data class HashtagTimelineScreenKey(
+    val locator: PlatformLocator,
+    val hashtag: String,
+) : NavKey
 
-    override val key: ScreenKey
-        get() = locator.toString() + hashtag
+@Composable
+fun HashtagTimelineScreen(
+    viewModel: HashtagTimelineContainerViewModel,
+    locator: PlatformLocator,
+    hashtag: String,
+) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val viewModel = viewModel.getViewModel(locator, hashtag)
+    val hashtagTimelineUiState by viewModel.hashtagTimelineUiState.collectAsState()
+    val statusUiState by viewModel.uiState.collectAsState()
+    HashtagTimelineContent(
+        hashtagTimelineUiState = hashtagTimelineUiState,
+        statusUiState = statusUiState,
+        messageFlow = viewModel.errorMessageFlow,
+        openScreenFlow = viewModel.openScreenFlow,
+        newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
+        onBackClick = backStack::removeLastOrNull,
+        onRefresh = viewModel::onRefresh,
+        onLoadMore = viewModel::onLoadMore,
+        composedStatusInteraction = viewModel.composedStatusInteraction,
+        onFollowClick = viewModel::onFollowClick,
+        onUnfollowClick = viewModel::onUnfollowClick,
+    )
+    ConsumeSnackbarFlow(LocalSnackbarHostState.current, viewModel.errorMessageFlow)
+}
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel =
-            getViewModel<HashtagTimelineContainerViewModel>().getViewModel(locator, hashtag)
-        val hashtagTimelineUiState by viewModel.hashtagTimelineUiState.collectAsState()
-        val statusUiState by viewModel.uiState.collectAsState()
-        HashtagTimelineContent(
-            hashtagTimelineUiState = hashtagTimelineUiState,
-            statusUiState = statusUiState,
-            messageFlow = viewModel.errorMessageFlow,
-            openScreenFlow = viewModel.openScreenFlow,
-            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            onBackClick = navigator::pop,
-            onRefresh = viewModel::onRefresh,
-            onLoadMore = viewModel::onLoadMore,
-            composedStatusInteraction = viewModel.composedStatusInteraction,
-            onFollowClick = viewModel::onFollowClick,
-            onUnfollowClick = viewModel::onUnfollowClick,
-        )
-        ConsumeSnackbarFlow(LocalSnackbarHostState.current, viewModel.errorMessageFlow)
+@Composable
+private fun HashtagTimelineContent(
+    hashtagTimelineUiState: HashtagTimelineUiState,
+    statusUiState: CommonFeedsUiState,
+    messageFlow: SharedFlow<TextString>,
+    openScreenFlow: SharedFlow<NavKey>,
+    newStatusNotifyFlow: SharedFlow<Unit>,
+    onBackClick: () -> Unit,
+    onRefresh: () -> Unit,
+    onLoadMore: () -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
+    onFollowClick: () -> Unit,
+    onUnfollowClick: () -> Unit,
+) {
+    val snackbarHostState = rememberSnackbarHostState()
+    val contentCanScrollBackward = remember {
+        mutableStateOf(false)
     }
-
-    @Composable
-    private fun HashtagTimelineContent(
-        hashtagTimelineUiState: HashtagTimelineUiState,
-        statusUiState: CommonFeedsUiState,
-        messageFlow: SharedFlow<TextString>,
-        openScreenFlow: SharedFlow<Screen>,
-        newStatusNotifyFlow: SharedFlow<Unit>,
-        onBackClick: () -> Unit,
-        onRefresh: () -> Unit,
-        onLoadMore: () -> Unit,
-        composedStatusInteraction: ComposedStatusInteraction,
-        onFollowClick: () -> Unit,
-        onUnfollowClick: () -> Unit,
-    ) {
-        val snackbarHostState = rememberSnackbarHostState()
-        val contentCanScrollBackward = remember {
-            mutableStateOf(false)
-        }
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        ) { innerPadding ->
-            ScrollUpTopBarLayout(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                immersiveToTopBar = false,
-                topBarContent = {
-                    Toolbar(
-                        title = hashtagTimelineUiState.hashTag,
-                        onBackClick = onBackClick,
-                    )
-                },
-                headerContent = {
-                    HashtagHeaderContent(
-                        uiState = hashtagTimelineUiState,
-                        onFollowClick = onFollowClick,
-                        onUnfollowClick = onUnfollowClick,
-                    )
-                },
-                contentCanScrollBackward = contentCanScrollBackward,
-            ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    FeedsContent(
-                        uiState = statusUiState,
-                        openScreenFlow = openScreenFlow,
-                        newStatusNotifyFlow = newStatusNotifyFlow,
-                        composedStatusInteraction = composedStatusInteraction,
-                        onRefresh = onRefresh,
-                        onLoadMore = onLoadMore,
-                        nestedScrollConnection = null,
-                        contentCanScrollBackward = contentCanScrollBackward,
-                    )
-                }
-            }
-        }
-        ConsumeSnackbarFlow(snackbarHostState, messageFlow)
-    }
-
-    @Composable
-    private fun HashtagHeaderContent(
-        uiState: HashtagTimelineUiState,
-        onFollowClick: () -> Unit,
-        onUnfollowClick: () -> Unit,
-    ) {
-        Surface(
-            Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .weight(1F),
-                        style = MaterialTheme.typography.titleMedium,
-                        text = uiState.hashTag,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Start,
-                    )
-
-                    FollowHashtagButton(
-                        modifier = Modifier.padding(start = 8.dp),
-                        uiState = uiState,
-                        onFollowClick = onFollowClick,
-                        onUnfollowClick = onUnfollowClick,
-                    )
-                }
-
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = uiState.description,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Start,
-                )
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMotionApi::class)
-    @Composable
-    private fun buildMotionScene() = MotionScene {
-        val topBarRef = createRefFor("topBar")
-        val topBarBottomContentRef = createRefFor("topBarBottomContent")
-        val start1 = constraintSet {
-            constrain(topBarRef) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }
-            constrain(topBarBottomContentRef) {
-                top.linkTo(topBarRef.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }
-        }
-        val end1 = constraintSet {
-            constrain(topBarRef) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }
-            constrain(topBarBottomContentRef) {
-                bottom.linkTo(topBarRef.bottom, 4.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }
-        }
-        transition(name = "default", from = start1, to = end1) {}
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun HashtagAppBar(
-        uiState: HashtagTimelineUiState,
-        onBackClick: () -> Unit,
-        onFollowClick: () -> Unit,
-        onUnfollowClick: () -> Unit,
-    ) {
-        Surface(
-            Modifier
-                .layoutId("topBarBottomContent")
-                .fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .weight(1F),
-                        style = MaterialTheme.typography.titleMedium,
-                        text = uiState.hashTag,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Start,
-                    )
-
-                    FollowHashtagButton(
-                        modifier = Modifier.padding(start = 8.dp),
-                        uiState = uiState,
-                        onFollowClick = onFollowClick,
-                        onUnfollowClick = onUnfollowClick,
-                    )
-                }
-
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = uiState.description,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Start,
-                )
-            }
-        }
-        TopAppBar(
-            modifier = Modifier.layoutId("topBar"),
-            navigationIcon = {
-                Toolbar.BackButton(
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    ) { innerPadding ->
+        ScrollUpTopBarLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            immersiveToTopBar = false,
+            topBarContent = {
+                Toolbar(
+                    title = hashtagTimelineUiState.hashTag,
                     onBackClick = onBackClick,
                 )
             },
-            title = {
-                Text(
-                    fontSize = 18.sp,
-                    text = uiState.hashTag,
+            headerContent = {
+                HashtagHeaderContent(
+                    uiState = hashtagTimelineUiState,
+                    onFollowClick = onFollowClick,
+                    onUnfollowClick = onUnfollowClick,
                 )
             },
-        )
+            contentCanScrollBackward = contentCanScrollBackward,
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                FeedsContent(
+                    uiState = statusUiState,
+                    openScreenFlow = openScreenFlow,
+                    newStatusNotifyFlow = newStatusNotifyFlow,
+                    composedStatusInteraction = composedStatusInteraction,
+                    onRefresh = onRefresh,
+                    onLoadMore = onLoadMore,
+                    nestedScrollConnection = null,
+                    contentCanScrollBackward = contentCanScrollBackward,
+                )
+            }
+        }
     }
+    ConsumeSnackbarFlow(snackbarHostState, messageFlow)
+}
 
-    @Composable
-    private fun FollowHashtagButton(
-        modifier: Modifier,
-        uiState: HashtagTimelineUiState,
-        onFollowClick: () -> Unit,
-        onUnfollowClick: () -> Unit,
+@Composable
+private fun HashtagHeaderContent(
+    uiState: HashtagTimelineUiState,
+    onFollowClick: () -> Unit,
+    onUnfollowClick: () -> Unit,
+) {
+    Surface(
+        Modifier.fillMaxWidth()
     ) {
-        var showUnfollowDialog by remember { mutableStateOf(false) }
-        StyledTextButton(
-            modifier = modifier,
-            onClick = {
-                if (uiState.following) {
-                    showUnfollowDialog = true
-                } else {
-                    onFollowClick()
-                }
-            },
-            style = if (uiState.following) {
-                TextButtonStyle.STANDARD
-            } else {
-                TextButtonStyle.ACTIVE
-            },
-            text = if (uiState.following) {
-                stringResource(LocalizedString.statusUiUserDetailRelationshipFollowing)
-            } else {
-                stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow)
-            },
-        )
-        if (showUnfollowDialog) {
-            AlertConfirmDialog(
-                content = stringResource(LocalizedString.activity_pub_hashtag_unfollow_dialog_message),
-                onConfirm = onUnfollowClick,
-                onDismissRequest = { showUnfollowDialog = false },
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .weight(1F),
+                    style = MaterialTheme.typography.titleMedium,
+                    text = uiState.hashTag,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                )
+
+                FollowHashtagButton(
+                    modifier = Modifier.padding(start = 8.dp),
+                    uiState = uiState,
+                    onFollowClick = onFollowClick,
+                    onUnfollowClick = onUnfollowClick,
+                )
+            }
+
+            Text(
+                modifier = Modifier.padding(top = 4.dp),
+                text = uiState.description,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start,
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMotionApi::class)
+@Composable
+private fun buildMotionScene() = MotionScene {
+    val topBarRef = createRefFor("topBar")
+    val topBarBottomContentRef = createRefFor("topBarBottomContent")
+    val start1 = constraintSet {
+        constrain(topBarRef) {
+            top.linkTo(parent.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            width = Dimension.fillToConstraints
+        }
+        constrain(topBarBottomContentRef) {
+            top.linkTo(topBarRef.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            width = Dimension.fillToConstraints
+        }
+    }
+    val end1 = constraintSet {
+        constrain(topBarRef) {
+            top.linkTo(parent.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            width = Dimension.fillToConstraints
+        }
+        constrain(topBarBottomContentRef) {
+            bottom.linkTo(topBarRef.bottom, 4.dp)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            width = Dimension.fillToConstraints
+        }
+    }
+    transition(name = "default", from = start1, to = end1) {}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HashtagAppBar(
+    uiState: HashtagTimelineUiState,
+    onBackClick: () -> Unit,
+    onFollowClick: () -> Unit,
+    onUnfollowClick: () -> Unit,
+) {
+    Surface(
+        Modifier
+            .layoutId("topBarBottomContent")
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .weight(1F),
+                    style = MaterialTheme.typography.titleMedium,
+                    text = uiState.hashTag,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                )
+
+                FollowHashtagButton(
+                    modifier = Modifier.padding(start = 8.dp),
+                    uiState = uiState,
+                    onFollowClick = onFollowClick,
+                    onUnfollowClick = onUnfollowClick,
+                )
+            }
+
+            Text(
+                modifier = Modifier.padding(top = 4.dp),
+                text = uiState.description,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start,
+            )
+        }
+    }
+    TopAppBar(
+        modifier = Modifier.layoutId("topBar"),
+        navigationIcon = {
+            Toolbar.BackButton(
+                onBackClick = onBackClick,
+            )
+        },
+        title = {
+            Text(
+                fontSize = 18.sp,
+                text = uiState.hashTag,
+            )
+        },
+    )
+}
+
+@Composable
+private fun FollowHashtagButton(
+    modifier: Modifier,
+    uiState: HashtagTimelineUiState,
+    onFollowClick: () -> Unit,
+    onUnfollowClick: () -> Unit,
+) {
+    var showUnfollowDialog by remember { mutableStateOf(false) }
+    StyledTextButton(
+        modifier = modifier,
+        onClick = {
+            if (uiState.following) {
+                showUnfollowDialog = true
+            } else {
+                onFollowClick()
+            }
+        },
+        style = if (uiState.following) {
+            TextButtonStyle.STANDARD
+        } else {
+            TextButtonStyle.ACTIVE
+        },
+        text = if (uiState.following) {
+            stringResource(LocalizedString.statusUiUserDetailRelationshipFollowing)
+        } else {
+            stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow)
+        },
+    )
+    if (showUnfollowDialog) {
+        AlertConfirmDialog(
+            content = stringResource(LocalizedString.activity_pub_hashtag_unfollow_dialog_message),
+            onConfirm = onUnfollowClick,
+            onDismissRequest = { showUnfollowDialog = false },
+        )
     }
 }

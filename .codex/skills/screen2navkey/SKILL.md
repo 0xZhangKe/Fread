@@ -82,16 +82,6 @@ class ProfileNavEntryProvider : NavEntryProvider {
 }
 ```
 
-你需要按照模块来完成工作。
-
-对于已经修改完成的类请不要再改。
-
-你只应该修改 Screen 和 navigation3 相关的代码，其他的代码不要改，即使你觉得有问题也不要改。
-
-不要修改任何 Tab 以及其直接引用的页面。
-
-不要做任何超出我要求的事情。
-
 ## 工作流程
 你需要 Follow 以下工作流程：
 1. 首先找到给定模块中所有符合如下条件的 Screen：
@@ -101,11 +91,20 @@ class ProfileNavEntryProvider : NavEntryProvider {
 3. 逐个重构这些 Screen
 4. 对于每个 Screen，首先创建该 Screen 的 NavKey，比如给 ProfileScreen 创建一个 ProfileScreenNavKey.
 5. 将 ProfileScreen 改为 @Composable 函数。
-6. 移除 LocalNavigator，并添加 LocalNavBackStack
-7. navigator.pop 调用改为 backStack.removeLastOrNull
-8. navigator.push(Screen) 改为 backStack.add(NavKey)
-9. 对于使用了 navigationResult 的地方请保持不动，不要试图修改相关的代码，即使有编译报错也不用管，保留原样。
-10. 将 ProfileScreenNavKey 以及这个 @Composable 函数 注册到该模块的 NavEntryProvider 中。
-11. 找到这个 Screen 的相关引用，并将跳转处改为这个 Screen 的 NavKey
-12. 结束这个 Screen 重构并进入下一个 Screen。
-13. 直到所有重构完所有满足条件的 Screen。
+6. 对于使用了 navigationResult 的地方请保持不动，不要试图修改相关的代码，即使有编译报错也不用管，保留原样。
+7. 将 ProfileScreenNavKey 以及这个 @Composable 函数 注册到该模块的 NavEntryProvider 中。
+8. 找到这个 Screen 的相关引用，并将跳转处改为这个 Screen 的 NavKey
+9. 结束这个 Screen 重构并进入下一个 Screen。
+10. 直到所有重构完所有满足条件的 Screen。
+
+## 绝对禁止
+一下内容为绝对禁止修改的规则：
+1. 对于已经修改完成的类请不要再改
+2. 你只应该修改 Screen 和 navigation3 相关的代码，其他的代码不要改，即使你觉得有问题也不要改
+3. 不要修改任何 Tab 以及其直接引用的页面
+4. 不要做任何超出我要求的事情
+5. 遇到不属于上述情况的页面请直接忽略，不要自己想办法解决
+6. 不要求改任何嵌套的 Navigator 页面，遇到嵌套的情况直接跳过
+7. 不要修改任何已经使用 navigation3 的页面
+8. 不要通过代码引用的方式找某个页面的引用并且试图修改其引用点
+

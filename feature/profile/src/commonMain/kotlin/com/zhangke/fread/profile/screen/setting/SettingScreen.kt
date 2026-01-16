@@ -55,7 +55,7 @@ import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.language.LanguageSettingItem
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
@@ -89,8 +89,9 @@ class SettingScreen : BaseScreen() {
 
         val activityLanguageHelper = LocalActivityLanguageHelper.current
         val activityDayNightHelper = LocalActivityDayNightHelper.current
-        val activityTextHandler = LocalActivityTextHandler.current
+        val activityTextHandler = LocalTextHandler.current
 
+        val coroutineScope = rememberCoroutineScope()
         SettingContent(
             uiState = uiState,
             onBackClick = navigator::pop,
@@ -101,10 +102,16 @@ class SettingScreen : BaseScreen() {
                 viewModel.onChangeAutoPlayInlineVideo(it)
             },
             onDayNightModeClick = {
-                activityDayNightHelper.setMode(it)
+                coroutineScope.launch {
+                    activityDayNightHelper.setMode(it)
+                }
             },
             onThemeTypeChanged = viewModel::onThemeTypeChanged,
-            onAmoledChanged = activityDayNightHelper::setAmoledMode,
+            onAmoledChanged = {
+                coroutineScope.launch {
+                    activityDayNightHelper.setAmoledMode(it)
+                }
+            },
             onLanguageClick = {
                 activityLanguageHelper.setLanguage(it)
             },

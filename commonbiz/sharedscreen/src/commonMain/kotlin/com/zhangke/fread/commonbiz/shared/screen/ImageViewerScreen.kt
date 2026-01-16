@@ -41,8 +41,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
@@ -52,13 +51,14 @@ import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.composable.HorizontalPageIndicator
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
 import com.zhangke.framework.imageloader.executeSafety
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
@@ -66,242 +66,243 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.jvm.Transient
 
-class ImageViewerScreen(
-    private val selectedIndex: Int,
-    private val imageList: List<Image>,
-    @Transient private val coordinatesList: List<LayoutCoordinates?>? = emptyList(),
-) : BaseScreen() {
+data class ImageViewerScreenNavKey(
+    val selectedIndex: Int,
+    val imageList: List<ImageViewerImage>,
+    @Transient val coordinatesList: List<LayoutCoordinates?>? = emptyList(),
+) : NavKey
 
-    private val backgroundCommonAlpha = 0.95F
-
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        if (imageList.isEmpty()) {
-            navigator.pop()
-            return
-        }
-        val coroutineScope = rememberCoroutineScope()
-        var backgroundColorAlpha by remember {
-            mutableFloatStateOf(0F)
-        }
-        var showIndicator by remember {
-            mutableStateOf(false)
-        }
-        LaunchedEffect(Unit) {
-            Animatable(0F).animateTo(
-                targetValue = backgroundCommonAlpha,
-                animationSpec = tween(
-                    ImageViewerDefault.ANIMATION_DURATION,
-                    easing = FastOutSlowInEasing
-                ),
-            ) {
-                backgroundColorAlpha = value
-            }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
+@Composable
+fun ImageViewerScreen(
+    selectedIndex: Int,
+    imageList: List<ImageViewerImage>,
+    coordinatesList: List<LayoutCoordinates?>? = emptyList(),
+) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val backgroundCommonAlpha = 0.95F
+    if (imageList.isEmpty()) {
+        LaunchedEffect(imageList) { backStack.removeLastOrNull() }
+        return
+    }
+    val coroutineScope = rememberCoroutineScope()
+    var backgroundColorAlpha by remember {
+        mutableFloatStateOf(0F)
+    }
+    var showIndicator by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(Unit) {
+        Animatable(0F).animateTo(
+            targetValue = backgroundCommonAlpha,
+            animationSpec = tween(
+                ImageViewerDefault.ANIMATION_DURATION,
+                easing = FastOutSlowInEasing
+            ),
         ) {
-            // TODO: check this bug, maybe cause Compose.
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawRect(
-                    color = Color.Black,
-                    alpha = backgroundColorAlpha,
-                )
-            }
-            val pagerState = rememberPagerState(
-                initialPage = selectedIndex.coerceAtLeast(0),
-                pageCount = imageList::size,
+            backgroundColorAlpha = value
+        }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+        // TODO: check this bug, maybe cause Compose.
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawRect(
+                color = Color.Black,
+                alpha = backgroundColorAlpha,
             )
-            val animatedInHolder = remember {
-                arrayOf(false)
-            }
+        }
+        val pagerState = rememberPagerState(
+            initialPage = selectedIndex.coerceAtLeast(0),
+            pageCount = imageList::size,
+        )
+        val animatedInHolder = remember {
+            arrayOf(false)
+        }
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                HorizontalPager(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    state = pagerState,
-                ) { pageIndex ->
-                    val currentMedia = imageList[pageIndex]
-                    val coordinates = coordinatesList?.getOrNull(pageIndex)
-                    val animatedIn = pageIndex == selectedIndex && animatedInHolder.first().not()
-                    ImagePageContent(
-                        image = currentMedia,
-                        coordinates = coordinates,
-                        needAnimateIn = animatedIn,
-                        animateInFinished = {
-                            animatedInHolder[0] = true
-                        },
-                        onDismissRequest = {
-                            navigator.pop()
-                        },
-                        onStartDismiss = {
-                            showIndicator = false
-                            coroutineScope.launch {
-                                Animatable(backgroundCommonAlpha).animateTo(
-                                    targetValue = 0.1F,
-                                    animationSpec = tween(
-                                        ImageViewerDefault.ANIMATION_DURATION,
-                                        easing = FastOutSlowInEasing
-                                    ),
-                                ) {
-                                    backgroundColorAlpha = value
-                                }
+        Box(modifier = Modifier.fillMaxSize()) {
+            HorizontalPager(
+                modifier = Modifier
+                    .fillMaxSize(),
+                state = pagerState,
+            ) { pageIndex ->
+                val currentMedia = imageList[pageIndex]
+                val coordinates = coordinatesList?.getOrNull(pageIndex)
+                val animatedIn = pageIndex == selectedIndex && animatedInHolder.first().not()
+                ImagePageContent(
+                    image = currentMedia,
+                    coordinates = coordinates,
+                    needAnimateIn = animatedIn,
+                    animateInFinished = {
+                        animatedInHolder[0] = true
+                    },
+                    onDismissRequest = {
+                        backStack.removeLastOrNull()
+                    },
+                    onStartDismiss = {
+                        showIndicator = false
+                        coroutineScope.launch {
+                            Animatable(backgroundCommonAlpha).animateTo(
+                                targetValue = 0.1F,
+                                animationSpec = tween(
+                                    ImageViewerDefault.ANIMATION_DURATION,
+                                    easing = FastOutSlowInEasing
+                                ),
+                            ) {
+                                backgroundColorAlpha = value
                             }
                         }
-                    )
-                }
-
-                ImageTopBar(imageList[pagerState.currentPage])
-
-                LaunchedEffect(Unit) {
-                    delay(300)
-                    showIndicator = true
-                }
-                if (showIndicator && pagerState.pageCount > 1) {
-                    HorizontalPageIndicator(
-                        currentIndex = pagerState.currentPage,
-                        pageCount = pagerState.pageCount,
-                        modifier = Modifier
-                            .padding(bottom = 64.dp)
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth(),
-                    )
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun ImagePageContent(
-        image: Image,
-        coordinates: LayoutCoordinates?,
-        needAnimateIn: Boolean,
-        animateInFinished: () -> Unit,
-        onDismissRequest: () -> Unit,
-        onStartDismiss: () -> Unit,
-    ) {
-        val imageLoader = LocalImageLoader.current
-        var aspectRatio: Float? by remember {
-            mutableStateOf(image.aspect)
-        }
-        if (aspectRatio == null) {
-            LaunchedEffect(image) {
-                val request = ImageRequest {
-                    data(image.url)
-                    size(SizeResolver(Size(50f, 50f)))
-                }
-                aspectRatio = imageLoader.executeSafety(request).aspectRatio() ?: 1F
-            }
-        }
-        if (aspectRatio != null) {
-            val viewerState = if (coordinates != null && coordinates.isAttached) {
-                rememberImageViewerState(
-                    aspectRatio = aspectRatio!!,
-                    needAnimateIn = needAnimateIn,
-                    initialSize = coordinates.size.toSize(),
-                    initialOffset = coordinates.positionInRoot(),
-                    onAnimateInFinished = animateInFinished,
-                    onDismissRequest = onDismissRequest,
-                    onStartDismiss = onStartDismiss,
-                )
-            } else {
-                rememberImageViewerState(
-                    aspectRatio = aspectRatio!!,
-                    needAnimateIn = false,
-                    onDismissRequest = onDismissRequest,
+                    }
                 )
             }
-            ImageViewer(
-                state = viewerState,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                val request = remember(image.url) {
-                    ImageRequest(image.url)
-                }
-                Image(
-                    painter = rememberImagePainter(request = request),
+
+            ImageTopBar(imageList[pagerState.currentPage])
+
+            LaunchedEffect(Unit) {
+                delay(300)
+                showIndicator = true
+            }
+            if (showIndicator && pagerState.pageCount > 1) {
+                HorizontalPageIndicator(
+                    currentIndex = pagerState.currentPage,
+                    pageCount = pagerState.pageCount,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .blurhash(image.blurhash),
-                    contentScale = ContentScale.FillBounds,
-                    contentDescription = image.description,
+                        .padding(bottom = 64.dp)
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
                 )
             }
         }
     }
+}
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun BoxScope.ImageTopBar(image: Image) {
-        var showBottomSheet by remember { mutableStateOf(false) }
-        val mediaFileHelper = LocalMediaFileHelper.current
-        Row(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .statusBarsPadding()
-                .padding(top = 8.dp, end = 8.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            var needSaveImage by remember { mutableStateOf(false) }
-            if (needSaveImage) {
-                RequireLocalStoragePermission(
-                    onPermissionGranted = {
-                        mediaFileHelper.saveImageToGallery(image.url)
-                        needSaveImage = false
-                    },
-                    onPermissionDenied = {
-                        needSaveImage = false
-                    },
-                )
+@Composable
+private fun ImagePageContent(
+    image: ImageViewerImage,
+    coordinates: LayoutCoordinates?,
+    needAnimateIn: Boolean,
+    animateInFinished: () -> Unit,
+    onDismissRequest: () -> Unit,
+    onStartDismiss: () -> Unit,
+) {
+    val imageLoader = LocalImageLoader.current
+    var aspectRatio: Float? by remember {
+        mutableStateOf(image.aspect)
+    }
+    if (aspectRatio == null) {
+        LaunchedEffect(image) {
+            val request = ImageRequest {
+                data(image.url)
+                size(SizeResolver(Size(50f, 50f)))
             }
-            Toolbar.DownloadButton(
-                onClick = {
-                    needSaveImage = true
-                },
-                tint = MaterialTheme.colorScheme.inverseOnSurface,
+            aspectRatio = imageLoader.executeSafety(request).aspectRatio() ?: 1F
+        }
+    }
+    if (aspectRatio != null) {
+        val viewerState = if (coordinates != null && coordinates.isAttached) {
+            rememberImageViewerState(
+                aspectRatio = aspectRatio!!,
+                needAnimateIn = needAnimateIn,
+                initialSize = coordinates.size.toSize(),
+                initialOffset = coordinates.positionInRoot(),
+                onAnimateInFinished = animateInFinished,
+                onDismissRequest = onDismissRequest,
+                onStartDismiss = onStartDismiss,
             )
-            if (!image.description.isNullOrEmpty()) {
-                Spacer(modifier = Modifier.width(16.dp))
-                SimpleIconButton(
-                    onClick = { showBottomSheet = true },
-                    tint = MaterialTheme.colorScheme.inverseOnSurface,
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Image description",
-                )
-                if (showBottomSheet) {
-                    ModalBottomSheet(
-                        onDismissRequest = { showBottomSheet = false },
+        } else {
+            rememberImageViewerState(
+                aspectRatio = aspectRatio!!,
+                needAnimateIn = false,
+                onDismissRequest = onDismissRequest,
+            )
+        }
+        ImageViewer(
+            state = viewerState,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            val request = remember(image.url) {
+                ImageRequest(image.url)
+            }
+            Image(
+                painter = rememberImagePainter(request = request),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .blurhash(image.blurhash),
+                contentScale = ContentScale.FillBounds,
+                contentDescription = image.description,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BoxScope.ImageTopBar(image: ImageViewerImage) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val mediaFileHelper = LocalMediaFileHelper.current
+    Row(
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .statusBarsPadding()
+            .padding(top = 8.dp, end = 8.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        var needSaveImage by remember { mutableStateOf(false) }
+        if (needSaveImage) {
+            RequireLocalStoragePermission(
+                onPermissionGranted = {
+                    mediaFileHelper.saveImageToGallery(image.url)
+                    needSaveImage = false
+                },
+                onPermissionDenied = {
+                    needSaveImage = false
+                },
+            )
+        }
+        Toolbar.DownloadButton(
+            onClick = {
+                needSaveImage = true
+            },
+            tint = MaterialTheme.colorScheme.inverseOnSurface,
+        )
+        if (!image.description.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.width(16.dp))
+            SimpleIconButton(
+                onClick = { showBottomSheet = true },
+                tint = MaterialTheme.colorScheme.inverseOnSurface,
+                imageVector = Icons.Default.Info,
+                contentDescription = "Image description",
+            )
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showBottomSheet = false },
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 28.dp)
+                            .wrapContentHeight()
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 28.dp)
-                                .wrapContentHeight()
-                        ) {
-                            Text(text = image.description)
-                        }
+                        Text(text = image.description)
                     }
                 }
             }
         }
     }
-
-    data class Image(
-        val url: String,
-        val previewUrl: String? = null,
-        val description: String? = null,
-        val blurhash: String? = null,
-        val aspect: Float? = null,
-    ) : PlatformSerializable
 }
 
-fun BlogMedia.toImage(): ImageViewerScreen.Image {
-    return ImageViewerScreen.Image(
+data class ImageViewerImage(
+    val url: String,
+    val previewUrl: String? = null,
+    val description: String? = null,
+    val blurhash: String? = null,
+    val aspect: Float? = null,
+) : PlatformSerializable
+
+fun BlogMedia.toImage(): ImageViewerImage {
+    return ImageViewerImage(
         url = this.url,
         previewUrl = this.previewUrl,
         description = this.description,
@@ -310,7 +311,7 @@ fun BlogMedia.toImage(): ImageViewerScreen.Image {
     )
 }
 
-fun List<BlogMedia>.toImages(): List<ImageViewerScreen.Image> {
+fun List<BlogMedia>.toImages(): List<ImageViewerImage> {
     return this.map { it.toImage() }
 }
 

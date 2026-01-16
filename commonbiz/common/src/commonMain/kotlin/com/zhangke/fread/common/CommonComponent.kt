@@ -83,5 +83,3 @@ interface CommonComponent : CommonPlatformComponent {
 interface CommonComponentProvider {
     val component: CommonComponent
 }
-
-lateinit var commonComponentProvider: CommonComponentProvider

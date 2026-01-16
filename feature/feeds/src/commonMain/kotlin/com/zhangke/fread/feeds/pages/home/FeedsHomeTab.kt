@@ -3,14 +3,13 @@ package com.zhangke.fread.feeds.pages.home
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.zhangke.framework.nav.Tab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.ic_home
 import org.jetbrains.compose.resources.painterResource
 
-class FeedsHomeTab(private val tabIndex: UShort) : Tab {
+class FeedsHomeTab() : Tab {
 
     override val options: TabOptions
         @Composable get() {
@@ -19,14 +18,12 @@ class FeedsHomeTab(private val tabIndex: UShort) : Tab {
                 TabOptions(
                     title = "Home",
                     icon = icon,
-                    index = tabIndex,
                 )
             }
         }
 
-    @OptIn(ExperimentalSharedTransitionApi::class)
     @Composable
     override fun Content() {
-        Navigator(FeedsContentHomeScreen())
+        FeedsContentHomeScreen()
     }
 }

@@ -10,20 +10,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.commonbiz.shared.composable.InitErrorContent
 import com.zhangke.fread.commonbiz.shared.composable.ObserveForFeedsConnection
@@ -31,16 +27,17 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import com.zhangke.fread.status.ui.common.ObserveScrollStopedPosition
+import org.koin.compose.viewmodel.koinViewModel
 
 internal class ActivityPubTimelineTab(
     private val locator: PlatformLocator,
     private val type: ActivityPubStatusSourceType,
     private val listId: String? = null,
     private val listTitle: String? = null,
-) : BasePagerTab() {
+) : BaseTab() {
 
-    override val options: PagerTabOptions
-        @Composable get() = PagerTabOptions(
+    override val options: TabOptions
+        @Composable get() = TabOptions(
             title = when (type) {
                 ActivityPubStatusSourceType.TIMELINE_HOME -> ActivityPubTabNames.homeTimeline
                 ActivityPubStatusSourceType.TIMELINE_LOCAL -> ActivityPubTabNames.localTimeline
@@ -50,18 +47,14 @@ internal class ActivityPubTimelineTab(
         )
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
-        val viewModel = screen.getViewModel<ActivityPubTimelineContainerViewModel>()
+    override fun Content() {
+        super.Content()
+        val viewModel = koinViewModel<ActivityPubTimelineContainerViewModel>()
             .getSubViewModel(locator, type, listId)
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = LocalSnackbarHostState.current
         ActivityPubTimelineContent(
             uiState = uiState,
-            nestedScrollConnection = nestedScrollConnection,
             composedStatusInteraction = viewModel.composedStatusInteraction,
             onJumpedToStatus = viewModel::onJumpedToStatus,
             onLoadPrevious = viewModel::onLoadPreviousPage,
@@ -76,7 +69,6 @@ internal class ActivityPubTimelineTab(
     @Composable
     private fun ActivityPubTimelineContent(
         uiState: ActivityPubTimelineUiState,
-        nestedScrollConnection: NestedScrollConnection?,
         composedStatusInteraction: ComposedStatusInteraction,
         onJumpedToStatus: () -> Unit,
         onLoadPrevious: () -> Unit,
@@ -121,9 +113,7 @@ internal class ActivityPubTimelineTab(
                         }
                     }
                     LoadableInlineVideoLazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .applyNestedScrollConnection(nestedScrollConnection),
+                        modifier = Modifier.fillMaxSize(),
                         state = state,
                         onLoadPrevious = {
                             onLoadPrevious()

@@ -62,11 +62,6 @@ actual interface CommonPlatformComponent {
             .build()
     }
 
-    @ApplicationScope
-    @Provides
-    fun provideFlowSettings(delegate: NSUserDefaults): FlowSettings {
-        return NSUserDefaultsSettings(delegate).toFlowSettings()
-    }
 }
 
 // From: https://developer.android.com/kotlin/multiplatform/room#ios

@@ -3,56 +3,49 @@ package com.zhangke.fread.activitypub.app.internal.screen.list.add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.activitypub.app.internal.screen.list.ListDetailPageContent
-import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserScreen
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserScreenNavKey
 import com.zhangke.fread.status.model.PlatformLocator
+import kotlinx.serialization.Serializable
 
-class AddListScreen(
-    private val locator: PlatformLocator,
-) : BaseScreen() {
+@Serializable
+data class AddListScreenNavKey(val locator: PlatformLocator) : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val snackbarHostState = rememberSnackbarHostState()
-        val viewModel = getViewModel<AddListViewModel, AddListViewModel.Factory> {
-            it.create(locator)
-        }
-        val uiState by viewModel.uiState.collectAsState()
-        ListDetailPageContent(
-            name = uiState.name,
-            snackBarState = snackbarHostState,
-            exclusive = uiState.exclusive,
-            repliesPolicy = uiState.repliesPolicy,
-            showLoadingCover = uiState.showLoadingCover,
-            accountList = uiState.accountList,
-            accountsLoading = false,
-            loadAccountsError = null,
-            showDeleteIcon = false,
-            onSaveClick = viewModel::onSaveClick,
-            onExclusiveChangeRequest = viewModel::onExclusiveChanged,
-            onPolicySelect = viewModel::onPolicySelect,
-            onBackClick = navigator::pop,
-            onRemoveAccount = viewModel::onRemoveAccount,
-            onRetryLoadAccountsClick = {},
-            onNameChangedRequest = viewModel::onNameChangeRequest,
-            onAddUserClick = {
-                navigator.push(SearchUserScreen(locator, onlyFollowing = false).apply {
-                    onAccountSelected = { account ->
-                        viewModel.onAddAccount(account)
-                    }
-                })
-            },
-        )
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarFlow)
-        ConsumeFlow(viewModel.finishPageFlow) { navigator.pop() }
+@Composable
+fun AddListScreen(viewModel: AddListViewModel, locator: PlatformLocator) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val snackbarHostState = rememberSnackbarHostState()
+    val uiState by viewModel.uiState.collectAsState()
+    ConsumeFlow(SearchUserScreenNavKey.accountSelectedFlow.flow) {
+        viewModel.onAddAccount(it)
     }
+    ListDetailPageContent(
+        name = uiState.name,
+        snackBarState = snackbarHostState,
+        exclusive = uiState.exclusive,
+        repliesPolicy = uiState.repliesPolicy,
+        showLoadingCover = uiState.showLoadingCover,
+        accountList = uiState.accountList,
+        accountsLoading = false,
+        loadAccountsError = null,
+        showDeleteIcon = false,
+        onSaveClick = viewModel::onSaveClick,
+        onExclusiveChangeRequest = viewModel::onExclusiveChanged,
+        onPolicySelect = viewModel::onPolicySelect,
+        onBackClick = { backStack.removeLastOrNull() },
+        onRemoveAccount = viewModel::onRemoveAccount,
+        onRetryLoadAccountsClick = {},
+        onNameChangedRequest = viewModel::onNameChangeRequest,
+        onAddUserClick = {
+            backStack.add(SearchUserScreenNavKey(locator, onlyFollowing = false))
+        },
+    )
+    ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarFlow)
+    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
 }

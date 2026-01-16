@@ -2,27 +2,24 @@ package com.zhangke.fread.activitypub.app.internal.screen.explorer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.HorizontalPagerWithTab
-import com.zhangke.framework.composable.PagerTab
-import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.HorizontalPagerWithTab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 
 class ExplorerContainerTab(
     private val locator: PlatformLocator,
     private val platform: BlogPlatform,
-) : PagerTab {
+) : BaseTab() {
 
-    override val options: PagerTabOptions?
+    override val options: TabOptions?
         @Composable get() = null
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
+    override fun Content() {
+        super.Content()
         val tabs = remember {
             listOf(
                 ExplorerTab(
@@ -42,11 +39,9 @@ class ExplorerContainerTab(
                 ),
             )
         }
-        with(screen) {
-            HorizontalPagerWithTab(
-                tabList = tabs,
-                pagerUserScrollEnabled = true,
-            )
-        }
+        HorizontalPagerWithTab(
+            tabList = tabs,
+            pagerUserScrollEnabled = true,
+        )
     }
 }

@@ -30,7 +30,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -38,122 +37,114 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.ObserveLoadMore
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.transparentIndicatorAndContainerColors
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
-abstract class AbstractSearchStatusScreen : BaseScreen() {
+@Composable
+fun AbstractSearchStatusScreen(viewModel: AbstractSearchStatusViewModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val snackbarHostState = rememberSnackbarHostState()
+    val uiState by viewModel.uiState.collectAsState()
+    SearchStatusContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        composedStatusInteraction = viewModel.composedStatusInteraction,
+        onBackClick = backStack::removeLastOrNull,
+        onQueryChanged = viewModel::onQueryChange,
+        onSearchClick = viewModel::onSearchClick,
+        onLoadMore = viewModel::onLoadMore,
+    )
+    ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
+    ConsumeOpenScreenFlow(viewModel.openScreenFlow)
+}
 
-    @Composable
-    abstract fun createViewModel(): AbstractSearchStatusViewModel
-
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewMode = createViewModel()
-        val snackbarHostState = rememberSnackbarHostState()
-        val uiState by viewMode.uiState.collectAsState()
-        SearchStatusContent(
-            uiState = uiState,
-            snackbarHostState = snackbarHostState,
-            composedStatusInteraction = viewMode.composedStatusInteraction,
-            onBackClick = navigator::pop,
-            onQueryChanged = viewMode::onQueryChange,
-            onSearchClick = viewMode::onSearchClick,
-            onLoadMore = viewMode::onLoadMore,
-        )
-        ConsumeSnackbarFlow(snackbarHostState, viewMode.errorMessageFlow)
-        ConsumeOpenScreenFlow(viewMode.openScreenFlow)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchStatusContent(
+    uiState: SearchStatusUiState,
+    snackbarHostState: SnackbarHostState,
+    composedStatusInteraction: ComposedStatusInteraction,
+    onBackClick: () -> Unit,
+    onQueryChanged: (String) -> Unit,
+    onSearchClick: () -> Unit,
+    onLoadMore: () -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    val keyboardState by keyboardAsState()
+    LaunchedEffect(keyboardState) {
+        if (!keyboardState) {
+            focusManager.clearFocus()
+        }
     }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun SearchStatusContent(
-        uiState: SearchStatusUiState,
-        snackbarHostState: SnackbarHostState,
-        composedStatusInteraction: ComposedStatusInteraction,
-        onBackClick: () -> Unit,
-        onQueryChanged: (String) -> Unit,
-        onSearchClick: () -> Unit,
-        onLoadMore: () -> Unit,
-    ) {
-        val focusManager = LocalFocusManager.current
-        val keyboardState by keyboardAsState()
-        LaunchedEffect(keyboardState) {
-            if (!keyboardState) {
-                focusManager.clearFocus()
-            }
-        }
-        val focusRequester = remember { FocusRequester() }
-        LaunchedEffect(Unit) {
-            delay(200)
-            focusRequester.requestFocus()
-        }
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                TopAppBar(
-                    navigationIcon = { Toolbar.BackButton(onBackClick = onBackClick) },
-                    title = {
-                        TextField(
-                            modifier = Modifier.fillMaxWidth()
-                                .focusRequester(focusRequester),
-                            value = uiState.query,
-                            onValueChange = onQueryChanged,
-                            placeholder = {
-                                Text(
-                                    text = stringResource(LocalizedString.statusUiSearchAccountStatusHint),
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        delay(200)
+        focusRequester.requestFocus()
+    }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                navigationIcon = { Toolbar.BackButton(onBackClick = onBackClick) },
+                title = {
+                    TextField(
+                        modifier = Modifier.fillMaxWidth()
+                            .focusRequester(focusRequester),
+                        value = uiState.query,
+                        onValueChange = onQueryChanged,
+                        placeholder = {
+                            Text(
+                                text = stringResource(LocalizedString.statusUiSearchAccountStatusHint),
+                            )
+                        },
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                focusManager.clearFocus()
+                                onSearchClick()
+                            }
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Search
+                        ),
+                        trailingIcon = {
+                            if (uiState.searching) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.primary,
                                 )
-                            },
-                            keyboardActions = KeyboardActions(
-                                onSearch = {
-                                    focusManager.clearFocus()
-                                    onSearchClick()
-                                }
-                            ),
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Search
-                            ),
-                            trailingIcon = {
-                                if (uiState.searching) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(18.dp),
-                                        strokeWidth = 2.dp,
-                                        color = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
-                            },
-                            colors = TextFieldDefaults.transparentIndicatorAndContainerColors,
-                            maxLines = 1,
-                        )
-                    },
-                )
-            },
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-        ) { innerPadding ->
-            val listState = rememberLazyListState()
-            ObserveLoadMore(
-                lazyListState = listState,
-                onLoadMore = onLoadMore,
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                state = listState,
-            ) {
-                itemsIndexed(uiState.result) { index, status ->
-                    FeedsStatusNode(
-                        status = status,
-                        indexInList = index,
-                        composedStatusInteraction = composedStatusInteraction,
+                            }
+                        },
+                        colors = TextFieldDefaults.transparentIndicatorAndContainerColors,
+                        maxLines = 1,
                     )
-                }
+                },
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { innerPadding ->
+        val listState = rememberLazyListState()
+        ObserveLoadMore(
+            lazyListState = listState,
+            onLoadMore = onLoadMore,
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            state = listState,
+        ) {
+            itemsIndexed(uiState.result) { index, status ->
+                FeedsStatusNode(
+                    status = status,
+                    indexInList = index,
+                    composedStatusInteraction = composedStatusInteraction,
+                )
             }
         }
     }

@@ -3,6 +3,7 @@ package com.zhangke.fread.bluesky
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
@@ -61,7 +62,7 @@ class BlueskyScreenProvider @Inject constructor(
     override fun getContentScreen(
         content: FreadContent,
         isLatestTab: Boolean
-    ): PagerTab {
+    ): Tab {
         return BlueskyHomeTab(content.id, isLatestTab)
     }
 
@@ -135,7 +136,7 @@ class BlueskyScreenProvider @Inject constructor(
         )
     }
 
-    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
+    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): Tab? {
         if (platform.protocol.notBluesky) return null
         return ExplorerTab(locator)
     }

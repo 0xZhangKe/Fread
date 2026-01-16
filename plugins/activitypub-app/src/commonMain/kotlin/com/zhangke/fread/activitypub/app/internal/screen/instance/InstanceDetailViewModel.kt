@@ -25,7 +25,7 @@ class InstanceDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         InstanceDetailUiState(
             loading = false,
-            baseUrl = null,
+            baseUrl = serverBaseUrl,
             instance = null,
             modAccount = null,
         )

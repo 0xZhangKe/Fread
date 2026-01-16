@@ -42,7 +42,7 @@ class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: Sys
     ) {
         if (checkAppSupportPage) {
             GlobalScreenNavigation.navigateByTransparent(
-                screen = UrlRedirectScreen(
+                screen = UrlRedirectScreenKey(
                     uri = uri.toString(),
                     locator = locator,
                     isFromExternal = isFromExternal,

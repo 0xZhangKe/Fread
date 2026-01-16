@@ -22,11 +22,13 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.model.JsonContent
+import kotlin.time.ExperimentalTime
 
 class BlueskyAccountAdapter @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
 ) {
 
+    @OptIn(ExperimentalTime::class)
     fun createBlueskyAccount(
         profileViewDetailed: ProfileViewDetailed?,
         createSessionResponse: CreateSessionResponse,
@@ -155,6 +157,7 @@ class BlueskyAccountAdapter @Inject constructor(
         )
     }
 
+    @OptIn(ExperimentalTime::class)
     fun updateProfile(
         account: BlueskyLoggedAccount,
         profile: ProfileViewDetailed,

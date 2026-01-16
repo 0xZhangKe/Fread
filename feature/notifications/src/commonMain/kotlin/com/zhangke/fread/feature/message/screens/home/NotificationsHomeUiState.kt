@@ -1,6 +1,6 @@
 package com.zhangke.fread.feature.message.screens.home
 
-import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.nav.Tab
 import com.zhangke.fread.feature.message.screens.notification.NotificationTab
 import com.zhangke.fread.status.account.LoggedAccount
 
@@ -9,5 +9,5 @@ data class NotificationsHomeUiState(
     val accountList: List<LoggedAccount>,
 ) {
 
-    val tabs: List<PagerTab> = accountList.map { NotificationTab(it) }
+    val tabs: List<Tab> = accountList.map { NotificationTab(it) }
 }

@@ -28,158 +28,156 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class SelectPlatformScreen : BaseScreen() {
+@Serializable
+object SelectPlatformScreenKey : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<SelectPlatformViewModel>()
-        val uiState by viewModel.uiState.collectAsState()
-        val snackbarHostState = rememberSnackbarHostState()
-        SelectPlatformContent(
-            uiState = uiState,
-            snackbarHostState = snackbarHostState,
-            onBackClick = navigator::pop,
-            onQueryChanged = viewModel::onQueryChanged,
-            onSearchClick = viewModel::onSearchClick,
-            onPlatformClick = viewModel::onResultClick,
-        )
-        ConsumeOpenScreenFlow(viewModel.openNewPageFlow)
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
-        ConsumeFlow(viewModel.finishPageFlow) { navigator.pop() }
-        LoadingDialog(
-            loading = uiState.loadingPlatformForAdd,
-            onDismissRequest = viewModel::onLoadingPlatformForAddCancel,
-        )
-        LaunchedEffect(Unit) { viewModel.onPageResumed(this) }
-    }
+@Composable
+fun SelectPlatformScreen(viewModel: SelectPlatformViewModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = rememberSnackbarHostState()
+    SelectPlatformContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onBackClick = { backStack.removeLastOrNull() },
+        onQueryChanged = viewModel::onQueryChanged,
+        onSearchClick = viewModel::onSearchClick,
+        onPlatformClick = viewModel::onResultClick,
+    )
+    ConsumeOpenScreenFlow(viewModel.openNewPageFlow)
+    ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
+    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+    LoadingDialog(
+        loading = uiState.loadingPlatformForAdd,
+        onDismissRequest = viewModel::onLoadingPlatformForAddCancel,
+    )
+    LaunchedEffect(Unit) { viewModel.onPageResumed(this) }
+}
 
-    @Composable
-    private fun SelectPlatformContent(
-        uiState: SelectPlatformUiState,
-        snackbarHostState: SnackbarHostState,
-        onBackClick: () -> Unit,
-        onQueryChanged: (String) -> Unit,
-        onSearchClick: () -> Unit,
-        onPlatformClick: (SearchPlatformResult) -> Unit,
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.activity_pub_select_platform_title),
-                    onBackClick = onBackClick,
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize()
-                    .padding(innerPadding),
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, top = 18.dp, end = 16.dp),
-                    value = uiState.query,
-                    onValueChange = onQueryChanged,
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Search
-                    ),
-                    placeholder = {
-                        Text(
-                            text = stringResource(LocalizedString.activity_pub_select_platform_text_hint),
-                            style = MaterialTheme.typography.bodyMedium,
+@Composable
+private fun SelectPlatformContent(
+    uiState: SelectPlatformUiState,
+    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    onQueryChanged: (String) -> Unit,
+    onSearchClick: () -> Unit,
+    onPlatformClick: (SearchPlatformResult) -> Unit,
+) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.activity_pub_select_platform_title),
+                onBackClick = onBackClick,
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 18.dp, end = 16.dp),
+                value = uiState.query,
+                onValueChange = onQueryChanged,
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Search
+                ),
+                placeholder = {
+                    Text(
+                        text = stringResource(LocalizedString.activity_pub_select_platform_text_hint),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                },
+                keyboardActions = KeyboardActions(
+                    onSearch = { onSearchClick() }
+                ),
+                trailingIcon = {
+                    if (uiState.querying) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary,
                         )
-                    },
-                    keyboardActions = KeyboardActions(
-                        onSearch = { onSearchClick() }
-                    ),
-                    trailingIcon = {
-                        if (uiState.querying) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(18.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                        } else {
-                            SimpleIconButton(
-                                onClick = onSearchClick,
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search",
-                            )
-                        }
-                    },
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (uiState.searchedResult.isNotEmpty()) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        items(uiState.searchedResult) {
-                            SearchPlatformResultUi(
-                                result = it,
-                                onClick = onPlatformClick,
-                            )
-                        }
+                    } else {
+                        SimpleIconButton(
+                            onClick = onSearchClick,
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                        )
                     }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        items(uiState.platformSnapshotList) {
-                            SearchPlatformResultUi(
-                                result = it,
-                                onClick = onPlatformClick,
-                            )
-                        }
+                },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (uiState.searchedResult.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    items(uiState.searchedResult) {
+                        SearchPlatformResultUi(
+                            result = it,
+                            onClick = onPlatformClick,
+                        )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    items(uiState.platformSnapshotList) {
+                        SearchPlatformResultUi(
+                            result = it,
+                            onClick = onPlatformClick,
+                        )
                     }
                 }
             }
         }
     }
+}
 
-    @Composable
-    private fun SearchPlatformResultUi(
-        result: SearchPlatformResult,
-        onClick: (SearchPlatformResult) -> Unit,
-    ) {
-        when (result) {
-            is SearchPlatformResult.SearchedPlatform -> BlogPlatformUi(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onClick(result) },
-                platform = result.platform,
-            )
+@Composable
+private fun SearchPlatformResultUi(
+    result: SearchPlatformResult,
+    onClick: (SearchPlatformResult) -> Unit,
+) {
+    when (result) {
+        is SearchPlatformResult.SearchedPlatform -> BlogPlatformUi(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick(result) },
+            platform = result.platform,
+        )
 
-            is SearchPlatformResult.SearchedSnapshot -> BlogPlatformSnapshotUi(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onClick(result) },
-                platform = result.snapshot,
-            )
-        }
+        is SearchPlatformResult.SearchedSnapshot -> BlogPlatformSnapshotUi(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick(result) },
+            platform = result.snapshot,
+        )
     }
 }

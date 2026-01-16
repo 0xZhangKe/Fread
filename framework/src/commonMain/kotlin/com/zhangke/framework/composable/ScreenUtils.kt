@@ -1,21 +1,20 @@
 package com.zhangke.framework.composable
 
 import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.nav.LocalNavBackStack
 import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun ConsumeOpenScreenFlow(
-    openScreenFlow: Flow<Screen>,
-    navigator: Navigator = LocalNavigator.currentOrThrow,
+    openScreenFlow: Flow<NavKey>,
+    backStack: NavBackStack<NavKey> = LocalNavBackStack.currentOrThrow,
 ) {
     ConsumeFlow(openScreenFlow) {
-        val lastItem = navigator.items.lastOrNull()
+        val lastItem = backStack.lastOrNull()
         if (lastItem != it) {
-            navigator.push(it)
+            backStack.add(it)
         }
     }
 }

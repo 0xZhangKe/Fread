@@ -45,7 +45,7 @@ import com.zhangke.fread.bluesky.internal.composable.FeedsAvatar
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyProfile
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -85,7 +85,7 @@ class FeedsDetailScreen(
             it.create(locator, feeds)
         }
         val uiState by viewModel.uiState.collectAsState()
-        val textHandler = LocalActivityTextHandler.current
+        val textHandler = LocalTextHandler.current
         val snackbarHostState = rememberSnackbarHostState()
         FeedsDetailContent(
             uiState = uiState,

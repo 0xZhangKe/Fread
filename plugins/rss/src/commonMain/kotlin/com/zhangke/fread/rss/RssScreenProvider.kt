@@ -2,6 +2,7 @@ package com.zhangke.fread.rss
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.rss.internal.screen.source.RssSourceScreen
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
@@ -31,7 +32,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
+    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): Tab? {
         return null
     }
 
@@ -94,7 +95,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): PagerTab? {
+    override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): Tab? {
         return null
     }
 }

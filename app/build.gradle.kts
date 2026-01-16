@@ -100,7 +100,11 @@ dependencies {
 
     implementation(libs.bundles.androidx.media3)
     implementation(libs.androidx.appcompat)
+    implementation(libs.bundles.androidx.nav3)
 //    ksp(libs.krouter.reducing.compiler)
+
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
 }
 
 listOf("assembleRelease", "assembleDebug").forEach { taskName ->

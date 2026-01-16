@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.commonbiz.shared.blog.detail
 
 import androidx.compose.foundation.background
@@ -20,7 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.architect.json.globalJson
@@ -29,7 +31,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
@@ -38,84 +39,85 @@ import com.zhangke.fread.status.ui.StatusInfoLine
 import com.zhangke.fread.status.ui.style.StatusStyles
 import com.zhangke.fread.status.utils.DateTimeFormatter
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.ExperimentalTime
 
-class RssBlogDetailScreen(
-    private val serializedBlog: String,
-) : BaseScreen() {
+@Serializable
+data class RssBlogDetailScreenNavKey(val serializedBlog: String) : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val blog: Blog = remember {
-            globalJson.decodeFromString(serializedBlog)
-        }
-        val navigator = LocalNavigator.currentOrThrow
-        val browserLauncher = LocalActivityBrowserLauncher.current
-
-        val viewModel = getViewModel<RssBlogDetailViewModel>()
-        val coroutineScope = rememberCoroutineScope()
-        ConsumeOpenScreenFlow(viewModel.openScreenFlow)
-        Scaffold(
-            topBar = {
-                Toolbar(
-                    title = blog.title.ifNullOrEmpty {
-                        stringResource(LocalizedString.sharedStatusContextScreenTitle)
-                    },
-                    onBackClick = navigator::pop,
-                    actions = {
-                        SimpleIconButton(
-                            onClick = {
-                                coroutineScope.launch {
-                                    browserLauncher.launchWebTabInApp(blog.url, checkAppSupportPage = false)
-                                }
-                            },
-                            imageVector = Icons.Default.OpenInBrowser,
-                            contentDescription = "Open In Browser",
-                        )
-                    }
-                )
-            }
-        ) { innerPaddings ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPaddings)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .background(MaterialTheme.colorScheme.surface),
-            ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                val displayTime by produceState("", blog.createAt) {
-                    value =
-                        DateTimeFormatter.format(blog.createAt.instant.toEpochMilliseconds())
+@Composable
+fun RssBlogDetailScreen(
+    serializedBlog: String,
+    viewModel: RssBlogDetailViewModel,
+) {
+    val blog: Blog = remember { globalJson.decodeFromString(serializedBlog) }
+    val navigator = LocalNavigator.currentOrThrow
+    val browserLauncher = LocalActivityBrowserLauncher.current
+    val coroutineScope = rememberCoroutineScope()
+    ConsumeOpenScreenFlow(viewModel.openScreenFlow)
+    Scaffold(
+        topBar = {
+            Toolbar(
+                title = blog.title.ifNullOrEmpty {
+                    stringResource(LocalizedString.sharedStatusContextScreenTitle)
+                },
+                onBackClick = navigator::pop,
+                actions = {
+                    SimpleIconButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                browserLauncher.launchWebTabInApp(
+                                    blog.url,
+                                    checkAppSupportPage = false
+                                )
+                            }
+                        },
+                        imageVector = Icons.Default.OpenInBrowser,
+                        contentDescription = "Open In Browser",
+                    )
                 }
-                StatusInfoLine(
-                    modifier = Modifier.fillMaxWidth(),
-                    blog = blog,
-                    isOwner = false,
-                    visibility = blog.visibility,
-                    displayTime = displayTime,
-                    style = StatusStyles.medium(),
-                    onInteractive = { _, _ -> },
-                    onUserInfoClick = viewModel::onUserInfoClick,
-                    onUrlClick = {
-                        coroutineScope.launch {
-                            browserLauncher.launchWebTabInApp(it)
-                        }
-                    },
-                    blogTranslationState = BlogTranslationUiState(support = false),
-                    editedAt = blog.editedAt?.instant,
-                    showOpenBlogWithOtherAccountBtn = false,
-                    allowToShowFollowButton = false,
-                    onTranslateClick = {},
-                )
-                WebViewPreviewer(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-                    html = blog.content,
-                )
+            )
+        }
+    ) { innerPaddings ->
+        Column(
+            modifier = Modifier
+                .padding(innerPaddings)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.surface),
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+            val displayTime by produceState("", blog.createAt) {
+                value =
+                    DateTimeFormatter.format(blog.createAt.instant.toEpochMilliseconds())
             }
+            StatusInfoLine(
+                modifier = Modifier.fillMaxWidth(),
+                blog = blog,
+                isOwner = false,
+                visibility = blog.visibility,
+                displayTime = displayTime,
+                style = StatusStyles.medium(),
+                onInteractive = { _, _ -> },
+                onUserInfoClick = viewModel::onUserInfoClick,
+                onUrlClick = {
+                    coroutineScope.launch {
+                        browserLauncher.launchWebTabInApp(it)
+                    }
+                },
+                blogTranslationState = BlogTranslationUiState(support = false),
+                editedAt = blog.editedAt?.instant,
+                showOpenBlogWithOtherAccountBtn = false,
+                allowToShowFollowButton = false,
+                onTranslateClick = {},
+            )
+            WebViewPreviewer(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize(),
+                html = blog.content,
+            )
         }
     }
 }

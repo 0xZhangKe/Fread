@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.config.AppCommonConfig
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_github_logo
@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.vectorResource
 fun FeedbackBottomSheet(
     onDismissRequest: () -> Unit,
 ) {
-    val textHandler = LocalActivityTextHandler.current
+    val textHandler = LocalTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()

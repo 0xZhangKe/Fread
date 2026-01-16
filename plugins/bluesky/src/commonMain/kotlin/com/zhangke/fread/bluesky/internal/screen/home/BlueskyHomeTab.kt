@@ -44,6 +44,8 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.TopBarWithTabLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
@@ -56,28 +58,24 @@ import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 class BlueskyHomeTab(
     private val contentId: String,
     private val isLatestContent: Boolean,
-) : BasePagerTab() {
+) : BaseTab() {
 
-    override val options: PagerTabOptions?
+    override val options: TabOptions?
         @Composable get() = null
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel =
-            screen.getViewModel<BlueskyHomeContainerViewModel>().getSubViewModel(contentId)
+        val viewModel = koinViewModel<BlueskyHomeContainerViewModel>().getSubViewModel(contentId)
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
         BlueskyHomeContent(
-            screen = screen,
             uiState = uiState,
             snackBarHostState = snackBarHostState,
             onPostBlogClick = { uiState.locator?.let { navigator.push(PublishPostScreen(it)) } },
@@ -98,7 +96,6 @@ class BlueskyHomeTab(
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun BlueskyHomeContent(
-        screen: Screen,
         uiState: BlueskyHomeUiState,
         snackBarHostState: SnackbarHostState,
         onPostBlogClick: (BlueskyLoggedAccount) -> Unit,
@@ -226,10 +223,7 @@ class BlueskyHomeTab(
                                     state = pagerState,
                                     userScrollEnabled = !contentScrollInProgress,
                                 ) { pageIndex ->
-                                    tabList[pageIndex].TabContent(
-                                        screen,
-                                        null,
-                                    )
+                                    tabList[pageIndex].Content()
                                 }
                             }
                         }

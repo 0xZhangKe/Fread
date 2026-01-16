@@ -20,65 +20,63 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreen
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
-class FeedsContentHomeScreen : BaseScreen() {
+@Composable
+fun FeedsContentHomeScreen() {
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow.rootNavigator
-        CompositionLocalProvider(LocalNavigator provides navigator) {
-            val coroutineScope = rememberCoroutineScope()
-            val viewModel: ContentHomeViewModel = getViewModel()
-            val uiState by viewModel.uiState.collectAsState()
-            if (uiState.contentAndTabList.isEmpty()) {
-                if (uiState.loading) {
-                    Box(modifier = Modifier.fillMaxSize())
-                } else {
-                    EmptyContent(modifier = Modifier.fillMaxSize()) {
-                        navigator.push(SelectContentTypeScreen())
-                    }
-                }
+    val navigator = LocalNavigator.currentOrThrow.rootNavigator
+    CompositionLocalProvider(LocalNavigator provides navigator) {
+        val coroutineScope = rememberCoroutineScope()
+        val viewModel: ContentHomeViewModel = koinViewModel()
+        val uiState by viewModel.uiState.collectAsState()
+        if (uiState.contentAndTabList.isEmpty()) {
+            if (uiState.loading) {
+                Box(modifier = Modifier.fillMaxSize())
             } else {
-                val mainTabConnection = LocalNestedTabConnection.current
-                val pagerState = rememberPagerState(
-                    initialPage = uiState.currentPageIndex.coerceAtLeast(0),
-                    pageCount = { uiState.contentAndTabList.size },
-                )
-                ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
-                    if (pagerState.currentPage < pagerState.pageCount - 1) {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                        }
-                    }
+                EmptyContent(modifier = Modifier.fillMaxSize()) {
+                    navigator.push(SelectContentTypeScreen())
                 }
-                ConsumeFlow(mainTabConnection.scrollToContentTabFlow) { content ->
-                    val index = uiState.contentAndTabList.indexOfFirst { it.first == content }
-                    if (index in 0 until pagerState.pageCount) {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    }
-                }
-                ConsumeFlow(viewModel.switchPageFlow) {
+            }
+        } else {
+            val mainTabConnection = LocalNestedTabConnection.current
+            val pagerState = rememberPagerState(
+                initialPage = uiState.currentPageIndex.coerceAtLeast(0),
+                pageCount = { uiState.contentAndTabList.size },
+            )
+            ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
+                if (pagerState.currentPage < pagerState.pageCount - 1) {
                     coroutineScope.launch {
-                        viewModel.onSwitchPageFlowUsed()
-                        pagerState.animateScrollToPage(it)
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 }
-                val targetPage = pagerState.targetPage
-                LaunchedEffect(targetPage) {
-                    viewModel.onCurrentPageChanged(targetPage)
-                }
-                val contentScrollInProgress by mainTabConnection.contentScrollInpProgress.collectAsState()
-                HorizontalPager(
-                    state = pagerState,
-                    userScrollEnabled = !contentScrollInProgress,
-                ) { pageIndex ->
-                    val currentScreen = uiState.contentAndTabList[pageIndex].second
-                    with(currentScreen) {
-                        TabContent(this@FeedsContentHomeScreen, null)
+            }
+            ConsumeFlow(mainTabConnection.scrollToContentTabFlow) { content ->
+                val index = uiState.contentAndTabList.indexOfFirst { it.first == content }
+                if (index in 0 until pagerState.pageCount) {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(index)
                     }
+                }
+            }
+            ConsumeFlow(viewModel.switchPageFlow) {
+                coroutineScope.launch {
+                    viewModel.onSwitchPageFlowUsed()
+                    pagerState.animateScrollToPage(it)
+                }
+            }
+            val targetPage = pagerState.targetPage
+            LaunchedEffect(targetPage) {
+                viewModel.onCurrentPageChanged(targetPage)
+            }
+            val contentScrollInProgress by mainTabConnection.contentScrollInpProgress.collectAsState()
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = !contentScrollInProgress,
+            ) { pageIndex ->
+                val currentScreen = uiState.contentAndTabList[pageIndex].second
+                with(currentScreen) {
+                    Content()
                 }
             }
         }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -32,120 +33,124 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.ScreenEventFlow
 import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.activitypub.app.internal.screen.list.AccountItem
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class SearchUserScreen(
-    private val locator: PlatformLocator,
-    private val onlyFollowing: Boolean,
-) : BaseScreen() {
+@Serializable
+data class SearchUserScreenNavKey(
+    val locator: PlatformLocator,
+    val onlyFollowing: Boolean,
+) : NavKey {
 
-    var onAccountSelected: ((ActivityPubAccountEntity) -> Unit)? = null
-
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewMode = getViewModel<SearchUserViewModel, SearchUserViewModel.Factory> {
-            it.create(locator, onlyFollowing)
-        }
-        val snackbarHostState = rememberSnackbarHostState()
-        val uiState by viewMode.uiState.collectAsState()
-        SearchUserContent(
-            uiState = uiState,
-            snackbarHostState = snackbarHostState,
-            onAccountClicked = {
-                onAccountSelected?.invoke(it)
-                navigator.pop()
-            },
-            onQueryChange = viewMode::onQueryChange,
-            onSearchClick = viewMode::onSearchClick,
-            onBackClick = navigator::pop,
-        )
-        ConsumeSnackbarFlow(snackbarHostState, viewMode.snackBarMessage)
+    companion object {
+        val accountSelectedFlow = ScreenEventFlow<ActivityPubAccountEntity>()
     }
+}
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun SearchUserContent(
-        uiState: SearchUserUiState,
-        snackbarHostState: SnackbarHostState,
-        onAccountClicked: (ActivityPubAccountEntity) -> Unit,
-        onQueryChange: (String) -> Unit,
-        onSearchClick: () -> Unit,
-        onBackClick: () -> Unit,
-    ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        val focusRequester = remember { FocusRequester() }
-                        LaunchedEffect(Unit) { focusRequester.requestFocus() }
-                        TextField(
-                            modifier = Modifier.fillMaxWidth()
-                                .focusRequester(focusRequester),
-                            value = uiState.query,
-                            onValueChange = { onQueryChange(it) },
-                            placeholder = {
-                                Text(
-                                    text = stringResource(LocalizedString.activity_pub_search_user_placeholder)
-                                )
-                            },
-                            keyboardActions = KeyboardActions(
-                                onSearch = { onSearchClick() }
-                            ),
-                            singleLine = true,
-                            maxLines = 1,
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Search
-                            ),
-                            colors = TextFieldDefaults.transparentIndicatorColors.copy(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                            ),
-                            textStyle = MaterialTheme.typography.titleMedium,
-                        )
-                    },
-                    navigationIcon = {
-                        Toolbar.BackButton(onBackClick = onBackClick)
-                    },
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
+@Composable
+fun SearchUserScreen(viewModel: SearchUserViewModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val snackbarHostState = rememberSnackbarHostState()
+    val uiState by viewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    SearchUserContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onAccountClicked = {
+            coroutineScope.launch {
+                SearchUserScreenNavKey.accountSelectedFlow.emit(it)
+                backStack.removeLastOrNull()
             }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .padding(innerPadding),
+        },
+        onQueryChange = viewModel::onQueryChange,
+        onSearchClick = viewModel::onSearchClick,
+        onBackClick = backStack::removeLastOrNull,
+    )
+    ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchUserContent(
+    uiState: SearchUserUiState,
+    snackbarHostState: SnackbarHostState,
+    onAccountClicked: (ActivityPubAccountEntity) -> Unit,
+    onQueryChange: (String) -> Unit,
+    onSearchClick: () -> Unit,
+    onBackClick: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    val focusRequester = remember { FocusRequester() }
+                    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+                    TextField(
+                        modifier = Modifier.fillMaxWidth()
+                            .focusRequester(focusRequester),
+                        value = uiState.query,
+                        onValueChange = { onQueryChange(it) },
+                        placeholder = {
+                            Text(
+                                text = stringResource(LocalizedString.activity_pub_search_user_placeholder)
+                            )
+                        },
+                        keyboardActions = KeyboardActions(
+                            onSearch = { onSearchClick() }
+                        ),
+                        singleLine = true,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Search
+                        ),
+                        colors = TextFieldDefaults.transparentIndicatorColors.copy(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                        ),
+                        textStyle = MaterialTheme.typography.titleMedium,
+                    )
+                },
+                navigationIcon = {
+                    Toolbar.BackButton(onBackClick = onBackClick)
+                },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    items(uiState.accounts) {
-                        AccountItem(
-                            modifier = Modifier.clickable { onAccountClicked(it) },
-                            account = it,
-                            showRemoveIcon = false,
-                        )
-                    }
-                }
-                if (uiState.searching) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center).size(64.dp)
+                items(uiState.accounts) {
+                    AccountItem(
+                        modifier = Modifier.clickable { onAccountClicked(it) },
+                        account = it,
+                        showRemoveIcon = false,
                     )
                 }
+            }
+            if (uiState.searching) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center).size(64.dp)
+                )
             }
         }
     }

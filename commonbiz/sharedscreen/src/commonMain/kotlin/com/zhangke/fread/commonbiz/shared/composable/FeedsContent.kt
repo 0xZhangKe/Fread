@@ -28,6 +28,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
@@ -54,7 +55,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun FeedsContent(
     uiState: CommonFeedsUiState,
-    openScreenFlow: SharedFlow<Screen>,
+    openScreenFlow: SharedFlow<NavKey>,
     newStatusNotifyFlow: SharedFlow<Unit>?,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,

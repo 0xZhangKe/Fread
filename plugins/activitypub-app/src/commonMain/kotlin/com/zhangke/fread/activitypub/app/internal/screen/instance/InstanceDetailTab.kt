@@ -2,7 +2,6 @@ package com.zhangke.fread.activitypub.app.internal.screen.instance
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
@@ -13,7 +12,7 @@ import com.zhangke.fread.localization.LocalizedString
 
 internal enum class InstanceDetailTab(
     val title: TextString,
-    val content: @Composable Screen.(
+    val content: @Composable (
         baseUrl: FormalBaseUrl,
         rules: List<ActivityPubInstanceEntity.Rule>,
         contentCanScrollBackward: MutableState<Boolean>,

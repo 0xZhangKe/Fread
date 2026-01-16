@@ -74,7 +74,7 @@ class StatusScreenProvider(
         }
     }
 
-    fun getUserDetailScreenWithoutAccount(uri: FormalUri): Screen? {
+    fun getUserDetailScreenWithoutAccount(uri: FormalUri): NavKey? {
         return providerList.firstNotNullOfOrNull {
             it.getUserDetailScreenWithoutAccount(uri)
         }

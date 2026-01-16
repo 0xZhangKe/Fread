@@ -41,9 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -51,305 +49,301 @@ import com.zhangke.framework.composable.IconButtonStyle
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledIconButton
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class EditAccountInfoScreen(
-    private val baseUrl: FormalBaseUrl,
-    private val accountUri: FormalUri,
-) : BaseScreen() {
+@Serializable
+data class EditAccountInfoScreenNavKey(
+    val baseUrl: String,
+    val accountUri: String,
+) : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<EditAccountInfoViewModel, EditAccountInfoViewModel.Factory>() {
-            it.create(baseUrl, accountUri)
-        }
-        val uiState by viewModel.uiState.collectAsState()
-        EditAccountInfoContent(
-            uiState = uiState,
-            snackBarMessageFlow = viewModel.snackBarMessageFlow,
-            onBackClick = navigator::pop,
-            onEditClick = viewModel::onEditClick,
-            onUserNameChanged = viewModel::onUserNameInput,
-            onBioChanged = viewModel::onUserDescriptionInput,
-            onFieldChanged = viewModel::onFieldInput,
-            onFieldDeleteClick = viewModel::onFieldDelete,
-            onFieldAddClick = viewModel::onFieldAddClick,
-            onAvatarSelected = viewModel::onAvatarSelected,
-            onHeaderSelected = viewModel::onHeaderSelected,
-        )
-        ConsumeFlow(viewModel.finishPageFlow) {
-            navigator.pop()
-        }
+@Composable
+fun EditAccountInfoScreen(viewModel: EditAccountInfoViewModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    EditAccountInfoContent(
+        uiState = uiState,
+        snackBarMessageFlow = viewModel.snackBarMessageFlow,
+        onBackClick = backStack::removeLastOrNull,
+        onEditClick = viewModel::onEditClick,
+        onUserNameChanged = viewModel::onUserNameInput,
+        onBioChanged = viewModel::onUserDescriptionInput,
+        onFieldChanged = viewModel::onFieldInput,
+        onFieldDeleteClick = viewModel::onFieldDelete,
+        onFieldAddClick = viewModel::onFieldAddClick,
+        onAvatarSelected = viewModel::onAvatarSelected,
+        onHeaderSelected = viewModel::onHeaderSelected,
+    )
+    ConsumeFlow(viewModel.finishPageFlow) {
+        backStack.removeLastOrNull()
     }
+}
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun EditAccountInfoContent(
-        uiState: EditAccountUiState,
-        snackBarMessageFlow: SharedFlow<TextString>,
-        onBackClick: () -> Unit,
-        onEditClick: () -> Unit,
-        onUserNameChanged: (String) -> Unit,
-        onBioChanged: (String) -> Unit,
-        onFieldChanged: (Int, String, String) -> Unit,
-        onFieldDeleteClick: (Int) -> Unit,
-        onFieldAddClick: () -> Unit,
-        onAvatarSelected: (PlatformUri) -> Unit,
-        onHeaderSelected: (PlatformUri) -> Unit,
-    ) {
-        val snackBarHost = rememberSnackbarHostState()
-        ConsumeSnackbarFlow(snackBarHost, snackBarMessageFlow)
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(snackBarHost)
-            },
-            topBar = {
-                TopAppBar(
-                    navigationIcon = {
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EditAccountInfoContent(
+    uiState: EditAccountUiState,
+    snackBarMessageFlow: SharedFlow<TextString>,
+    onBackClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onUserNameChanged: (String) -> Unit,
+    onBioChanged: (String) -> Unit,
+    onFieldChanged: (Int, String, String) -> Unit,
+    onFieldDeleteClick: (Int) -> Unit,
+    onFieldAddClick: () -> Unit,
+    onAvatarSelected: (PlatformUri) -> Unit,
+    onHeaderSelected: (PlatformUri) -> Unit,
+) {
+    val snackBarHost = rememberSnackbarHostState()
+    ConsumeSnackbarFlow(snackBarHost, snackBarMessageFlow)
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackBarHost)
+        },
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    SimpleIconButton(
+                        onClick = onBackClick,
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close",
+                    )
+                },
+                title = {
+                    Text(text = uiState.name)
+                },
+                actions = {
+                    if (uiState.requesting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(24.dp)
+                        )
+                    } else {
                         SimpleIconButton(
-                            onClick = onBackClick,
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
+                            onClick = onEditClick,
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Edit",
                         )
-                    },
-                    title = {
-                        Text(text = uiState.name)
-                    },
-                    actions = {
-                        if (uiState.requesting) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .padding(end = 8.dp)
-                                    .size(24.dp)
-                            )
-                        } else {
-                            SimpleIconButton(
-                                onClick = onEditClick,
-                                imageVector = Icons.Default.Check,
-                                contentDescription = "Edit",
-                            )
-                        }
                     }
-                )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(bottom = 30.dp)
-                    .verticalScroll(rememberScrollState())
-                    .imePadding(),
-            ) {
-                val headerHeight = 150.dp
-                val avatarSize = 80.dp
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(headerHeight + avatarSize / 2)
-                ) {
-                    HeaderInEdit(
-                        uiState = uiState,
-                        headerHeight = headerHeight,
-                        onHeaderSelected = onHeaderSelected,
-                    )
-                    AvatarInEdit(
-                        uiState = uiState,
-                        avatarSize = avatarSize,
-                        onAvatarSelected = onAvatarSelected,
-                    )
                 }
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                        .fillMaxWidth(),
-                    value = uiState.name,
-                    onValueChange = onUserNameChanged,
-                    placeholder = {
-                        Text(
-                            modifier = Modifier.alpha(0.7F),
-                            text = stringResource(LocalizedString.editProfileInputNameHint)
-                        )
-                    },
-                    label = {
-                        Text(text = stringResource(LocalizedString.editProfileLabelName))
-                    },
-                )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                        .fillMaxWidth(),
-                    value = uiState.description,
-                    onValueChange = onBioChanged,
-                    placeholder = {
-                        Text(
-                            modifier = Modifier.alpha(0.7F),
-                            text = stringResource(LocalizedString.editProfileInputNoteHint),
-                        )
-                    },
-                    label = {
-                        Text(text = stringResource(LocalizedString.editProfileLabelNote))
-                    },
-                )
-                AccountFieldListUi(
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(bottom = 30.dp)
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
+        ) {
+            val headerHeight = 150.dp
+            val avatarSize = 80.dp
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(headerHeight + avatarSize / 2)
+            ) {
+                HeaderInEdit(
                     uiState = uiState,
-                    onFieldChanged = onFieldChanged,
-                    onFieldDeleteClick = onFieldDeleteClick,
-                    onFieldAddClick = onFieldAddClick,
+                    headerHeight = headerHeight,
+                    onHeaderSelected = onHeaderSelected,
+                )
+                AvatarInEdit(
+                    uiState = uiState,
+                    avatarSize = avatarSize,
+                    onAvatarSelected = onAvatarSelected,
                 )
             }
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                    .fillMaxWidth(),
+                value = uiState.name,
+                onValueChange = onUserNameChanged,
+                placeholder = {
+                    Text(
+                        modifier = Modifier.alpha(0.7F),
+                        text = stringResource(LocalizedString.editProfileInputNameHint)
+                    )
+                },
+                label = {
+                    Text(text = stringResource(LocalizedString.editProfileLabelName))
+                },
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                    .fillMaxWidth(),
+                value = uiState.description,
+                onValueChange = onBioChanged,
+                placeholder = {
+                    Text(
+                        modifier = Modifier.alpha(0.7F),
+                        text = stringResource(LocalizedString.editProfileInputNoteHint),
+                    )
+                },
+                label = {
+                    Text(text = stringResource(LocalizedString.editProfileLabelNote))
+                },
+            )
+            AccountFieldListUi(
+                uiState = uiState,
+                onFieldChanged = onFieldChanged,
+                onFieldDeleteClick = onFieldDeleteClick,
+                onFieldAddClick = onFieldAddClick,
+            )
         }
     }
+}
 
-    @Composable
-    private fun AccountFieldListUi(
-        uiState: EditAccountUiState,
-        onFieldChanged: (Int, String, String) -> Unit,
-        onFieldDeleteClick: (Int) -> Unit,
-        onFieldAddClick: () -> Unit,
+@Composable
+private fun AccountFieldListUi(
+    uiState: EditAccountUiState,
+    onFieldChanged: (Int, String, String) -> Unit,
+    onFieldDeleteClick: (Int) -> Unit,
+    onFieldAddClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 16.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Text(
+            text = stringResource(LocalizedString.activity_pub_edit_account_info_label_about),
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        Box(modifier = Modifier.weight(1F))
+        if (uiState.fieldAddable) {
+            StyledIconButton(
+                onClick = onFieldAddClick,
+                imageVector = Icons.Default.Add,
+                style = IconButtonStyle.STANDARD,
+                contentDescription = "Add",
+            )
+        }
+    }
+    Box(modifier = Modifier.height(6.dp))
+    uiState.fieldList.forEach { fieldUiState ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(start = 16.dp, top = 11.dp, end = 8.dp, bottom = 11.dp),
         ) {
-            Text(
-                text = stringResource(LocalizedString.activity_pub_edit_account_info_label_about),
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            Box(modifier = Modifier.weight(1F))
-            if (uiState.fieldAddable) {
-                StyledIconButton(
-                    onClick = onFieldAddClick,
-                    imageVector = Icons.Default.Add,
-                    style = IconButtonStyle.STANDARD,
-                    contentDescription = "Add",
-                )
-            }
-        }
-        Box(modifier = Modifier.height(6.dp))
-        uiState.fieldList.forEach { fieldUiState ->
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 11.dp, end = 8.dp, bottom = 11.dp),
+                    .weight(1F)
+                    .padding(end = 8.dp)
             ) {
-                Column(
+
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = fieldUiState.name,
+                    onValueChange = {
+                        onFieldChanged(
+                            fieldUiState.idForUi,
+                            it,
+                            fieldUiState.value
+                        )
+                    },
+                )
+
+                OutlinedTextField(
                     modifier = Modifier
-                        .weight(1F)
-                        .padding(end = 8.dp)
-                ) {
-
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = fieldUiState.name,
-                        onValueChange = {
-                            onFieldChanged(
-                                fieldUiState.idForUi,
-                                it,
-                                fieldUiState.value
-                            )
-                        },
-                    )
-
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 6.dp),
-                        value = fieldUiState.value,
-                        onValueChange = {
-                            onFieldChanged(
-                                fieldUiState.idForUi,
-                                fieldUiState.name,
-                                it
-                            )
-                        },
-                    )
-                }
-
-                SimpleIconButton(
-                    onClick = { onFieldDeleteClick(fieldUiState.idForUi) },
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
+                        .fillMaxWidth()
+                        .padding(top = 6.dp),
+                    value = fieldUiState.value,
+                    onValueChange = {
+                        onFieldChanged(
+                            fieldUiState.idForUi,
+                            fieldUiState.name,
+                            it
+                        )
+                    },
                 )
             }
-        }
-    }
 
-    @Composable
-    private fun HeaderInEdit(
-        uiState: EditAccountUiState,
-        headerHeight: Dp,
-        onHeaderSelected: (PlatformUri) -> Unit,
-    ) {
-        PickVisualMediaLauncherContainer(
-            onResult = { it.firstOrNull()?.let(onHeaderSelected) },
-        ) {
-            AutoSizeImage(
-                uiState.header,
-                modifier = Modifier
-                    .height(headerHeight)
-                    .fillMaxWidth()
-                    .freadPlaceholder(uiState.header.isEmpty())
-                    .clickable {
-                        launchImage()
-                    },
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
+            SimpleIconButton(
+                onClick = { onFieldDeleteClick(fieldUiState.idForUi) },
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete",
             )
         }
     }
+}
 
-    @Composable
-    private fun BoxScope.AvatarInEdit(
-        uiState: EditAccountUiState,
-        avatarSize: Dp,
-        onAvatarSelected: (PlatformUri) -> Unit,
+@Composable
+private fun HeaderInEdit(
+    uiState: EditAccountUiState,
+    headerHeight: Dp,
+    onHeaderSelected: (PlatformUri) -> Unit,
+) {
+    PickVisualMediaLauncherContainer(
+        onResult = { it.firstOrNull()?.let(onHeaderSelected) },
     ) {
-        Box(
+        AutoSizeImage(
+            uiState.header,
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 16.dp)
-                .size(avatarSize)
-                .clip(CircleShape)
-                .border(2.dp, Color.White, CircleShape)
-                .freadPlaceholder(uiState.avatar.isEmpty())
-        ) {
-            AutoSizeImage(
-                uiState.avatar,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                contentDescription = "avatar",
-            )
-            PickVisualMediaLauncherContainer(
-                onResult = {
-                    it.firstOrNull()?.let(onAvatarSelected)
+                .height(headerHeight)
+                .fillMaxWidth()
+                .freadPlaceholder(uiState.header.isEmpty())
+                .clickable {
+                    launchImage()
                 },
-            ) {
-                SimpleIconButton(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5F))
-                        .padding(10.dp),
-                    onClick = {
-                        launchImage()
-                    },
-                    imageVector = Icons.Default.Edit,
-                    tint = Color.White,
-                    contentDescription = "Edit Avatar",
-                )
-            }
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
+private fun BoxScope.AvatarInEdit(
+    uiState: EditAccountUiState,
+    avatarSize: Dp,
+    onAvatarSelected: (PlatformUri) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .align(Alignment.BottomStart)
+            .padding(start = 16.dp)
+            .size(avatarSize)
+            .clip(CircleShape)
+            .border(2.dp, Color.White, CircleShape)
+            .freadPlaceholder(uiState.avatar.isEmpty())
+    ) {
+        AutoSizeImage(
+            uiState.avatar,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            contentDescription = "avatar",
+        )
+        PickVisualMediaLauncherContainer(
+            onResult = {
+                it.firstOrNull()?.let(onAvatarSelected)
+            },
+        ) {
+            SimpleIconButton(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5F))
+                    .padding(10.dp),
+                onClick = {
+                    launchImage()
+                },
+                imageVector = Icons.Default.Edit,
+                tint = Color.White,
+                contentDescription = "Edit Avatar",
+            )
         }
     }
 }

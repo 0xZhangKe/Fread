@@ -3,9 +3,12 @@ package com.zhangke.fread.commonbiz.shared
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.nav.NavEntryProvider
+import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreen
+import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreenNavKey
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreenKey
-import io.ktor.http.parametersOf
+import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
+import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreenNavKey
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.subclass
 import org.koin.compose.viewmodel.koinViewModel
@@ -19,9 +22,28 @@ class SharedScreenNavEntryProvider : NavEntryProvider {
                 viewModel = koinViewModel { parametersOf(it.userUrisJson) }
             )
         }
+        entry<StatusContextScreenNavKey> {
+            StatusContextScreen(
+                locator = it.locator,
+                serializedStatus = it.serializedStatus,
+                serializedBlog = it.serializedBlog,
+                blogId = it.blogId,
+                platform = it.platform,
+                blogTranslationUiState = it.blogTranslationUiState,
+                containerViewModel = koinViewModel(),
+            )
+        }
+        entry<RssBlogDetailScreenNavKey> {
+            RssBlogDetailScreen(
+                serializedBlog = it.serializedBlog,
+                viewModel = koinViewModel(),
+            )
+        }
     }
 
     override fun PolymorphicModuleBuilder<NavKey>.polymorph() {
         subclass(MultiAccountPublishingScreenKey::class)
+        subclass(StatusContextScreenNavKey::class)
+        subclass(RssBlogDetailScreenNavKey::class)
     }
 }

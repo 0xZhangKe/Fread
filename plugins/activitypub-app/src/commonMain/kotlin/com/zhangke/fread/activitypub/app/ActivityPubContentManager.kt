@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app
 
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
-import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentScreen
+import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentScreenKey
 import com.zhangke.fread.status.content.AddContentAction
 import com.zhangke.fread.status.content.IContentManager
 import com.zhangke.fread.status.model.ContentConfig
@@ -18,7 +18,7 @@ class ActivityPubContentManager @Inject constructor() : IContentManager {
     ) {
         if (platform.protocol.notActivityPub) return
         action.onFinishPage()
-        action.onOpenNewPage(AddActivityPubContentScreen(platform))
+        action.onOpenNewPage(AddActivityPubContentScreenKey(platform))
     }
 
     override fun restoreContent(config: ContentConfig): FreadContent? {

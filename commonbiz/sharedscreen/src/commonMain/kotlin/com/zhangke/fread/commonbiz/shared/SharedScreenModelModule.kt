@@ -13,9 +13,7 @@ import com.zhangke.fread.status.model.StatusProviderProtocol
 import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.Provides
 
-expect interface SharedScreenPlatformModule
-
-interface SharedScreenModelModule : SharedScreenPlatformModule {
+interface SharedScreenModelModule {
 
     @IntoMap
     @Provides

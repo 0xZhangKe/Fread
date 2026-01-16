@@ -23,7 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubListEntity
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -31,8 +31,8 @@ import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
-import com.zhangke.fread.activitypub.app.internal.screen.list.add.AddListScreen
-import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.list.add.AddListScreenNavKey
+import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.serialization.Serializable
@@ -55,11 +55,14 @@ fun CreatedListsScreen(
         onBackClick = backStack::removeLastOrNull,
         onRetryClick = viewModel::onRetryClick,
         onListClick = {
-            navigator.push(
-                EditListScreen(locator = locator, serializedList = globalJson.encodeToString(it))
+            backStack.add(
+                EditListScreenNavKey(
+                    locator = locator,
+                    serializedList = globalJson.encodeToString(it)
+                )
             )
         },
-        onAddListClick = { navigator.push(AddListScreen(locator)) },
+        onAddListClick = { backStack.add(AddListScreenNavKey(locator)) },
     )
     LaunchedEffect(Unit) { viewModel.onPageResume() }
     ConsumeSnackbarFlow(snackBarState, viewModel.snackBarFlow)
@@ -134,5 +137,4 @@ private fun CreatedListsContent(
             }
         }
     }
-}
 }

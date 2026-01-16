@@ -1,26 +1,22 @@
 package com.zhangke.fread.activitypub.app
 
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.screen.add.select.SelectPlatformScreen
-import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
+import com.zhangke.fread.activitypub.app.internal.screen.add.select.SelectPlatformScreenKey
+import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentTab
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
-import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreenKey
-import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
+import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreenKey
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
-import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreenKey
-import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.account.LoggedAccount
@@ -91,7 +87,7 @@ class ActivityPubScreenProvider @Inject constructor(
 
     override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): Tab? {
         if (content !is ActivityPubContent) return null
-        return ActivityPubContentScreen(content.id, isLatestTab)
+        return ActivityPubContentTab(content.id, isLatestTab)
     }
 
     override fun getEditContentConfigScreenScreen(content: FreadContent): NavKey? {
@@ -143,7 +139,7 @@ class ActivityPubScreenProvider @Inject constructor(
         protocol: StatusProviderProtocol
     ): NavKey? {
         if (protocol.notActivityPub) return null
-        return UserListScreen(
+        return UserListScreenKey(
             locator = locator,
             type = UserListType.FAVOURITES,
             statusId = blog.id,
@@ -156,7 +152,7 @@ class ActivityPubScreenProvider @Inject constructor(
         protocol: StatusProviderProtocol
     ): NavKey? {
         if (protocol.notActivityPub) return null
-        return UserListScreen(
+        return UserListScreenKey(
             locator = locator,
             type = UserListType.REBLOGS,
             statusId = blog.id,
@@ -169,7 +165,7 @@ class ActivityPubScreenProvider @Inject constructor(
         baseUrl: FormalBaseUrl,
     ): NavKey? {
         if (protocol.notActivityPub) return null
-        return InstanceDetailScreen(locator = locator, baseUrl = baseUrl)
+        return InstanceDetailScreenKey(locator = locator, baseUrl = baseUrl)
     }
 
     override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): Tab? {
@@ -179,11 +175,11 @@ class ActivityPubScreenProvider @Inject constructor(
 
     override fun getAddContentScreen(protocol: StatusProviderProtocol): NavKey? {
         if (protocol.notActivityPub) return null
-        return SelectPlatformScreen()
+        return SelectPlatformScreenKey
     }
 
     override fun getPublishScreen(account: LoggedAccount, text: String): NavKey? {
         if (account !is ActivityPubLoggedAccount) return null
-        return PostStatusScreen(accountUri = account.uri, defaultContent = text)
+        return PostStatusScreenKey(accountUri = account.uri, defaultContent = text)
     }
 }

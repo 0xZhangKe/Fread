@@ -1,20 +1,18 @@
 package com.zhangke.fread.bluesky.internal.screen.search
 
 import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.hilt.getViewModel
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.fread.commonbiz.shared.screen.search.AbstractSearchStatusScreen
-import com.zhangke.fread.commonbiz.shared.screen.search.AbstractSearchStatusViewModel
 import com.zhangke.fread.status.model.PlatformLocator
+import kotlinx.serialization.Serializable
 
-class SearchStatusScreen(
-    private val locator: PlatformLocator,
-    private val did: String,
-) : AbstractSearchStatusScreen() {
+@Serializable
+data class SearchStatusScreenNavKey(
+    val locator: PlatformLocator,
+    val did: String,
+) : NavKey
 
-    @Composable
-    override fun createViewModel(): AbstractSearchStatusViewModel {
-        return getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory> {
-            it.create(locator, did)
-        }
-    }
+@Composable
+fun SearchStatusScreen(viewModel: SearchStatusViewModel) {
+    AbstractSearchStatusScreen(viewModel)
 }

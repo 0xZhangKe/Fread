@@ -10,11 +10,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.serialization.Serializable
 
@@ -34,12 +34,12 @@ fun StatusListScreen(locator: PlatformLocator, type: StatusListType) {
         )
     }
     val snackBarHostState = rememberSnackbarHostState()
-    val navigator = LocalNavigator.currentOrThrow
+    val backStack = LocalNavBackStack.currentOrThrow
     Scaffold(
         topBar = {
             Toolbar(
                 title = tab.options?.title.orEmpty(),
-                onBackClick = navigator::pop,
+                onBackClick = backStack::removeLastOrNull,
             )
         },
         snackbarHost = {

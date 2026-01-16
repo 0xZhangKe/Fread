@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.zhangke.fread.commonbiz.shared.db.SelectedAccountPublishingDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 
 actual fun Module.createPlatformModule() {
     single<SelectedAccountPublishingDatabase> {
@@ -13,4 +14,5 @@ actual fun Module.createPlatformModule() {
             SelectedAccountPublishingDatabase.DB_NAME,
         ).build()
     }
+    factoryOf(::SharedScreenAndroidEntryProvider)
 }

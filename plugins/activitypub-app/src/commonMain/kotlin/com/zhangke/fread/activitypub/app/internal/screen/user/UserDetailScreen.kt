@@ -56,8 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
@@ -73,20 +72,16 @@ import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
-import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreenNavKey
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreenKey
-import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreenKey
-import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsScreen
-import com.zhangke.fread.activitypub.app.internal.screen.search.SearchStatusScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsScreenKey
+import com.zhangke.fread.activitypub.app.internal.screen.search.SearchStatusScreenNavKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListTabStatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
-import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
@@ -156,8 +151,8 @@ fun UserDetailScreen(
         },
         onSearchClick = {
             uiState.accountUiState?.account?.id?.let { userId ->
-                navigator.push(
-                    SearchStatusScreen(
+                backstack.add(
+                    SearchStatusScreenNavKey(
                         locator = uiState.locator,
                         userId = userId,
                     )
@@ -167,7 +162,7 @@ fun UserDetailScreen(
         onBookmarksClick = {
             backstack.add(StatusListScreenKey(locator = locator, type = StatusListType.BOOKMARKS))
         },
-        onBackClick = navigator::pop,
+        onBackClick = backstack::removeLastOrNull,
         onFollowAccountClick = viewModel::onFollowClick,
         onUnfollowAccountClick = viewModel::onUnfollowClick,
         onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
@@ -222,7 +217,12 @@ fun UserDetailScreen(
         onEditClick = {
             uiState.userInsight
                 ?.let {
-                    navigator.push(EditAccountInfoScreen(it.baseUrl, it.uri))
+                    backstack.add(
+                        EditAccountInfoScreenNavKey(
+                            baseUrl = it.baseUrl.toString(),
+                            accountUri = it.uri.toString(),
+                        )
+                    )
                 }
         },
         onFollowerClick = {
@@ -283,7 +283,7 @@ fun UserDetailScreen(
             backstack.add(FiltersListScreenKey(uiState.locator))
         },
         onCreatedListClick = {
-            backstack.add(CreatedListsScreen(uiState.locator))
+            backstack.add(CreatedListsScreenKey(uiState.locator))
         },
         onLogoutClick = {
             viewModel.onLogoutClick()

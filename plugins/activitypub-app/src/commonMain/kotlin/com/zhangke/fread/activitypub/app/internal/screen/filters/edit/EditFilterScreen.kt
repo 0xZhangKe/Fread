@@ -23,7 +23,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -47,7 +46,6 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberFutureDatePickerState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
-import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.utils.getScreenWidth
@@ -70,10 +68,8 @@ data class EditFilterScreenKey(
 @Composable
 fun EditFilterScreen(viewModel: EditFilterViewModel, id: String?) {
     val backStack = LocalNavBackStack.currentOrThrow
-    val addedKeywordList by navigator.navigationResult
-        .getResult<List<EditFilterUiState.Keyword>>(screenKey = HiddenKeywordScreen.SCREEN_KEY)
-    LaunchedEffect(addedKeywordList) {
-        addedKeywordList?.let(viewModel::onKeywordChanged)
+    ConsumeFlow(HiddenKeywordScreenNavKey.keywordsListFlow.flow) {
+        viewModel.onKeywordChanged(it)
     }
     val uiState by viewModel.uiState.collectAsState()
     val snackBarHostState = rememberSnackbarHostState()
@@ -100,7 +96,7 @@ fun EditFilterScreen(viewModel: EditFilterViewModel, id: String?) {
         onTitleChanged = viewModel::onTitleChanged,
         onExpiredDateSelected = viewModel::onExpiredDateSelected,
         onKeywordClick = {
-            backStack.add(HiddenKeywordScreen(uiState.keywordList))
+            backStack.add(HiddenKeywordScreenNavKey(uiState.keywordList))
         },
         onContextChanged = viewModel::onContextChanged,
         onWarningCheckChanged = viewModel::onWarningCheckChanged,

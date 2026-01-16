@@ -29,10 +29,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -40,7 +40,6 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreenKey
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalTextHandler
@@ -67,11 +66,8 @@ fun InstanceDetailScreen(locator: PlatformLocator, viewModel: InstanceDetailView
     val backStack = LocalNavBackStack.currentOrThrow
     InstanceDetailContent(
         uiState = uiState,
-        onBackClick = {
-            if (!navigator.pop()) {
-                navigationResult.popWithResult(false)
-            }
-        },
+        locator = locator,
+        onBackClick = { backStack.removeLastOrNull() },
         onUserClick = { _, webFinger, userId ->
             backStack.add(
                 UserDetailScreenKey(
@@ -87,6 +83,7 @@ fun InstanceDetailScreen(locator: PlatformLocator, viewModel: InstanceDetailView
 @Composable
 private fun InstanceDetailContent(
     uiState: InstanceDetailUiState,
+    locator: PlatformLocator,
     onBackClick: () -> Unit,
     onUserClick: (PlatformLocator, WebFinger, String?) -> Unit,
 ) {
@@ -103,9 +100,7 @@ private fun InstanceDetailContent(
         privateNote = null,
         topBarActions = {
             val baseUrl = uiState.baseUrl
-            if (baseUrl != null) {
-                InstanceDetailActions(baseUrl)
-            }
+            InstanceDetailActions(baseUrl)
         },
         contentCanScrollBackward = contentCanScrollBackward,
         description = buildRichText(uiState.instance?.description.orEmpty()),
@@ -163,14 +158,11 @@ private fun InstanceDetailContent(
                         .weight(1F),
                     state = pagerState,
                 ) { currentPage ->
-                    if (uiState.baseUrl != null) {
-                        tabs[currentPage].content(
-                            this@InstanceDetailScreen,
-                            uiState.baseUrl,
-                            uiState.instance.rules,
-                            contentCanScrollBackward,
-                        )
-                    }
+                    tabs[currentPage].content(
+                        uiState.baseUrl,
+                        uiState.instance.rules,
+                        contentCanScrollBackward,
+                    )
                 }
             }
         }
@@ -217,7 +209,7 @@ private fun InstanceModLine(
                     .noRippleClick {
                         val account = uiState.modAccount ?: return@noRippleClick
                         val role =
-                            PlatformLocator(accountUri = account.uri, baseUrl = baseUrl)
+                            PlatformLocator(accountUri = account.uri, baseUrl = uiState.baseUrl)
                         onUserClick(role, account.webFinger, account.userId)
                     },
                 verticalAlignment = Alignment.CenterVertically,

@@ -1,10 +1,9 @@
 package com.zhangke.fread.rss
 
-import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.composable.PagerTab
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.rss.internal.screen.source.RssSourceScreen
+import com.zhangke.fread.rss.internal.screen.source.RssSourceScreenNavKey
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.blog.Blog
@@ -20,15 +19,15 @@ class RssScreenProvider @Inject constructor(
     private val uriTransformer: RssUriTransformer,
 ) : IStatusScreenProvider {
 
-    override fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    override fun getReplyBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return null
     }
 
-    override fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    override fun getEditBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return null
     }
 
-    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): Screen? {
+    override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return null
     }
 
@@ -36,7 +35,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
+    override fun getEditContentConfigScreenScreen(content: FreadContent): NavKey? {
         return null
     }
 
@@ -44,22 +43,22 @@ class RssScreenProvider @Inject constructor(
         locator: PlatformLocator,
         uri: FormalUri,
         userId: String?
-    ): Screen? {
+    ): NavKey? {
         return getUserDetailScreenWithoutAccount(uri)
     }
 
-    override fun getUserDetailScreenWithoutAccount(uri: FormalUri): Screen? {
+    override fun getUserDetailScreenWithoutAccount(uri: FormalUri): NavKey? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri) ?: return null
         val url = uriInsight.url
-        return RssSourceScreen(url)
+        return RssSourceScreenNavKey(url)
     }
 
     override fun getUserDetailScreen(
         locator: PlatformLocator,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         return null
     }
 
@@ -67,7 +66,7 @@ class RssScreenProvider @Inject constructor(
         locator: PlatformLocator,
         did: String,
         protocol: StatusProviderProtocol
-    ): Screen? {
+    ): NavKey? {
         return null
     }
 
@@ -75,7 +74,7 @@ class RssScreenProvider @Inject constructor(
         locator: PlatformLocator,
         tag: String,
         protocol: StatusProviderProtocol,
-    ): Screen? {
+    ): NavKey? {
         return null
     }
 
@@ -83,7 +82,7 @@ class RssScreenProvider @Inject constructor(
         locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
-    ): Screen? {
+    ): NavKey? {
         return null
     }
 
@@ -91,7 +90,7 @@ class RssScreenProvider @Inject constructor(
         locator: PlatformLocator,
         blog: Blog,
         protocol: StatusProviderProtocol
-    ): Screen? {
+    ): NavKey? {
         return null
     }
 

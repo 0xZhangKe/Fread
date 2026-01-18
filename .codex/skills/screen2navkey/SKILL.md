@@ -3,9 +3,10 @@ name: screen2navkey
 description: convert Voyager Screen to navigation 3
 ---
 
-## 目的
+## 任务背景
 目前项目中使用了 Voyager(cafe.adriel.voyager:voyager-navigator) 作为导航框架，现在我希望将 Voyager 替换成 navigation3(androidx.navigation3:navigation3-runtime).
 
+## 任务内容
 目前 nav3 我已经集成并且完成了部分代码的重构，现在你需要帮我做一件事情，将一些 Screen 替换成 一个 Composable 函数 + NavKey。
 
 你的目的是把继承自 cafe.adriel.voyager.core.screen.Screen 或者 com.zhangke.fread.common.page.BaseScreen 的类改成 androix.navigaton3 的一个 NavKey + 对应的 Composable 函数。
@@ -107,4 +108,5 @@ class ProfileNavEntryProvider : NavEntryProvider {
 6. 不要求改任何嵌套的 Navigator 页面，遇到嵌套的情况直接跳过
 7. 不要修改任何已经使用 navigation3 的页面
 8. 不要通过代码引用的方式找某个页面的引用并且试图修改其引用点
+9. 不要修改任何超出要求的代码
 

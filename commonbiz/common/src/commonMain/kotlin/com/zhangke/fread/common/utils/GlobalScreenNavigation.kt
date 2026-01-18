@@ -1,7 +1,6 @@
 package com.zhangke.fread.common.utils
 
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

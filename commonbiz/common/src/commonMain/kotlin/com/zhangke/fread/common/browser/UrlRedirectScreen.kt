@@ -26,17 +26,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.architect.theme.dialogScrim
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.composable.SelectableAccount
 import com.zhangke.fread.common.deeplink.SelectAccountForPublishScreenKey
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.StatusProvider
@@ -61,12 +59,12 @@ data class UrlRedirectScreenKey(
 
 @Composable
 fun UrlRedirectScreen(uri: String, viewModel: UrlRedirectViewModel) {
-    val transparentNavigator = LocalNavigator.currentOrThrow
+    val backStack = LocalNavBackStack.currentOrThrow
     val browserLauncher = LocalActivityBrowserLauncher.current
-    ConsumeFlow(viewModel.finishPageFlow) { transparentNavigator.pop() }
+    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
     ConsumeFlow(viewModel.openNewPageFlow) { GlobalScreenNavigation.navigate(it) }
     ConsumeFlow(viewModel.finishAndOpenUrlTab) {
-        transparentNavigator.pop()
+        backStack.removeLastOrNull()
         browserLauncher.launchWebTabInApp(
             url = uri,
             locator = null,
@@ -74,7 +72,7 @@ fun UrlRedirectScreen(uri: String, viewModel: UrlRedirectViewModel) {
         )
     }
     ConsumeFlow(viewModel.finishAndOpenPublishScreen) {
-        transparentNavigator.pop()
+        backStack.removeLastOrNull()
         GlobalScreenNavigation.navigateByTransparent(SelectAccountForPublishScreenKey(uri))
     }
     val pageState by viewModel.pageState.collectAsState()

@@ -15,7 +15,7 @@ object ExternalInputHandler {
         val uri = SimpleUri.parse(fixedText)
         if (uri == null || uri.host.isNullOrEmpty()) {
             // goto publish screen
-            GlobalScreenNavigation.navigateByTransparent(SelectAccountForPublishScreen(fixedText))
+            GlobalScreenNavigation.navigateByTransparent(SelectAccountForPublishScreenKey(fixedText))
         } else {
             val action = KRouter.route<RouteAction>(fixedText)
             if (action?.execute() == true) return

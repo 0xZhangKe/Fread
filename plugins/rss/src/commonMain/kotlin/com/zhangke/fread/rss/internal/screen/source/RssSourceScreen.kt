@@ -28,227 +28,222 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.utils.UrlEncoder
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class RssSourceScreen(private val url: String) : BaseScreen() {
+@Serializable
+data class RssSourceScreenNavKey(val url: String) : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<RssSourceViewModel, RssSourceViewModel.Factory> {
-            it.create(UrlEncoder.decode(url))
+@Composable
+fun RssSourceScreen(viewModel: RssSourceViewModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    RssSourceContent(
+        uiState = uiState,
+        snackBarMessageFlow = viewModel.snackBarMessageFlow,
+        onBackClick = { backStack.removeLastOrNull() },
+        onDisplayNameChanged = viewModel::onDisplayNameChanged,
+    )
+}
+
+@Composable
+private fun RssSourceContent(
+    uiState: RssSourceUiState,
+    snackBarMessageFlow: Flow<TextString>,
+    onBackClick: () -> Unit,
+    onDisplayNameChanged: (String) -> Unit,
+) {
+    val browserLauncher = LocalActivityBrowserLauncher.current
+    val snackBarState = rememberSnackbarHostState()
+    val coroutineScope = rememberCoroutineScope()
+    ConsumeSnackbarFlow(snackBarState, snackBarMessageFlow)
+    Scaffold(
+        topBar = {
+            Toolbar(
+                onBackClick = onBackClick,
+                title = stringResource(LocalizedString.rss_source_detail_screen_title),
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(snackBarState)
         }
-        val uiState by viewModel.uiState.collectAsState()
-        RssSourceContent(
-            uiState = uiState,
-            snackBarMessageFlow = viewModel.snackBarMessageFlow,
-            onBackClick = navigator::pop,
-            onDisplayNameChanged = viewModel::onDisplayNameChanged,
-        )
-    }
-
-    @Composable
-    private fun RssSourceContent(
-        uiState: RssSourceUiState,
-        snackBarMessageFlow: Flow<TextString>,
-        onBackClick: () -> Unit,
-        onDisplayNameChanged: (String) -> Unit,
-    ) {
-        val browserLauncher = LocalActivityBrowserLauncher.current
-        val snackBarState = rememberSnackbarHostState()
-        val coroutineScope = rememberCoroutineScope()
-        ConsumeSnackbarFlow(snackBarState, snackBarMessageFlow)
-        Scaffold(
-            topBar = {
-                Toolbar(
-                    onBackClick = onBackClick,
-                    title = stringResource(LocalizedString.rss_source_detail_screen_title),
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(snackBarState)
-            }
-        ) { paddingValues ->
-            Column(
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+        ) {
+            BlogAuthorAvatar(
                 modifier = Modifier
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                BlogAuthorAvatar(
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 20.dp)
-                        .size(80.dp),
-                    imageUrl = uiState.source?.thumbnail,
-                )
+                    .padding(start = 16.dp, top = 20.dp)
+                    .size(80.dp),
+                imageUrl = uiState.source?.thumbnail,
+            )
 
-                Text(
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                        .freadPlaceholder(uiState.source?.title.isNullOrEmpty()),
-                    style = MaterialTheme.typography.titleMedium,
-                    text = uiState.source?.title.orEmpty(),
-                )
+            Text(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                    .freadPlaceholder(uiState.source?.title.isNullOrEmpty()),
+                style = MaterialTheme.typography.titleMedium,
+                text = uiState.source?.title.orEmpty(),
+            )
 
-                FreadRichText(
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                        .freadPlaceholder(uiState.source?.description.isNullOrEmpty()),
-                    content = uiState.source?.description.orEmpty(),
-                    mentions = emptyList(),
-                    emojis = emptyList(),
-                    tags = emptyList(),
-                    onHashtagClick = {},
-                    onMentionClick = {},
-                    onUrlClick = {
-                        browserLauncher.launchWebTabInApp(coroutineScope, it)
+            FreadRichText(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                    .freadPlaceholder(uiState.source?.description.isNullOrEmpty()),
+                content = uiState.source?.description.orEmpty(),
+                mentions = emptyList(),
+                emojis = emptyList(),
+                tags = emptyList(),
+                onHashtagClick = {},
+                onMentionClick = {},
+                onUrlClick = {
+                    browserLauncher.launchWebTabInApp(coroutineScope, it)
+                },
+            )
+
+            Spacer(modifier = Modifier.height(22.dp))
+
+            val rssSource = uiState.source
+            if (rssSource != null) {
+                CustomTitleItem(
+                    displayName = rssSource.displayName,
+                    onDisplayNameChanged = onDisplayNameChanged,
+                )
+                RssInfoItem(
+                    modifier = Modifier.clickable {
+                        browserLauncher.launchWebTabInApp(coroutineScope, rssSource.url)
                     },
+                    title = stringResource(LocalizedString.rss_source_detail_screen_url),
+                    content = rssSource.url,
                 )
-
-                Spacer(modifier = Modifier.height(22.dp))
-
-                val rssSource = uiState.source
-                if (rssSource != null) {
-                    CustomTitleItem(
-                        displayName = rssSource.displayName,
-                        onDisplayNameChanged = onDisplayNameChanged,
-                    )
+                if (rssSource.homePage.isNullOrEmpty().not()) {
                     RssInfoItem(
                         modifier = Modifier.clickable {
-                            browserLauncher.launchWebTabInApp(coroutineScope, rssSource.url)
+                            browserLauncher.launchWebTabInApp(coroutineScope, rssSource.homePage)
                         },
-                        title = stringResource(LocalizedString.rss_source_detail_screen_url),
-                        content = rssSource.url,
-                    )
-                    if (rssSource.homePage.isNullOrEmpty().not()) {
-                        RssInfoItem(
-                            modifier = Modifier.clickable {
-                                browserLauncher.launchWebTabInApp(coroutineScope, rssSource.homePage)
-                            },
-                            title = stringResource(LocalizedString.rss_source_detail_screen_home_url),
-                            content = rssSource.homePage,
-                        )
-                    }
-                    RssInfoItem(
-                        title = stringResource(LocalizedString.rss_source_detail_screen_add_date),
-                        content = uiState.formattedAddDate.orEmpty(),
-                    )
-                    RssInfoItem(
-                        title = stringResource(LocalizedString.rss_source_detail_screen_last_update_date),
-                        content = uiState.formattedLastUpdateDate.orEmpty(),
+                        title = stringResource(LocalizedString.rss_source_detail_screen_home_url),
+                        content = rssSource.homePage,
                     )
                 }
+                RssInfoItem(
+                    title = stringResource(LocalizedString.rss_source_detail_screen_add_date),
+                    content = uiState.formattedAddDate.orEmpty(),
+                )
+                RssInfoItem(
+                    title = stringResource(LocalizedString.rss_source_detail_screen_last_update_date),
+                    content = uiState.formattedLastUpdateDate.orEmpty(),
+                )
             }
         }
     }
+}
 
-    @Composable
-    private fun CustomTitleItem(
-        displayName: String,
-        onDisplayNameChanged: (String) -> Unit,
-    ) {
-        var showEditDisplayNameDialog by remember {
-            mutableStateOf(false)
+@Composable
+private fun CustomTitleItem(
+    displayName: String,
+    onDisplayNameChanged: (String) -> Unit,
+) {
+    var showEditDisplayNameDialog by remember {
+        mutableStateOf(false)
+    }
+    RssInfoItem(
+        title = stringResource(LocalizedString.rss_source_detail_screen_custom_title),
+        content = displayName,
+        option = {
+            SimpleIconButton(
+                onClick = { showEditDisplayNameDialog = true },
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit",
+            )
+        },
+    )
+
+    if (showEditDisplayNameDialog) {
+        var newDisplayName by remember {
+            mutableStateOf(displayName)
         }
-        RssInfoItem(
-            title = stringResource(LocalizedString.rss_source_detail_screen_custom_title),
-            content = displayName,
-            option = {
-                SimpleIconButton(
-                    onClick = { showEditDisplayNameDialog = true },
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit",
-                )
+        FreadDialog(
+            title = stringResource(LocalizedString.alert),
+            onDismissRequest = {
+                showEditDisplayNameDialog = false
             },
-        )
-
-        if (showEditDisplayNameDialog) {
-            var newDisplayName by remember {
-                mutableStateOf(displayName)
-            }
-            FreadDialog(
-                title = stringResource(LocalizedString.alert),
-                onDismissRequest = {
-                    showEditDisplayNameDialog = false
-                },
-                positiveButtonText = stringResource(LocalizedString.ok),
-                onPositiveClick = {
-                    showEditDisplayNameDialog = false
-                    if (newDisplayName != displayName) {
-                        onDisplayNameChanged(newDisplayName)
-                    }
-                },
-                negativeButtonText = stringResource(LocalizedString.cancel),
-                onNegativeClick = {
-                    showEditDisplayNameDialog = false
-                },
-                content = {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        value = newDisplayName,
-                        onValueChange = {
-                            newDisplayName = it
-                        },
-                        label = {
-                            Text(text = stringResource(LocalizedString.rss_source_detail_screen_custom_title))
-                        }
-                    )
+            positiveButtonText = stringResource(LocalizedString.ok),
+            onPositiveClick = {
+                showEditDisplayNameDialog = false
+                if (newDisplayName != displayName) {
+                    onDisplayNameChanged(newDisplayName)
                 }
+            },
+            negativeButtonText = stringResource(LocalizedString.cancel),
+            onNegativeClick = {
+                showEditDisplayNameDialog = false
+            },
+            content = {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    value = newDisplayName,
+                    onValueChange = {
+                        newDisplayName = it
+                    },
+                    label = {
+                        Text(text = stringResource(LocalizedString.rss_source_detail_screen_custom_title))
+                    }
+                )
+            }
+        )
+    }
+}
+
+@Composable
+private fun RssInfoItem(
+    title: String,
+    content: String,
+    modifier: Modifier = Modifier,
+    option: (@Composable () -> Unit)? = null,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1F)
+                .padding(end = 16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
-    }
-
-    @Composable
-    private fun RssInfoItem(
-        title: String,
-        content: String,
-        modifier: Modifier = Modifier,
-        option: (@Composable () -> Unit)? = null,
-    ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1F)
-                    .padding(end = 16.dp)
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Text(
-                    text = content,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-            if (option != null) {
-                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    option()
-                }
+        if (option != null) {
+            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                option()
             }
         }
     }

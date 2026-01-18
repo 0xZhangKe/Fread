@@ -1,7 +1,6 @@
 package com.zhangke.fread.explore.screens.home
 
 import androidx.lifecycle.ViewModel
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.nav.Tab
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer

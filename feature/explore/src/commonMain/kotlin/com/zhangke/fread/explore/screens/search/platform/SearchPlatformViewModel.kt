@@ -1,7 +1,7 @@
 package com.zhangke.fread.explore.screens.search.platform
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.emitInViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
@@ -30,8 +30,8 @@ open class SearchPlatformViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SearchedPlatformUiState.default())
     val uiState: StateFlow<SearchedPlatformUiState> get() = _uiState
 
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
-    val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
+    private val _openScreenFlow = MutableSharedFlow<NavKey>()
+    val openScreenFlow: SharedFlow<NavKey> get() = _openScreenFlow
 
     init {
         launchInViewModel {

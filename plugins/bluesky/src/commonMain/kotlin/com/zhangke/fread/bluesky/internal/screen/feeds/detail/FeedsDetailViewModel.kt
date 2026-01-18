@@ -25,11 +25,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class FeedsDetailViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
@@ -66,6 +67,7 @@ class FeedsDetailViewModel @Inject constructor(
         getFeedsDetail()
     }
 
+    @OptIn(ExperimentalTime::class)
     fun onLikeClick() {
         if (likeJob?.isActive == true) return
         val feeds = _uiState.value.feeds

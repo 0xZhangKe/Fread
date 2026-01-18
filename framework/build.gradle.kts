@@ -18,7 +18,6 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(path = ":localization"))
-                implementation(libs.bundles.voyager)
 
                 implementation(compose.components.resources)
 

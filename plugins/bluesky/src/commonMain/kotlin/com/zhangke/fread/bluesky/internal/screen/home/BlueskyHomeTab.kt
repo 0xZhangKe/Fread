@@ -32,26 +32,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.TopBarWithTabLayout
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
-import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
+import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
-import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreen
-import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreenNavKey
 import com.zhangke.fread.commonbiz.shared.composable.NotLoginPageError
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.ContentToolbar
@@ -71,21 +66,23 @@ class BlueskyHomeTab(
     @Composable
     override fun Content() {
         super.Content()
-        val navigator = LocalNavigator.currentOrThrow
+        val backStack = LocalNavBackStack.currentOrThrow
         val viewModel = koinViewModel<BlueskyHomeContainerViewModel>().getSubViewModel(contentId)
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
         BlueskyHomeContent(
             uiState = uiState,
             snackBarHostState = snackBarHostState,
-            onPostBlogClick = { uiState.locator?.let { navigator.push(PublishPostScreen(it)) } },
+            onPostBlogClick = {
+                uiState.locator?.let { backStack.add(PublishPostScreenNavKey(locator = it)) }
+            },
             onTitleClick = {},
             onLoginClick = {
                 uiState.content?.baseUrl?.let { baseUrl ->
-                    navigator.push(
-                        AddBlueskyContentScreen(
+                    backStack.add(
+                        AddBlueskyContentScreenNavKey(
                             baseUrl = baseUrl,
-                            loginMode = true
+                            loginMode = true,
                         )
                     )
                 }

@@ -8,39 +8,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.DefaultLoading
-import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.search.SearchedPlatform
 import com.zhangke.fread.status.ui.source.SearchPlatformResultUi
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 internal class SearchedPlatformTab(
     private val locator: PlatformLocator,
     private val query: String,
-) : BasePagerTab() {
+) : BaseTab() {
 
-    override val options: PagerTabOptions
-        @Composable get() = PagerTabOptions(
+    override val options: TabOptions
+        @Composable get() = TabOptions(
             title = stringResource(LocalizedString.explorerSearchTabTitleServer),
         )
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
-        val viewModel = with(screen) {
-            getViewModel<SearchPlatformViewModel, SearchPlatformViewModel.Factory> {
-                it.create(locator, query)
-            }
+    override fun Content() {
+        super.Content()
+        val viewModel = koinViewModel<SearchPlatformViewModel> {
+            parametersOf(locator, query)
         }
         val uiState by viewModel.uiState.collectAsState()
         SearchedSourcesContent(

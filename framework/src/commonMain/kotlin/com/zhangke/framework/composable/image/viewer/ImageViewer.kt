@@ -13,7 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
@@ -25,15 +27,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.toSize
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
-import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.zhangke.framework.ktx.isSingle
 import com.zhangke.framework.utils.pxToDp
 import kotlinx.coroutines.launch
 
 private val infinityConstraints = Constraints()
 
-@OptIn(InternalVoyagerApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ImageViewer(
     state: ImageViewerState,

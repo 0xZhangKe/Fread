@@ -26,8 +26,6 @@ kotlin {
 
                 implementation(libs.arrow.core)
 
-                implementation(libs.bundles.voyager)
-
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
                 implementation(libs.kotlinInject.runtime)

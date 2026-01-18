@@ -44,7 +44,6 @@ kotlin {
                 implementation(libs.androidx.room)
                 implementation(libs.auto.service.annotations)
                 implementation(libs.androidx.paging.common)
-                implementation(libs.bundles.voyager)
                 implementation(libs.leftright)
 
                 implementation(libs.krouter.runtime)

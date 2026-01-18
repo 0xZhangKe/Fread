@@ -25,14 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.architect.theme.dialogScrim
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.composable.SelectableAccount
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
@@ -54,19 +54,19 @@ data class SelectAccountForPublishScreenKey(val text: String) : NavKey
 @Composable
 fun SelectAccountForPublishScreen(viewModel: SelectAccountForPublishViewModel) {
     val loadingAccountList by viewModel.loggedAccounts.collectAsState()
-    val navigator = LocalNavigator.currentOrThrow
+    val navigator = LocalNavBackStack.currentOrThrow
     ConsumeFlow(viewModel.openScreenFlow) {
-        navigator.pop()
+        navigator.removeLastOrNull()
         GlobalScreenNavigation.navigate(it)
     }
     ConsumeFlow(viewModel.finishScreenFlow) {
-        navigator.pop()
+        navigator.removeLastOrNull()
     }
     Box(
         modifier = Modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.dialogScrim)
             .padding(horizontal = 32.dp)
-            .noRippleClick { navigator.pop() },
+            .noRippleClick { navigator.removeLastOrNull() },
         contentAlignment = Alignment.Center,
     ) {
         when (loadingAccountList) {
@@ -112,7 +112,7 @@ fun SelectAccountForPublishScreen(viewModel: SelectAccountForPublishViewModel) {
             }
 
             else -> {
-                navigator.pop()
+                navigator.removeLastOrNull()
             }
         }
     }

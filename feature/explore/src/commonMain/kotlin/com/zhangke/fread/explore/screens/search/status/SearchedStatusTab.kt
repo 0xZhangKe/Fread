@@ -10,8 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
@@ -20,8 +19,8 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.TabOptions
-import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -44,7 +43,7 @@ internal class SearchedStatusTab(
     @Composable
     override fun Content() {
         super.Content()
-        val navigator = LocalNavigator.currentOrThrow
+        val backStack = LocalNavBackStack.currentOrThrow
         val viewModel = koinViewModel<SearchStatusViewModel> { parametersOf(locator) }
         val uiState by viewModel.uiState.collectAsState()
 
@@ -64,7 +63,7 @@ internal class SearchedStatusTab(
             nestedScrollConnection = null,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.tryPush(it)
+            backStack.add(it)
         }
         val snackbarHostState = LocalSnackbarHostState.currentOrThrow
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

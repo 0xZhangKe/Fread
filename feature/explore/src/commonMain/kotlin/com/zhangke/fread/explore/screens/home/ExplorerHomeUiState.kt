@@ -1,6 +1,5 @@
 package com.zhangke.fread.explore.screens.home
 
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.nav.Tab
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator

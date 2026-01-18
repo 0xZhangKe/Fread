@@ -17,20 +17,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadErrorLineItem
 import com.zhangke.framework.composable.LoadingLineItem
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
-import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.fread.commonbiz.shared.composable.onOpenBlogWithOtherAccountClick
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
+import com.zhangke.fread.commonbiz.shared.screen.status.account.SelectAccountOpenStatusBottomSheet
+import com.zhangke.fread.commonbiz.shared.screen.status.account.rememberSelectAccountOpenStatusSheetState
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
@@ -106,7 +105,6 @@ fun StatusContextScreen(
     containerViewModel: StatusContextViewModel,
 ) {
     val backStack = LocalNavBackStack.currentOrThrow
-    val transparentNavigator = LocalTransparentNavigator.current
     val viewModel = containerViewModel.getSubViewModel(
         locator = locator,
         anchorStatus = serializedStatus?.let(globalJson::decodeFromString),
@@ -123,7 +121,6 @@ fun StatusContextScreen(
         onScrolledToAnchor = viewModel::onScrolledToAnchor,
         onMediaClick = { event ->
             onStatusMediaClick(
-                transparentNavigator = transparentNavigator,
                 navigator = backStack,
                 event = event,
             )
@@ -223,7 +220,7 @@ private fun StatusInContextUi(
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val bottomNavigator = LocalBottomSheetNavigator.current
+    val selectAccountOpenStatusBottomSheetState = rememberSelectAccountOpenStatusSheetState()
     when (statusInContext.type) {
         StatusInContextType.ANCESTOR -> StatusUi(
             modifier = modifier.clickable {
@@ -239,7 +236,7 @@ private fun StatusInContextUi(
             onMediaClick = onMediaClick,
             composedStatusInteraction = composedStatusInteraction,
             onOpenBlogWithOtherAccountClick = {
-                onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                selectAccountOpenStatusBottomSheetState.show(it)
             },
         )
 
@@ -252,7 +249,7 @@ private fun StatusInContextUi(
             detailModel = true,
             composedStatusInteraction = composedStatusInteraction,
             onOpenBlogWithOtherAccountClick = {
-                onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                selectAccountOpenStatusBottomSheetState.show(it)
             },
         )
 
@@ -266,7 +263,7 @@ private fun StatusInContextUi(
             threadsType = ThreadsType.NONE,
             composedStatusInteraction = composedStatusInteraction,
             onOpenBlogWithOtherAccountClick = {
-                onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                selectAccountOpenStatusBottomSheetState.show(it)
             },
         )
 
@@ -280,7 +277,7 @@ private fun StatusInContextUi(
             onMediaClick = onMediaClick,
             composedStatusInteraction = composedStatusInteraction,
             onOpenBlogWithOtherAccountClick = {
-                onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                selectAccountOpenStatusBottomSheetState.show(it)
             },
         )
 
@@ -294,7 +291,7 @@ private fun StatusInContextUi(
             onMediaClick = onMediaClick,
             composedStatusInteraction = composedStatusInteraction,
             onOpenBlogWithOtherAccountClick = {
-                onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                selectAccountOpenStatusBottomSheetState.show(it)
             },
         )
 
@@ -308,8 +305,9 @@ private fun StatusInContextUi(
             onMediaClick = onMediaClick,
             composedStatusInteraction = composedStatusInteraction,
             onOpenBlogWithOtherAccountClick = {
-                onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+                selectAccountOpenStatusBottomSheetState.show(it)
             },
         )
     }
+    SelectAccountOpenStatusBottomSheet(selectAccountOpenStatusBottomSheetState)
 }

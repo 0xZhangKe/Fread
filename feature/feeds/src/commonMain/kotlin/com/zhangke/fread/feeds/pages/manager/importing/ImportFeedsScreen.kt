@@ -36,93 +36,90 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.internal.BackHandler
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalPlatformUriHelper
 import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.localization.LocalizedString
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
-class ImportFeedsScreen : BaseScreen() {
+@Serializable
+object ImportFeedsScreenNavKey : NavKey
 
-    @OptIn(InternalVoyagerApi::class)
-    @Composable
-    override fun Content() {
-        super.Content()
-        val toastHelper = LocalToastHelper.current
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<ImportFeedsViewModel>()
-        val uiState by viewModel.uiState.collectAsState()
-        var showBackDialog by remember {
-            mutableStateOf(false)
-        }
-
-        fun onBackRequest() {
-            if (uiState.selectedFileUri != null || uiState.sourceList.isNotEmpty()) {
-                showBackDialog = true
-            } else {
-                navigator.pop()
-            }
-        }
-        if (showBackDialog) {
-            FreadDialog(
-                onDismissRequest = {
-                    showBackDialog = false
-                },
-                title = stringResource(LocalizedString.alert),
-                contentText = stringResource(LocalizedString.feedsImportBackDialogMessage),
-                onNegativeClick = {
-                    showBackDialog = false
-                },
-                onPositiveClick = {
-                    navigator.pop()
-                }
-            )
-        }
-        BackHandler(true) {
-            onBackRequest()
-        }
-        ImportFeedsContent(
-            uiState = uiState,
-            onBackClick = ::onBackRequest,
-            onFileSelected = viewModel::onFileSelected,
-            onImportClick = {
-                viewModel.onImportClick()
-            },
-            onGroupDelete = viewModel::onGroupDelete,
-            onSourceDelete = viewModel::onSourceDelete,
-            onSaveClick = viewModel::onSaveClick,
-            retryImportClick = viewModel::retryImportClick,
-        )
-        ConsumeFlow(viewModel.saveSuccessFlow) {
-            toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
-            navigator.pop()
-        }
+@Composable
+fun ImportFeedsScreen(viewModel: ImportFeedsViewModel) {
+    val toastHelper = LocalToastHelper.current
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    var showBackDialog by remember {
+        mutableStateOf(false)
     }
 
-    @Composable
-    private fun ImportFeedsContent(
-        uiState: ImportFeedsUiState,
-        onFileSelected: (PlatformUri) -> Unit,
-        onBackClick: () -> Unit,
-        onImportClick: () -> Unit,
-        onGroupDelete: (ImportSourceGroup) -> Unit,
-        onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
-        retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
-        onSaveClick: () -> Unit,
-    ) {
+    fun onBackRequest() {
+        if (uiState.selectedFileUri != null || uiState.sourceList.isNotEmpty()) {
+            showBackDialog = true
+        } else {
+            backStack.removeLastOrNull()
+        }
+    }
+    if (showBackDialog) {
+        FreadDialog(
+            onDismissRequest = {
+                showBackDialog = false
+            },
+            title = stringResource(LocalizedString.alert),
+            contentText = stringResource(LocalizedString.feedsImportBackDialogMessage),
+            onNegativeClick = {
+                showBackDialog = false
+            },
+            onPositiveClick = {
+                backStack.removeLastOrNull()
+            }
+        )
+    }
+    BackHandler(true) {
+        onBackRequest()
+    }
+    ImportFeedsContent(
+        uiState = uiState,
+        onBackClick = ::onBackRequest,
+        onFileSelected = viewModel::onFileSelected,
+        onImportClick = {
+            viewModel.onImportClick()
+        },
+        onGroupDelete = viewModel::onGroupDelete,
+        onSourceDelete = viewModel::onSourceDelete,
+        onSaveClick = viewModel::onSaveClick,
+        retryImportClick = viewModel::retryImportClick,
+    )
+    ConsumeFlow(viewModel.saveSuccessFlow) {
+        toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
+        backStack.removeLastOrNull()
+    }
+}
+
+@Composable
+private fun ImportFeedsContent(
+    uiState: ImportFeedsUiState,
+    onFileSelected: (PlatformUri) -> Unit,
+    onBackClick: () -> Unit,
+    onImportClick: () -> Unit,
+    onGroupDelete: (ImportSourceGroup) -> Unit,
+    onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
+    retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
+    onSaveClick: () -> Unit,
+) {
         val platformUriHelper = LocalPlatformUriHelper.current
         Scaffold(
             topBar = {

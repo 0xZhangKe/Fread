@@ -1,13 +1,13 @@
 package com.zhangke.fread.feeds
 
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.fread.commonbiz.shared.IFeedsScreenVisitor
-import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreen
+import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreenNavKey
 import me.tatarka.inject.annotations.Inject
 
 class FeedsScreenVisitor @Inject constructor() : IFeedsScreenVisitor {
 
-    override fun getAddContentScreen(): Screen {
-        return SelectContentTypeScreen()
+    override fun getAddContentScreen(): NavKey {
+        return SelectContentTypeScreenNavKey
     }
 }

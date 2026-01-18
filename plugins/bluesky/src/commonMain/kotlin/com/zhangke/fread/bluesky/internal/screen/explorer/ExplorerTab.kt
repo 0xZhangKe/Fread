@@ -2,7 +2,6 @@ package com.zhangke.fread.bluesky.internal.screen.explorer
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.nav.BaseTab
 import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreen

@@ -93,7 +93,6 @@ dependencies {
     implementation(compose.components.resources)
 
     implementation(libs.bundles.androidx.activity)
-    implementation(libs.bundles.voyager)
     implementation(libs.imageLoader)
 
     implementation(libs.krouter.runtime)

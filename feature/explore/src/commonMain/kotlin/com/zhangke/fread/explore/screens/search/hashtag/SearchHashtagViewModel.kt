@@ -2,7 +2,7 @@ package com.zhangke.fread.explore.screens.search.hashtag
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
@@ -41,7 +41,7 @@ open class SearchHashtagViewModel @Inject constructor(
 
     val uiState: StateFlow<CommonLoadableUiState<Hashtag>> get() = loadableController.uiState
 
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
+    private val _openScreenFlow = MutableSharedFlow<NavKey>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
     fun initQuery(query: String) {

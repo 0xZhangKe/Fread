@@ -1,10 +1,8 @@
 package com.zhangke.fread.feeds.pages.home
 
 import androidx.lifecycle.ViewModel
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.nav.Tab
-import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher

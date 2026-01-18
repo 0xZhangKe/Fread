@@ -29,8 +29,6 @@ kotlin {
 
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
-                implementation(libs.bundles.voyager)
-
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.imageLoader)
 

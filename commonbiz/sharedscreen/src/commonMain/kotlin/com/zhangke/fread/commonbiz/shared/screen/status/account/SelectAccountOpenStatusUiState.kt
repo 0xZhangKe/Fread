@@ -8,11 +8,21 @@ data class SelectAccountOpenStatusUiState(
     val searching: Boolean,
     val searchingAccount: LoggedAccount?,
     val searchFailed: Boolean,
-){
+) {
 
-    companion object{
+    fun reset(): SelectAccountOpenStatusUiState {
+        return SelectAccountOpenStatusUiState(
+            loadingAccounts = false,
+            accountList = emptyList(),
+            searching = false,
+            searchingAccount = null,
+            searchFailed = false,
+        )
+    }
 
-        fun default(loadingAccounts: Boolean): SelectAccountOpenStatusUiState{
+    companion object {
+
+        fun default(loadingAccounts: Boolean): SelectAccountOpenStatusUiState {
             return SelectAccountOpenStatusUiState(
                 loadingAccounts = loadingAccounts,
                 accountList = emptyList(),

@@ -46,11 +46,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.daynight.DayNightMode
@@ -58,491 +57,485 @@ import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.language.LanguageSettingItem
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_code
 import com.zhangke.fread.feature.profile.ic_ratting
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.profile.screen.donate.DonateScreen
-import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
-import com.zhangke.fread.profile.screen.setting.about.AboutScreen
+import com.zhangke.fread.profile.screen.donate.DonateScreenNavKey
+import com.zhangke.fread.profile.screen.opensource.OpenSourceScreenNavKey
+import com.zhangke.fread.profile.screen.setting.about.AboutScreenNavKey
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
-class SettingScreen : BaseScreen() {
+@Serializable
+object SettingScreenNavKey : NavKey
 
-    companion object {
+private val itemHeight = 82.dp
 
-        private val itemHeight = 82.dp
-    }
+@Composable
+fun SettingScreen(viewModel: SettingScreenModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val bottomSheetNavigator = LocalBottomSheetNavigator.current
-        val viewModel = getViewModel<SettingScreenModel>()
-        val uiState by viewModel.uiState.collectAsState()
+    val activityLanguageHelper = LocalActivityLanguageHelper.current
+    val activityDayNightHelper = LocalActivityDayNightHelper.current
+    val activityTextHandler = LocalTextHandler.current
 
-        val activityLanguageHelper = LocalActivityLanguageHelper.current
-        val activityDayNightHelper = LocalActivityDayNightHelper.current
-        val activityTextHandler = LocalTextHandler.current
-
-        val coroutineScope = rememberCoroutineScope()
-        SettingContent(
-            uiState = uiState,
-            onBackClick = navigator::pop,
-            onOpenSourceClick = {
-                navigator.push(OpenSourceScreen())
-            },
-            onSwitchAutoPlayClick = {
-                viewModel.onChangeAutoPlayInlineVideo(it)
-            },
-            onDayNightModeClick = {
-                coroutineScope.launch {
-                    activityDayNightHelper.setMode(it)
-                }
-            },
-            onThemeTypeChanged = viewModel::onThemeTypeChanged,
-            onAmoledChanged = {
-                coroutineScope.launch {
-                    activityDayNightHelper.setAmoledMode(it)
-                }
-            },
-            onLanguageClick = {
-                activityLanguageHelper.setLanguage(it)
-            },
-            onRatingClick = {
-                activityTextHandler.openAppMarket()
-            },
-            onAboutClick = {
-                navigator.push(AboutScreen())
-            },
-            onDonateClick = {
-                bottomSheetNavigator.show(DonateScreen())
-            },
-            onContentSizeChanged = {
-                viewModel.onContentSizeChanged(it)
-            },
-            onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
-            onImmersiveBarChanged = viewModel::onImmersiveBarChanged,
-            onTimelineDefaultPositionChanged = viewModel::onTimelineDefaultPositionChanged,
-        )
-    }
-
-    @Composable
-    private fun SettingContent(
-        uiState: SettingUiState,
-        onBackClick: () -> Unit,
-        onSwitchAutoPlayClick: (on: Boolean) -> Unit,
-        onOpenSourceClick: () -> Unit,
-        onDayNightModeClick: (DayNightMode) -> Unit,
-        onThemeTypeChanged: (ThemeType) -> Unit,
-        onLanguageClick: (LanguageSettingItem) -> Unit,
-        onImmersiveBarChanged: (on: Boolean) -> Unit,
-        onAmoledChanged: (on: Boolean) -> Unit,
-        onRatingClick: () -> Unit,
-        onAboutClick: () -> Unit,
-        onDonateClick: () -> Unit,
-        onContentSizeChanged: (StatusContentSize) -> Unit,
-        onAlwaysShowSensitive: (Boolean) -> Unit,
-        onTimelineDefaultPositionChanged: (TimelineDefaultPosition) -> Unit,
-    ) {
-        Scaffold(
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.settings),
-                    onBackClick = onBackClick,
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                AutoPlayInlineVideoItem(
-                    autoPlay = uiState.autoPlayInlineVideo,
-                    onSwitchClick = onSwitchAutoPlayClick,
-                )
-                AlwaysShowSensitiveContentItem(
-                    alwaysShowing = uiState.alwaysShowSensitiveContent,
-                    onAlwaysChanged = onAlwaysShowSensitive,
-                )
-                ImmersiveNavBar(
-                    immersive = uiState.immersiveNavBar,
-                    onImmersiveBarChanged = onImmersiveBarChanged,
-                )
-                AmoledMode(
-                    enabled = uiState.amoledEnabled,
-                    onAmoledChanged = onAmoledChanged,
-                )
-                DayNightItem(
-                    uiState = uiState,
-                    onDayNightModeClick = onDayNightModeClick,
-                )
-                ContentSizeItem(
-                    contentSize = uiState.contentSize,
-                    onContentSizeChanged = onContentSizeChanged,
-                )
-                TimelinePositionItem(
-                    position = uiState.timelineDefaultPosition,
-                    onPositionChanged = onTimelineDefaultPositionChanged,
-                )
-                ThemeTypeItem(
-                    themeType = uiState.themeType,
-                    onThemeTypeChanged = onThemeTypeChanged,
-                )
-                LanguageItem(
-                    onLanguageClick = onLanguageClick,
-                )
-                FeedbackItem()
-                SettingItem(
-                    icon = vectorResource(Res.drawable.ic_code),
-                    title = stringResource(LocalizedString.profileSettingOpenSourceTitle),
-                    subtitle = stringResource(LocalizedString.profileSettingOpenSourceDesc),
-                    onClick = onOpenSourceClick,
-                )
-                SettingItem(
-                    icon = {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(2.dp),
-                            imageVector = vectorResource(Res.drawable.ic_ratting),
-                            contentDescription = stringResource(LocalizedString.profileSettingRatting),
-                        )
-                    },
-                    title = stringResource(LocalizedString.profileSettingRatting),
-                    subtitle = stringResource(LocalizedString.profileSettingRattingDesc),
-                    onClick = onRatingClick,
-                )
-                SettingItem(
-                    icon = Icons.Outlined.Coffee,
-                    title = stringResource(LocalizedString.donate),
-                    subtitle = stringResource(LocalizedString.profileSettingDonateDesc),
-                    onClick = onDonateClick,
-                )
-                SettingItem(
-                    icon = Icons.Outlined.Info,
-                    title = stringResource(LocalizedString.profileSettingAboutTitle),
-                    subtitle = uiState.settingInfo,
-                    redDot = uiState.haveNewAppVersion,
-                    onClick = onAboutClick,
-                )
+    val coroutineScope = rememberCoroutineScope()
+    SettingContent(
+        uiState = uiState,
+        onBackClick = backStack::removeLastOrNull,
+        onOpenSourceClick = {
+            backStack.add(OpenSourceScreenNavKey)
+        },
+        onSwitchAutoPlayClick = {
+            viewModel.onChangeAutoPlayInlineVideo(it)
+        },
+        onDayNightModeClick = {
+            coroutineScope.launch {
+                activityDayNightHelper.setMode(it)
             }
-        }
-    }
-
-    @Composable
-    private fun AutoPlayInlineVideoItem(
-        autoPlay: Boolean,
-        onSwitchClick: (on: Boolean) -> Unit,
-    ) {
-        SettingItemWithSwitch(
-            icon = Icons.Default.PlayCircleOutline,
-            title = stringResource(LocalizedString.profileSettingInlineVideoAutoPlay),
-            subtitle = stringResource(LocalizedString.profileSettingInlineVideoAutoPlaySubtitle),
-            checked = autoPlay,
-            onCheckedChangeRequest = onSwitchClick,
-        )
-    }
-
-    @Composable
-    private fun AlwaysShowSensitiveContentItem(
-        alwaysShowing: Boolean,
-        onAlwaysChanged: (on: Boolean) -> Unit,
-    ) {
-        SettingItemWithSwitch(
-            icon = Icons.Default.PlayCircleOutline,
-            title = stringResource(LocalizedString.profileSettingAlwaysShowSensitiveContent),
-            subtitle = stringResource(LocalizedString.profileSettingAlwaysShowSensitiveContentSubtitle),
-            checked = alwaysShowing,
-            onCheckedChangeRequest = onAlwaysChanged,
-        )
-    }
-
-    @Composable
-    private fun ImmersiveNavBar(
-        immersive: Boolean,
-        onImmersiveBarChanged: (on: Boolean) -> Unit,
-    ) {
-        SettingItemWithSwitch(
-            icon = Icons.Default.PlayCircleOutline,
-            title = stringResource(LocalizedString.profileSettingImmersiveNavBar),
-            subtitle = stringResource(LocalizedString.profileSettingImmersiveNavBarDesc),
-            checked = immersive,
-            onCheckedChangeRequest = onImmersiveBarChanged,
-        )
-    }
-
-    @Composable
-    private fun AmoledMode(
-        enabled: Boolean,
-        onAmoledChanged: (on: Boolean) -> Unit,
-    ) {
-        SettingItemWithSwitch(
-            icon = Icons.Default.DarkMode,
-            title = stringResource(LocalizedString.setting_item_amoled_mode),
-            subtitle = stringResource(LocalizedString.setting_item_amoled_mode_description),
-            checked = enabled,
-            onCheckedChangeRequest = onAmoledChanged,
-        )
-    }
-
-    @Composable
-    private fun DayNightItem(
-        uiState: SettingUiState,
-        onDayNightModeClick: (DayNightMode) -> Unit,
-    ) {
-        SettingItemWithPopup(
-            icon = Icons.Default.Contrast,
-            title = stringResource(LocalizedString.profileSettingDarkModeTitle),
-            subtitle = uiState.dayNightMode.modeName,
-            dropDownItemCount = DayNightMode.entries.size,
-            dropDownItemText = { DayNightMode.entries[it].modeName },
-            onItemClick = { index ->
-                onDayNightModeClick(DayNightMode.entries[index])
-            },
-        )
-    }
-
-    @Composable
-    private fun ThemeTypeItem(
-        themeType: ThemeType,
-        onThemeTypeChanged: (ThemeType) -> Unit,
-    ) {
-        SettingItemWithPopup(
-            icon = Icons.Default.Palette,
-            title = stringResource(LocalizedString.profileSettingThemeTitle),
-            subtitle = themeType.displayName,
-            dropDownItemCount = ThemeType.entries.size,
-            dropDownItemText = { ThemeType.entries[it].displayName },
-            onItemClick = {
-                onThemeTypeChanged(ThemeType.entries[it])
+        },
+        onThemeTypeChanged = viewModel::onThemeTypeChanged,
+        onAmoledChanged = {
+            coroutineScope.launch {
+                activityDayNightHelper.setAmoledMode(it)
             }
-        )
-    }
+        },
+        onLanguageClick = {
+            activityLanguageHelper.setLanguage(it)
+        },
+        onRatingClick = {
+            activityTextHandler.openAppMarket()
+        },
+        onAboutClick = {
+            backStack.add(AboutScreenNavKey)
+        },
+        onDonateClick = {
+            backStack.add(DonateScreenNavKey)
+        },
+        onContentSizeChanged = {
+            viewModel.onContentSizeChanged(it)
+        },
+        onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
+        onImmersiveBarChanged = viewModel::onImmersiveBarChanged,
+        onTimelineDefaultPositionChanged = viewModel::onTimelineDefaultPositionChanged,
+    )
+}
 
-    @Composable
-    private fun ContentSizeItem(
-        contentSize: StatusContentSize,
-        onContentSizeChanged: (StatusContentSize) -> Unit,
-    ) {
-        SettingItemWithPopup(
-            icon = Icons.Default.TextFields,
-            title = stringResource(LocalizedString.profileSettingFontSize),
-            subtitle = contentSize.sizeName,
-            dropDownItemCount = StatusContentSize.entries.size,
-            dropDownItemText = { StatusContentSize.entries[it].sizeName },
-            onItemClick = {
-                onContentSizeChanged(StatusContentSize.entries[it])
-            }
-        )
-    }
-
-    @Composable
-    private fun TimelinePositionItem(
-        position: TimelineDefaultPosition,
-        onPositionChanged: (TimelineDefaultPosition) -> Unit,
-    ) {
-        SettingItemWithPopup(
-            icon = Icons.Default.ViewTimeline,
-            title = stringResource(LocalizedString.profileSettingTimelinePosition),
-            subtitle = position.displayName,
-            dropDownItemCount = TimelineDefaultPosition.entries.size,
-            dropDownItemText = {
-                TimelineDefaultPosition.entries[it].displayName
-            },
-            onItemClick = {
-                onPositionChanged(TimelineDefaultPosition.entries[it])
-            },
-        )
-    }
-
-    @Composable
-    private fun LanguageItem(
-        onLanguageClick: (LanguageSettingItem) -> Unit,
-    ) {
-        val activityLanguageHelper = LocalActivityLanguageHelper.current
-        val subtitle = activityLanguageHelper.currentLanguage.getDisplayName()
-        SettingItemWithPopup(
-            icon = Icons.Default.Language,
-            title = stringResource(LocalizedString.profileSettingLanguageTitle),
-            subtitle = subtitle,
-            dropDownItemCount = LanguageSettingItem.items.size,
-            dropDownItemText = { LanguageSettingItem.items[it].getDisplayName() },
-            onItemClick = {
-                onLanguageClick(LanguageSettingItem.items[it])
-            }
-        )
-    }
-
-    @Composable
-    private fun FeedbackItem() {
-        var showFeedbackBottomSheet by remember {
-            mutableStateOf(false)
-        }
-        SettingItem(
-            icon = Icons.AutoMirrored.Outlined.Chat,
-            title = stringResource(LocalizedString.profileSettingOpenSourceFeedback),
-            subtitle = stringResource(LocalizedString.profileSettingOpenSourceFeedbackDesc),
-            onClick = {
-                showFeedbackBottomSheet = true
-            },
-        )
-        if (showFeedbackBottomSheet) {
-            FeedbackBottomSheet(
-                onDismissRequest = { showFeedbackBottomSheet = false },
+@Composable
+private fun SettingContent(
+    uiState: SettingUiState,
+    onBackClick: () -> Unit,
+    onSwitchAutoPlayClick: (on: Boolean) -> Unit,
+    onOpenSourceClick: () -> Unit,
+    onDayNightModeClick: (DayNightMode) -> Unit,
+    onThemeTypeChanged: (ThemeType) -> Unit,
+    onLanguageClick: (LanguageSettingItem) -> Unit,
+    onImmersiveBarChanged: (on: Boolean) -> Unit,
+    onAmoledChanged: (on: Boolean) -> Unit,
+    onRatingClick: () -> Unit,
+    onAboutClick: () -> Unit,
+    onDonateClick: () -> Unit,
+    onContentSizeChanged: (StatusContentSize) -> Unit,
+    onAlwaysShowSensitive: (Boolean) -> Unit,
+    onTimelineDefaultPositionChanged: (TimelineDefaultPosition) -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.settings),
+                onBackClick = onBackClick,
             )
-        }
-    }
-
-    @Composable
-    private fun SettingItemWithSwitch(
-        icon: ImageVector,
-        title: String,
-        subtitle: String,
-        checked: Boolean,
-        onCheckedChangeRequest: (Boolean) -> Unit,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()),
         ) {
-            Box(modifier = Modifier.weight(1F)) {
-                SettingItem(
-                    icon = icon,
-                    title = title,
-                    subtitle = subtitle,
-                    onClick = {},
-                )
-            }
-            Switch(
-                modifier = Modifier,
-                checked = checked,
-                onCheckedChange = onCheckedChangeRequest,
+            AutoPlayInlineVideoItem(
+                autoPlay = uiState.autoPlayInlineVideo,
+                onSwitchClick = onSwitchAutoPlayClick,
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            AlwaysShowSensitiveContentItem(
+                alwaysShowing = uiState.alwaysShowSensitiveContent,
+                onAlwaysChanged = onAlwaysShowSensitive,
+            )
+            ImmersiveNavBar(
+                immersive = uiState.immersiveNavBar,
+                onImmersiveBarChanged = onImmersiveBarChanged,
+            )
+            AmoledMode(
+                enabled = uiState.amoledEnabled,
+                onAmoledChanged = onAmoledChanged,
+            )
+            DayNightItem(
+                uiState = uiState,
+                onDayNightModeClick = onDayNightModeClick,
+            )
+            ContentSizeItem(
+                contentSize = uiState.contentSize,
+                onContentSizeChanged = onContentSizeChanged,
+            )
+            TimelinePositionItem(
+                position = uiState.timelineDefaultPosition,
+                onPositionChanged = onTimelineDefaultPositionChanged,
+            )
+            ThemeTypeItem(
+                themeType = uiState.themeType,
+                onThemeTypeChanged = onThemeTypeChanged,
+            )
+            LanguageItem(
+                onLanguageClick = onLanguageClick,
+            )
+            FeedbackItem()
+            SettingItem(
+                icon = vectorResource(Res.drawable.ic_code),
+                title = stringResource(LocalizedString.profileSettingOpenSourceTitle),
+                subtitle = stringResource(LocalizedString.profileSettingOpenSourceDesc),
+                onClick = onOpenSourceClick,
+            )
+            SettingItem(
+                icon = {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(2.dp),
+                        imageVector = vectorResource(Res.drawable.ic_ratting),
+                        contentDescription = stringResource(LocalizedString.profileSettingRatting),
+                    )
+                },
+                title = stringResource(LocalizedString.profileSettingRatting),
+                subtitle = stringResource(LocalizedString.profileSettingRattingDesc),
+                onClick = onRatingClick,
+            )
+            SettingItem(
+                icon = Icons.Outlined.Coffee,
+                title = stringResource(LocalizedString.donate),
+                subtitle = stringResource(LocalizedString.profileSettingDonateDesc),
+                onClick = onDonateClick,
+            )
+            SettingItem(
+                icon = Icons.Outlined.Info,
+                title = stringResource(LocalizedString.profileSettingAboutTitle),
+                subtitle = uiState.settingInfo,
+                redDot = uiState.haveNewAppVersion,
+                onClick = onAboutClick,
+            )
         }
     }
+}
 
-    @Composable
-    private fun SettingItemWithPopup(
-        icon: ImageVector,
-        title: String,
-        subtitle: String,
-        // dropDownItems: List<String>,
-        dropDownItemCount: Int,
-        dropDownItemText: @Composable (Int) -> String,
-        onItemClick: (Int) -> Unit,
+@Composable
+private fun AutoPlayInlineVideoItem(
+    autoPlay: Boolean,
+    onSwitchClick: (on: Boolean) -> Unit,
+) {
+    SettingItemWithSwitch(
+        icon = Icons.Default.PlayCircleOutline,
+        title = stringResource(LocalizedString.profileSettingInlineVideoAutoPlay),
+        subtitle = stringResource(LocalizedString.profileSettingInlineVideoAutoPlaySubtitle),
+        checked = autoPlay,
+        onCheckedChangeRequest = onSwitchClick,
+    )
+}
+
+@Composable
+private fun AlwaysShowSensitiveContentItem(
+    alwaysShowing: Boolean,
+    onAlwaysChanged: (on: Boolean) -> Unit,
+) {
+    SettingItemWithSwitch(
+        icon = Icons.Default.PlayCircleOutline,
+        title = stringResource(LocalizedString.profileSettingAlwaysShowSensitiveContent),
+        subtitle = stringResource(LocalizedString.profileSettingAlwaysShowSensitiveContentSubtitle),
+        checked = alwaysShowing,
+        onCheckedChangeRequest = onAlwaysChanged,
+    )
+}
+
+@Composable
+private fun ImmersiveNavBar(
+    immersive: Boolean,
+    onImmersiveBarChanged: (on: Boolean) -> Unit,
+) {
+    SettingItemWithSwitch(
+        icon = Icons.Default.PlayCircleOutline,
+        title = stringResource(LocalizedString.profileSettingImmersiveNavBar),
+        subtitle = stringResource(LocalizedString.profileSettingImmersiveNavBarDesc),
+        checked = immersive,
+        onCheckedChangeRequest = onImmersiveBarChanged,
+    )
+}
+
+@Composable
+private fun AmoledMode(
+    enabled: Boolean,
+    onAmoledChanged: (on: Boolean) -> Unit,
+) {
+    SettingItemWithSwitch(
+        icon = Icons.Default.DarkMode,
+        title = stringResource(LocalizedString.setting_item_amoled_mode),
+        subtitle = stringResource(LocalizedString.setting_item_amoled_mode_description),
+        checked = enabled,
+        onCheckedChangeRequest = onAmoledChanged,
+    )
+}
+
+@Composable
+private fun DayNightItem(
+    uiState: SettingUiState,
+    onDayNightModeClick: (DayNightMode) -> Unit,
+) {
+    SettingItemWithPopup(
+        icon = Icons.Default.Contrast,
+        title = stringResource(LocalizedString.profileSettingDarkModeTitle),
+        subtitle = uiState.dayNightMode.modeName,
+        dropDownItemCount = DayNightMode.entries.size,
+        dropDownItemText = { DayNightMode.entries[it].modeName },
+        onItemClick = { index ->
+            onDayNightModeClick(DayNightMode.entries[index])
+        },
+    )
+}
+
+@Composable
+private fun ThemeTypeItem(
+    themeType: ThemeType,
+    onThemeTypeChanged: (ThemeType) -> Unit,
+) {
+    SettingItemWithPopup(
+        icon = Icons.Default.Palette,
+        title = stringResource(LocalizedString.profileSettingThemeTitle),
+        subtitle = themeType.displayName,
+        dropDownItemCount = ThemeType.entries.size,
+        dropDownItemText = { ThemeType.entries[it].displayName },
+        onItemClick = {
+            onThemeTypeChanged(ThemeType.entries[it])
+        }
+    )
+}
+
+@Composable
+private fun ContentSizeItem(
+    contentSize: StatusContentSize,
+    onContentSizeChanged: (StatusContentSize) -> Unit,
+) {
+    SettingItemWithPopup(
+        icon = Icons.Default.TextFields,
+        title = stringResource(LocalizedString.profileSettingFontSize),
+        subtitle = contentSize.sizeName,
+        dropDownItemCount = StatusContentSize.entries.size,
+        dropDownItemText = { StatusContentSize.entries[it].sizeName },
+        onItemClick = {
+            onContentSizeChanged(StatusContentSize.entries[it])
+        }
+    )
+}
+
+@Composable
+private fun TimelinePositionItem(
+    position: TimelineDefaultPosition,
+    onPositionChanged: (TimelineDefaultPosition) -> Unit,
+) {
+    SettingItemWithPopup(
+        icon = Icons.Default.ViewTimeline,
+        title = stringResource(LocalizedString.profileSettingTimelinePosition),
+        subtitle = position.displayName,
+        dropDownItemCount = TimelineDefaultPosition.entries.size,
+        dropDownItemText = {
+            TimelineDefaultPosition.entries[it].displayName
+        },
+        onItemClick = {
+            onPositionChanged(TimelineDefaultPosition.entries[it])
+        },
+    )
+}
+
+@Composable
+private fun LanguageItem(
+    onLanguageClick: (LanguageSettingItem) -> Unit,
+) {
+    val activityLanguageHelper = LocalActivityLanguageHelper.current
+    val subtitle = activityLanguageHelper.currentLanguage.getDisplayName()
+    SettingItemWithPopup(
+        icon = Icons.Default.Language,
+        title = stringResource(LocalizedString.profileSettingLanguageTitle),
+        subtitle = subtitle,
+        dropDownItemCount = LanguageSettingItem.items.size,
+        dropDownItemText = { LanguageSettingItem.items[it].getDisplayName() },
+        onItemClick = {
+            onLanguageClick(LanguageSettingItem.items[it])
+        }
+    )
+}
+
+@Composable
+private fun FeedbackItem() {
+    var showFeedbackBottomSheet by remember {
+        mutableStateOf(false)
+    }
+    SettingItem(
+        icon = Icons.AutoMirrored.Outlined.Chat,
+        title = stringResource(LocalizedString.profileSettingOpenSourceFeedback),
+        subtitle = stringResource(LocalizedString.profileSettingOpenSourceFeedbackDesc),
+        onClick = {
+            showFeedbackBottomSheet = true
+        },
+    )
+    if (showFeedbackBottomSheet) {
+        FeedbackBottomSheet(
+            onDismissRequest = { showFeedbackBottomSheet = false },
+        )
+    }
+}
+
+@Composable
+private fun SettingItemWithSwitch(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChangeRequest: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        val coroutineScope = rememberCoroutineScope()
-        Box(modifier = Modifier.fillMaxWidth()) {
-            var showPopup by remember {
-                mutableStateOf(false)
-            }
+        Box(modifier = Modifier.weight(1F)) {
             SettingItem(
                 icon = icon,
                 title = title,
                 subtitle = subtitle,
-                onClick = {
-                    showPopup = true
-                },
+                onClick = {},
             )
-            DropdownMenu(
-                expanded = showPopup,
-                offset = DpOffset(x = 36.dp, y = 0.dp),
-                onDismissRequest = { showPopup = false },
-            ) {
-                repeat(dropDownItemCount) { index ->
-                    DropdownMenuItem(
-                        text = { Text(dropDownItemText(index)) },
-                        onClick = {
-                            showPopup = false
-                            coroutineScope.launch {
-                                delay(100)
-                                onItemClick(index)
-                            }
-                        },
-                    )
-                }
+        }
+        Switch(
+            modifier = Modifier,
+            checked = checked,
+            onCheckedChange = onCheckedChangeRequest,
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+    }
+}
+
+@Composable
+private fun SettingItemWithPopup(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    // dropDownItems: List<String>,
+    dropDownItemCount: Int,
+    dropDownItemText: @Composable (Int) -> String,
+    onItemClick: (Int) -> Unit,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    Box(modifier = Modifier.fillMaxWidth()) {
+        var showPopup by remember {
+            mutableStateOf(false)
+        }
+        SettingItem(
+            icon = icon,
+            title = title,
+            subtitle = subtitle,
+            onClick = {
+                showPopup = true
+            },
+        )
+        DropdownMenu(
+            expanded = showPopup,
+            offset = DpOffset(x = 36.dp, y = 0.dp),
+            onDismissRequest = { showPopup = false },
+        ) {
+            repeat(dropDownItemCount) { index ->
+                DropdownMenuItem(
+                    text = { Text(dropDownItemText(index)) },
+                    onClick = {
+                        showPopup = false
+                        coroutineScope.launch {
+                            delay(100)
+                            onItemClick(index)
+                        }
+                    },
+                )
             }
         }
     }
+}
 
-    @Composable
-    private fun SettingItem(
-        icon: ImageVector,
-        title: String,
-        subtitle: String,
-        redDot: Boolean = false,
-        onClick: () -> Unit,
-    ) {
-        SettingItem(
-            icon = {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = icon,
-                    contentDescription = title,
-                )
-            },
-            title = title,
-            redDot = redDot,
-            subtitle = subtitle,
-            onClick = onClick,
-        )
-    }
+@Composable
+private fun SettingItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    redDot: Boolean = false,
+    onClick: () -> Unit,
+) {
+    SettingItem(
+        icon = {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = icon,
+                contentDescription = title,
+            )
+        },
+        title = title,
+        redDot = redDot,
+        subtitle = subtitle,
+        onClick = onClick,
+    )
+}
 
-    @Composable
-    private fun SettingItem(
-        icon: @Composable () -> Unit,
-        title: String,
-        redDot: Boolean = false,
-        subtitle: String,
-        onClick: () -> Unit,
+@Composable
+private fun SettingItem(
+    icon: @Composable () -> Unit,
+    title: String,
+    redDot: Boolean = false,
+    subtitle: String,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick() },
+                .heightIn(min = itemHeight)
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier
-                    .heightIn(min = itemHeight)
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                icon()
-                Spacer(modifier = Modifier.width(16.dp))
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = title,
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1,
-                        )
-                        if (redDot) {
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Box(
-                                modifier = Modifier.size(4.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Red.copy(alpha = 0.8F)),
-                            )
-                        }
-                    }
+            icon()
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
-                        modifier = Modifier.padding(top = 4.dp),
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
                     )
+                    if (redDot) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Box(
+                            modifier = Modifier.size(4.dp)
+                                .clip(CircleShape)
+                                .background(Color.Red.copy(alpha = 0.8F)),
+                        )
+                    }
                 }
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
     }

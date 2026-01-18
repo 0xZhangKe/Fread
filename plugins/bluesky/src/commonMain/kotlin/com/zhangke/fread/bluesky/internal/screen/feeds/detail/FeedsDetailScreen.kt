@@ -32,273 +32,244 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.bluesky.internal.composable.FeedsAvatar
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyProfile
-import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
+import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreenNavKey
 import com.zhangke.fread.common.handler.LocalTextHandler
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.action.likeAlt
 import com.zhangke.fread.status.ui.action.likeIcon
 import com.zhangke.fread.status.ui.action.pinAlt
 import org.jetbrains.compose.resources.stringResource
-import kotlin.jvm.Transient
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-class FeedsDetailScreen(
-    private val feedsJson: String,
-    private val locator: PlatformLocator,
-) : BaseScreen() {
-
-    companion object {
-
-        fun create(feeds: BlueskyFeeds, locator: PlatformLocator): FeedsDetailScreen {
-            return FeedsDetailScreen(
-                locator = locator,
-                feedsJson = globalJson.encodeToString(
-                    serializer = BlueskyFeeds.serializer(),
-                    value = feeds,
-                ),
-            )
-        }
+@Composable
+fun FeedsDetailScreenContent(
+    feeds: BlueskyFeeds,
+    locator: PlatformLocator,
+    onFeedsUpdate: (BlueskyFeeds.Feeds) -> Unit,
+) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val viewModel = koinViewModel<FeedsDetailViewModel> {
+        parametersOf(locator, feeds)
     }
+    val uiState by viewModel.uiState.collectAsState()
+    val textHandler = LocalTextHandler.current
+    val snackbarHostState = rememberSnackbarHostState()
+    FeedsDetailContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onCreatorClick = {
+            backStack.add(BskyUserDetailScreenNavKey(locator = locator, did = it.did))
+        },
+        onShareFeedsClick = { textHandler.shareUrl(url = it.uri, text = it.displayName) },
+        onShareListClick = { textHandler.shareUrl(url = it.uri, text = it.name) },
+        onLikeClick = viewModel::onLikeClick,
+        onPinClick = viewModel::onPinClick,
+    )
+    ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
+    ConsumeFlow(viewModel.feedsUpdateFlow) { onFeedsUpdate(it) }
+}
 
-    @Transient
-    var onFeedsUpdate: ((BlueskyFeeds.Feeds) -> Unit)? = null
-
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<FeedsDetailViewModel, FeedsDetailViewModel.Factory> {
-            val feeds = globalJson.decodeFromString<BlueskyFeeds>(feedsJson)
-            it.create(locator, feeds)
-        }
-        val uiState by viewModel.uiState.collectAsState()
-        val textHandler = LocalTextHandler.current
-        val snackbarHostState = rememberSnackbarHostState()
-        FeedsDetailContent(
-            uiState = uiState,
-            snackbarHostState = snackbarHostState,
-            onCreatorClick = {
-                navigator.push(
-                    BskyUserDetailScreen(
-                        locator = locator,
-                        did = it.did
-                    )
-                )
-            },
-            onShareFeedsClick = { textHandler.shareUrl(url = it.uri, text = it.displayName) },
-            onShareListClick = { textHandler.shareUrl(url = it.uri, text = it.name) },
-            onLikeClick = viewModel::onLikeClick,
-            onPinClick = viewModel::onPinClick,
-        )
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
-        ConsumeFlow(viewModel.feedsUpdateFlow) {
-            onFeedsUpdate?.invoke(it)
-        }
-    }
-
-    @Composable
-    private fun FeedsDetailContent(
-        uiState: FeedsDetailUiState,
-        snackbarHostState: SnackbarHostState,
-        onCreatorClick: (BlueskyProfile) -> Unit,
-        onShareFeedsClick: (BlueskyFeeds.Feeds) -> Unit,
-        onShareListClick: (BlueskyFeeds.List) -> Unit,
-        onLikeClick: () -> Unit,
-        onPinClick: () -> Unit,
+@Composable
+private fun FeedsDetailContent(
+    uiState: FeedsDetailUiState,
+    snackbarHostState: SnackbarHostState,
+    onCreatorClick: (BlueskyProfile) -> Unit,
+    onShareFeedsClick: (BlueskyFeeds.Feeds) -> Unit,
+    onShareListClick: (BlueskyFeeds.List) -> Unit,
+    onLikeClick: () -> Unit,
+    onPinClick: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth()
+        Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp)) {
+            val feeds = uiState.feeds
+            if (feeds is BlueskyFeeds.Feeds) {
+                FeedsDetail(
+                    feeds = feeds,
+                    onCreatorClick = onCreatorClick,
+                    onShareClick = onShareFeedsClick,
+                    onLikeClick = onLikeClick,
+                    onPinClick = onPinClick,
+                )
+            } else if (feeds is BlueskyFeeds.List) {
+                ListDetail(
+                    feeds = feeds,
+                    onShareClick = onShareListClick,
+                )
+            }
+        }
+        SnackbarHost(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            hostState = snackbarHostState,
+        )
+    }
+}
+
+@Composable
+private fun FeedsDetail(
+    feeds: BlueskyFeeds.Feeds,
+    onCreatorClick: (BlueskyProfile) -> Unit,
+    onShareClick: (BlueskyFeeds.Feeds) -> Unit,
+    onLikeClick: () -> Unit,
+    onPinClick: () -> Unit,
+) {
+    FeedsBasicInfo(
+        name = feeds.displayName(),
+        authorHandle = feeds.creator.prettyHandle,
+        avatar = feeds.avatar,
+        description = feeds.description,
+        onShareClick = { onShareClick(feeds) },
+        onCreatorClick = { onCreatorClick(feeds.creator) },
+    )
+    Text(
+        modifier = Modifier.fillMaxWidth()
+            .padding(top = 8.dp, start = 16.dp, end = 16.dp),
+        text = stringResource(
+            LocalizedString.bsky_feeds_explorer_liked_by,
+            (feeds.likeCount ?: 0L).formatToHumanReadable(),
+        ),
+        style = MaterialTheme.typography.labelMedium,
+        maxLines = 1,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Start,
+        overflow = TextOverflow.Ellipsis,
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .padding(start = 16.dp, top = 8.dp, end = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(
+            onClick = onLikeClick,
         ) {
-            Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp)) {
-                val feeds = uiState.feeds
-                if (feeds is BlueskyFeeds.Feeds) {
-                    FeedsDetail(
-                        feeds = feeds,
-                        onCreatorClick = onCreatorClick,
-                        onShareClick = onShareFeedsClick,
-                        onLikeClick = onLikeClick,
-                        onPinClick = onPinClick,
-                    )
-                } else if (feeds is BlueskyFeeds.List) {
-                    ListDetail(
-                        feeds = feeds,
-                        onShareClick = onShareListClick,
-                    )
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = likeIcon(liked = feeds.liked),
+                contentDescription = likeAlt(),
+                tint = if (feeds.liked) {
+                    MaterialTheme.colorScheme.tertiary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
                 }
-            }
-            SnackbarHost(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                hostState = snackbarHostState,
             )
         }
-    }
-
-    @Composable
-    private fun FeedsDetail(
-        feeds: BlueskyFeeds.Feeds,
-        onCreatorClick: (BlueskyProfile) -> Unit,
-        onShareClick: (BlueskyFeeds.Feeds) -> Unit,
-        onLikeClick: () -> Unit,
-        onPinClick: () -> Unit,
-    ) {
-        FeedsBasicInfo(
-            name = feeds.displayName(),
-            authorHandle = feeds.creator.prettyHandle,
-            avatar = feeds.avatar,
-            description = feeds.description,
-            onShareClick = { onShareClick(feeds) },
-            onCreatorClick = { onCreatorClick(feeds.creator) },
-        )
-        Text(
-            modifier = Modifier.fillMaxWidth()
-                .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-            text = stringResource(
-                LocalizedString.bsky_feeds_explorer_liked_by,
-                (feeds.likeCount ?: 0L).formatToHumanReadable(),
-            ),
-            style = MaterialTheme.typography.labelMedium,
-            maxLines = 1,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Start,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(start = 16.dp, top = 8.dp, end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(
-                onClick = onLikeClick,
-            ) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = likeIcon(liked = feeds.liked),
-                    contentDescription = likeAlt(),
-                    tint = if (feeds.liked) {
-                        MaterialTheme.colorScheme.tertiary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            val pinBtnColors = if (feeds.pinned) {
-                ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = Color.White,
-                )
-            } else {
-                ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = Color.White,
-                )
-            }
-            TextButton(
-                modifier = Modifier.weight(1F),
-                onClick = onPinClick,
-                colors = pinBtnColors,
-            ) {
-                Text(pinAlt(feeds.pinned))
-            }
-        }
-    }
-
-
-    @Composable
-    private fun ListDetail(
-        feeds: BlueskyFeeds.List,
-        onShareClick: (BlueskyFeeds.List) -> Unit,
-    ) {
-        FeedsBasicInfo(
-            name = feeds.name,
-            avatar = feeds.avatar,
-            authorHandle = null,
-            description = feeds.description,
-            onShareClick = { onShareClick(feeds) },
-            onCreatorClick = {},
-        )
-    }
-
-    @Composable
-    private fun FeedsBasicInfo(
-        avatar: String?,
-        name: String,
-        authorHandle: String?,
-        description: String?,
-        onShareClick: () -> Unit,
-        onCreatorClick: () -> Unit,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            FeedsAvatar(
-                url = avatar,
-                modifier = Modifier,
+        Spacer(modifier = Modifier.width(8.dp))
+        val pinBtnColors = if (feeds.pinned) {
+            ButtonDefaults.textButtonColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = Color.White,
             )
-            Column(
-                modifier = Modifier.weight(1F).padding(start = 16.dp),
-            ) {
-                Text(
-                    text = name,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.titleMedium
-                        .copy(fontWeight = FontWeight.SemiBold),
-                )
-                if (!authorHandle.isNullOrEmpty()) {
-                    val authorPrefix =
-                        stringResource(LocalizedString.bsky_feeds_detail_creator_prefix)
-                    val creator = remember(authorHandle) {
-                        buildAnnotatedString {
-                            append(authorPrefix)
-                            append(" ")
-                            append(authorHandle)
-                            addStyle(
-                                style = SpanStyle(textDecoration = TextDecoration.Underline),
-                                start = authorPrefix.length,
-                                end = length,
-                            )
-                        }
-                    }
-                    Text(
-                        modifier = Modifier.noRippleClick { onCreatorClick() }
-                            .padding(top = 1.dp),
-                        text = creator,
-                        maxLines = 1,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                }
-            }
-            IconButton(
-                onClick = { onShareClick() },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Share,
-                    contentDescription = "Share",
-                )
-            }
+        } else {
+            ButtonDefaults.textButtonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = Color.White,
+            )
         }
-        if (!description.isNullOrEmpty()) {
+        TextButton(
+            modifier = Modifier.weight(1F),
+            onClick = onPinClick,
+            colors = pinBtnColors,
+        ) {
+            Text(pinAlt(feeds.pinned))
+        }
+    }
+}
+
+
+@Composable
+private fun ListDetail(
+    feeds: BlueskyFeeds.List,
+    onShareClick: (BlueskyFeeds.List) -> Unit,
+) {
+    FeedsBasicInfo(
+        name = feeds.name,
+        avatar = feeds.avatar,
+        authorHandle = null,
+        description = feeds.description,
+        onShareClick = { onShareClick(feeds) },
+        onCreatorClick = {},
+    )
+}
+
+@Composable
+private fun FeedsBasicInfo(
+    avatar: String?,
+    name: String,
+    authorHandle: String?,
+    description: String?,
+    onShareClick: () -> Unit,
+    onCreatorClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        FeedsAvatar(
+            url = avatar,
+            modifier = Modifier,
+        )
+        Column(
+            modifier = Modifier.weight(1F).padding(start = 16.dp),
+        ) {
             Text(
-                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                text = description,
-                textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.bodyMedium,
+                text = name,
+                maxLines = 1,
+                style = MaterialTheme.typography.titleMedium
+                    .copy(fontWeight = FontWeight.SemiBold),
+            )
+            if (!authorHandle.isNullOrEmpty()) {
+                val authorPrefix =
+                    stringResource(LocalizedString.bsky_feeds_detail_creator_prefix)
+                val creator = remember(authorHandle) {
+                    buildAnnotatedString {
+                        append(authorPrefix)
+                        append(" ")
+                        append(authorHandle)
+                        addStyle(
+                            style = SpanStyle(textDecoration = TextDecoration.Underline),
+                            start = authorPrefix.length,
+                            end = length,
+                        )
+                    }
+                }
+                Text(
+                    modifier = Modifier.noRippleClick { onCreatorClick() }
+                        .padding(top = 1.dp),
+                    text = creator,
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+        }
+        IconButton(
+            onClick = { onShareClick() },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = "Share",
             )
         }
+    }
+    if (!description.isNullOrEmpty()) {
+        Text(
+            modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
+            text = description,
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }

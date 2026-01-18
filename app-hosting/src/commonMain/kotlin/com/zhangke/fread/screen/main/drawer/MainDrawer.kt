@@ -38,16 +38,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.feeds.pages.home.EmptyContent
-import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreen
+import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.profile.screen.setting.SettingScreen
+import com.zhangke.fread.profile.screen.setting.SettingScreenNavKey
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.statusui.ic_drag_indicator
@@ -62,8 +61,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MainDrawer(onDismissRequest: () -> Unit) {
-    val navigator = LocalNavigator.currentOrThrow
-    val bottomSheetNavigator = LocalBottomSheetNavigator.current
+    val backStack = LocalNavBackStack.currentOrThrow
     val screenVisitor = LocalModuleScreenVisitor.current
     val viewModel = koinViewModel<MainDrawerViewModel>()
     val uiState by viewModel.uiState.collectAsState()
@@ -79,7 +77,7 @@ fun MainDrawer(onDismissRequest: () -> Unit) {
         },
         onAddContentClick = {
             onDismissRequest()
-            navigator.push(SelectContentTypeScreen())
+            backStack.add(SelectContentTypeScreenNavKey)
         },
         onMove = viewModel::onContentConfigMove,
         onEditClick = {
@@ -88,10 +86,10 @@ fun MainDrawer(onDismissRequest: () -> Unit) {
         },
         onSettingClick = {
             onDismissRequest()
-            navigator.push(SettingScreen())
+            backStack.add(SettingScreenNavKey)
         },
         onDonateClick = {
-            bottomSheetNavigator.show(screenVisitor.profileScreenVisitor.getDonateScreen())
+            backStack.add(screenVisitor.profileScreenVisitor.getDonateScreen())
         },
     )
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)

@@ -20,7 +20,6 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.zhangke.framework.nav.LocalNavBackStack
@@ -64,7 +63,6 @@ import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.getKoin
 
 @OptIn(
-    ExperimentalVoyagerApi::class,
     ExperimentalMaterialApi::class,
     ExperimentalSharedTransitionApi::class
 )

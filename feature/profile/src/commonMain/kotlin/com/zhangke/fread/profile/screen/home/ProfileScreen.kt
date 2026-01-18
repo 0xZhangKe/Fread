@@ -25,14 +25,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.profile.screen.setting.SettingScreen
+import com.zhangke.fread.profile.screen.setting.SettingScreenNavKey
 import com.zhangke.fread.status.account.LoggedAccount
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -49,10 +49,10 @@ fun ProfileScreen() {
     ProfileHomePageContent(
         uiState = uiState,
         onAddAccountClick = {
-            backStack.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
+            backStack.add(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
         },
         onSettingClick = {
-            backStack.push(SettingScreen())
+            backStack.add(SettingScreenNavKey)
         },
         onAccountClick = {
             viewModel.onAccountClick(it)

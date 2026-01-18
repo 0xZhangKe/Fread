@@ -12,7 +12,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(path = ":framework"))
-                implementation(libs.bundles.voyager)
 
                 implementation(compose.components.resources)
                 implementation(libs.arrow.core)

@@ -3,10 +3,10 @@ package com.zhangke.fread.commonbiz.shared.composable
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.fread.commonbiz.shared.screen.status.account.SelectAccountOpenStatusBottomSheet
+import com.zhangke.fread.commonbiz.shared.screen.status.account.rememberSelectAccountOpenStatusSheetState
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
@@ -22,9 +22,8 @@ fun FeedsStatusNode(
     showDivider: Boolean = true,
     style: StatusStyle = LocalStatusUiConfig.current.contentStyle,
 ) {
-    val bottomNavigator = LocalBottomSheetNavigator.current
-    val navigator = LocalNavigator.currentOrThrow
-    val transparentNavigator = LocalTransparentNavigator.current
+    val backStack = LocalNavBackStack.currentOrThrow
+    val selectAccountOpenStatusBottomSheetState = rememberSelectAccountOpenStatusSheetState()
     StatusUi(
         modifier = modifier.clickable {
             composedStatusInteraction.onStatusClick(status)
@@ -36,13 +35,13 @@ fun FeedsStatusNode(
         composedStatusInteraction = composedStatusInteraction,
         onMediaClick = { event ->
             onStatusMediaClick(
-                transparentNavigator = transparentNavigator,
-                navigator = navigator,
+                navigator = backStack,
                 event = event,
             )
         },
         onOpenBlogWithOtherAccountClick = {
-            onOpenBlogWithOtherAccountClick(bottomNavigator, it)
+            selectAccountOpenStatusBottomSheetState.show(it)
         },
     )
+    SelectAccountOpenStatusBottomSheet(selectAccountOpenStatusBottomSheetState)
 }

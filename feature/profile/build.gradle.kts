@@ -21,8 +21,6 @@ kotlin {
 
                 implementation(compose.components.resources)
 
-                implementation(libs.bundles.voyager)
-
                 implementation(libs.arrow.core)
 
                 implementation(libs.jetbrains.lifecycle.viewmodel)

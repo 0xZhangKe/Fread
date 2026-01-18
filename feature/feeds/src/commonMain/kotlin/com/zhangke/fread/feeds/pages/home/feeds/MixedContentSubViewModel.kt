@@ -14,7 +14,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
-import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
+import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreenNavKey
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.updateFollowingState
 import com.zhangke.fread.status.content.MixedContent
@@ -132,7 +132,7 @@ class MixedContentSubViewModel(
     fun onContentTitleClick() {
         val mixedContent = uiState.value.content ?: return
         launchInViewModel {
-            mutableOpenScreenFlow.emit(EditMixedContentScreen(mixedContent.id))
+            mutableOpenScreenFlow.emit(EditMixedContentScreenNavKey(mixedContent.id))
         }
     }
 

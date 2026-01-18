@@ -1,7 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.feeds
 
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog

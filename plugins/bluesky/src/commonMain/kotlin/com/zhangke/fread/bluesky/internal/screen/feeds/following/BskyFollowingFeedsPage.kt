@@ -17,7 +17,9 @@ import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -35,204 +37,206 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreen
-import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreen
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreenContent
+import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
+import kotlinx.serialization.Serializable
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 import org.jetbrains.compose.resources.stringResource
 
-class BskyFollowingFeedsPage(
-    private val contentId: String?,
-    private val locator: PlatformLocator?,
-) : BaseScreen() {
+@Serializable
+data class BskyFollowingFeedsPageNavKey(
+    val contentId: String?,
+    val locator: PlatformLocator?,
+) : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val bottomSheetNavigator = LocalBottomSheetNavigator.current
-        val viewModel =
-            getViewModel<BskyFollowingFeedsViewModel, BskyFollowingFeedsViewModel.Factory> {
-                it.create(contentId, locator)
-            }
-        val uiState by viewModel.uiState.collectAsState()
-        val snackBarState = rememberSnackbarHostState()
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BskyFollowingFeedsPage(viewModel: BskyFollowingFeedsViewModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    val snackBarState = rememberSnackbarHostState()
 
-        BskyFeedsExplorerContent(
-            uiState = uiState,
-            snackBarState = snackBarState,
-            onBackClick = navigator::pop,
-            onRefresh = viewModel::onRefresh,
-            onFeedsClick = { feed ->
-                uiState.locator?.let {
-                    val screen = FeedsDetailScreen.create(feed, it)
-                    screen.onFeedsUpdate = { f ->
-                        viewModel.onFeedsUpdate(f)
-                    }
-                    bottomSheetNavigator.show(screen)
-                }
-            },
-            onExplorerClick = {
-                uiState.locator?.let { navigator.push(ExplorerFeedsScreen(it)) }
-            },
-            onFeedsReorder = viewModel::onFeedsOrderChanged,
-            onDeleteClick = viewModel::onDeleteClick,
-        )
-
-        ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
-
-        ConsumeFlow(viewModel.finishPageFlow) {
-            navigator.pop()
-        }
-
-        LaunchedEffect(Unit) {
-            viewModel.onPageResume()
+    var clickedFeeds: BlueskyFeeds? by remember { mutableStateOf(null) }
+    var showFeedsDetailBottomSheet by remember { mutableStateOf(false) }
+    if (showFeedsDetailBottomSheet && uiState.locator != null) {
+        ModalBottomSheet(
+            onDismissRequest = { showFeedsDetailBottomSheet = false },
+        ) {
+            FeedsDetailScreenContent(
+                feeds = clickedFeeds!!,
+                locator = uiState.locator!!,
+                onFeedsUpdate = viewModel::onFeedsUpdate,
+            )
         }
     }
+    BskyFeedsExplorerContent(
+        uiState = uiState,
+        snackBarState = snackBarState,
+        onBackClick = backStack::removeLastOrNull,
+        onRefresh = viewModel::onRefresh,
+        onFeedsClick = { feed ->
+            clickedFeeds = feed
+            showFeedsDetailBottomSheet = true
+        },
+        onExplorerClick = {
+            uiState.locator?.let { backStack.add(ExplorerFeedsScreenNavKey(it)) }
+        },
+        onFeedsReorder = viewModel::onFeedsOrderChanged,
+        onDeleteClick = viewModel::onDeleteClick,
+    )
 
-    @OptIn(ExperimentalMaterialApi::class)
-    @Composable
-    private fun BskyFeedsExplorerContent(
-        uiState: BskyFeedsExplorerUiState,
-        snackBarState: SnackbarHostState,
-        onBackClick: () -> Unit,
-        onRefresh: () -> Unit,
-        onFeedsClick: (BlueskyFeeds) -> Unit,
-        onExplorerClick: () -> Unit,
-        onFeedsReorder: (Int, Int) -> Unit,
-        onDeleteClick: () -> Unit,
-    ) {
-        var showDeleteConfirmDialog by remember {
-            mutableStateOf(false)
-        }
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.feeds),
-                    onBackClick = onBackClick,
-                    actions = {
-                        SimpleIconButton(
-                            onClick = onExplorerClick,
-                            imageVector = Icons.Default.Explore,
-                            contentDescription = stringResource(LocalizedString.bsky_feeds_explorer_more),
-                        )
+    ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
 
-                        SimpleIconButton(
-                            onClick = { showDeleteConfirmDialog = true },
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete content",
-                        )
-                    }
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackBarState)
-            },
-        ) { innerPadding ->
-            if (uiState.initializing && uiState.followingFeeds.isEmpty()) {
-                InitializingPlaceholder(modifier = Modifier.padding(innerPadding))
-            } else {
-                val pullRefreshState = rememberPullRefreshState(
-                    refreshing = uiState.refreshing,
-                    onRefresh = onRefresh,
-                )
-                var feedsInUi by remember(uiState.followingFeeds) {
-                    mutableStateOf(uiState.followingFeeds)
-                }
-                key(uiState.followingFeeds) {
-                    val state = rememberReorderableLazyListState(
-                        onMove = { from, to ->
-                            if (feedsInUi.isEmpty()) return@rememberReorderableLazyListState
-                            feedsInUi = feedsInUi.toMutableList().apply {
-                                if (from.index <= feedsInUi.lastIndex) {
-                                    if (to.index > feedsInUi.lastIndex) {
-                                        add(removeAt(from.index))
-                                    } else {
-                                        add(to.index, removeAt(from.index))
-                                    }
-                                }
-                            }
-                        },
-                        onDragEnd = { startIndex, endIndex ->
-                            onFeedsReorder(startIndex, endIndex)
-                        },
+    ConsumeFlow(viewModel.finishPageFlow) {
+        backStack.removeLastOrNull()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onPageResume()
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun BskyFeedsExplorerContent(
+    uiState: BskyFeedsExplorerUiState,
+    snackBarState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    onRefresh: () -> Unit,
+    onFeedsClick: (BlueskyFeeds) -> Unit,
+    onExplorerClick: () -> Unit,
+    onFeedsReorder: (Int, Int) -> Unit,
+    onDeleteClick: () -> Unit,
+) {
+    var showDeleteConfirmDialog by remember {
+        mutableStateOf(false)
+    }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.feeds),
+                onBackClick = onBackClick,
+                actions = {
+                    SimpleIconButton(
+                        onClick = onExplorerClick,
+                        imageVector = Icons.Default.Explore,
+                        contentDescription = stringResource(LocalizedString.bsky_feeds_explorer_more),
                     )
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                            .padding(innerPadding)
-                            .pullRefresh(pullRefreshState)
-                            .reorderable(state)
-                            .detectReorderAfterLongPress(state),
-                        state = state.listState,
-                    ) {
-                        if (uiState.pageError != null) {
-                            item {
-                                Box(modifier = Modifier.fillMaxSize()) {
-                                    DefaultFailed(
-                                        modifier = Modifier.fillMaxSize(),
-                                        exception = uiState.pageError,
-                                    )
+
+                    SimpleIconButton(
+                        onClick = { showDeleteConfirmDialog = true },
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete content",
+                    )
+                }
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarState)
+        },
+    ) { innerPadding ->
+        if (uiState.initializing && uiState.followingFeeds.isEmpty()) {
+            InitializingPlaceholder(modifier = Modifier.padding(innerPadding))
+        } else {
+            val pullRefreshState = rememberPullRefreshState(
+                refreshing = uiState.refreshing,
+                onRefresh = onRefresh,
+            )
+            var feedsInUi by remember(uiState.followingFeeds) {
+                mutableStateOf(uiState.followingFeeds)
+            }
+            key(uiState.followingFeeds) {
+                val state = rememberReorderableLazyListState(
+                    onMove = { from, to ->
+                        if (feedsInUi.isEmpty()) return@rememberReorderableLazyListState
+                        feedsInUi = feedsInUi.toMutableList().apply {
+                            if (from.index <= feedsInUi.lastIndex) {
+                                if (to.index > feedsInUi.lastIndex) {
+                                    add(removeAt(from.index))
+                                } else {
+                                    add(to.index, removeAt(from.index))
                                 }
                             }
-                        } else {
-                            if (feedsInUi.isNotEmpty()) {
-                                items(
-                                    items = feedsInUi,
-                                    key = { it.uiKey },
-                                ) { feed ->
-                                    ReorderableItem(
-                                        state = state,
-                                        key = feed.uiKey,
-                                    ) { dragging ->
-                                        val elevation by animateDpAsState(
-                                            targetValue = if (dragging) 16.dp else 0.dp,
-                                            label = "BskyPinnedFeedsItemElevation",
+                        }
+                    },
+                    onDragEnd = { startIndex, endIndex ->
+                        onFeedsReorder(startIndex, endIndex)
+                    },
+                )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(innerPadding)
+                        .pullRefresh(pullRefreshState)
+                        .reorderable(state)
+                        .detectReorderAfterLongPress(state),
+                    state = state.listState,
+                ) {
+                    if (uiState.pageError != null) {
+                        item {
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                DefaultFailed(
+                                    modifier = Modifier.fillMaxSize(),
+                                    exception = uiState.pageError,
+                                )
+                            }
+                        }
+                    } else {
+                        if (feedsInUi.isNotEmpty()) {
+                            items(
+                                items = feedsInUi,
+                                key = { it.uiKey },
+                            ) { feed ->
+                                ReorderableItem(
+                                    state = state,
+                                    key = feed.uiKey,
+                                ) { dragging ->
+                                    val elevation by animateDpAsState(
+                                        targetValue = if (dragging) 16.dp else 0.dp,
+                                        label = "BskyPinnedFeedsItemElevation",
+                                    )
+                                    Surface(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        shadowElevation = elevation,
+                                    ) {
+                                        BlueskyFollowingFeeds(
+                                            modifier = Modifier.fillMaxSize(),
+                                            feeds = feed,
+                                            onFeedsClick = onFeedsClick,
                                         )
-                                        Surface(
-                                            modifier = Modifier
-                                                .fillMaxWidth(),
-                                            shadowElevation = elevation,
-                                        ) {
-                                            BlueskyFollowingFeeds(
-                                                modifier = Modifier.fillMaxSize(),
-                                                feeds = feed,
-                                                onFeedsClick = onFeedsClick,
-                                            )
-                                        }
                                     }
                                 }
-                                item {
-                                    Box(modifier = Modifier.fillMaxWidth()) {
-                                        TextButton(
-                                            modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
-                                                .align(Alignment.Center),
-                                            onClick = onExplorerClick,
-                                        ) {
-                                            Text(
-                                                text = stringResource(LocalizedString.bsky_feeds_explorer_more)
-                                            )
-                                        }
+                            }
+                            item {
+                                Box(modifier = Modifier.fillMaxWidth()) {
+                                    TextButton(
+                                        modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
+                                            .align(Alignment.Center),
+                                        onClick = onExplorerClick,
+                                    ) {
+                                        Text(
+                                            text = stringResource(LocalizedString.bsky_feeds_explorer_more)
+                                        )
                                     }
                                 }
                             }
@@ -240,45 +244,45 @@ class BskyFollowingFeedsPage(
                     }
                 }
             }
-
-            if (uiState.reordering) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                        .noRippleClick { }
-                        .background(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.6F)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(64.dp),
-                    )
-                }
-            }
         }
-        if (showDeleteConfirmDialog) {
-            FreadDialog(
-                onDismissRequest = { showDeleteConfirmDialog = false },
-                contentText = stringResource(LocalizedString.statusUiEditContentDeleteDialogContent),
-                onNegativeClick = {
-                    showDeleteConfirmDialog = false
-                },
-                onPositiveClick = {
-                    showDeleteConfirmDialog = false
-                    onDeleteClick()
-                },
-            )
+
+        if (uiState.reordering) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .noRippleClick { }
+                    .background(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.6F)),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(64.dp),
+                )
+            }
         }
     }
+    if (showDeleteConfirmDialog) {
+        FreadDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            contentText = stringResource(LocalizedString.statusUiEditContentDeleteDialogContent),
+            onNegativeClick = {
+                showDeleteConfirmDialog = false
+            },
+            onPositiveClick = {
+                showDeleteConfirmDialog = false
+                onDeleteClick()
+            },
+        )
+    }
+}
 
-    private val BlueskyFeeds.uiKey: String get() = "${this::class.simpleName}@${this.id}"
+private val BlueskyFeeds.uiKey: String get() = "${this::class.simpleName}@${this.id}"
 
-    @Composable
-    private fun InitializingPlaceholder(modifier: Modifier) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-        ) {
-            repeat(30) {
-                TitleWithAvatarItemPlaceholder(Modifier.fillMaxWidth())
-            }
+@Composable
+private fun InitializingPlaceholder(modifier: Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        repeat(30) {
+            TitleWithAvatarItemPlaceholder(Modifier.fillMaxWidth())
         }
     }
 }

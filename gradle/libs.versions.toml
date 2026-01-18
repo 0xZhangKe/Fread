@@ -44,8 +44,6 @@ ktorfit = "2.2.0"
 
 auto_service = "1.0.1"
 
-voyager = "1.1.0-beta03"
-
 krouter = "1.3.7"
 
 multiplatformsettings = "1.3.0"
@@ -83,15 +81,6 @@ androidx-collection = ["androidx.collection", "androidx.collection.ktx"]
 androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okhttp", "androidx.media3.ui", "androidx.media3.session", "androidx.media3.database", "androidx.media3.decoder", "androidx.media3.datasource", "androidx.media3.common", "androidx-media3-hls"]
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
-
-voyager = [
-    "voyager-navigator",
-    "voyager-bottom-sheet-navigator",
-    "voyager-tab-navigator",
-    "voyager-transitions",
-    "voyager-screenModel",
-    "voyager-lifecycle-kmp",
-]
 
 googlePlayReview = ["googlePlayReview", "googlePlayReviewKtx"]
 
@@ -188,13 +177,6 @@ ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devto
 compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
 composeCompiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-jb-backhandler = { group = "org.jetbrains.compose.ui", name = "ui-backhandler", version.ref = "compose-multiplatform" }
-
-voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
-voyager-bottom-sheet-navigator = {  module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
-voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-voyager-lifecycle-kmp = { module = "cafe.adriel.voyager:voyager-lifecycle-kmp", version.ref = "voyager" }
 
 krouter-reducing-compiler = { group = "io.github.0xzhangke", name = "krouter-reducing-compiler", version.ref = "krouter"}
 krouter-collecting-compiler = { group = "io.github.0xzhangke", name = "krouter-collecting-compiler", version.ref = "krouter"}

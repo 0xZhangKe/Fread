@@ -1,7 +1,6 @@
 package com.zhangke.fread.common
 
 import androidx.lifecycle.ViewModelProvider
-import cafe.adriel.voyager.hilt.KotlinInjectViewModelProviderFactory
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.UrlRedirectViewModel
@@ -43,18 +42,6 @@ interface CommonComponent : CommonPlatformComponent {
     @Provides
     fun provideApplicationCoroutineScope(): ApplicationCoroutineScope {
         return ApplicationScope
-    }
-
-    @ApplicationScope
-    @Provides
-    fun provideViewModelProviderFactory(
-        viewModelMaps: Map<ViewModelKey, ViewModelCreator>,
-        viewModelFactoryMaps: Map<ViewModelKey, ViewModelFactory>,
-    ): ViewModelProvider.Factory {
-        return KotlinInjectViewModelProviderFactory(
-            viewModelMaps = viewModelMaps,
-            viewModelFactoryMaps = viewModelFactoryMaps,
-        )
     }
 
     @IntoSet

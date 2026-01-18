@@ -25,9 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.IconButtonStyle
@@ -36,16 +35,16 @@ import com.zhangke.framework.composable.StyledIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.feeds.ic_import
-import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsScreen
-import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
+import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsScreenNavKey
+import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.status.source.StatusSource
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -53,57 +52,53 @@ import org.jetbrains.compose.resources.vectorResource
 /**
  * 添加混合 Feeds 页面
  */
-internal class AddMixedFeedsScreen(
-    private val statusSource: StatusSource? = null
-) : BaseScreen() {
+@Serializable
+object AddMixedFeedsScreenNavKey : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val toastHelper = LocalToastHelper.current
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<AddMixedFeedsViewModel, AddMixedFeedsViewModel.Factory> {
-            it.create(statusSource)
-        }
-        val snackbarHostState = rememberSnackbarHostState()
-        FeedsManager(
-            uiState = viewModel.uiState.collectAsState().value,
-            snackbarHostState = snackbarHostState,
-            onBackClick = navigator::pop,
-            onAddSourceClick = {
-                navigator.push(SearchSourceForAddScreen().apply {
-                    onSourceSelected = { viewModel.onAddSource(it) }
-                })
-            },
-            onImportClick = {
-                navigator.push(ImportFeedsScreen())
-            },
-            onConfirmClick = {
-                viewModel.onConfirmClick()
-            },
-            onNameInputValueChanged = viewModel::onSourceNameInput,
-            onRemoveSourceClick = {
-                viewModel.onRemoveSource(it)
-            },
-        )
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
-        ConsumeFlow(viewModel.addContentSuccessFlow) {
-            toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
-            navigator.pop()
-        }
+@Composable
+fun AddMixedFeedsScreen(viewModel: AddMixedFeedsViewModel) {
+    val toastHelper = LocalToastHelper.current
+    val backStack = LocalNavBackStack.currentOrThrow
+    val snackbarHostState = rememberSnackbarHostState()
+    FeedsManager(
+        uiState = viewModel.uiState.collectAsState().value,
+        snackbarHostState = snackbarHostState,
+        onBackClick = backStack::removeLastOrNull,
+        onAddSourceClick = {
+            backStack.add(SearchSourceForAddScreenNavKey)
+        },
+        onImportClick = {
+            backStack.add(ImportFeedsScreenNavKey)
+        },
+        onConfirmClick = {
+            viewModel.onConfirmClick()
+        },
+        onNameInputValueChanged = viewModel::onSourceNameInput,
+        onRemoveSourceClick = {
+            viewModel.onRemoveSource(it)
+        },
+    )
+    ConsumeFlow(SearchSourceForAddScreenNavKey.sourceSelectedFlow.flow) {
+        viewModel.onAddSource(it)
     }
+    ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
+    ConsumeFlow(viewModel.addContentSuccessFlow) {
+        toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
+        backStack.removeLastOrNull()
+    }
+}
 
-    @Composable
-    private fun FeedsManager(
-        uiState: AddMixedFeedsUiState,
-        snackbarHostState: SnackbarHostState,
-        onBackClick: () -> Unit,
-        onAddSourceClick: () -> Unit,
-        onImportClick: () -> Unit,
-        onConfirmClick: () -> Unit,
-        onNameInputValueChanged: (String) -> Unit,
-        onRemoveSourceClick: (item: StatusSourceUiState) -> Unit,
-    ) {
+@Composable
+private fun FeedsManager(
+    uiState: AddMixedFeedsUiState,
+    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    onAddSourceClick: () -> Unit,
+    onImportClick: () -> Unit,
+    onConfirmClick: () -> Unit,
+    onNameInputValueChanged: (String) -> Unit,
+    onRemoveSourceClick: (item: StatusSourceUiState) -> Unit,
+) {
         Scaffold(
             topBar = {
                 Toolbar(

@@ -21,8 +21,6 @@ kotlin {
 
                 implementation(compose.components.resources)
 
-                implementation(libs.bundles.voyager)
-
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
                 implementation(libs.androidx.paging.common)

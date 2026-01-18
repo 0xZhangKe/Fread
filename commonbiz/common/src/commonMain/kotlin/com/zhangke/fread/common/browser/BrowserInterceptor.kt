@@ -1,7 +1,6 @@
 package com.zhangke.fread.common.browser
 
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol

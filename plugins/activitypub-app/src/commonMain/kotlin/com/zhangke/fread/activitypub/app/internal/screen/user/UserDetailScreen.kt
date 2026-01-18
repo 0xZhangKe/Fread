@@ -56,7 +56,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
@@ -64,6 +63,7 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.nav.HorizontalPagerWithTab
@@ -71,7 +71,6 @@ import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreenNavKey
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreenKey
@@ -89,7 +88,8 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.utils.formatDate
-import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.fread.commonbiz.shared.screen.ImageViewerImage
+import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.PlatformLocator
@@ -131,7 +131,6 @@ fun UserDetailScreen(
     userId: String? = null,
 ) {
     val backstack = LocalNavBackStack.currentOrThrow
-    val transparentNavigator = LocalTransparentNavigator.current
     val browserLauncher = LocalActivityBrowserLauncher.current
     val activityTextHandler = LocalTextHandler.current
     val viewModel = viewModel.getViewModel(locator, userUri, webFinger, userId)
@@ -175,11 +174,11 @@ fun UserDetailScreen(
                 ?.account
                 ?.avatar
                 ?.let {
-                    val screen = ImageViewerScreen(
+                    val screenKey = ImageViewerScreenNavKey(
                         selectedIndex = 0,
-                        imageList = listOf(ImageViewerScreen.Image(url = it)),
+                        imageList = listOf(ImageViewerImage(url = it)),
                     )
-                    transparentNavigator.push(screen)
+                    backstack.add(screenKey)
                 }
         },
         onBannerClick = {
@@ -187,11 +186,11 @@ fun UserDetailScreen(
                 ?.account
                 ?.header
                 ?.let {
-                    val screen = ImageViewerScreen(
+                    val screen = ImageViewerScreenNavKey(
                         selectedIndex = 0,
-                        imageList = listOf(ImageViewerScreen.Image(url = it)),
+                        imageList = listOf(ImageViewerImage(url = it)),
                     )
-                    transparentNavigator.push(screen)
+                    backstack.add(screen)
                 }
         },
         onOpenInBrowserClick = {

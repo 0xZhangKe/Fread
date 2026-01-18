@@ -1,6 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.utils
 
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.fread.status.model.PlatformLocator
@@ -30,8 +30,8 @@ open class LoadableStatusController(
     private val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = mutableErrorMessageFlow
 
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
-    val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
+    private val _openScreenFlow = MutableSharedFlow<NavKey>()
+    val openScreenFlow: SharedFlow<NavKey> get() = _openScreenFlow
 
     open fun onRefresh(
         locator: PlatformLocator,

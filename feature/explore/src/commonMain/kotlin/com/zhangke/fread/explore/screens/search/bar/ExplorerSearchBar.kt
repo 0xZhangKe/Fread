@@ -42,8 +42,7 @@ import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
@@ -52,8 +51,9 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
-import com.zhangke.fread.explore.screens.search.SearchScreen
+import com.zhangke.fread.explore.screens.search.SearchScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -71,7 +71,7 @@ fun ExplorerSearchBar(
     accountList: List<LoggedAccount>,
     onAccountSelected: (LoggedAccount) -> Unit,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
+    val backStack = LocalNavBackStack.currentOrThrow
     var active by rememberSaveable { mutableStateOf(false) }
     val viewModel = koinViewModel<SearchBarViewModel>()
     LaunchedEffect(selectedAccount) {
@@ -114,7 +114,13 @@ fun ExplorerSearchBar(
                     val locator = uiState.locator
                     val protocol = uiState.account?.platform?.protocol
                     if (locator != null && protocol != null) {
-                        navigator.push(SearchScreen(locator, protocol, uiState.query))
+                        backStack.add(
+                            SearchScreenNavKey(
+                                locator = locator,
+                                protocol = protocol,
+                                query = uiState.query,
+                            )
+                        )
                     }
                 },
                 expanded = active,
@@ -174,7 +180,7 @@ fun ExplorerSearchBar(
         },
     )
     ConsumeFlow(viewModel.openScreenFlow) {
-        navigator.push(it)
+        backStack.add(it)
     }
 }
 

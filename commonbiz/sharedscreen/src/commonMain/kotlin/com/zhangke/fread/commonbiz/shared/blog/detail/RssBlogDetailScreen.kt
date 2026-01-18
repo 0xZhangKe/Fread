@@ -23,13 +23,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.fread.localization.LocalizedString
@@ -52,7 +52,7 @@ fun RssBlogDetailScreen(
     viewModel: RssBlogDetailViewModel,
 ) {
     val blog: Blog = remember { globalJson.decodeFromString(serializedBlog) }
-    val navigator = LocalNavigator.currentOrThrow
+    val navigator = LocalNavBackStack.currentOrThrow
     val browserLauncher = LocalActivityBrowserLauncher.current
     val coroutineScope = rememberCoroutineScope()
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)
@@ -62,7 +62,7 @@ fun RssBlogDetailScreen(
                 title = blog.title.ifNullOrEmpty {
                     stringResource(LocalizedString.sharedStatusContextScreenTitle)
                 },
-                onBackClick = navigator::pop,
+                onBackClick = navigator::removeLastOrNull,
                 actions = {
                     SimpleIconButton(
                         onClick = {

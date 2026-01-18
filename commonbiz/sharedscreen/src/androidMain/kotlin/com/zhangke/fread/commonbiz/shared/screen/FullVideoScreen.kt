@@ -5,13 +5,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavKey
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.toPlatformUri
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.video.full.FullScreenVideoPlayer
 import kotlinx.serialization.Serializable
 

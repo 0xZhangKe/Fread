@@ -29,7 +29,6 @@ kotlin {
                 implementation(libs.androidx.room)
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.auto.service.annotations)
-                implementation(libs.bundles.voyager)
                 implementation(libs.uri.kmp)
                 implementation(libs.rssparser)
                 implementation(libs.okio)

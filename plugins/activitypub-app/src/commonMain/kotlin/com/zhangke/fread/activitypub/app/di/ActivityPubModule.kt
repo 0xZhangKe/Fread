@@ -64,7 +64,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.Gen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailContainerViewModel
-import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListContainerViewModel
@@ -91,6 +90,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.GetUserStatusUs
 import com.zhangke.fread.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.fread.activitypub.app.internal.utils.MastodonHelper
+import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.status.IStatusProvider
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
@@ -120,7 +120,7 @@ val activityPubModule = module {
     factoryOf(::ActivityPubNotificationResolver)
     factoryOf(::ActivityPubPublishManager)
     factoryOf(::ActivityPubStartup)
-    factoryOf(::ActivityPubUrlInterceptor)
+    factoryOf(::ActivityPubUrlInterceptor) bind BrowserInterceptor::class
     factoryOf(::ActivityPubContentMigrator)
 
     factoryOf(::ActivityPubAccountEntityAdapter)
@@ -193,7 +193,6 @@ val activityPubModule = module {
     viewModelOf(::PostStatusViewModel)
     viewModelOf(::TrendingStatusViewModel)
     viewModelOf(::UserDetailContainerViewModel)
-    viewModelOf(::UserAboutContainerViewModel)
     viewModelOf(::UserListViewModel)
     viewModelOf(::SearchUserViewModel)
     viewModelOf(::StatusListContainerViewModel)

@@ -47,6 +47,7 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdatePreferencesUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateProfileRecordUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
+import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.status.IStatusProvider
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -74,7 +75,6 @@ val blueskyModule = module {
     factoryOf(::BlueskyStatusResolver)
     factoryOf(::BlueskyStatusSourceResolver)
     factoryOf(::BskyStartup)
-    factoryOf(::BskyUrlInterceptor)
     factoryOf(::BlueskyContentMigrator)
     factoryOf(::BlueskyLoggedAccountManager)
 
@@ -121,6 +121,8 @@ val blueskyModule = module {
     viewModelOf(::PublishPostViewModel)
 
     factoryOf(::BlueskyProvider) bind IStatusProvider::class
+    factoryOf(::BskyUrlInterceptor) bind BrowserInterceptor::class
+
 }
 
 expect fun Module.createPlatformModule()

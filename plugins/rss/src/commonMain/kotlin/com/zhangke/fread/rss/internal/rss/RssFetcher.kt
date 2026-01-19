@@ -2,7 +2,7 @@ package com.zhangke.fread.rss.internal.rss
 
 import com.zhangke.fread.rss.internal.model.RssChannelItem
 import com.zhangke.fread.rss.internal.model.RssSource
-import kotlin.time.Clock
+import kotlinx.datetime.Clock
 import kotlin.time.ExperimentalTime
 
 class RssFetcher(

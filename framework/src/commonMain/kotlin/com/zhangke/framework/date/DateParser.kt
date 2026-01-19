@@ -3,8 +3,8 @@
 package com.zhangke.framework.date
 
 import com.zhangke.framework.utils.Rfc822InstantParser
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 object DateParser {

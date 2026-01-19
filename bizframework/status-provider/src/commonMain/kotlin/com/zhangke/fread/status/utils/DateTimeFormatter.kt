@@ -1,15 +1,15 @@
 package com.zhangke.fread.status.utils
 
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.Composable
 import com.zhangke.fread.localization.LocalizedString
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.getString
-import kotlin.time.Clock
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours

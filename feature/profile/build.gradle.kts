@@ -27,7 +27,6 @@ kotlin {
 
                 implementation(libs.androidx.paging.common)
 
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.auto.service.annotations)
                 implementation(libs.krouter.runtime)
             }

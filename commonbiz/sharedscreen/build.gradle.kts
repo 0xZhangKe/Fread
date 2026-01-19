@@ -29,7 +29,6 @@ kotlin {
 
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.imageLoader)
 
                 implementation(libs.krouter.runtime)

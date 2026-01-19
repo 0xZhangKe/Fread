@@ -25,9 +25,8 @@ import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyScreenProvider @Inject constructor(
+class BlueskyScreenProvider(
     private val userUriTransformer: UserUriTransformer,
 ) : IStatusScreenProvider {
 

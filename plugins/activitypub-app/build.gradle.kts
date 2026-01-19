@@ -38,7 +38,6 @@ kotlin {
                 implementation(libs.jetbrains.lifecycle.viewmodel)
                 implementation(libs.androidx.constraintlayout.compose.kmp)
                 implementation(libs.imageLoader)
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.androidx.room)
                 implementation(libs.auto.service.annotations)
                 implementation(libs.androidx.paging.common)

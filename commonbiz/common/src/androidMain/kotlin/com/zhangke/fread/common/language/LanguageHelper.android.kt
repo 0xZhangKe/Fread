@@ -7,17 +7,12 @@ import android.os.Bundle
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.ActivityLifecycleCallbacksAdapter
 import com.zhangke.fread.common.config.LocalConfigManager
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.localization.LanguageCode
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.tatarka.inject.annotations.Inject
 import java.lang.ref.WeakReference
 
-private const val OLD_LANGUAGE_SETTING = "app_language_setting"
-
-@ApplicationScope
-class LanguageHelper @Inject constructor(
+private const val OLD_LANGUAGE_SETTING = "app_language_setting" class LanguageHelper (
     private val localConfigManager: LocalConfigManager,
     private val context: Context,
 ) {

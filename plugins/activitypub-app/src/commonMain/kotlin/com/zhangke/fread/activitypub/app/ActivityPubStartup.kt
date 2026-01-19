@@ -10,9 +10,8 @@ import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLogged
 import com.zhangke.fread.common.content.FreadContentRepo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubStartup @Inject constructor(
+class ActivityPubStartup(
     private val contentRepo: FreadContentRepo,
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val contentAdapter: ActivityPubContentAdapter,

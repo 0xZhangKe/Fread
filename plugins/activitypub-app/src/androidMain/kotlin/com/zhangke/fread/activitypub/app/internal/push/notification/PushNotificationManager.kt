@@ -24,10 +24,9 @@ import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLogged
 import com.zhangke.fread.common.action.OpenNotificationPageAction
 import com.zhangke.fread.commonbiz.R
 import com.zhangke.fread.commonbiz.ic_fread_logo
-import me.tatarka.inject.annotations.Inject
 import kotlin.random.Random
 
-class PushNotificationManager @Inject constructor(
+class PushNotificationManager (
     private val accountRepo: ActivityPubLoggedAccountRepo
 ) {
 

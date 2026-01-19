@@ -1,9 +1,8 @@
 package com.zhangke.fread.commonbiz.shared.usecase
 
 import com.zhangke.fread.status.status.model.Status
-import me.tatarka.inject.annotations.Inject
 
-class RefactorToNewBlogUseCase @Inject constructor() {
+class RefactorToNewBlogUseCase () {
 
     operator fun invoke(status: Status): Status.NewBlog {
         return when (status) {

@@ -5,9 +5,8 @@ import app.bsky.actor.PutPreferencesRequest
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class UpdatePreferencesUseCase @Inject constructor(
+class UpdatePreferencesUseCase (
     private val clientManager: BlueskyClientManager,
 ) {
 

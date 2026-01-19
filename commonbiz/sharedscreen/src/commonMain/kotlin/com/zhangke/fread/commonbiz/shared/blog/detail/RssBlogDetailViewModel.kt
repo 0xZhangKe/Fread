@@ -8,9 +8,8 @@ import com.zhangke.fread.status.author.BlogAuthor
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class RssBlogDetailViewModel @Inject constructor(
+class RssBlogDetailViewModel (
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 

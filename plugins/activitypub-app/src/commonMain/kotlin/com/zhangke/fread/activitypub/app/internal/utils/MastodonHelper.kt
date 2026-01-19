@@ -1,17 +1,14 @@
 package com.zhangke.fread.activitypub.app.internal.utils
 
 import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.StorageHelper
-import me.tatarka.inject.annotations.Inject
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.SYSTEM
 import okio.openZip
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-@ApplicationScope
-class MastodonHelper @Inject constructor(
+class MastodonHelper (
     private val storageHelper: StorageHelper,
 ) {
 

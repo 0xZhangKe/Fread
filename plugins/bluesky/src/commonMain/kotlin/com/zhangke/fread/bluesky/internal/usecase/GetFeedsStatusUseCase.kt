@@ -19,11 +19,10 @@ import com.zhangke.fread.bluesky.internal.model.BskyPagingFeeds
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
 
-class GetFeedsStatusUseCase @Inject constructor(
+class GetFeedsStatusUseCase(
     private val clientManager: BlueskyClientManager,
     private val statusAdapter: BlueskyStatusAdapter,
     private val blogPlatformRepo: BlueskyPlatformRepo,

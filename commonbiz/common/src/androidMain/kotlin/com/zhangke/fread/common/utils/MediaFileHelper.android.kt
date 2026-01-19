@@ -6,12 +6,9 @@ import com.zhangke.framework.toast.showFileSaveSuccessToast
 import com.zhangke.framework.toast.showFileSavingToast
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
-import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-actual class MediaFileHelper @Inject constructor(
+actual class MediaFileHelper (
     private val context: ApplicationContext,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
 ) {

@@ -6,9 +6,8 @@ import com.zhangke.fread.status.content.IContentManager
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.status.IStatusResolver
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubProvider @Inject constructor(
+class ActivityPubProvider (
     internalContentManager: ActivityPubContentManager,
     internalScreenProvider: ActivityPubScreenProvider,
     internalSearchEngine: ActivityPubSearchEngine,

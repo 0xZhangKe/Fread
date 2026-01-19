@@ -9,9 +9,8 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubApplication
 import com.zhangke.fread.activitypub.app.internal.platform.FreadApplicationRegisterInfo
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubApplicationRepo @Inject constructor(
+class ActivityPubApplicationRepo (
     private val databases: ActivityPubDatabases,
     private val clientManager: ActivityPubClientManager,
     private val registerApplicationEntryAdapter: RegisterApplicationEntryAdapter,

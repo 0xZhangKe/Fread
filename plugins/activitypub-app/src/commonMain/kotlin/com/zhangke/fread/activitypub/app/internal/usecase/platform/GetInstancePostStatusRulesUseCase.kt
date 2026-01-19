@@ -4,9 +4,8 @@ import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostBlogRules
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class GetInstancePostStatusRulesUseCase @Inject constructor(
+class GetInstancePostStatusRulesUseCase (
     private val clientManager: ActivityPubClientManager,
 ) {
 

@@ -10,9 +10,8 @@ import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
-class RssAccountManager @Inject constructor() : IAccountManager {
+class RssAccountManager() : IAccountManager {
 
     override suspend fun getAllLoggedAccount(): List<LoggedAccount> {
         return emptyList()

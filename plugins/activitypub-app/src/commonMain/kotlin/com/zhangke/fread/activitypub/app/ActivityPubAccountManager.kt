@@ -13,7 +13,6 @@ import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLogged
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.ActivityPubAccountLogoutUseCase
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.account.LoggedAccount
@@ -28,10 +27,8 @@ import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class ActivityPubAccountManager @Inject constructor(
+class ActivityPubAccountManager(
     private val oAuthor: ActivityPubOAuthor,
     private val clientManager: ActivityPubClientManager,
     private val loggedAccountProvider: LoggedAccountProvider,

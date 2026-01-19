@@ -9,9 +9,8 @@ import com.zhangke.fread.activitypub.app.internal.usecase.GetInstanceAnnouncemen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Inject
 
-class ServerAboutViewModel @Inject constructor(
+class ServerAboutViewModel (
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val getInstanceAnnouncementUseCase: GetInstanceAnnouncementUseCase,
 ) : ViewModel() {

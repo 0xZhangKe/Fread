@@ -2,14 +2,11 @@ package com.zhangke.fread.common.account
 
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.fread.common.config.FreadConfigManager
-import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class ActiveAccountsSynchronizer @Inject constructor(
+class ActiveAccountsSynchronizer (
     private val freadConfigManager: FreadConfigManager,
 ) {
 

@@ -7,11 +7,8 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.framework.utils.startActivityCompat
 import com.zhangke.framework.utils.toAndroidUri
-import com.zhangke.fread.common.di.ActivityScope
-import me.tatarka.inject.annotations.Inject
 
-@ActivityScope
-class AndroidSystemBrowserLauncher @Inject constructor(
+class AndroidSystemBrowserLauncher(
     private val context: Context,
 ) : SystemBrowserLauncher {
 

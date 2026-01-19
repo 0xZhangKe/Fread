@@ -27,7 +27,6 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.androidx.room)
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.auto.service.annotations)
                 implementation(libs.uri.kmp)
                 implementation(libs.rssparser)

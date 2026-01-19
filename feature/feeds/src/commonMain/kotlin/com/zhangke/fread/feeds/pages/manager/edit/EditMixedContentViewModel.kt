@@ -7,7 +7,6 @@ import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
@@ -18,19 +17,12 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-class EditMixedContentViewModel @Inject constructor(
+class EditMixedContentViewModel(
     private val configRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
-    @Assisted private val configId: String,
+    private val configId: String,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(configId: String): EditMixedContentViewModel
-    }
 
     private val _uiState = MutableStateFlow(LoadableState.loading<EditMixedContentUiState>())
     val uiState: StateFlow<LoadableState<EditMixedContentUiState>> = _uiState.asStateFlow()

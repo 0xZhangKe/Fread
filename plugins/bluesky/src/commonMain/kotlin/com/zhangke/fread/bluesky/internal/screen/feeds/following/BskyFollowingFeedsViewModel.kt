@@ -12,7 +12,6 @@ import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdatePinnedFeedsOrderUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,25 +20,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class BskyFollowingFeedsViewModel @Inject constructor(
+class BskyFollowingFeedsViewModel(
     private val getFollowingFeeds: GetFollowingFeedsUseCase,
     private val contentRepo: FreadContentRepo,
     private val updatePinnedFeedsOrder: UpdatePinnedFeedsOrderUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
-    @Assisted private val contentId: String?,
-    @Assisted private val locator: PlatformLocator?,
+    private val contentId: String?,
+    private val locator: PlatformLocator?,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            contentId: String?,
-            locator: PlatformLocator?,
-        ): BskyFollowingFeedsViewModel
-    }
 
     private val _uiState = MutableStateFlow(BskyFeedsExplorerUiState.default())
     val uiState = _uiState.asStateFlow()

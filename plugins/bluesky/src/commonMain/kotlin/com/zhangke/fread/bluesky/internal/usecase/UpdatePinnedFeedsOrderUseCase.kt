@@ -6,9 +6,8 @@ import app.bsky.actor.SavedFeedsPrefV2
 import app.bsky.actor.Type
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class UpdatePinnedFeedsOrderUseCase @Inject constructor(
+class UpdatePinnedFeedsOrderUseCase(
     private val updatePreferences: UpdatePreferencesUseCase,
 ) {
 

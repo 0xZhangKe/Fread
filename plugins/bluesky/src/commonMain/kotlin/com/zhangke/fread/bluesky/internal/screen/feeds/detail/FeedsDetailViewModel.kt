@@ -17,7 +17,6 @@ import com.zhangke.fread.bluesky.internal.usecase.DeleteRecordUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PinFeedsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UnpinFeedsUseCase
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,31 +24,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-class FeedsDetailViewModel @Inject constructor(
+class FeedsDetailViewModel(
     private val clientManager: BlueskyClientManager,
     private val feedsAdapter: BlueskyFeedsAdapter,
     private val createRecord: CreateRecordUseCase,
     private val deleteRecord: DeleteRecordUseCase,
     private val followFeeds: PinFeedsUseCase,
     private val unfollowFeeds: UnpinFeedsUseCase,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted feeds: BlueskyFeeds,
+    private val locator: PlatformLocator,
+    feeds: BlueskyFeeds,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            locator: PlatformLocator,
-            feeds: BlueskyFeeds,
-        ): FeedsDetailViewModel
-    }
 
     private val _uiState = MutableStateFlow(FeedsDetailUiState.default(feeds))
     val uiState = _uiState.asStateFlow()

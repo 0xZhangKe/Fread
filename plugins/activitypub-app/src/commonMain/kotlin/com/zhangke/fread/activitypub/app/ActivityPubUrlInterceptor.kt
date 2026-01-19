@@ -21,9 +21,8 @@ import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScr
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubUrlInterceptor @Inject constructor(
+class ActivityPubUrlInterceptor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val clientManager: ActivityPubClientManager,
     private val loggedAccountProvider: LoggedAccountProvider,

@@ -3,9 +3,8 @@ package com.zhangke.fread.explore.usecase
 import com.zhangke.fread.common.status.model.SearchResultUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.search.SearchResult
-import me.tatarka.inject.annotations.Inject
 
-class BuildSearchResultUiStateUseCase @Inject constructor() {
+class BuildSearchResultUiStateUseCase() {
 
     suspend operator fun invoke(locator: PlatformLocator, result: SearchResult): SearchResultUiState {
         return when (result) {

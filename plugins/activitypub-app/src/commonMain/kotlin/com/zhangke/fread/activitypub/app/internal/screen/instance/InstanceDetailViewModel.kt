@@ -5,22 +5,14 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.common.di.ViewModelFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-class InstanceDetailViewModel @Inject constructor(
+class InstanceDetailViewModel (
     private val platformRepo: ActivityPubPlatformRepo,
     private val authorAdapter: ActivityPubAccountEntityAdapter,
-    @Assisted private val serverBaseUrl: FormalBaseUrl,
+    private val serverBaseUrl: FormalBaseUrl,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(serverBaseUrl: FormalBaseUrl): InstanceDetailViewModel
-    }
 
     private val _uiState = MutableStateFlow(
         InstanceDetailUiState(

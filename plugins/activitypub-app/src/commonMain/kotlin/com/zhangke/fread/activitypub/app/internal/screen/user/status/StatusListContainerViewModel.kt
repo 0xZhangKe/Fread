@@ -10,9 +10,8 @@ import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class StatusListContainerViewModel @Inject constructor(
+class StatusListContainerViewModel (
     private val clientManager: ActivityPubClientManager,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val statusProvider: StatusProvider,
@@ -43,9 +42,7 @@ class StatusListContainerViewModel @Inject constructor(
         type: StatusListType,
     ): StatusListViewModel {
         return obtainSubViewModel(ViewModelParams(locator, type))
-    }
-
-    class ViewModelParams(
+    } class ViewModelParams(
         val locator: PlatformLocator,
         val type: StatusListType,
     ) : SubViewModelParams() {

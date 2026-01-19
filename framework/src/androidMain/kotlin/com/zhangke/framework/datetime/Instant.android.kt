@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 
 //@Parcelize
 //@Serializable(with = TimestampAsInstantSerializer::class)
-//actual class Instant actual constructor(
+//actual class Instant actual (
 //    actual val instant: kotlinx.datetime.Instant
 //) : java.io.Serializable

@@ -6,9 +6,8 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyNotificationAdapter @Inject constructor(
+class BlueskyNotificationAdapter(
     private val accountAdapter: BlueskyAccountAdapter,
     private val statusAdapter: BlueskyStatusAdapter,
 ) {

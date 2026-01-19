@@ -3,13 +3,10 @@ package com.zhangke.fread.common.language
 import android.content.Context
 import android.os.Build.VERSION
 import android.os.LocaleList
-import com.zhangke.fread.common.di.ActivityScope
 import com.zhangke.fread.localization.locale
-import me.tatarka.inject.annotations.Inject
 import java.util.Locale
 
-@ActivityScope
-actual class ActivityLanguageHelper @Inject constructor(
+actual class ActivityLanguageHelper(
     private val languageHelper: LanguageHelper,
 ) {
 

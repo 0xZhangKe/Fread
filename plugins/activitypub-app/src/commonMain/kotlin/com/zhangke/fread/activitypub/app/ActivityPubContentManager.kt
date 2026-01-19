@@ -8,9 +8,8 @@ import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubContentManager @Inject constructor() : IContentManager {
+class ActivityPubContentManager () : IContentManager {
 
     override suspend fun addContent(
         platform: BlogPlatform,

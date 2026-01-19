@@ -42,7 +42,6 @@ kotlin {
                 implementation(compose.components.resources)
 
                 implementation(libs.jetbrains.lifecycle.viewmodel)
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.krouter.runtime)
                 implementation(libs.imageLoader)
                 implementation(libs.kotlinx.serialization.core)
@@ -71,10 +70,6 @@ kotlin {
 
 dependencies {
     kspAll(libs.krouter.reducing.compiler)
-}
-
-ksp {
-    arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }
 
 compose {

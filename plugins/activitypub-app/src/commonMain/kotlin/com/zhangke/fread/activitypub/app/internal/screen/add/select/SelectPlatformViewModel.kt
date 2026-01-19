@@ -19,9 +19,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class SelectPlatformViewModel @Inject constructor(
+class SelectPlatformViewModel (
     private val platformRepo: ActivityPubPlatformRepo,
     private val onboardingComponent: OnboardingComponent,
 ) : ViewModel() {

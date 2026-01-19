@@ -15,9 +15,8 @@ import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.publish.IPublishBlogManager
 import com.zhangke.fread.status.publish.PublishingMedia
 import com.zhangke.fread.status.publish.PublishingPost
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubPublishManager @Inject constructor(
+class ActivityPubPublishManager(
     private val clientManager: ActivityPubClientManager,
     private val publishPost: PublishPostUseCase,
 ) : IPublishBlogManager {

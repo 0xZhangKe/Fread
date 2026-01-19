@@ -2,11 +2,7 @@ package com.zhangke.fread.common.config
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.russhwolf.settings.coroutines.FlowSettings
-import com.zhangke.fread.common.di.ApplicationScope
-import me.tatarka.inject.annotations.Inject
-
-@ApplicationScope
-class LocalConfigManager @Inject constructor(
+class LocalConfigManager (
     configSettingsFactory: Lazy<FlowSettings>,
 ) {
     private val configSettings by configSettingsFactory

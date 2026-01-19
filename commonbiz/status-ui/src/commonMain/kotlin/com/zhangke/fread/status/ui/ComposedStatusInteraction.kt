@@ -12,7 +12,6 @@ import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 
-
 interface ComposedStatusInteraction {
 
     fun onStatusInteractive(status: StatusUiState, type: StatusActionType)

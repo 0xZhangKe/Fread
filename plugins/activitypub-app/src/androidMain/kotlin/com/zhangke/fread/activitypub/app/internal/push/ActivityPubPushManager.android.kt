@@ -5,16 +5,13 @@ import com.zhangke.activitypub.entities.SubscribePushRequestEntity
 import com.zhangke.activitypub.entities.SubscriptionAlertsEntity
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.config.FreadConfigManager
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.push.IPushManager
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.krouter.KRouter
-import me.tatarka.inject.annotations.Inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-@ApplicationScope
-actual class ActivityPubPushManager @Inject constructor(
+actual class ActivityPubPushManager (
     private val freadConfigManager: FreadConfigManager,
     private val clientManager: ActivityPubClientManager,
     private val pushInfoRepo: PushInfoRepo,

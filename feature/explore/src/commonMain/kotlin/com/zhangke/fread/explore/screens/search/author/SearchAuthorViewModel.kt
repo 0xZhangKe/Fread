@@ -7,24 +7,16 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-open class SearchAuthorViewModel @Inject constructor(
+open class SearchAuthorViewModel(
     private val statusProvider: StatusProvider,
-    @Assisted val locator: PlatformLocator,
+    val locator: PlatformLocator,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-        fun create(locator: PlatformLocator): SearchAuthorViewModel
-    }
 
     private val _snackMessageFlow = MutableSharedFlow<TextString>()
     val snackMessageFlow: SharedFlow<TextString> get() = _snackMessageFlow

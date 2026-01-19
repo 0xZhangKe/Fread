@@ -9,10 +9,9 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClient
 import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.client.selfRkey
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 
-class UpdateProfileRecordUseCase @Inject constructor() {
+class UpdateProfileRecordUseCase() {
 
     suspend operator fun invoke(
         client: BlueskyClient,

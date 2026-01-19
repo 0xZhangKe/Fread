@@ -8,9 +8,8 @@ import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.startActivityCompat
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.utils.ShareHelper
-import me.tatarka.inject.annotations.Inject
 
-actual class TextHandler @Inject constructor(
+actual class TextHandler (
     private val context: Context,
 ) {
     actual val packageName: String

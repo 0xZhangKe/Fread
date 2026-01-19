@@ -8,9 +8,8 @@ import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class HomeFeedsContainerViewModel @Inject constructor(
+class HomeFeedsContainerViewModel(
     private val statusUiStateAdapter: StatusUiStateAdapter,
     private val statusUpdater: StatusUpdater,
     private val statusProvider: StatusProvider,

@@ -1,7 +1,6 @@
 package com.zhangke.fread.rss.internal.repo
 
 import com.zhangke.framework.datetime.Instant
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.rss.internal.adapter.BlogAuthorAdapter
 import com.zhangke.fread.rss.internal.db.RssChannelEntity
 import com.zhangke.fread.rss.internal.db.RssDatabases
@@ -14,13 +13,11 @@ import com.zhangke.fread.rss.internal.utils.AvatarUtils
 import com.zhangke.fread.status.author.BlogAuthor
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import me.tatarka.inject.annotations.Inject
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.SYSTEM
 
-@ApplicationScope
-class RssRepo @Inject constructor(
+class RssRepo(
     rssDatabases: RssDatabases,
     private val blogAuthorAdapter: BlogAuthorAdapter,
     private val rssUriTransformer: RssUriTransformer,

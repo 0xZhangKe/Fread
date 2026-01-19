@@ -21,9 +21,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class ProfileHomeViewModel @Inject constructor(
+class ProfileHomeViewModel(
     private val statusProvider: StatusProvider,
     private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
 ) : ViewModel() {

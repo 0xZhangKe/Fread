@@ -1,7 +1,6 @@
 package com.zhangke.fread.common.config
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.utils.RandomIdGenerator
 import kotlinx.coroutines.Dispatchers
@@ -9,10 +8,8 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class FreadConfigManager @Inject constructor(
+class FreadConfigManager (
     private val localConfigManager: LocalConfigManager,
 ) {
     companion object {

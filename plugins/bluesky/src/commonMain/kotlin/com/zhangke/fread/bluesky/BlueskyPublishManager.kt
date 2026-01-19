@@ -10,9 +10,8 @@ import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.publish.IPublishBlogManager
 import com.zhangke.fread.status.publish.PublishingMedia
 import com.zhangke.fread.status.publish.PublishingPost
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyPublishManager @Inject constructor(
+class BlueskyPublishManager (
     private val publishingPost: PublishingPostUseCase,
 ) : IPublishBlogManager {
 

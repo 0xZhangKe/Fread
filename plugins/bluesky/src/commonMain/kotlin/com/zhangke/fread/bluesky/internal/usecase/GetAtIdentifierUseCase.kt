@@ -2,12 +2,11 @@ package com.zhangke.fread.bluesky.internal.usecase
 
 import com.zhangke.framework.utils.RegexFactory
 import com.zhangke.framework.utils.WebFinger
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtIdentifier
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Handle
 
-class GetAtIdentifierUseCase @Inject constructor() {
+class GetAtIdentifierUseCase() {
 
     operator fun invoke(text: String): AtIdentifier? {
         // did, handle, homePageUrl

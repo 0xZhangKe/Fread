@@ -10,9 +10,8 @@ import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class HashtagTimelineContainerViewModel @Inject constructor(
+class HashtagTimelineContainerViewModel (
     private val clientManager: ActivityPubClientManager,
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
@@ -41,9 +40,7 @@ class HashtagTimelineContainerViewModel @Inject constructor(
     fun getViewModel(locator: PlatformLocator, tag: String): HashtagTimelineViewModel {
         val params = Params(locator, tag)
         return obtainSubViewModel(params)
-    }
-
-    class Params(
+    } class Params(
         val locator: PlatformLocator,
         val tag: String,
     ) : SubViewModelParams() {

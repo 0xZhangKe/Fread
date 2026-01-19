@@ -6,9 +6,8 @@ import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class FreadConfigModuleStartup @Inject constructor(
+class FreadConfigModuleStartup (
     private val applicationCoroutineScope: ApplicationCoroutineScope,
     private val freadConfigManager: Lazy<FreadConfigManager>,
 ) : ModuleStartup {

@@ -5,9 +5,8 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubInstanceAdapter @Inject constructor(
+class ActivityPubInstanceAdapter (
     private val platformUriTransformer: PlatformUriTransformer,
 ) {
 

@@ -16,10 +16,9 @@ import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 
-class GetFollowingFeedsUseCase @Inject constructor(
+class GetFollowingFeedsUseCase(
     private val clientManager: BlueskyClientManager,
     private val feedsAdapter: BlueskyFeedsAdapter,
 ) {

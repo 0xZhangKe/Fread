@@ -18,9 +18,8 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Inject
 
-class ContentHomeViewModel @Inject constructor(
+class ContentHomeViewModel(
     private val contentRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
     private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,

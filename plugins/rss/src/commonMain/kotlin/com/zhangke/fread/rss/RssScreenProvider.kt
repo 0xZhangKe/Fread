@@ -13,9 +13,8 @@ import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class RssScreenProvider @Inject constructor(
+class RssScreenProvider(
     private val uriTransformer: RssUriTransformer,
 ) : IStatusScreenProvider {
 

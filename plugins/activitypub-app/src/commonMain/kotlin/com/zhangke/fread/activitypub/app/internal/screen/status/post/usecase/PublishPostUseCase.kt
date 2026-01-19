@@ -22,9 +22,8 @@ import com.zhangke.fread.status.model.StatusVisibility
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
-import me.tatarka.inject.annotations.Inject
 
-class PublishPostUseCase @Inject constructor(
+class PublishPostUseCase (
     private val clientManager: ActivityPubClientManager,
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val attachmentAdapter: PostStatusAttachmentAdapter,

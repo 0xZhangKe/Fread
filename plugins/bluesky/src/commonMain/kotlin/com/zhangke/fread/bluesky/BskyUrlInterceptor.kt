@@ -23,11 +23,10 @@ import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreenNavKey
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.createBlueskyProtocol
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Handle
 import sh.christian.ozone.api.RKey
 
-class BskyUrlInterceptor @Inject constructor(
+class BskyUrlInterceptor(
     private val accountManager: BlueskyLoggedAccountManager,
     private val clientManager: BlueskyClientManager,
     private val statusAdapter: BlueskyStatusAdapter,

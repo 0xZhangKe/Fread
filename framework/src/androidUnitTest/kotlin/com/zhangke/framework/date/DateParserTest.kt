@@ -8,7 +8,6 @@ import kotlinx.datetime.toJavaInstant
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-
 class DateParserTest {
 
     @Test

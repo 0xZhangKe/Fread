@@ -12,9 +12,8 @@ import io.ktor.client.request.url
 import io.ktor.http.takeFrom
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import me.tatarka.inject.annotations.Inject
 
-class MastodonInstanceRepo @Inject constructor() {
+class MastodonInstanceRepo () {
 
     private companion object {
 

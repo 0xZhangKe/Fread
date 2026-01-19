@@ -8,9 +8,8 @@ import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: SystemBrowserLauncher) {
+class BrowserLauncher (private val systemBrowserLauncher: SystemBrowserLauncher) {
 
     fun launchBySystemBrowser(url: String) {
         launchBySystemBrowser(url.toPlatformUri())

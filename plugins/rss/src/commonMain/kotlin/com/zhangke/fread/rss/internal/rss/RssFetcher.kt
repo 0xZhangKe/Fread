@@ -1,13 +1,10 @@
 package com.zhangke.fread.rss.internal.rss
 
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.rss.internal.model.RssChannelItem
 import com.zhangke.fread.rss.internal.model.RssSource
 import kotlinx.datetime.Clock
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class RssFetcher @Inject constructor(
+class RssFetcher(
     private val rssParserWrapper: RssParserWrapper,
 ) {
 

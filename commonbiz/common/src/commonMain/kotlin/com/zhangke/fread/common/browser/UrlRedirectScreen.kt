@@ -34,7 +34,6 @@ import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.composable.SelectableAccount
 import com.zhangke.fread.common.deeplink.SelectAccountForPublishScreenKey
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.StatusProvider
@@ -46,8 +45,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
 
 @Serializable
@@ -133,26 +130,15 @@ sealed interface UrlRedirectPageState {
     data object Loading : UrlRedirectPageState
 
     data class SelectAccount(val accounts: List<LoggedAccount>) : UrlRedirectPageState
-}
-
-class UrlRedirectViewModel @Inject constructor(
+} class UrlRedirectViewModel (
     private val browserInterceptorSet: Set<BrowserInterceptor>,
     val browserLauncher: BrowserLauncher,
     private val statusProvider: StatusProvider,
     private val selectedContentSwitcher: SelectedContentSwitcher,
-    @Assisted private val uri: String,
-    @Assisted private val locator: PlatformLocator?,
-    @Assisted private val isFromExternal: Boolean,
+    private val uri: String,
+    private val locator: PlatformLocator?,
+    private val isFromExternal: Boolean,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            uri: String,
-            locator: PlatformLocator?,
-            isFromExternal: Boolean,
-        ): UrlRedirectViewModel
-    }
 
     private val _openNewPageFlow = MutableSharedFlow<NavKey>()
     val openNewPageFlow = _openNewPageFlow.asSharedFlow()

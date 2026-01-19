@@ -9,13 +9,10 @@ import com.zhangke.framework.utils.throwInDebug
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.repo.BlueskyLoggedAccountRepo
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class BlueskyClientManager @Inject constructor(
+class BlueskyClientManager(
     private val loggedAccountRepo: BlueskyLoggedAccountRepo,
     private val accountAdapter: BlueskyAccountAdapter,
 ) {

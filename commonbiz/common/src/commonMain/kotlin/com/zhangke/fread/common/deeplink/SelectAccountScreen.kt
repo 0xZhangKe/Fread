@@ -34,7 +34,6 @@ import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.composable.SelectableAccount
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.StatusProvider
@@ -44,8 +43,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
 
 @Serializable
@@ -116,17 +113,10 @@ fun SelectAccountForPublishScreen(viewModel: SelectAccountForPublishViewModel) {
             }
         }
     }
-}
-
-class SelectAccountForPublishViewModel @Inject constructor(
+} class SelectAccountForPublishViewModel (
     private val statusProvider: StatusProvider,
-    @Assisted private val text: String,
+    private val text: String,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(text: String): SelectAccountForPublishViewModel
-    }
 
     private val _loggedAccounts =
         MutableStateFlow<LoadableState<List<LoggedAccount>>>(LoadableState.idle())

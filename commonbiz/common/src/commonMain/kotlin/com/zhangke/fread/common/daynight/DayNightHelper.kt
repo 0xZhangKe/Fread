@@ -2,15 +2,12 @@ package com.zhangke.fread.common.daynight
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.fread.common.config.LocalConfigManager
-import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.runBlocking
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class DayNightHelper @Inject constructor(
+class DayNightHelper (
     private val localConfigManager: LocalConfigManager,
 ) {
 

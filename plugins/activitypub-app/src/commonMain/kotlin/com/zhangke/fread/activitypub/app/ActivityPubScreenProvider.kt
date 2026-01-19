@@ -28,9 +28,8 @@ import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubScreenProvider @Inject constructor(
+class ActivityPubScreenProvider(
     private val userUriTransformer: UserUriTransformer,
     private val loggedAccountProvider: LoggedAccountProvider,
 ) : IStatusScreenProvider {

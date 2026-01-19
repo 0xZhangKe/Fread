@@ -7,7 +7,6 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
-
 sealed class TextString {
     class ResourceText(val resId: Int, val formatArgs: Array<Any>) : TextString()
     class ComposeResourceText(val res: StringResource, val formatArgs: Array<Any>) : TextString()

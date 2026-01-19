@@ -4,9 +4,8 @@ import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubInstanceInfoEntity
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubPlatformEntityAdapter @Inject constructor(
+class ActivityPubPlatformEntityAdapter (
     private val uriTransformer: PlatformUriTransformer,
 ) {
 

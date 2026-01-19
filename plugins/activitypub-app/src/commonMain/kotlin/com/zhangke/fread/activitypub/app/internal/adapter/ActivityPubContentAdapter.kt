@@ -2,9 +2,8 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubContentAdapter @Inject constructor() {
+class ActivityPubContentAdapter () {
 
     fun createContent(
         platform: BlogPlatform,

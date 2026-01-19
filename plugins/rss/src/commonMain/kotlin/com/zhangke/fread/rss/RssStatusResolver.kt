@@ -20,9 +20,8 @@ import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class RssStatusResolver @Inject constructor(
+class RssStatusResolver(
     private val uriTransformer: RssUriTransformer,
     private val rssStatusRepo: RssStatusRepo,
 ) : IStatusResolver {

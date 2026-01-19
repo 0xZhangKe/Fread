@@ -6,13 +6,10 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toAndroidUri
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.fread.common.di.ApplicationContext
-import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-actual class PlatformUriHelper @Inject constructor(
+actual class PlatformUriHelper (
     private val context: ApplicationContext,
 ) {
     actual suspend fun read(uri: PlatformUri): ContentProviderFile? {

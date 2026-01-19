@@ -27,9 +27,8 @@ import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubStatusAdapter @Inject constructor(
+class ActivityPubStatusAdapter (
     private val activityPubAccountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,

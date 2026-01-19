@@ -17,10 +17,9 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 
-class BlueskyLoggedAccountManager @Inject constructor(
+class BlueskyLoggedAccountManager(
     private val clientManager: BlueskyClientManager,
     private val accountAdapter: BlueskyAccountAdapter,
     private val platformRepo: BlueskyPlatformRepo,

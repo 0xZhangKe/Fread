@@ -4,9 +4,8 @@ import com.zhangke.fread.bluesky.internal.uri.BlueskyUriPath
 import com.zhangke.fread.bluesky.internal.uri.createBlueskyUri
 import com.zhangke.fread.bluesky.internal.uri.isBlueskyUri
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class UserUriTransformer @Inject constructor() {
+class UserUriTransformer() {
 
     companion object {
 

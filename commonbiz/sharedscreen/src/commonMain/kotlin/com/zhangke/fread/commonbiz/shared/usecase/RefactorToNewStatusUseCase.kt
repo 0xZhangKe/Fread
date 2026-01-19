@@ -1,9 +1,8 @@
 package com.zhangke.fread.commonbiz.shared.usecase
 
 import com.zhangke.fread.status.model.StatusUiState
-import me.tatarka.inject.annotations.Inject
 
-class RefactorToNewStatusUseCase @Inject constructor(
+class RefactorToNewStatusUseCase (
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) {
 

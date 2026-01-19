@@ -12,9 +12,8 @@ import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class UserTimelineContainerViewModel @Inject constructor(
+class UserTimelineContainerViewModel (
     private val statusProvider: StatusProvider,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val statusUpdater: StatusUpdater,
@@ -53,9 +52,7 @@ class UserTimelineContainerViewModel @Inject constructor(
         return obtainSubViewModel(
             Params(tabType, locator, webFinger, userId)
         )
-    }
-
-    class Params(
+    } class Params(
         val tabType: UserTimelineTabType,
         val locator: PlatformLocator,
         val webFinger: WebFinger,

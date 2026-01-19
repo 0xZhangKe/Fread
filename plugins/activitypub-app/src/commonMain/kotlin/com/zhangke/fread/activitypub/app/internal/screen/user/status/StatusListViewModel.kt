@@ -10,7 +10,6 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
@@ -39,11 +38,6 @@ class StatusListViewModel(
     statusUiStateAdapter = statusUiStateAdapter,
     refactorToNewStatus = refactorToNewStatus,
 ) {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(locator: PlatformLocator, type: StatusListType): StatusListViewModel
-    }
 
     private var nextMaxId: String? = null
 

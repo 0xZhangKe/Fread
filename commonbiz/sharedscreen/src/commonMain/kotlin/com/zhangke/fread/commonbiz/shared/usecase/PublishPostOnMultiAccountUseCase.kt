@@ -7,9 +7,8 @@ import com.zhangke.fread.status.publish.PublishingPost
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
-import me.tatarka.inject.annotations.Inject
 
-class PublishPostOnMultiAccountUseCase @Inject constructor(
+class PublishPostOnMultiAccountUseCase (
     private val statusProvider: StatusProvider,
 ) {
 
@@ -38,9 +37,7 @@ class PublishPostOnMultiAccountUseCase @Inject constructor(
             return Result.success(Unit)
         }
     }
-}
-
-class PublishingPartFailed(
+} class PublishingPartFailed(
     val successAccount: List<String>,
     val failedAccounts: List<String>,
     val e: Throwable,

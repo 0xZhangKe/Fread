@@ -8,9 +8,8 @@ import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.FreadContent
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class FreadContentDbMigrateManager @Inject constructor(
+class FreadContentDbMigrateManager (
     private val contentRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
     private val contentConfigDatabases: ContentConfigDatabases,

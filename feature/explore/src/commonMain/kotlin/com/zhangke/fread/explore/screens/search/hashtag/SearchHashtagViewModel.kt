@@ -7,7 +7,6 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
@@ -15,17 +14,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-open class SearchHashtagViewModel @Inject constructor(
+open class SearchHashtagViewModel(
     private val statusProvider: StatusProvider,
-    @Assisted private val locator: PlatformLocator,
+    private val locator: PlatformLocator,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-        fun create(locator: PlatformLocator): SearchHashtagViewModel
-    }
 
     private val _snackMessageFlow = MutableSharedFlow<TextString>()
     val snackMessageFlow: SharedFlow<TextString> get() = _snackMessageFlow

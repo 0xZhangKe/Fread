@@ -7,9 +7,8 @@ import com.zhangke.fread.activitypub.app.internal.push.ActivityPubPushManager
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubAccountLogoutUseCase @Inject constructor(
+class ActivityPubAccountLogoutUseCase (
     private val activityPubPushManager: ActivityPubPushManager,
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val loggedAccountProvider: LoggedAccountProvider,

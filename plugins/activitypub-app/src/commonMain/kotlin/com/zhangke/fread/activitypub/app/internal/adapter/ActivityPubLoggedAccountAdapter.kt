@@ -9,9 +9,8 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.reportToLogger
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubLoggedAccountAdapter @Inject constructor(
+class ActivityPubLoggedAccountAdapter (
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val userUriTransformer: UserUriTransformer,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,

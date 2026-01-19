@@ -7,7 +7,6 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.screen.search.AbstractSearchStatusViewModel
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
@@ -15,10 +14,7 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class SearchStatusViewModel @Inject constructor(
+class SearchStatusViewModel (
     private val clientManager: ActivityPubClientManager,
     statusProvider: StatusProvider,
     private val platformRepo: ActivityPubPlatformRepo,
@@ -27,19 +23,14 @@ class SearchStatusViewModel @Inject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
     refactorToNewStatus: RefactorToNewStatusUseCase,
     statusUpdater: StatusUpdater,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted private val userId: String,
+    private val locator: PlatformLocator,
+    private val userId: String,
 ) : AbstractSearchStatusViewModel(
     statusProvider = statusProvider,
     statusUiStateAdapter = statusUiStateAdapter,
     statusUpdater = statusUpdater,
     refactorToNewStatus = refactorToNewStatus,
 ) {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(locator: PlatformLocator, userId: String): SearchStatusViewModel
-    }
 
     private var platform: BlogPlatform? = null
     private var loggedAccount: ActivityPubLoggedAccount? = loggedAccountProvider.getAccount(locator)

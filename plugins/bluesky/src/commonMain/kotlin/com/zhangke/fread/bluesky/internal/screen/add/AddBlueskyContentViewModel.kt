@@ -11,7 +11,6 @@ import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
 import com.zhangke.fread.bluesky.internal.utils.AtRequestException
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.onboarding.OnboardingComponent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,31 +20,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class AddBlueskyContentViewModel @Inject constructor(
+class AddBlueskyContentViewModel(
     private val loginToBluesky: LoginToBskyUseCase,
     private val contentRepo: FreadContentRepo,
     private val platformRepo: BlueskyPlatformRepo,
     private val onboardingComponent: OnboardingComponent,
-    @Assisted private val baseUrl: FormalBaseUrl?,
-    @Assisted private val loginMode: Boolean,
-    @Assisted private val avatar: String?,
-    @Assisted private val displayName: String?,
-    @Assisted private val handle: String?,
+    private val baseUrl: FormalBaseUrl?,
+    private val loginMode: Boolean,
+    private val avatar: String?,
+    private val displayName: String?,
+    private val handle: String?,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            baseUrl: FormalBaseUrl?,
-            loginMode: Boolean,
-            avatar: String?,
-            displayName: String?,
-            handle: String?,
-        ): AddBlueskyContentViewModel
-    }
 
     private val _uiState = MutableStateFlow(
         AddBlueskyContentUiState.default(

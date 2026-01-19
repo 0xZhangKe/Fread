@@ -19,9 +19,8 @@ import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubNotificationResolver @Inject constructor(
+class ActivityPubNotificationResolver (
     private val clientManager: ActivityPubClientManager,
     private val platformRepo: ActivityPubPlatformRepo,
     private val loggedAccountProvider: LoggedAccountProvider,

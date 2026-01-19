@@ -16,9 +16,8 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
-import me.tatarka.inject.annotations.Inject
 
-class RssSearchEngine @Inject constructor(
+class RssSearchEngine(
     private val rssPlatformTransformer: RssPlatformTransformer,
     private val rssSourceTransformer: RssSourceTransformer,
     private val rssRepo: RssRepo,

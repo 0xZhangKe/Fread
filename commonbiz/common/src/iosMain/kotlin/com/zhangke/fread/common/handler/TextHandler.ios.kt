@@ -1,16 +1,13 @@
 package com.zhangke.fread.common.handler
 
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.SystemUtils
-import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSBundle
 import platform.Foundation.NSURL
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
 import platform.UIKit.UIPasteboard
 
-@ApplicationScope
-actual class TextHandler @Inject constructor() {
+actual class TextHandler () {
     actual val packageName: String
         get() = NSBundle.mainBundle().bundleIdentifier().orEmpty()
 

@@ -31,7 +31,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.Gen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
@@ -51,25 +50,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
-class PostStatusViewModel @Inject constructor(
+class PostStatusViewModel (
     private val getCustomEmoji: GetCustomEmojiUseCase,
     private val getInstancePostStatusRules: GetInstancePostStatusRulesUseCase,
     private val generateInitPostStatusUiState: GenerateInitPostStatusUiStateUseCase,
     private val clientManager: ActivityPubClientManager,
     private val publishPost: PublishPostUseCase,
-    @Assisted private val screenParams: PostStatusScreenParams,
+    private val screenParams: PostStatusScreenParams,
     private val platformUriHelper: PlatformUriHelper,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(screenParams: PostStatusScreenParams): PostStatusViewModel
-    }
 
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
     val uiState: StateFlow<LoadableState<PostStatusUiState>> = _uiState.asStateFlow()

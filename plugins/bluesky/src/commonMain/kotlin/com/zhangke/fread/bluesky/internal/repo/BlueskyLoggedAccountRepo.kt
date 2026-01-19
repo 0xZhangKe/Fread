@@ -7,9 +7,8 @@ import com.zhangke.fread.bluesky.internal.db.BlueskyLoggedAccountEntity
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyLoggedAccountRepo @Inject constructor(
+class BlueskyLoggedAccountRepo(
     database: BlueskyLoggedAccountDatabase,
 ) {
 

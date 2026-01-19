@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
@@ -17,25 +16,18 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.updateStatus
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class SearchStatusViewModel @Inject constructor(
+class SearchStatusViewModel(
     private val statusProvider: StatusProvider,
     statusUpdater: StatusUpdater,
     statusUiStateAdapter: StatusUiStateAdapter,
     refactorToNewStatus: RefactorToNewStatusUseCase,
-    @Assisted val locator: PlatformLocator,
+    val locator: PlatformLocator,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
     statusUiStateAdapter = statusUiStateAdapter,
     refactorToNewStatus = refactorToNewStatus,
 ) {
-
-    fun interface Factory : ViewModelFactory {
-        fun create(locator: PlatformLocator): SearchStatusViewModel
-    }
 
     private val loadStatusController = LoadableStatusController(viewModelScope)
 

@@ -12,9 +12,8 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
-import me.tatarka.inject.annotations.Inject
 
-class BlogPlatformResourceLoader @Inject constructor(
+class BlogPlatformResourceLoader (
     private val mastodonHelper: MastodonHelper,
 ) {
 

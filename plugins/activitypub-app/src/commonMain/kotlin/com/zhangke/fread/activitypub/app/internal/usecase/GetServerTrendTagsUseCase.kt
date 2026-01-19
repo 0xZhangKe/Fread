@@ -4,9 +4,8 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class GetServerTrendTagsUseCase @Inject constructor(
+class GetServerTrendTagsUseCase (
     private val clientManager: ActivityPubClientManager,
     private val activityPubTagAdapter: ActivityPubTagAdapter,
 ) {

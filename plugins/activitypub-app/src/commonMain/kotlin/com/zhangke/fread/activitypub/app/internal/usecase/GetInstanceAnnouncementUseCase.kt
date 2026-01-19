@@ -6,9 +6,8 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class GetInstanceAnnouncementUseCase @Inject constructor(
+class GetInstanceAnnouncementUseCase (
     private val clientManager: ActivityPubClientManager,
 ) {
 

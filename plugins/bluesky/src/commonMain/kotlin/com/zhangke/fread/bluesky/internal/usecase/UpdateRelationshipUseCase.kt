@@ -6,11 +6,10 @@ import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.client.adjustToRkey
 import com.zhangke.fread.bluesky.internal.client.followRecord
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
 
-class UpdateRelationshipUseCase @Inject constructor(
+class UpdateRelationshipUseCase(
     private val clientManager: BlueskyClientManager,
     private val createRecord: CreateRecordUseCase,
     private val deleteRecord: DeleteRecordUseCase,

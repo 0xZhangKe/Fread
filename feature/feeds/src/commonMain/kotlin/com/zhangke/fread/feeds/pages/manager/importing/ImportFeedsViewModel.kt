@@ -26,11 +26,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class ImportFeedsViewModel @Inject constructor(
+class ImportFeedsViewModel(
     private val statusProvider: StatusProvider,
     private val contentRepo: FreadContentRepo,
     private val platformUriHelper: PlatformUriHelper,

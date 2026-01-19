@@ -5,9 +5,8 @@ import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.bluesky.internal.migrate.BlueskyContentMigrator
 import com.zhangke.fread.bluesky.internal.usecase.RefreshSessionUseCase
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class BskyStartup @Inject constructor(
+class BskyStartup(
     private val refreshSession: RefreshSessionUseCase,
     private val contentMigrator: BlueskyContentMigrator,
 ) : ModuleStartup {

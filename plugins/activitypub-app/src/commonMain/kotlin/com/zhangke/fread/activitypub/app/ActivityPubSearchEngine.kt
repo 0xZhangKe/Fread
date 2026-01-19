@@ -23,9 +23,8 @@ import com.zhangke.fread.status.search.SearchedPlatform
 import com.zhangke.fread.status.source.StatusSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubSearchEngine @Inject constructor(
+class ActivityPubSearchEngine (
     private val searchUserSource: SearchUserSourceNoTokenUseCase,
     private val clientManager: ActivityPubClientManager,
     private val platformRepo: ActivityPubPlatformRepo,

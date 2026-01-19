@@ -13,9 +13,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class AboutViewModel @Inject constructor(
+class AboutViewModel(
     private val updateManager: AppUpdateManager,
 ) : ViewModel() {
 

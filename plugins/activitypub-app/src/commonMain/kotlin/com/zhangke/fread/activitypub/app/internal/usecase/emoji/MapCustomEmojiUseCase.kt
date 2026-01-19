@@ -1,9 +1,8 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.emoji
 
 import com.zhangke.fread.status.model.Emoji
-import me.tatarka.inject.annotations.Inject
 
-class MapCustomEmojiUseCase @Inject constructor() {
+class MapCustomEmojiUseCase () {
 
     operator fun invoke(content: String, emojis: List<Emoji>): String {
         return content

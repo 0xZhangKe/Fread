@@ -11,9 +11,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class SelectContentTypeViewModel @Inject constructor(
+class SelectContentTypeViewModel(
     private val onboardingComponent: OnboardingComponent,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {

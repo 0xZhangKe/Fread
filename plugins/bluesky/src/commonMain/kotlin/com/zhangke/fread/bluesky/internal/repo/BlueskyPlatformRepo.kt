@@ -4,9 +4,8 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.uri.platform.PlatformUriTransformer
 import com.zhangke.fread.status.model.createBlueskyProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyPlatformRepo @Inject constructor(
+class BlueskyPlatformRepo(
     private val platformUriTransformer: PlatformUriTransformer,
 ) {
 

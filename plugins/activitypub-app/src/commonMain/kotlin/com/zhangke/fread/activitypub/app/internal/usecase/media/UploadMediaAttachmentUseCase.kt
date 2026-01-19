@@ -9,10 +9,9 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.status.model.PlatformLocator
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
-import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.seconds
 
-class UploadMediaAttachmentUseCase @Inject constructor(
+class UploadMediaAttachmentUseCase (
     private val clientManager: ActivityPubClientManager,
 ) {
 

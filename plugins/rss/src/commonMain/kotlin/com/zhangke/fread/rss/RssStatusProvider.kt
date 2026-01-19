@@ -10,9 +10,8 @@ import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.status.IStatusResolver
-import me.tatarka.inject.annotations.Inject
 
-class RssStatusProvider @Inject constructor(
+class RssStatusProvider(
     contentManager: RssContentManager,
     rssScreenProvider: RssScreenProvider,
     rssSearchEngine: RssSearchEngine,

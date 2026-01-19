@@ -2,9 +2,8 @@ package com.zhangke.fread.feature.message.repo.notification
 
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class NotificationsRepo @Inject constructor(
+class NotificationsRepo(
     database: NotificationsDatabase,
 ) {
 

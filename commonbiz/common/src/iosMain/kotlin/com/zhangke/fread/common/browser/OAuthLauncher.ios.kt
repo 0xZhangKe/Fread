@@ -1,8 +1,6 @@
 package com.zhangke.fread.common.browser
 
-import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.suspendCancellableCoroutine
-import me.tatarka.inject.annotations.Inject
 import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASWebAuthenticationSession
 import platform.Foundation.NSError
@@ -15,8 +13,7 @@ import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-@ApplicationScope
-actual class OAuthHandler @Inject constructor(
+actual class OAuthHandler (
     private val application: UIApplication,
 ) {
     @Suppress("UNCHECKED_CAST")

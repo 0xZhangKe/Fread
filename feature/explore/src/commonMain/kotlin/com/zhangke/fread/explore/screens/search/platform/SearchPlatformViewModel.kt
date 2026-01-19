@@ -5,7 +5,6 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.emitInViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.search.SearchedPlatform
@@ -14,18 +13,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-open class SearchPlatformViewModel @Inject constructor(
+open class SearchPlatformViewModel(
     private val statusProvider: StatusProvider,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted private val query: String,
+    private val locator: PlatformLocator,
+    private val query: String,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-        fun create(locator: PlatformLocator, query: String): SearchPlatformViewModel
-    }
 
     private val _uiState = MutableStateFlow(SearchedPlatformUiState.default())
     val uiState: StateFlow<SearchedPlatformUiState> get() = _uiState

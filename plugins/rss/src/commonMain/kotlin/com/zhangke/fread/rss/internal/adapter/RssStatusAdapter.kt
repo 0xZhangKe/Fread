@@ -10,9 +10,8 @@ import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.status.model.Status
-import me.tatarka.inject.annotations.Inject
 
-class RssStatusAdapter @Inject constructor(
+class RssStatusAdapter(
     private val blogAuthorAdapter: BlogAuthorAdapter,
     private val rssPlatformTransformer: RssPlatformTransformer,
 ) {

@@ -14,7 +14,6 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEnti
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
@@ -25,31 +24,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class UserListViewModel @Inject constructor(
+class UserListViewModel (
     private val clientManager: ActivityPubClientManager,
     private val userUriTransformer: UserUriTransformer,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted private val type: UserListType,
-    @Assisted private val statusId: String?,
-    @Assisted private val userUri: FormalUri?,
-    @Assisted private val userId: String?,
+    private val locator: PlatformLocator,
+    private val type: UserListType,
+    private val statusId: String?,
+    private val userUri: FormalUri?,
+    private val userId: String?,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            locator: PlatformLocator,
-            type: UserListType,
-            statusId: String?,
-            userUri: FormalUri?,
-            userId: String?,
-        ): UserListViewModel
-    }
 
     private val _uiState = MutableStateFlow(
         UserListUiState(

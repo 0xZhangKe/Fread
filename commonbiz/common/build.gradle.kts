@@ -41,8 +41,6 @@ kotlin {
                 implementation(libs.jetbrains.lifecycle.viewmodel)
                 implementation(libs.jetbrains.lifecycle.viewmodel.compose)
 
-                implementation(libs.kotlinInject.runtime)
-
                 implementation(libs.androidx.room)
                 implementation(libs.uri.kmp)
 
@@ -103,8 +101,4 @@ compose {
 
 room {
     schemaDirectory("$projectDir/schemas")
-}
-
-ksp {
-    arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }

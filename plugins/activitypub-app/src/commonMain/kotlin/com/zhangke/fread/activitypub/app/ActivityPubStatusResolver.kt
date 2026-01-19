@@ -25,9 +25,8 @@ import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubStatusResolver @Inject constructor(
+class ActivityPubStatusResolver (
     private val clientManager: ActivityPubClientManager,
     private val getUserStatus: GetUserStatusUseCase,
     private val userUriTransformer: UserUriTransformer,

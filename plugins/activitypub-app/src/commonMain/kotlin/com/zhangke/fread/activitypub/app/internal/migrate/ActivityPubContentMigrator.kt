@@ -3,9 +3,8 @@ package com.zhangke.fread.activitypub.app.internal.migrate
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.common.content.FreadContentRepo
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubContentMigrator @Inject constructor(
+class ActivityPubContentMigrator (
     private val freadContentRepo: FreadContentRepo,
     private val accountRepo: ActivityPubLoggedAccountRepo,
 ) {

@@ -19,9 +19,8 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyAccountManager @Inject constructor(
+class BlueskyAccountManager(
     private val accountManager: BlueskyLoggedAccountManager,
     private val unblockUserWithoutUri: UnblockUserWithoutUriUseCase,
 ) : IAccountManager {

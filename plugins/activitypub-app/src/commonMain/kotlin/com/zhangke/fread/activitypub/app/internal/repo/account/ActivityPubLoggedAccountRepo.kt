@@ -6,16 +6,13 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountDat
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.fread.activitypub.app.internal.db.old.OldActivityPubLoggerAccountDao
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class ActivityPubLoggedAccountRepo @Inject constructor(
+class ActivityPubLoggedAccountRepo (
     private val oldDatabases: ActivityPubDatabases,
     private val accountDatabase: ActivityPubLoggedAccountDatabase,
 ) {

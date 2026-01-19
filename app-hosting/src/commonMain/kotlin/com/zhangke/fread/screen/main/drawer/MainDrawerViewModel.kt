@@ -14,9 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class MainDrawerViewModel @Inject constructor(
+class MainDrawerViewModel (
     private val contentRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {

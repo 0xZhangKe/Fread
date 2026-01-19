@@ -10,7 +10,6 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.framework.utils.languageCode
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.repo.SelectedAccountPublishingRepo
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
@@ -31,21 +30,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-class MultiAccountPublishingViewModel @Inject constructor(
+class MultiAccountPublishingViewModel (
     private val statusProvider: StatusProvider,
     private val platformUriHelper: PlatformUriHelper,
     private val publishPostOnMultiAccount: PublishPostOnMultiAccountUseCase,
     private val selectedAccountPublishingRepo: SelectedAccountPublishingRepo,
-    @Assisted private val defaultAddAccountList: List<String>,
+    private val defaultAddAccountList: List<String>,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(defaultAddAccountList: List<String>): MultiAccountPublishingViewModel
-    }
 
     private val _uiState = MutableStateFlow(MultiAccountPublishingUiState.default())
     val uiState = _uiState.asStateFlow()

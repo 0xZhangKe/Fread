@@ -2,9 +2,8 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubPollRequestEntity
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
-import me.tatarka.inject.annotations.Inject
 
-class PostStatusAttachmentAdapter @Inject constructor() {
+class PostStatusAttachmentAdapter () {
 
     fun toPollRequest(poll: PostStatusAttachment.Poll): ActivityPubPollRequestEntity {
         return ActivityPubPollRequestEntity(

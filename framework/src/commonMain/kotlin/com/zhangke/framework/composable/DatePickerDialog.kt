@@ -85,7 +85,7 @@ fun DatePickerDialog(
 fun rememberFutureDatePickerState(
     initialSelectedDateMillis: Long? = null,
 ): DatePickerState {
-    val currentYear = remember {
+    val currentYear: Int = remember {
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
     }
     return rememberDatePickerState(

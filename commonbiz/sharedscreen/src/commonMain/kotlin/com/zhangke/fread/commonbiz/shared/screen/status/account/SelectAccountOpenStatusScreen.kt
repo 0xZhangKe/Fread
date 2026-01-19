@@ -19,7 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -124,54 +123,52 @@ private fun SelectAccountOpenStatusContent(
     onCancelClick: () -> Unit,
     onSearchFailedClick: () -> Unit,
 ) {
-    Surface(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .padding(bottom = 16.dp)
-                .verticalScroll(rememberScrollState()),
-        ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = stringResource(LocalizedString.selectAccountOpenStatusTitle),
-                fontSize = 18.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            if (!uiState.loadingAccounts && uiState.accountList.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                        .padding(vertical = 38.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(LocalizedString.selectAccountOpenStatusEmpty)
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(vertical = 16.dp)
+            .padding(bottom = 16.dp)
+            .verticalScroll(rememberScrollState()),
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = stringResource(LocalizedString.selectAccountOpenStatusTitle),
+            fontSize = 18.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        if (!uiState.loadingAccounts && uiState.accountList.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .padding(vertical = 38.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(LocalizedString.selectAccountOpenStatusEmpty)
+                )
+            }
+        } else {
+            val pagerState = rememberPagerState { 2 }
+            LaunchedEffect(uiState.searching) {
+                val target = if (uiState.searching) 1 else 0
+                pagerState.animateScrollToPage(target)
+            }
+            HorizontalPager(
+                modifier = Modifier.fillMaxWidth(),
+                state = pagerState,
+                userScrollEnabled = false,
+            ) { page ->
+                if (page == 0) {
+                    AccountsListContent(
+                        uiState = uiState,
+                        onAccountClick = onAccountClick,
                     )
-                }
-            } else {
-                val pagerState = rememberPagerState { 2 }
-                LaunchedEffect(uiState.searching) {
-                    val target = if (uiState.searching) 1 else 0
-                    pagerState.animateScrollToPage(target)
-                }
-                HorizontalPager(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = pagerState,
-                    userScrollEnabled = false,
-                ) { page ->
-                    if (page == 0) {
-                        AccountsListContent(
-                            uiState = uiState,
-                            onAccountClick = onAccountClick,
-                        )
-                    } else {
-                        SearchContent(
-                            uiState = uiState,
-                            onCancelClick = onCancelClick,
-                            onSearchFailedClick = onSearchFailedClick,
-                        )
-                    }
+                } else {
+                    SearchContent(
+                        uiState = uiState,
+                        onCancelClick = onCancelClick,
+                        onSearchFailedClick = onSearchFailedClick,
+                    )
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.zhangke.fread.common.browser
 import android.content.Context
 import android.content.Intent
 import androidx.browser.customtabs.CustomTabsIntent
+import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.framework.utils.startActivityCompat
@@ -25,7 +26,7 @@ class AndroidSystemBrowserLauncher(
     override fun launchWebTabInApp(uri: PlatformUri) {
         try {
             CustomTabsIntent.Builder().build()
-                .launchUrl(context.extractActivity() ?: context, uri.toAndroidUri())
+                .launchUrl(TopActivityManager.topActiveActivity!!, uri.toAndroidUri())
         } catch (_: Throwable) {
             // ignore
         }

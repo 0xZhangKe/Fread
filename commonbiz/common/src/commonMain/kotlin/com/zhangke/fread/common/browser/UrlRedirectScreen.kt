@@ -61,12 +61,12 @@ fun UrlRedirectScreen(uri: String, viewModel: UrlRedirectViewModel) {
     ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
     ConsumeFlow(viewModel.openNewPageFlow) { GlobalScreenNavigation.navigate(it) }
     ConsumeFlow(viewModel.finishAndOpenUrlTab) {
-        backStack.removeLastOrNull()
         browserLauncher.launchWebTabInApp(
             url = uri,
             locator = null,
             checkAppSupportPage = false,
         )
+        backStack.removeLastOrNull()
     }
     ConsumeFlow(viewModel.finishAndOpenPublishScreen) {
         backStack.removeLastOrNull()
@@ -74,7 +74,7 @@ fun UrlRedirectScreen(uri: String, viewModel: UrlRedirectViewModel) {
     }
     val pageState by viewModel.pageState.collectAsState()
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.size(100.dp)
             .background(MaterialTheme.colorScheme.dialogScrim),
         contentAlignment = Alignment.Center,
     ) {
@@ -130,8 +130,10 @@ sealed interface UrlRedirectPageState {
     data object Loading : UrlRedirectPageState
 
     data class SelectAccount(val accounts: List<LoggedAccount>) : UrlRedirectPageState
-} class UrlRedirectViewModel (
-    private val browserInterceptorSet: Set<BrowserInterceptor>,
+}
+
+class UrlRedirectViewModel (
+    private val browserInterceptorSet: List<BrowserInterceptor>,
     val browserLauncher: BrowserLauncher,
     private val statusProvider: StatusProvider,
     private val selectedContentSwitcher: SelectedContentSwitcher,

@@ -9,7 +9,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -30,8 +29,7 @@ import com.zhangke.fread.common.deeplink.ExternalInputHandler
 import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.common.utils.ActivityResultCallback
 import com.zhangke.fread.common.utils.CallbackableActivity
-import com.zhangke.fread.di.component
-import com.zhangke.fread.di.create
+import com.zhangke.fread.status.StatusProvider
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -49,6 +47,7 @@ class FreadActivity : ComponentActivity(), CallbackableActivity {
 
     private val dayNightHelper by inject<DayNightHelper>()
     private val freadConfigManager by inject<FreadConfigManager>()
+    private val statusProvider by inject<StatusProvider>()
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -113,7 +112,7 @@ class FreadActivity : ComponentActivity(), CallbackableActivity {
 
     private fun subscribeNotification() {
         lifecycleScope.launch {
-            application.component.statusProvider.accountManager.subscribeNotification()
+            statusProvider.accountManager.subscribeNotification()
         }
     }
 

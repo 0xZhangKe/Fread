@@ -2,7 +2,8 @@ package com.zhangke.fread.rss.internal.rss
 
 import com.zhangke.fread.rss.internal.model.RssChannelItem
 import com.zhangke.fread.rss.internal.model.RssSource
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class RssFetcher(
     private val rssParserWrapper: RssParserWrapper,
@@ -19,6 +20,7 @@ class RssFetcher(
         return Result.success(Pair(rssSource, rssChannelItem))
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun RssChannel.convert(url: String): RssSource {
         return RssSource(
             url = url,

@@ -1,7 +1,10 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.rss.internal.rss.adapter
 
 import com.prof18.rssparser.model.RssChannel
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import kotlin.time.ExperimentalTime
 
 fun RssChannel.convert(): com.zhangke.fread.rss.internal.rss.RssChannel {
     return com.zhangke.fread.rss.internal.rss.RssChannel(

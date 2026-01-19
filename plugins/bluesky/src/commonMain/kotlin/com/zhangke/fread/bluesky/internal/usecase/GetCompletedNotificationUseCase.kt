@@ -20,11 +20,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
 import sh.christian.ozone.api.AtUri
+import kotlin.time.ExperimentalTime
 
 class GetCompletedNotificationUseCase(
     private val clientManager: BlueskyClientManager,
 ) {
 
+    @OptIn(ExperimentalTime::class)
     suspend operator fun invoke(
         locator: PlatformLocator,
         params: ListNotificationsQueryParams,

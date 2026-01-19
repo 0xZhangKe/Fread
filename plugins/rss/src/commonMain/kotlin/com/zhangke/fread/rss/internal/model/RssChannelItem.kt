@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.rss.internal.model
 
 import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
 
 data class RssChannelItem(
     val id: String,

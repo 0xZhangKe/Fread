@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.activitypub.app.internal.screen.filters.list
 
 import androidx.lifecycle.ViewModel
@@ -16,6 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.time.ExperimentalTime
+
 class FiltersListViewModel (
     private val clientManager: ActivityPubClientManager,
     private val locator: PlatformLocator,

@@ -13,8 +13,9 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.PagedStatusNotification
-import kotlinx.datetime.Clock
 import sh.christian.ozone.api.Did
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class BlueskyNotificationResolver(
     private val clientManager: BlueskyClientManager,
@@ -87,6 +88,7 @@ class BlueskyNotificationResolver(
         return null
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun updateUnreadNotification(
         account: LoggedAccount,
         notificationLastReadId: String

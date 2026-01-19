@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.framework.utils
 
 import kotlinx.datetime.Instant
@@ -6,6 +8,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.asTimeZone
 import kotlinx.datetime.toInstant
+import kotlin.time.ExperimentalTime
 
 /**
  * RFC 822 date/time format to [Instant] parser.

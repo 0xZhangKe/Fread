@@ -1,11 +1,14 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.common.utils
 
 import com.zhangke.framework.date.InstantFormater
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 fun getCurrentInstant(): Instant {
-    return Clock.System.now()
+    return Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
 }
 
 fun getCurrentTimeMillis(): Long {

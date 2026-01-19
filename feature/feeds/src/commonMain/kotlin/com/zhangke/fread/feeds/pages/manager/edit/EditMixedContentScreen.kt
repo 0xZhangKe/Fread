@@ -80,57 +80,56 @@ private fun EditFeedsScreenContent(
     onAddSourceClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
-        val snackbarHostState = rememberSnackbarHostState()
-        val errorMessage = uiState.successDataOrNull()?.errorMessage?.take(180)
-        if (errorMessage.isNullOrEmpty().not()) {
-            LaunchedEffect(errorMessage) {
-                snackbarHostState.showSnackbar(errorMessage.orEmpty())
-            }
+    val snackbarHostState = rememberSnackbarHostState()
+    val errorMessage = uiState.successDataOrNull()?.errorMessage?.take(180)
+    if (errorMessage.isNullOrEmpty().not()) {
+        LaunchedEffect(errorMessage) {
+            snackbarHostState.showSnackbar(errorMessage.orEmpty())
         }
-        Scaffold(
-            topBar = {
-                EditFeedsScreenTopBar(
-                    uiState = uiState,
-                    onEditNameClick = onEditNameClick,
-                    onBackClick = onBackClick,
-                    onDeleteClick = onDeleteClick,
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-            floatingActionButton = {
-                if (uiState.isSuccess) {
-                    FloatingActionButton(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        onClick = onAddSourceClick,
-                        shape = CircleShape,
-                    ) {
-                        Icon(
-                            painter = rememberVectorPainter(image = Icons.Default.Add),
-                            contentDescription = "Add Source",
-                        )
-                    }
+    }
+    Scaffold(
+        topBar = {
+            EditFeedsScreenTopBar(
+                uiState = uiState,
+                onEditNameClick = onEditNameClick,
+                onBackClick = onBackClick,
+                onDeleteClick = onDeleteClick,
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        floatingActionButton = {
+            if (uiState.isSuccess) {
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    onClick = onAddSourceClick,
+                    shape = CircleShape,
+                ) {
+                    Icon(
+                        painter = rememberVectorPainter(image = Icons.Default.Add),
+                        contentDescription = "Add Source",
+                    )
                 }
-            },
-        ) { paddings ->
-            LoadableLayout(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddings),
-                state = uiState,
-            ) { uiState ->
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(uiState.sourceList) { item ->
-                        RemovableStatusSource(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {},
-                            source = item,
-                            onRemoveClick = {
-                                onRemoveSourceClick(item)
-                            }
-                        )
-                    }
+            }
+        },
+    ) { paddings ->
+        LoadableLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddings),
+            state = uiState,
+        ) { uiState ->
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(uiState.sourceList) { item ->
+                    RemovableStatusSource(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {},
+                        source = item,
+                        onRemoveClick = {
+                            onRemoveSourceClick(item)
+                        }
+                    )
                 }
             }
         }

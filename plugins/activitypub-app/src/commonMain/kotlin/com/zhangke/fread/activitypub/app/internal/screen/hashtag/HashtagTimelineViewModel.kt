@@ -29,6 +29,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.getString
+import kotlin.time.ExperimentalTime
 
 class HashtagTimelineViewModel(
     private val clientManager: ActivityPubClientManager,
@@ -114,6 +115,7 @@ class HashtagTimelineViewModel(
         )
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun getTodayTimeInMillis(): Long {
         val timeZone = TimeZone.currentSystemDefault()
         val today = getCurrentInstant().toLocalDateTime(timeZone)

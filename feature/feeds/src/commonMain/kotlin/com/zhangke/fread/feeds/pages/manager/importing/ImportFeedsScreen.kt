@@ -120,254 +120,253 @@ private fun ImportFeedsContent(
     retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
     onSaveClick: () -> Unit,
 ) {
-        val platformUriHelper = LocalPlatformUriHelper.current
-        Scaffold(
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.feedsImportPageTitle),
-                    onBackClick = onBackClick,
-                    actions = {
-                        SimpleIconButton(
-                            onClick = onSaveClick,
-                            imageVector = Icons.Default.Save,
-                            contentDescription = "Save",
-                        )
-                    }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.padding(innerPadding),
+    val platformUriHelper = LocalPlatformUriHelper.current
+    Scaffold(
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.feedsImportPageTitle),
+                onBackClick = onBackClick,
+                actions = {
+                    SimpleIconButton(
+                        onClick = onSaveClick,
+                        imageVector = Icons.Default.Save,
+                        contentDescription = "Save",
+                    )
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding),
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                OpenDocumentContainer(
+                    onResult = onFileSelected,
                 ) {
-                    OpenDocumentContainer(
-                        onResult = onFileSelected,
+                    Card(
+                        modifier = Modifier
+                            .weight(1F)
+                            .clickable {
+                                launch()
+                            },
                     ) {
-                        Card(
+                        Box(
                             modifier = Modifier
-                                .weight(1F)
-                                .clickable {
-                                    launch()
-                                },
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
-                            ) {
-                                val prettyFileUri = remember(uiState.selectedFileUri) {
-                                    uiState.selectedFileUri?.let {
-                                        platformUriHelper.queryFileName(it)
-                                    }
+                            val prettyFileUri = remember(uiState.selectedFileUri) {
+                                uiState.selectedFileUri?.let {
+                                    platformUriHelper.queryFileName(it)
                                 }
-                                Text(
-                                    modifier = Modifier.align(Alignment.Center),
-                                    text = prettyFileUri
-                                        ?: stringResource(LocalizedString.feedsImportPageHint),
-                                    overflow = TextOverflow.Clip,
-                                    maxLines = 1,
-                                    fontSize = 12.sp,
-                                )
                             }
+                            Text(
+                                modifier = Modifier.align(Alignment.Center),
+                                text = prettyFileUri
+                                    ?: stringResource(LocalizedString.feedsImportPageHint),
+                                overflow = TextOverflow.Clip,
+                                maxLines = 1,
+                                fontSize = 12.sp,
+                            )
                         }
                     }
-                    Button(
-                        modifier = Modifier.padding(start = 16.dp),
-                        onClick = onImportClick,
-                        enabled = uiState.selectedFileUri != null,
-                    ) {
-                        Text(
-                            text = stringResource(LocalizedString.feedsImportButton)
-                        )
-                    }
                 }
-
-                if (uiState.errorMessage.isNullOrEmpty().not()) {
+                Button(
+                    modifier = Modifier.padding(start = 16.dp),
+                    onClick = onImportClick,
+                    enabled = uiState.selectedFileUri != null,
+                ) {
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                        text = uiState.errorMessage.orEmpty(),
-                        textAlign = TextAlign.Start,
-                        color = MaterialTheme.colorScheme.error,
+                        text = stringResource(LocalizedString.feedsImportButton)
+                    )
+                }
+            }
+
+            if (uiState.errorMessage.isNullOrEmpty().not()) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    text = uiState.errorMessage.orEmpty(),
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+
+            ImportGroupList(
+                itemList = uiState.importingUiItems,
+                onGroupDelete = onGroupDelete,
+                onSourceDelete = onSourceDelete,
+                retryImportClick = retryImportClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ImportGroupList(
+    itemList: List<ImportingUiItem>,
+    onGroupDelete: (ImportSourceGroup) -> Unit,
+    onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
+    retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
+) {
+    val lazyListState = rememberLazyListState()
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        state = lazyListState,
+    ) {
+        items(itemList) { item ->
+            when (item) {
+                is ImportingUiItem.Group -> {
+                    ImportGroupItem(
+                        group = item.group,
+                        onGroupDelete = onGroupDelete,
                     )
                 }
 
-                ImportGroupList(
-                    itemList = uiState.importingUiItems,
-                    onGroupDelete = onGroupDelete,
-                    onSourceDelete = onSourceDelete,
-                    retryImportClick = retryImportClick,
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun ImportGroupList(
-        itemList: List<ImportingUiItem>,
-        onGroupDelete: (ImportSourceGroup) -> Unit,
-        onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
-        retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
-    ) {
-        val lazyListState = rememberLazyListState()
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = lazyListState,
-        ) {
-            items(itemList) { item ->
-                when (item) {
-                    is ImportingUiItem.Group -> {
-                        ImportGroupItem(
-                            group = item.group,
-                            onGroupDelete = onGroupDelete,
-                        )
-                    }
-
-                    is ImportingUiItem.Source -> {
-                        ImportSourceItem(
-                            group = item.group,
-                            source = item.source,
-                            onSourceDelete = onSourceDelete,
-                            retryImportClick = retryImportClick,
-                        )
-                    }
+                is ImportingUiItem.Source -> {
+                    ImportSourceItem(
+                        group = item.group,
+                        source = item.source,
+                        onSourceDelete = onSourceDelete,
+                        retryImportClick = retryImportClick,
+                    )
                 }
             }
         }
     }
+}
 
-    @Composable
-    private fun ImportGroupItem(
-        group: ImportSourceGroup,
-        onGroupDelete: (ImportSourceGroup) -> Unit,
+@Composable
+private fun ImportGroupItem(
+    group: ImportSourceGroup,
+    onGroupDelete: (ImportSourceGroup) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 16.dp, bottom = 8.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, bottom = 8.dp, end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Text(
+            modifier = Modifier,
+            text = group.title,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleLarge,
+        )
+        Spacer(modifier = Modifier.weight(1F))
+        var showDeleteDialog by remember {
+            mutableStateOf(false)
+        }
+        Text(
+            text = "${group.children.size} sources",
+            style = MaterialTheme.typography.labelMedium,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        SimpleIconButton(
+            onClick = { showDeleteDialog = true },
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Delete group",
+        )
+        if (showDeleteDialog) {
+            FreadDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                contentText = stringResource(LocalizedString.feedsDeleteConfirmContent),
+                onNegativeClick = { showDeleteDialog = false },
+                onPositiveClick = {
+                    showDeleteDialog = false
+                    onGroupDelete(group)
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun ImportSourceItem(
+    group: ImportSourceGroup,
+    source: ImportingSource,
+    onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
+    retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 32.dp, top = 4.dp, bottom = 4.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1F),
         ) {
             Text(
                 modifier = Modifier,
-                text = group.title,
+                text = source.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
-            Spacer(modifier = Modifier.weight(1F))
-            var showDeleteDialog by remember {
-                mutableStateOf(false)
-            }
-            Text(
-                text = "${group.children.size} sources",
-                style = MaterialTheme.typography.labelMedium,
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            SimpleIconButton(
-                onClick = { showDeleteDialog = true },
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Delete group",
-            )
-            if (showDeleteDialog) {
-                FreadDialog(
-                    onDismissRequest = { showDeleteDialog = false },
-                    contentText = stringResource(LocalizedString.feedsDeleteConfirmContent),
-                    onNegativeClick = { showDeleteDialog = false },
-                    onPositiveClick = {
-                        showDeleteDialog = false
-                        onGroupDelete(group)
-                    },
+            if (source is ImportingSource.Failure) {
+                Text(
+                    text = source.errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
                 )
             }
         }
-    }
-
-    @Composable
-    private fun ImportSourceItem(
-        group: ImportSourceGroup,
-        source: ImportingSource,
-        onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
-        retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 32.dp, top = 4.dp, bottom = 4.dp, end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier.weight(1F),
-            ) {
-                Text(
-                    modifier = Modifier,
-                    text = source.title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium,
+        Spacer(modifier = Modifier.width(6.dp))
+        when (source) {
+            is ImportingSource.Importing -> {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp)
                 )
-                if (source is ImportingSource.Failure) {
-                    Text(
-                        text = source.errorMessage,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.labelSmall,
-                        maxLines = 1,
-                    )
-                }
             }
-            Spacer(modifier = Modifier.width(6.dp))
-            when (source) {
-                is ImportingSource.Importing -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
 
-                is ImportingSource.Success -> {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null,
-                    )
-                }
-
-                is ImportingSource.Pending -> {
-                    Text(text = "waiting...")
-                }
-
-                is ImportingSource.Failure -> {
-                    Icon(
-                        modifier = Modifier.clickable { retryImportClick(group, source) },
-                        painter = rememberVectorPainter(image = Icons.Default.Refresh),
-                        contentDescription = "Retry",
-                    )
-                }
+            is ImportingSource.Success -> {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null,
+                )
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            var showDeleteDialog by remember {
-                mutableStateOf(false)
+
+            is ImportingSource.Pending -> {
+                Text(text = "waiting...")
             }
-            SimpleIconButton(
-                onClick = { showDeleteDialog = true },
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Delete source",
+
+            is ImportingSource.Failure -> {
+                Icon(
+                    modifier = Modifier.clickable { retryImportClick(group, source) },
+                    painter = rememberVectorPainter(image = Icons.Default.Refresh),
+                    contentDescription = "Retry",
+                )
+            }
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        var showDeleteDialog by remember {
+            mutableStateOf(false)
+        }
+        SimpleIconButton(
+            onClick = { showDeleteDialog = true },
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Delete source",
+        )
+        if (showDeleteDialog) {
+            FreadDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                contentText = stringResource(LocalizedString.feedsDeleteConfirmContent),
+                onNegativeClick = { showDeleteDialog = false },
+                onPositiveClick = {
+                    showDeleteDialog = false
+                    onSourceDelete(group, source)
+                },
             )
-            if (showDeleteDialog) {
-                FreadDialog(
-                    onDismissRequest = { showDeleteDialog = false },
-                    contentText = stringResource(LocalizedString.feedsDeleteConfirmContent),
-                    onNegativeClick = { showDeleteDialog = false },
-                    onPositiveClick = {
-                        showDeleteDialog = false
-                        onSourceDelete(group, source)
-                    },
-                )
-            }
         }
     }
 }

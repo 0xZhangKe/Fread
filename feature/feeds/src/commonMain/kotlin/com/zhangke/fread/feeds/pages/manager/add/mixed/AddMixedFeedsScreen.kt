@@ -99,89 +99,88 @@ private fun FeedsManager(
     onNameInputValueChanged: (String) -> Unit,
     onRemoveSourceClick: (item: StatusSourceUiState) -> Unit,
 ) {
-        Scaffold(
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.addFeedsPageTitle),
-                    onBackClick = onBackClick,
-                    actions = {
-                        SimpleIconButton(
-                            modifier = Modifier.rotate(180F),
-                            onClick = onImportClick,
-                            imageVector = vectorResource(Res.drawable.ic_import),
-                            contentDescription = "Import",
-                        )
-                        SimpleIconButton(
-                            onClick = onConfirmClick,
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Add",
-                        )
-                    }
-                )
-            },
-            snackbarHost = snackbarHost(snackbarHostState),
-        ) { paddings ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddings)
-            ) {
-                Box(modifier = Modifier.height(32.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp)
-                            .weight(1F),
-                        value = uiState.sourceName,
-                        maxLines = 1,
-                        label = {
-                            Text(text = stringResource(LocalizedString.addFeedsPageFeedsNameLabel))
-                        },
-                        placeholder = {
-                            Text(text = stringResource(LocalizedString.addFeedsPageFeedsNameHint))
-                        },
-                        onValueChange = {
-                            onNameInputValueChanged(it.take(uiState.maxNameLength))
-                        },
+    Scaffold(
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.addFeedsPageTitle),
+                onBackClick = onBackClick,
+                actions = {
+                    SimpleIconButton(
+                        modifier = Modifier.rotate(180F),
+                        onClick = onImportClick,
+                        imageVector = vectorResource(Res.drawable.ic_import),
+                        contentDescription = "Import",
                     )
-
-                    StyledIconButton(
-                        modifier = Modifier.padding(end = 8.dp),
-                        imageVector = Icons.Default.Add,
-                        style = IconButtonStyle.STANDARD,
-                        onClick = onAddSourceClick,
+                    SimpleIconButton(
+                        onClick = onConfirmClick,
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Add",
                     )
                 }
+            )
+        },
+        snackbarHost = snackbarHost(snackbarHostState),
+    ) { paddings ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddings)
+        ) {
+            Box(modifier = Modifier.height(32.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp)
+                        .weight(1F),
+                    value = uiState.sourceName,
+                    maxLines = 1,
+                    label = {
+                        Text(text = stringResource(LocalizedString.addFeedsPageFeedsNameLabel))
+                    },
+                    placeholder = {
+                        Text(text = stringResource(LocalizedString.addFeedsPageFeedsNameHint))
+                    },
+                    onValueChange = {
+                        onNameInputValueChanged(it.take(uiState.maxNameLength))
+                    },
+                )
 
-                if (uiState.sourceList.isEmpty()) {
-                    Text(
-                        modifier = Modifier
-                            .padding(top = 32.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .clickable {
-                                onAddSourceClick()
+                StyledIconButton(
+                    modifier = Modifier.padding(end = 8.dp),
+                    imageVector = Icons.Default.Add,
+                    style = IconButtonStyle.STANDARD,
+                    onClick = onAddSourceClick,
+                )
+            }
+
+            if (uiState.sourceList.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            onAddSourceClick()
+                        },
+                    text = stringResource(LocalizedString.addFeedsPageFeedsEmpty),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.padding(top = 32.dp),
+                    contentPadding = PaddingValues(bottom = 32.dp),
+                ) {
+                    items(uiState.sourceList) { item ->
+                        RemovableStatusSource(
+                            modifier = Modifier.fillMaxWidth(),
+                            source = item,
+                            onClick = {},
+                            onRemoveClick = {
+                                onRemoveSourceClick(item)
                             },
-                        text = stringResource(LocalizedString.addFeedsPageFeedsEmpty),
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.padding(top = 32.dp),
-                        contentPadding = PaddingValues(bottom = 32.dp),
-                    ) {
-                        items(uiState.sourceList) { item ->
-                            RemovableStatusSource(
-                                modifier = Modifier.fillMaxWidth(),
-                                source = item,
-                                onClick = {},
-                                onRemoveClick = {
-                                    onRemoveSourceClick(item)
-                                },
-                            )
-                        }
+                        )
                     }
                 }
             }

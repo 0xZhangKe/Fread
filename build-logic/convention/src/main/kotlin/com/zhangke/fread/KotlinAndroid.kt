@@ -77,7 +77,7 @@ private fun Project.configureKotlin() {
     kotlinCompile {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
-            languageVersion = KotlinVersion.KOTLIN_2_0
+            languageVersion = KotlinVersion.KOTLIN_2_2
             // Treat all Kotlin warnings as errors (disabled by default)
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
             val warningsAsErrors: String? by project
@@ -88,7 +88,7 @@ private fun Project.configureKotlin() {
     kotlin {
         sourceSets.all {
             languageSettings {
-                languageVersion = KotlinVersion.KOTLIN_2_0.version
+                languageVersion = KotlinVersion.KOTLIN_2_2.version
                 enableLanguageFeature("ExplicitBackingFields")
                 optIn("kotlin.RequiresOptIn")
                 optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")

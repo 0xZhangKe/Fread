@@ -6,8 +6,8 @@ import com.zhangke.framework.architect.json.getLongOrNull
 import com.zhangke.framework.architect.json.getStringOrNull
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.utils.appContext
-import com.zhangke.fread.activitypub.app.di.activityPubComponent
 import com.zhangke.fread.activitypub.app.internal.push.notification.ActivityPubPushMessage
+import com.zhangke.fread.activitypub.app.internal.push.notification.PushNotificationManager
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.common.push.PushMessage
 import com.zhangke.fread.status.account.LoggedAccount
@@ -16,20 +16,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-actual class ActivityPubPushMessageReceiverHelper {
+actual class ActivityPubPushMessageReceiverHelper : KoinComponent {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    private val pushNotificationManager: PushNotificationManager by inject()
+    private val accountRepo: ActivityPubLoggedAccountRepo by inject()
+    private val pushInfoRepo: PushInfoRepo by inject()
 
     @OptIn(ExperimentalEncodingApi::class)
     actual fun onReceiveNewMessage(message: PushMessage) {
         val accountId = String(Base64.UrlSafe.decode(message.encodedAccountId))
         coroutineScope.launch {
-            val info = getPushRepo().getPushInfo(accountId) ?: return@launch
+            val info = pushInfoRepo.getPushInfo(accountId) ?: return@launch
             val account =
-                getAccountRepo().queryAll().firstOrNull { it.userId == accountId } ?: return@launch
+                accountRepo.queryAll().firstOrNull { it.userId == accountId } ?: return@launch
             val pushMessage = try {
                 CryptoUtil.decryptData(
                     keys = info,
@@ -44,8 +50,7 @@ actual class ActivityPubPushMessageReceiverHelper {
             }
             Log.d("PushManager", "pushMessage: $pushMessage")
             if (pushMessage != null) {
-                appContext.activityPubComponent.pushNotificationManager
-                    .onReceiveNewMessage(appContext, pushMessage)
+                pushNotificationManager.onReceiveNewMessage(appContext, pushMessage)
             }
         }
     }
@@ -67,16 +72,5 @@ actual class ActivityPubPushMessageReceiverHelper {
             body = jsonObject.getStringOrNull("body") ?: return null,
             account = account,
         )
-    }
-
-    private fun getAccountRepo(): ActivityPubLoggedAccountRepo {
-        val activityPubComponent = appContext.activityPubComponent
-        return activityPubComponent.accountRepo
-    }
-
-    private fun getPushRepo(): PushInfoRepo {
-        val activityPubComponent = appContext.activityPubComponent
-        val database = activityPubComponent.provideActivityPushDatabase(appContext)
-        return activityPubComponent.providePushInfoRepo(database)
     }
 }

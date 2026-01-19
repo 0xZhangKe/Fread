@@ -99,165 +99,164 @@ private fun AddBlueskyContentContent(
     onBackClick: () -> Unit,
     onLoginClick: () -> Unit,
 ) {
-        val avatarSize = 48.dp
-        Scaffold(
-            modifier = Modifier.fillMaxSize().imePadding(),
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.bsky_add_content_title),
-                    onBackClick = onBackClick,
+    val avatarSize = 48.dp
+    Scaffold(
+        modifier = Modifier.fillMaxSize().imePadding(),
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.bsky_add_content_title),
+                onBackClick = onBackClick,
+            )
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(innerPadding)
+                .padding(start = 16.dp, end = 16.dp),
+        ) {
+            if (uiState.loginToSpecAccount) {
+                AccountInfoCard(
+                    modifier = Modifier.padding(top = 18.dp),
+                    avatar = uiState.avatar.orEmpty(),
+                    avatarSize = avatarSize,
+                    displayName = uiState.displayName.orEmpty(),
+                    handle = uiState.handle!!,
                 )
-            },
-            snackbarHost = { SnackbarHost(snackBarHostState) },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(start = 16.dp, end = 16.dp),
-            ) {
-                if (uiState.loginToSpecAccount) {
-                    AccountInfoCard(
-                        modifier = Modifier.padding(top = 18.dp),
-                        avatar = uiState.avatar.orEmpty(),
-                        avatarSize = avatarSize,
-                        displayName = uiState.displayName.orEmpty(),
-                        handle = uiState.handle!!,
-                    )
 
-                    val lineColor = MaterialTheme.colorScheme.outlineVariant
+                val lineColor = MaterialTheme.colorScheme.outlineVariant
 
-                    Canvas(
-                        Modifier.height(68.dp)
-                            .padding(
-                                start = 16.dp + avatarSize / 2,
-                                top = 8.dp,
-                            ).width(1.dp),
-                    ) {
-                        drawLine(
-                            color = lineColor,
-                            strokeWidth = 1.dp.toPx(),
-                            cap = StrokeCap.Round,
-                            start = Offset(0F, 0f),
-                            end = Offset(0F, size.height),
-                        )
-                    }
-                } else {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 18.dp),
-                        value = uiState.hosting,
-                        readOnly = loginMode,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Language,
-                                contentDescription = null,
-                            )
-                        },
-                        onValueChange = onHostingChange,
-                        label = {
-                            Text(stringResource(LocalizedString.bsky_add_content_hosting_provider))
-                        },
-                        singleLine = true,
+                Canvas(
+                    Modifier.height(68.dp)
+                        .padding(
+                            start = 16.dp + avatarSize / 2,
+                            top = 8.dp,
+                        ).width(1.dp),
+                ) {
+                    drawLine(
+                        color = lineColor,
+                        strokeWidth = 1.dp.toPx(),
+                        cap = StrokeCap.Round,
+                        start = Offset(0F, 0f),
+                        end = Offset(0F, size.height),
                     )
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        value = uiState.username,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.AlternateEmail,
-                                contentDescription = null,
-                            )
-                        },
-                        onValueChange = onUserNameChange,
-                        label = {
-                            Text(stringResource(LocalizedString.bsky_add_content_user_name))
-                        },
-                        singleLine = true,
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
+            } else {
                 OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = uiState.password,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    onValueChange = onPasswordChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 18.dp),
+                    value = uiState.hosting,
+                    readOnly = uiState.loginMode,
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Lock,
+                            imageVector = Icons.Default.Language,
                             contentDescription = null,
                         )
                     },
+                    onValueChange = onHostingChange,
                     label = {
-                        Text(stringResource(LocalizedString.bsky_add_content_password))
+                        Text(stringResource(LocalizedString.bsky_add_content_hosting_provider))
                     },
                     singleLine = true,
                 )
-                if (uiState.authFactorRequired) {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        value = uiState.factorToken,
-                        onValueChange = onFactorTokenChange,
-                        label = {
-                            Text(stringResource(LocalizedString.bsky_add_content_factor_token))
-                        },
-                        singleLine = true,
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    value = uiState.username,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.AlternateEmail,
+                            contentDescription = null,
+                        )
+                    },
+                    onValueChange = onUserNameChange,
+                    label = {
+                        Text(stringResource(LocalizedString.bsky_add_content_user_name))
+                    },
+                    singleLine = true,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = uiState.password,
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                onValueChange = onPasswordChange,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null,
                     )
-                }
-                Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-                    Button(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        onClick = onLoginClick,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        ),
-                    ) {
-                        Text(stringResource(LocalizedString.login))
-                    }
+                },
+                label = {
+                    Text(stringResource(LocalizedString.bsky_add_content_password))
+                },
+                singleLine = true,
+            )
+            if (uiState.authFactorRequired) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    value = uiState.factorToken,
+                    onValueChange = onFactorTokenChange,
+                    label = {
+                        Text(stringResource(LocalizedString.bsky_add_content_factor_token))
+                    },
+                    singleLine = true,
+                )
+            }
+            Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+                Button(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    onClick = onLoginClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    ),
+                ) {
+                    Text(stringResource(LocalizedString.login))
                 }
             }
         }
     }
+}
 
-    @Composable
-    private fun AccountInfoCard(
-        modifier: Modifier,
-        avatarSize: Dp,
-        avatar: String,
-        displayName: String,
-        handle: String,
-    ) {
-        Box(modifier = modifier) {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+@Composable
+private fun AccountInfoCard(
+    modifier: Modifier,
+    avatarSize: Dp,
+    avatar: String,
+    displayName: String,
+    handle: String,
+) {
+    Box(modifier = modifier) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                BlogAuthorAvatar(
+                    modifier = Modifier.size(48.dp),
+                    imageUrl = avatar,
+                )
+                Column(
+                    modifier = Modifier.padding(start = 8.dp).weight(1F),
                 ) {
-                    BlogAuthorAvatar(
-                        modifier = Modifier.size(48.dp),
-                        imageUrl = avatar,
+                    Text(
+                        text = displayName,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
-                    Column(
-                        modifier = Modifier.padding(start = 8.dp).weight(1F),
-                    ) {
-                        Text(
-                            text = displayName,
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                        Text(
-                            text = handle,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                    Text(
+                        text = handle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }

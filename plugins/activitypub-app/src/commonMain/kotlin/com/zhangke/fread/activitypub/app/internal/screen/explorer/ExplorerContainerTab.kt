@@ -2,7 +2,6 @@ package com.zhangke.fread.activitypub.app.internal.screen.explorer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.nav.BaseTab
 import com.zhangke.framework.nav.HorizontalPagerWithTab
 import com.zhangke.framework.nav.TabOptions

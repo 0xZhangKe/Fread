@@ -30,7 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
+import com.zhangke.framework.composable.BackHandler
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar

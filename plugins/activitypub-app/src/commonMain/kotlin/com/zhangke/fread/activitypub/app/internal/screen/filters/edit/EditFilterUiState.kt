@@ -11,7 +11,7 @@ import org.jetbrains.compose.resources.stringResource
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-data class EditFilterUiState @OptIn(ExperimentalTime::class) (
+data class EditFilterUiState @OptIn(ExperimentalTime::class) constructor(
     val title: String,
     val expiresDate: Instant?,
     val keywordList: List<Keyword>,

@@ -91,4 +91,3 @@ private fun SearchScreenContent(
         }
     }
 }
-}

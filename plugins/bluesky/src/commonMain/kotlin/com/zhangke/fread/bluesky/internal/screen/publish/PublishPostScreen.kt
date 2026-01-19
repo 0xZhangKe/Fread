@@ -90,67 +90,66 @@ private fun PublishPostContent(
     onAddAccountClick: () -> Unit,
     onMentionCandidateClick: (ProfileView) -> Unit,
 ) {
-        PublishPostScaffold(
-            account = uiState.account,
-            snackBarHostState = snackBarHostState,
-            content = uiState.content,
-            showSwitchAccountIcon = false,
-            showAddAccountIcon = uiState.showAddAccountIcon,
-            publishing = uiState.publishing,
-            replyingBlog = uiState.replyBlog,
-            onContentChanged = onContentChanged,
-            onPublishClick = onPublishClick,
-            onBackClick = onBackClick,
-            onAddAccountClick = onAddAccountClick,
-            postSettingLabel = {
-                PostInteractionSettingLabel(
-                    modifier = Modifier.padding(top = 1.dp),
-                    setting = uiState.interactionSetting,
-                    lists = uiState.list,
-                    onQuoteChange = onQuoteChange,
-                    onSettingSelected = onSettingSelected,
-                    onSettingOptionsSelected = onSettingOptionsSelected,
-                )
-            },
-            bottomPanel = {
-                PublishPostFeaturesPanel(
-                    modifier = Modifier.fillMaxWidth().bottomPaddingAsBottomBar(),
-                    contentLength = uiState.content.text.length,
-                    maxContentLimit = uiState.maxCharacters,
-                    mediaAvailableCount = uiState.remainingImageCount,
-                    selectedLanguages = uiState.selectedLanguages,
-                    maxLanguageCount = uiState.maxLanguageCount,
-                    onMediaSelected = onMediaSelected,
-                    onLanguageSelected = onLanguageSelected,
-                    floatingBar = {
-                        MentionCandidateBar(
-                            uiState = uiState,
-                            onMentionClick = onMentionCandidateClick,
-                        )
-                    },
-                )
-            },
-            attachment = { style ->
-                if (uiState.attachment != null) {
-                    PublishPostMediaAttachment(
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                            .fillMaxWidth(),
-                        media = uiState.attachment,
-                        mediaAltMaxCharacters = uiState.mediaAltMaxCharacters,
-                        onAltChanged = onMediaAltChanged,
-                        onDeleteClick = onMediaDeleteClick,
+    PublishPostScaffold(
+        account = uiState.account,
+        snackBarHostState = snackBarHostState,
+        content = uiState.content,
+        showSwitchAccountIcon = false,
+        showAddAccountIcon = uiState.showAddAccountIcon,
+        publishing = uiState.publishing,
+        replyingBlog = uiState.replyBlog,
+        onContentChanged = onContentChanged,
+        onPublishClick = onPublishClick,
+        onBackClick = onBackClick,
+        onAddAccountClick = onAddAccountClick,
+        postSettingLabel = {
+            PostInteractionSettingLabel(
+                modifier = Modifier.padding(top = 1.dp),
+                setting = uiState.interactionSetting,
+                lists = uiState.list,
+                onQuoteChange = onQuoteChange,
+                onSettingSelected = onSettingSelected,
+                onSettingOptionsSelected = onSettingOptionsSelected,
+            )
+        },
+        bottomPanel = {
+            PublishPostFeaturesPanel(
+                modifier = Modifier.fillMaxWidth().bottomPaddingAsBottomBar(),
+                contentLength = uiState.content.text.length,
+                maxContentLimit = uiState.maxCharacters,
+                mediaAvailableCount = uiState.remainingImageCount,
+                selectedLanguages = uiState.selectedLanguages,
+                maxLanguageCount = uiState.maxLanguageCount,
+                onMediaSelected = onMediaSelected,
+                onLanguageSelected = onLanguageSelected,
+                floatingBar = {
+                    MentionCandidateBar(
+                        uiState = uiState,
+                        onMentionClick = onMentionCandidateClick,
                     )
-                }
-                if (uiState.quoteBlog != null) {
-                    BlogInQuoting(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(16.dp),
-                        blog = uiState.quoteBlog,
-                        style = style.statusStyle,
-                    )
-                }
-            },
-            allowHashtagInHashtag = true,
-        )
-    }
+                },
+            )
+        },
+        attachment = { style ->
+            if (uiState.attachment != null) {
+                PublishPostMediaAttachment(
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                        .fillMaxWidth(),
+                    media = uiState.attachment,
+                    mediaAltMaxCharacters = uiState.mediaAltMaxCharacters,
+                    onAltChanged = onMediaAltChanged,
+                    onDeleteClick = onMediaDeleteClick,
+                )
+            }
+            if (uiState.quoteBlog != null) {
+                BlogInQuoting(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(16.dp),
+                    blog = uiState.quoteBlog,
+                    style = style.statusStyle,
+                )
+            }
+        },
+        allowHashtagInHashtag = true,
+    )
 }

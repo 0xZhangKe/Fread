@@ -12,7 +12,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.ref.WeakReference
 
-private const val OLD_LANGUAGE_SETTING = "app_language_setting" class LanguageHelper (
+private const val OLD_LANGUAGE_SETTING = "app_language_setting"
+
+class LanguageHelper (
     private val localConfigManager: LocalConfigManager,
     private val context: Context,
 ) {

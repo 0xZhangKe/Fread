@@ -147,4 +147,3 @@ private fun AccountDetail(
         onUserClick = { onAccountClick(accountDetail.account.account) },
     )
 }
-}

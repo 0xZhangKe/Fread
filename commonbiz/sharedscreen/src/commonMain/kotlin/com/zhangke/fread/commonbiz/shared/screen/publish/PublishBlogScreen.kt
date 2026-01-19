@@ -13,8 +13,10 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.localization.LocalizedString
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
+@Serializable
 object PublishBlogScreenNavKey : NavKey
 
 @Composable

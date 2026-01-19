@@ -64,12 +64,13 @@ import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import kotlin.jvm.Transient
 
+@Serializable
 data class ImageViewerScreenNavKey(
     val selectedIndex: Int,
     val imageList: List<ImageViewerImage>,
-    @Transient val coordinatesList: List<LayoutCoordinates?>? = emptyList(),
 ) : NavKey
 
 @Composable
@@ -293,6 +294,7 @@ private fun BoxScope.ImageTopBar(image: ImageViewerImage) {
     }
 }
 
+@Serializable
 data class ImageViewerImage(
     val url: String,
     val previewUrl: String? = null,

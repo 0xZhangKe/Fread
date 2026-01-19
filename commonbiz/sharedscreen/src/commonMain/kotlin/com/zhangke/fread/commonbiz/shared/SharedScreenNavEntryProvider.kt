@@ -27,7 +27,6 @@ class SharedScreenNavEntryProvider : NavEntryProvider {
             ImageViewerScreen(
                 selectedIndex = it.selectedIndex,
                 imageList = it.imageList,
-                coordinatesList = it.coordinatesList,
             )
         }
         entry<SelectLanguageScreenNavKey> {

@@ -53,7 +53,9 @@ import com.zhangke.fread.status.ui.update.AppUpdateDialog
 import com.zhangke.fread.status.ui.utils.getScreenWidth
 import com.zhangke.fread.utils.LocalActivityHelper
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
+@Serializable
 object FreadHomeScreenNavKey : NavKey
 
 @OptIn(ExperimentalComposeUiApi::class)

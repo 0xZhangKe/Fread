@@ -58,8 +58,10 @@ import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
+@Serializable
 data class SelectLanguageScreenNavKey(
     val selectedLanguages: List<String> = emptyList(),
     val maxSelectCount: Int = 1,

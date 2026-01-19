@@ -7,13 +7,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 
-class FreadConfigModuleStartup (
+class FreadConfigModuleStartup(
     private val applicationCoroutineScope: ApplicationCoroutineScope,
-    private val freadConfigManager: Lazy<FreadConfigManager>,
+    private val freadConfigManager: FreadConfigManager,
 ) : ModuleStartup {
     override fun onAppCreate() {
         applicationCoroutineScope.launch(Dispatchers.IO) {
-            freadConfigManager.value.initConfig()
+            freadConfigManager.initConfig()
         }
     }
 }

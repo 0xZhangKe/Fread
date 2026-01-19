@@ -17,12 +17,16 @@ import com.zhangke.fread.common.utils.MediaFileHelper
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.StorageHelper
 import com.zhangke.fread.common.utils.ToastHelper
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDefaults
+import platform.Foundation.NSUserDomainMask
 
 actual fun Module.createPlatformModule() {
     single<ContentConfigDatabases> {
@@ -72,4 +76,16 @@ actual fun Module.createPlatformModule() {
 
 private fun getDBFilePath(dbName: String): String {
     return documentDirectory() + "/$dbName"
+}
+
+@OptIn(ExperimentalForeignApi::class)
+fun documentDirectory(): String {
+    val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
+        directory = NSDocumentDirectory,
+        inDomain = NSUserDomainMask,
+        appropriateForURL = null,
+        create = false,
+        error = null,
+    )
+    return requireNotNull(documentDirectory?.path)
 }

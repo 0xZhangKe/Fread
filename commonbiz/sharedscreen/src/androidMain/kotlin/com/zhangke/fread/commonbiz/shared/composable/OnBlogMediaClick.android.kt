@@ -22,7 +22,6 @@ actual fun onStatusMediaClick(
                 ImageViewerScreenNavKey(
                     imageList = event.mediaList.toImages(),
                     selectedIndex = event.index,
-                    coordinatesList = event.coordinatesList,
                 )
             )
         }

@@ -32,9 +32,11 @@ import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.af_dian
 import com.zhangke.fread.feature.profile.kofi_symbol
 import com.zhangke.fread.localization.LocalizedString
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+@Serializable
 object DonateScreenNavKey : NavKey
 
 @Composable

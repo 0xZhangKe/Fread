@@ -1,5 +1,6 @@
 package com.zhangke.fread.common
 
+import com.russhwolf.settings.coroutines.FlowSettings
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.framework.module.ModuleStartup

@@ -23,6 +23,7 @@ import com.zhangke.fread.common.startup.LanguageModuleStartup
 import com.zhangke.fread.common.utils.MediaFileHelper
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.StorageHelper
+import com.zhangke.fread.common.utils.ToastHelper
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -66,6 +67,7 @@ actual fun Module.createPlatformModule() {
     singleOf(::ActivityLanguageHelper)
     singleOf(::LanguageHelper)
     singleOf(::TextHandler)
+    singleOf(::ToastHelper)
     singleOf(::OAuthHandler)
     singleOf(::AndroidSystemBrowserLauncher) bind SystemBrowserLauncher::class
     factoryOf(::LanguageModuleStartup) bind ModuleStartup::class

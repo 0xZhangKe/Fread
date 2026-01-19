@@ -4,10 +4,6 @@ import FirebaseCore
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
 
-    lazy var applicationComponent: IosApplicationComponent = createApplicationComponent(
-        appDelegate: self
-    )
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         // Use Firebase library to configure APIs
         FirebaseApp.configure()

@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
 
 package com.zhangke.fread.bluesky.internal.client
 
@@ -11,8 +10,7 @@ import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import kotlinx.datetime.Instant
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.model.JsonContent
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Clock
 
 internal fun likeRecord(
     subject: StrongRef,

@@ -51,12 +51,12 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.utils.getScreenWidth
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.Clock
+import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+import kotlinx.datetime.Instant
 
 @Serializable
 data class EditFilterScreenKey(

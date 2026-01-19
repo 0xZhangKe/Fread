@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package com.zhangke.fread.bluesky.internal.usecase
 
 import androidx.compose.ui.text.TextRange
@@ -63,8 +61,7 @@ import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Language
 import sh.christian.ozone.api.RKey
 import sh.christian.ozone.api.Uri
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Clock
 
 class PublishingPostUseCase(
     private val clientManager: BlueskyClientManager,

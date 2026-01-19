@@ -7,7 +7,7 @@ import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import kotlinx.datetime.Instant
-import kotlin.time.Clock
+import kotlinx.datetime.Clock
 import kotlin.time.ExperimentalTime
 
 fun RssItem.convert(): com.zhangke.fread.rss.internal.rss.RssItem {

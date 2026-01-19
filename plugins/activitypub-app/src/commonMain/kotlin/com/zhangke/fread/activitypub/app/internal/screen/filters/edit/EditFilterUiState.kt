@@ -9,7 +9,7 @@ import com.zhangke.fread.localization.LocalizedString
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+import kotlinx.datetime.Instant
 
 data class EditFilterUiState @OptIn(ExperimentalTime::class) constructor(
     val title: String,

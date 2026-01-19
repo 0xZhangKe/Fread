@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalTime::class) class EditFilterViewModel (
     private val clientManager: ActivityPubClientManager,

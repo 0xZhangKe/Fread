@@ -14,7 +14,7 @@ import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.PagedStatusNotification
 import sh.christian.ozone.api.Did
-import kotlin.time.Clock
+import kotlinx.datetime.Clock
 import kotlin.time.ExperimentalTime
 
 class BlueskyNotificationResolver(

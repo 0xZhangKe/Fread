@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlin.time.ExperimentalTime
 import kotlinx.datetime.Instant
 
-@OptIn(ExperimentalTime::class) class EditFilterViewModel (
+class EditFilterViewModel(
     private val clientManager: ActivityPubClientManager,
     private val locator: PlatformLocator,
     private val id: String?,

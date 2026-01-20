@@ -129,7 +129,19 @@ val blueskyModule = module {
     viewModelOf(::BskyUserDetailViewModel)
     viewModelOf(::EditProfileViewModel)
     viewModelOf(::UserListViewModel)
-    viewModelOf(::PublishPostViewModel)
+    viewModel {
+        PublishPostViewModel(
+            clientManager = get(),
+            getAllLists = get(),
+            platformUriHelper = get(),
+            configManager = get(),
+            publishingPost = get(),
+            locator = it.get(),
+            defaultText = it.getOrNull(),
+            replyBlogJsonString = it.getOrNull(),
+            quoteBlogJsonString = it.getOrNull(),
+        )
+    }
 
     factoryOf(::BlueskyProvider) bind IStatusProvider::class
     factoryOf(::BskyUrlInterceptor) bind BrowserInterceptor::class

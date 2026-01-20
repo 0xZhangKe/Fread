@@ -3,8 +3,8 @@ package com.zhangke.fread.activitypub.app.di
 import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.ActivityPubContentManager
-import com.zhangke.fread.activitypub.app.ActivityPubNotificationResolver
 import com.zhangke.fread.activitypub.app.ActivityPubNavEntryProvider
+import com.zhangke.fread.activitypub.app.ActivityPubNotificationResolver
 import com.zhangke.fread.activitypub.app.ActivityPubProvider
 import com.zhangke.fread.activitypub.app.ActivityPubPublishManager
 import com.zhangke.fread.activitypub.app.ActivityPubScreenProvider
@@ -93,9 +93,10 @@ import com.zhangke.fread.activitypub.app.internal.utils.MastodonHelper
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.status.IStatusProvider
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -180,7 +181,13 @@ val activityPubModule = module {
     viewModelOf(::EditContentConfigViewModel)
     viewModelOf(::ActivityPubTimelineContainerViewModel)
     viewModelOf(::ExplorerContainerViewModel)
-    viewModelOf(::EditFilterViewModel)
+    viewModel {
+        EditFilterViewModel(
+            clientManager = get(),
+            locator = it.get(),
+            id = it.getOrNull<String>(),
+        )
+    }
     viewModelOf(::FiltersListViewModel)
     viewModelOf(::HashtagTimelineContainerViewModel)
     viewModelOf(::InstanceDetailViewModel)

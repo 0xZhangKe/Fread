@@ -72,7 +72,14 @@ class BlueskyNavEntryProvider : NavEntryProvider {
             UserListScreen(
                 locator = key.locator,
                 type = key.type,
-                viewModel = koinViewModel { parametersOf(key.locator, key.type, key.postUri) },
+                viewModel = koinViewModel {
+                    parametersOf(
+                        key.locator,
+                        key.type,
+                        key.postUri,
+                        key.did,
+                    )
+                },
             )
         }
         entry<BskyUserDetailScreenNavKey> { key ->

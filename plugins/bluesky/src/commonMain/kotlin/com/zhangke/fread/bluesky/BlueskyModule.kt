@@ -1,6 +1,7 @@
 package com.zhangke.fread.bluesky
 
 import com.zhangke.framework.nav.NavEntryProvider
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyFeedsAdapter
@@ -48,7 +49,6 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateProfileRecordUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
 import com.zhangke.fread.common.browser.BrowserInterceptor
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
 import org.koin.core.module.Module
@@ -150,6 +150,7 @@ val blueskyModule = module {
             locator = params.get(),
             type = params.get(),
             postUri = params.getOrNull<String>(),
+            userDid = params.getOrNull<String>(),
         )
     }
     viewModel {

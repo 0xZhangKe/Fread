@@ -35,6 +35,7 @@ class UserListViewModel(
     private val locator: PlatformLocator,
     private val type: UserListType,
     private val postUri: String?,
+    userDid: String?,
 ) : ViewModel() {
 
     private val _snackBarMessage = MutableSharedFlow<TextString>()
@@ -48,6 +49,8 @@ class UserListViewModel(
     val uiState: StateFlow<CommonLoadableUiState<UserListItemUiState>> get() = loadController.uiState
 
     private var cursor: String? = null
+
+    private val userDid: Did? = userDid?.let { Did(it) }
 
     init {
         loadController.initData(
@@ -195,7 +198,7 @@ class UserListViewModel(
             }
 
             UserListType.FOLLOWERS -> {
-                val did = client.loggedAccountProvider()?.did?.let { Did(it) }
+                val did = userDid ?: client.loggedAccountProvider()?.did?.let { Did(it) }
                 if (did == null) return Result.success(emptyList())
                 client.getFollowersCatching(
                     GetFollowersQueryParams(
@@ -206,7 +209,7 @@ class UserListViewModel(
             }
 
             UserListType.FOLLOWING -> {
-                val did = client.loggedAccountProvider()?.did?.let { Did(it) }
+                val did = userDid ?: client.loggedAccountProvider()?.did?.let { Did(it) }
                 if (did == null) return Result.success(emptyList())
                 client.getFollowsCatching(GetFollowsQueryParams(actor = did, cursor = cursor))
             }

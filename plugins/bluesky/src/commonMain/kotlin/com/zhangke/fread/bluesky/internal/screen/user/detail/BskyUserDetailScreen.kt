@@ -96,10 +96,10 @@ fun BskyUserDetailScreen(
         onUnblockClick = viewModel::onUnblockClick,
         onUnfollowClick = viewModel::onUnfollowClick,
         onFollowerClick = {
-            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.FOLLOWERS))
+            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.FOLLOWERS, did = did))
         },
         onFollowingClick = {
-            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.FOLLOWING))
+            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.FOLLOWING, did = did))
         },
         onOpenInBrowserClick = {
             uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(coroutineScope, it) }
@@ -111,10 +111,10 @@ fun BskyUserDetailScreen(
         onMuteClick = { viewModel.onMuteClick(true) },
         onUnmuteClick = { viewModel.onMuteClick(false) },
         onBlockedUserListClick = {
-            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.BLOCKED))
+            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.BLOCKED, did = did))
         },
         onMuteUserListClick = {
-            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.MUTED))
+            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.MUTED, did = did))
         },
         onHashtagClick = { tag ->
             backStack.add(

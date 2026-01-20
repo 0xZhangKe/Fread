@@ -49,6 +49,7 @@ data class UserListScreenNavKey(
     val locator: PlatformLocator,
     val type: UserListType,
     val postUri: String? = null,
+    val did: String? = null,
 ) : NavKey
 
 @Composable

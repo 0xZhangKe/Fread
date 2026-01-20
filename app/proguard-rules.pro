@@ -71,6 +71,11 @@
 -dontwarn io.ktor.utils.io.core.PreviewKt
 -dontwarn io.ktor.client.network.sockets.SocketTimeoutException
 
+-dontwarn androidx.window.extensions.area.ExtensionWindowAreaPresentation
+-dontwarn androidx.window.extensions.core.util.function.Consumer
+-dontwarn androidx.window.extensions.core.util.function.Function
+-dontwarn androidx.window.extensions.core.util.function.Predicate
+
 # Parcelable
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;

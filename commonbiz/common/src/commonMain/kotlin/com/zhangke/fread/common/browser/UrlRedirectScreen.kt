@@ -1,10 +1,8 @@
 package com.zhangke.fread.common.browser
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation3.runtime.NavKey
-import com.zhangke.framework.architect.theme.dialogScrim
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.ktx.launchInViewModel
@@ -70,12 +67,11 @@ fun UrlRedirectScreen(uri: String, viewModel: UrlRedirectViewModel) {
     }
     ConsumeFlow(viewModel.finishAndOpenPublishScreen) {
         backStack.removeLastOrNull()
-        GlobalScreenNavigation.navigateByTransparent(SelectAccountForPublishScreenKey(uri))
+        GlobalScreenNavigation.navigate(SelectAccountForPublishScreenKey(uri))
     }
     val pageState by viewModel.pageState.collectAsState()
     Box(
-        modifier = Modifier.size(100.dp)
-            .background(MaterialTheme.colorScheme.dialogScrim),
+        modifier = Modifier,
         contentAlignment = Alignment.Center,
     ) {
         when (pageState) {
@@ -132,7 +128,7 @@ sealed interface UrlRedirectPageState {
     data class SelectAccount(val accounts: List<LoggedAccount>) : UrlRedirectPageState
 }
 
-class UrlRedirectViewModel (
+class UrlRedirectViewModel(
     private val browserInterceptorSet: List<BrowserInterceptor>,
     val browserLauncher: BrowserLauncher,
     private val statusProvider: StatusProvider,

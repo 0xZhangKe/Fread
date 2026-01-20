@@ -40,7 +40,7 @@ class BrowserLauncher (private val systemBrowserLauncher: SystemBrowserLauncher)
         isFromExternal: Boolean = false,
     ) {
         if (checkAppSupportPage) {
-            GlobalScreenNavigation.navigateByTransparent(
+            GlobalScreenNavigation.navigate(
                 screen = UrlRedirectScreenKey(
                     uri = uri.toString(),
                     locator = locator,

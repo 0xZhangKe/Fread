@@ -18,6 +18,8 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.seiko.imageloader.ImageLoader
@@ -129,6 +131,11 @@ fun FreadApp() {
                         rememberSaveableStateHolderNavEntryDecorator(),
                         rememberViewModelStoreNavEntryDecorator()
                     ),
+                    sceneStrategy = remember {
+                        DialogSceneStrategy<NavKey>().then(
+                            SinglePaneSceneStrategy()
+                        )
+                    },
                     entryProvider = entryProvider {
                         for (provider in navEntryProviders) {
                             with(provider) { build() }
@@ -139,11 +146,6 @@ fun FreadApp() {
                     GlobalScreenNavigation.openScreenFlow
                         .debounce(300)
                         .collect { key -> backStack.add(key) }
-                }
-                LaunchedEffect(Unit) {
-                    GlobalScreenNavigation.openTransparentScreenFlow
-                        .debounce(300)
-                        .collect { backStack.add(it) }
                 }
                 val browserLauncher = LocalActivityBrowserLauncher.current
                 RegisterNotificationAction(browserLauncher)

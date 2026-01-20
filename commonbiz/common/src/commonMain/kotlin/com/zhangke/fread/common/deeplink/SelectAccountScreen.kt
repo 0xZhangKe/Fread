@@ -1,10 +1,8 @@
 package com.zhangke.fread.common.deeplink
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,11 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation3.runtime.NavKey
-import com.zhangke.framework.composable.currentOrThrow
-import com.zhangke.framework.architect.theme.dialogScrim
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.nav.LocalNavBackStack
@@ -60,10 +56,7 @@ fun SelectAccountForPublishScreen(viewModel: SelectAccountForPublishViewModel) {
         navigator.removeLastOrNull()
     }
     Box(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.dialogScrim)
-            .padding(horizontal = 32.dp)
-            .noRippleClick { navigator.removeLastOrNull() },
+        modifier = Modifier,
         contentAlignment = Alignment.Center,
     ) {
         when (loadingAccountList) {
@@ -113,7 +106,9 @@ fun SelectAccountForPublishScreen(viewModel: SelectAccountForPublishViewModel) {
             }
         }
     }
-} class SelectAccountForPublishViewModel (
+}
+
+class SelectAccountForPublishViewModel(
     private val statusProvider: StatusProvider,
     private val text: String,
 ) : ViewModel() {

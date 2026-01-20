@@ -45,7 +45,7 @@ class PublishPostViewModel(
     private val configManager: FreadConfigManager,
     private val publishingPost: PublishingPostUseCase,
     private val locator: PlatformLocator,
-    private val defaultText: String?,
+    defaultText: String?,
     replyBlogJsonString: String?,
     quoteBlogJsonString: String?,
 ) : ViewModel() {

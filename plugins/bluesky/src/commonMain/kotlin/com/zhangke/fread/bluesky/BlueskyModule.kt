@@ -48,6 +48,7 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateProfileRecordUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
 import com.zhangke.fread.common.browser.BrowserInterceptor
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
 import org.koin.core.module.Module
@@ -110,7 +111,19 @@ val blueskyModule = module {
     factoryOf(::PinFeedsUseCase)
     factoryOf(::RefreshSessionUseCase)
 
-    viewModelOf(::AddBlueskyContentViewModel)
+    viewModel { params ->
+        AddBlueskyContentViewModel(
+            loginToBluesky = get(),
+            contentRepo = get(),
+            platformRepo = get(),
+            onboardingComponent = get(),
+            baseUrl = params.getOrNull<FormalBaseUrl>(),
+            loginMode = params.get(),
+            avatar = params.getOrNull<String>(),
+            displayName = params.getOrNull<String>(),
+            handle = params.getOrNull<String>(),
+        )
+    }
     viewModelOf(::BlueskyHomeContainerViewModel)
     viewModelOf(::HomeFeedsContainerViewModel)
     viewModel { params ->
@@ -128,7 +141,17 @@ val blueskyModule = module {
     viewModelOf(::SearchStatusViewModel)
     viewModelOf(::BskyUserDetailViewModel)
     viewModelOf(::EditProfileViewModel)
-    viewModelOf(::UserListViewModel)
+    viewModel { params ->
+        UserListViewModel(
+            clientManager = get(),
+            accountAdapter = get(),
+            updateRelationship = get(),
+            updateBlock = get(),
+            locator = params.get(),
+            type = params.get(),
+            postUri = params.getOrNull<String>(),
+        )
+    }
     viewModel {
         PublishPostViewModel(
             clientManager = get(),

@@ -11,8 +11,10 @@ import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeViewModel
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentViewModel
 import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsViewModel
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddViewModel
+import com.zhangke.fread.status.source.StatusSource
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -23,7 +25,14 @@ val feedsModule = module {
 
     viewModelOf(::ContentHomeViewModel)
     viewModelOf(::MixedContentViewModel)
-    viewModelOf(::AddMixedFeedsViewModel)
+    viewModel { params ->
+        AddMixedFeedsViewModel(
+            statusProvider = get(),
+            contentRepo = get(),
+            onboardingComponent = get(),
+            statusSource = params.getOrNull<StatusSource>(),
+        )
+    }
     viewModelOf(::EditMixedContentViewModel)
     viewModelOf(::ImportFeedsViewModel)
     viewModelOf(::SearchSourceForAddViewModel)

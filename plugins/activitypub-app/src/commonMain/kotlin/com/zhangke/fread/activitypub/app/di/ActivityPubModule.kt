@@ -92,6 +92,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.fread.activitypub.app.internal.utils.MastodonHelper
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.status.IStatusProvider
+import com.zhangke.fread.status.uri.FormalUri
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -200,7 +201,19 @@ val activityPubModule = module {
     viewModelOf(::PostStatusViewModel)
     viewModelOf(::TrendingStatusViewModel)
     viewModelOf(::UserDetailContainerViewModel)
-    viewModelOf(::UserListViewModel)
+    viewModel { params ->
+        UserListViewModel(
+            clientManager = get(),
+            userUriTransformer = get(),
+            webFingerBaseUrlToUserIdRepo = get(),
+            accountEntityAdapter = get(),
+            locator = params.get(),
+            type = params.get(),
+            statusId = params.getOrNull<String>(),
+            userUri = params.getOrNull<FormalUri>(),
+            userId = params.getOrNull<String>(),
+        )
+    }
     viewModelOf(::SearchUserViewModel)
     viewModelOf(::StatusListContainerViewModel)
     viewModelOf(::TagListViewModel)

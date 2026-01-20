@@ -30,33 +30,23 @@ import com.zhangke.framework.utils.equalsExactly
 @Composable
 fun rememberImageViewerState(
     aspectRatio: Float,
-    needAnimateIn: Boolean,
     initialSize: Size = Size.Unspecified,
-    initialOffset: Offset = Offset.Unspecified,
     minimumScale: Float = 1f,
     maximumScale: Float = 3f,
     onDismissRequest: () -> Unit,
-    onStartDismiss: (() -> Unit)? = null,
-    onAnimateInFinished: (() -> Unit)? = null,
 ): ImageViewerState {
     val dismissRequest by rememberUpdatedState(newValue = onDismissRequest)
-    val startDismiss by rememberUpdatedState(newValue = onStartDismiss)
-    val animateInFinished by rememberUpdatedState(newValue = onAnimateInFinished)
     return rememberSaveable(
         saver = ImageViewerState.Saver,
     ) {
         ImageViewerState(
             aspectRatio = aspectRatio,
             initialSize = initialSize,
-            initialOffset = initialOffset,
             minimumScale = minimumScale,
             maximumScale = maximumScale,
-            needAnimateIn = needAnimateIn,
         )
     }.apply {
         this.onDismissRequest = dismissRequest
-        this.onStartDismiss = startDismiss
-        this.onAnimateInFinished = animateInFinished
     }
 }
 
@@ -64,15 +54,11 @@ fun rememberImageViewerState(
 class ImageViewerState(
     private val aspectRatio: Float,
     private val initialSize: Size,
-    private val initialOffset: Offset,
-    private val needAnimateIn: Boolean,
     private val minimumScale: Float = 1f,
     private val maximumScale: Float = 3f,
 ) {
 
-    var onAnimateInFinished: (() -> Unit)? = null
     var onDismissRequest: (() -> Unit)? = null
-    var onStartDismiss: (() -> Unit)? = null
 
     private var _currentWidthPixel = mutableFloatStateOf(0F)
     private var _currentHeightPixel = mutableFloatStateOf(0F)
@@ -96,8 +82,6 @@ class ImageViewerState(
             return aspectRatio <= layoutSize.aspectRatio()
         }
 
-    private var alreadyAnimationIn = false
-
     private var flingAnimation: AnimationScope<Offset, AnimationVector2D>? = null
     private var scaleAnimation: AnimationScope<Float, AnimationVector1D>? = null
     private var resumeOffsetYAnimation: AnimationScope<Float, AnimationVector1D>? = null
@@ -115,39 +99,30 @@ class ImageViewerState(
             _currentWidthPixel.floatValue = initialSize.width
             _currentHeightPixel.floatValue = initialSize.height
         }
-        if (!initialOffset.isUnspecified) {
-            _currentOffsetXPixel.floatValue = initialOffset.x
-            _currentOffsetYPixel.floatValue = initialOffset.y
-        }
     }
 
-    suspend fun updateLayoutSize(size: Size) {
+    fun updateLayoutSize(size: Size) {
+        if (size == layoutSize) return
         layoutSize = size
         onLayoutSizeChanged()
-        onAnimateInFinished?.invoke()
     }
 
-    private suspend fun onLayoutSizeChanged() {
-        val offsetY = if (isBigVerticalImage){
+    private fun onLayoutSizeChanged() {
+        val offsetY = if (isBigVerticalImage) {
             0F
-        }else{
+        } else {
             layoutSize.height / 2F - standardHeight / 2F
         }
-        if (initialSize.isUnspecified || initialOffset.isUnspecified) {
+        if (initialSize.isUnspecified) {
             _currentWidthPixel.floatValue = standardWidth
             _currentHeightPixel.floatValue = standardHeight
             _currentOffsetXPixel.floatValue = 0F
             _currentOffsetYPixel.floatValue = offsetY
         } else {
-            if (needAnimateIn && !alreadyAnimationIn) {
-                alreadyAnimationIn = true
-                animateToStandard()
-            } else {
-                _currentWidthPixel.floatValue = standardWidth
-                _currentHeightPixel.floatValue = standardHeight
-                _currentOffsetXPixel.floatValue = 0F
-                _currentOffsetYPixel.floatValue = offsetY
-            }
+            _currentWidthPixel.floatValue = standardWidth
+            _currentHeightPixel.floatValue = standardHeight
+            _currentOffsetXPixel.floatValue = 0F
+            _currentOffsetYPixel.floatValue = offsetY
         }
     }
 
@@ -267,8 +242,7 @@ class ImageViewerState(
     }
 
     internal suspend fun startDismiss() {
-        onStartDismiss?.invoke()
-        if ((initialSize.isUnspecified || initialSize.isEmpty()) && initialOffset.isUnspecified) {
+        if ((initialSize.isUnspecified || initialSize.isEmpty())) {
             onDismissRequest?.invoke()
             return
         }
@@ -276,10 +250,8 @@ class ImageViewerState(
             if (initialSize.isEmpty()) _currentWidthPixel.floatValue else initialSize.width
         val targetHeight =
             if (initialSize.isEmpty()) _currentHeightPixel.floatValue else initialSize.height
-        val targetOffsetX =
-            if (initialOffset.isUnspecified) _currentOffsetXPixel.floatValue else initialOffset.x
-        val targetOffsetY =
-            if (initialOffset.isUnspecified) _currentOffsetYPixel.floatValue else initialOffset.y
+        val targetOffsetX = _currentOffsetXPixel.floatValue
+        val targetOffsetY = _currentOffsetYPixel.floatValue
         animateToTarget(
             targetWidth = targetWidth,
             targetHeight = targetHeight,
@@ -404,20 +376,9 @@ class ImageViewerState(
         private val Size.magicHeight: Float
             get() = if (isUnspecified) MAGIC_NUMBER else height
 
-        private val Offset.magicX: Float
-            get() = if (isUnspecified) MAGIC_NUMBER else x
-
-        private val Offset.magicY: Float
-            get() = if (isUnspecified) MAGIC_NUMBER else y
-
         private fun magicSize(width: Float, height: Float): Size {
             if (width == MAGIC_NUMBER || height == MAGIC_NUMBER) return Size.Unspecified
             return Size(width = width, height = height)
-        }
-
-        private fun magicOffset(x: Float, y: Float): Offset {
-            if (x == MAGIC_NUMBER || y == MAGIC_NUMBER) return Offset.Unspecified
-            return Offset(x = x, y = y)
         }
 
         val Saver: Saver<ImageViewerState, *> = listSaver(
@@ -426,33 +387,18 @@ class ImageViewerState(
                     it.aspectRatio,
                     it.initialSize.magicWidth,
                     it.initialSize.magicHeight,
-                    it.initialOffset.magicX,
-                    it.initialOffset.magicY,
                     it.minimumScale,
                     it.maximumScale,
-                    it.needAnimateIn,
                 )
             },
             restore = {
                 ImageViewerState(
                     aspectRatio = it[0] as Float,
                     initialSize = magicSize(width = it[1] as Float, height = it[2] as Float),
-                    initialOffset = magicOffset(
-                        x = it[3] as Float,
-                        y = it[4] as Float,
-                    ),
-                    minimumScale = it[5] as Float,
-                    maximumScale = it[6] as Float,
-                    needAnimateIn = it[7] as Boolean,
+                    minimumScale = it[3] as Float,
+                    maximumScale = it[4] as Float,
                 )
             }
-        )
-    }
-
-    private fun Offset.coerceIn(bounds: Bounds): Offset {
-        return Offset(
-            x = this.x.coerceIn(bounds.left..bounds.right),
-            y = this.y.coerceIn(bounds.top..bounds.bottom),
         )
     }
 }

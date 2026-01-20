@@ -21,7 +21,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,17 +29,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
 import androidx.navigation3.runtime.NavKey
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.model.ImageRequest
@@ -63,10 +58,9 @@ import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
+import com.zhangke.fread.status.ui.image.buildFeedsImageSharedKey
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlin.jvm.Transient
 
 @Serializable
 data class ImageViewerScreenNavKey(
@@ -78,7 +72,6 @@ data class ImageViewerScreenNavKey(
 fun ImageViewerScreen(
     selectedIndex: Int,
     imageList: List<ImageViewerImage>,
-    coordinatesList: List<LayoutCoordinates?>? = emptyList(),
 ) {
     val backStack = LocalNavBackStack.currentOrThrow
     val backgroundCommonAlpha = 0.95F
@@ -86,7 +79,6 @@ fun ImageViewerScreen(
         LaunchedEffect(imageList) { backStack.removeLastOrNull() }
         return
     }
-    val coroutineScope = rememberCoroutineScope()
     var backgroundColorAlpha by remember {
         mutableFloatStateOf(0F)
     }
@@ -105,10 +97,8 @@ fun ImageViewerScreen(
         }
     }
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) {
-        // TODO: check this bug, maybe cause Compose.
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(
                 color = Color.Black,
@@ -119,9 +109,6 @@ fun ImageViewerScreen(
             initialPage = selectedIndex.coerceAtLeast(0),
             pageCount = imageList::size,
         )
-        val animatedInHolder = remember {
-            arrayOf(false)
-        }
 
         Box(modifier = Modifier.fillMaxSize()) {
             HorizontalPager(
@@ -130,32 +117,9 @@ fun ImageViewerScreen(
                 state = pagerState,
             ) { pageIndex ->
                 val currentMedia = imageList[pageIndex]
-                val coordinates = coordinatesList?.getOrNull(pageIndex)
-                val animatedIn = pageIndex == selectedIndex && animatedInHolder.first().not()
                 ImagePageContent(
                     image = currentMedia,
-                    coordinates = coordinates,
-                    needAnimateIn = animatedIn,
-                    animateInFinished = {
-                        animatedInHolder[0] = true
-                    },
-                    onDismissRequest = {
-                        backStack.removeLastOrNull()
-                    },
-                    onStartDismiss = {
-                        showIndicator = false
-                        coroutineScope.launch {
-                            Animatable(backgroundCommonAlpha).animateTo(
-                                targetValue = 0.1F,
-                                animationSpec = tween(
-                                    ImageViewerDefault.ANIMATION_DURATION,
-                                    easing = FastOutSlowInEasing
-                                ),
-                            ) {
-                                backgroundColorAlpha = value
-                            }
-                        }
-                    }
+                    onDismissRequest = backStack::removeLastOrNull,
                 )
             }
 
@@ -182,16 +146,10 @@ fun ImageViewerScreen(
 @Composable
 private fun ImagePageContent(
     image: ImageViewerImage,
-    coordinates: LayoutCoordinates?,
-    needAnimateIn: Boolean,
-    animateInFinished: () -> Unit,
     onDismissRequest: () -> Unit,
-    onStartDismiss: () -> Unit,
 ) {
     val imageLoader = LocalImageLoader.current
-    var aspectRatio: Float? by remember {
-        mutableStateOf(image.aspect)
-    }
+    var aspectRatio: Float? by remember { mutableStateOf(image.aspect) }
     if (aspectRatio == null) {
         LaunchedEffect(image) {
             val request = ImageRequest {
@@ -202,23 +160,10 @@ private fun ImagePageContent(
         }
     }
     if (aspectRatio != null) {
-        val viewerState = if (coordinates != null && coordinates.isAttached) {
-            rememberImageViewerState(
-                aspectRatio = aspectRatio!!,
-                needAnimateIn = needAnimateIn,
-                initialSize = coordinates.size.toSize(),
-                initialOffset = coordinates.positionInRoot(),
-                onAnimateInFinished = animateInFinished,
-                onDismissRequest = onDismissRequest,
-                onStartDismiss = onStartDismiss,
-            )
-        } else {
-            rememberImageViewerState(
-                aspectRatio = aspectRatio!!,
-                needAnimateIn = false,
-                onDismissRequest = onDismissRequest,
-            )
-        }
+        val viewerState = rememberImageViewerState(
+            aspectRatio = aspectRatio!!,
+            onDismissRequest = onDismissRequest,
+        )
         ImageViewer(
             state = viewerState,
             modifier = Modifier.fillMaxSize(),
@@ -231,7 +176,7 @@ private fun ImagePageContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .blurhash(image.blurhash)
-                    .sharedElement("blog_image"),
+                    .sharedElement(buildFeedsImageSharedKey(image.url)),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = image.description,
             )
@@ -268,13 +213,13 @@ private fun BoxScope.ImageTopBar(image: ImageViewerImage) {
             onClick = {
                 needSaveImage = true
             },
-            tint = MaterialTheme.colorScheme.inverseOnSurface,
+            tint = Color.White.copy(alpha = 0.7F),
         )
         if (!image.description.isNullOrEmpty()) {
             Spacer(modifier = Modifier.width(16.dp))
             SimpleIconButton(
                 onClick = { showBottomSheet = true },
-                tint = MaterialTheme.colorScheme.inverseOnSurface,
+                tint = Color.White.copy(alpha = 0.7F),
                 imageVector = Icons.Default.Info,
                 contentDescription = "Image description",
             )

@@ -260,7 +260,8 @@ private fun BlogAutoSizeImage(
                 data(imageUrl)
             }
         },
-        modifier = modifier.fillMaxSize().sharedElement("blog_image"),
+        modifier = modifier.fillMaxSize()
+            .sharedElement(buildFeedsImageSharedKey(imageUrl.orEmpty())),
         contentScale = ContentScale.Crop,
         contentDescription = description.ifNullOrEmpty { "Blog Image Media" },
     )
@@ -343,4 +344,8 @@ internal fun BlogImageMediaStyle.decideFirstImageWeightInHorizontalMode(aspect: 
     val factor = 1F / aspect - 1F
     val weight = minWeightInHorizontal + floatingWeight * factor
     return weight.coerceAtLeast(minWeightInHorizontal).coerceAtMost(maxWeightInHorizontal)
+}
+
+fun buildFeedsImageSharedKey(url: String): String {
+    return "feeds_img_$url"
 }

@@ -4,9 +4,8 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.publish.IPublishBlogManager
 import com.zhangke.fread.status.publish.PublishingPost
-import me.tatarka.inject.annotations.Inject
 
-class RssPublishManager @Inject constructor() : IPublishBlogManager {
+class RssPublishManager() : IPublishBlogManager {
 
     override suspend fun getPublishBlogRules(account: LoggedAccount): Result<PublishBlogRules>? {
         return null

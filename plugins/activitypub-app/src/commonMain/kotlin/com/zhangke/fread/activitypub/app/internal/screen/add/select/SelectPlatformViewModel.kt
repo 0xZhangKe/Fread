@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.add.select
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.textOf
@@ -9,7 +9,7 @@ import com.zhangke.framework.coroutines.invokeOnCancel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentScreen
+import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentScreenKey
 import com.zhangke.fread.common.onboarding.OnboardingComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -19,9 +19,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class SelectPlatformViewModel @Inject constructor(
+class SelectPlatformViewModel (
     private val platformRepo: ActivityPubPlatformRepo,
     private val onboardingComponent: OnboardingComponent,
 ) : ViewModel() {
@@ -29,7 +28,7 @@ class SelectPlatformViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SelectPlatformUiState.default())
     val uiState = _uiState.asStateFlow()
 
-    private val _openNewPageFlow = MutableSharedFlow<Screen>()
+    private val _openNewPageFlow = MutableSharedFlow<NavKey>()
     val openNewPageFlow = _openNewPageFlow.asSharedFlow()
 
     private val _finishPageFlow = MutableSharedFlow<Unit>()
@@ -118,7 +117,7 @@ class SelectPlatformViewModel @Inject constructor(
         when (result) {
             is SearchPlatformResult.SearchedPlatform -> {
                 launchInViewModel {
-                    _openNewPageFlow.emit(AddActivityPubContentScreen(result.platform))
+                    _openNewPageFlow.emit(AddActivityPubContentScreenKey(result.platform))
                 }
             }
 
@@ -136,7 +135,7 @@ class SelectPlatformViewModel @Inject constructor(
                     platformRepo.getPlatform(baseUrl)
                         .onSuccess { platform ->
                             _uiState.update { it.copy(loadingPlatformForAdd = false) }
-                            _openNewPageFlow.emit(AddActivityPubContentScreen(platform))
+                            _openNewPageFlow.emit(AddActivityPubContentScreenKey(platform))
                         }.onFailure { t ->
                             _uiState.update { it.copy(loadingPlatformForAdd = false) }
                             _snackBarMessage.emitTextMessageFromThrowable(t)

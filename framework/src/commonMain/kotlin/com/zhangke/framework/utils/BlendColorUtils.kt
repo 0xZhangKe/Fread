@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.toArgb
 import kotlin.math.pow
 import kotlin.math.round
 
-
 object BlendColorUtils {
 
     fun blend(

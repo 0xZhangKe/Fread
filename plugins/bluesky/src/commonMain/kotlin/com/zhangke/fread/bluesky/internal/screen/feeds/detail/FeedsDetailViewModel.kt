@@ -17,7 +17,6 @@ import com.zhangke.fread.bluesky.internal.usecase.DeleteRecordUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PinFeedsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UnpinFeedsUseCase
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,31 +25,20 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.Clock
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
+import kotlin.time.ExperimentalTime
 
-class FeedsDetailViewModel @Inject constructor(
+class FeedsDetailViewModel(
     private val clientManager: BlueskyClientManager,
     private val feedsAdapter: BlueskyFeedsAdapter,
     private val createRecord: CreateRecordUseCase,
     private val deleteRecord: DeleteRecordUseCase,
     private val followFeeds: PinFeedsUseCase,
     private val unfollowFeeds: UnpinFeedsUseCase,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted feeds: BlueskyFeeds,
 ) : ViewModel() {
 
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            locator: PlatformLocator,
-            feeds: BlueskyFeeds,
-        ): FeedsDetailViewModel
-    }
-
-    private val _uiState = MutableStateFlow(FeedsDetailUiState.default(feeds))
+    private val _uiState = MutableStateFlow<FeedsDetailUiState?>(null)
     val uiState = _uiState.asStateFlow()
 
     private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
@@ -62,14 +50,27 @@ class FeedsDetailViewModel @Inject constructor(
     private var likeJob: Job? = null
     private var pinJob: Job? = null
 
-    init {
+    private var locator: PlatformLocator? = null
+
+    fun initialize(locator: PlatformLocator, feeds: BlueskyFeeds) {
+        this.locator = locator
+        _uiState.value = FeedsDetailUiState.default(feeds)
         getFeedsDetail()
     }
 
+    fun clearState() {
+        likeJob?.cancel()
+        pinJob?.cancel()
+        locator = null
+        _uiState.value = null
+    }
+
+    @OptIn(ExperimentalTime::class)
     fun onLikeClick() {
         if (likeJob?.isActive == true) return
-        val feeds = _uiState.value.feeds
+        val feeds = _uiState.value?.feeds
         if (feeds !is BlueskyFeeds.Feeds) return
+        val locator = locator ?: return
         likeJob?.cancel()
         likeJob = launchInViewModel {
             if (feeds.liked) {
@@ -99,9 +100,10 @@ class FeedsDetailViewModel @Inject constructor(
     }
 
     fun onPinClick() {
-        val feeds = _uiState.value.feeds
+        val feeds = _uiState.value?.feeds
         if (feeds !is BlueskyFeeds.Feeds) return
         if (pinJob?.isActive == true) return
+        val locator = locator ?: return
         pinJob?.cancel()
         pinJob = launchInViewModel {
             if (feeds.pinned) {
@@ -110,7 +112,9 @@ class FeedsDetailViewModel @Inject constructor(
                 followFeeds(locator = locator, feeds = feeds)
             }.onSuccess {
                 val newFeeds = feeds.copy(pinned = !feeds.pinned)
-                _uiState.update { state -> state.copy(feeds = newFeeds) }
+                _uiState.update { state ->
+                    state?.copy(feeds = newFeeds) ?: FeedsDetailUiState.default(newFeeds)
+                }
                 _feedsUpdateFlow.emit(newFeeds)
             }.onFailure {
                 _snackBarMessageFlow.emitTextMessageFromThrowable(it)
@@ -120,7 +124,8 @@ class FeedsDetailViewModel @Inject constructor(
 
     private fun getFeedsDetail() {
         launchInViewModel {
-            val feeds = _uiState.value.feeds
+            val locator = locator ?: return@launchInViewModel
+            val feeds = _uiState.value?.feeds
             if (feeds !is BlueskyFeeds.Feeds) return@launchInViewModel
             clientManager.getClient(locator)
                 .getFeedGeneratorsCatching(GetFeedGeneratorsQueryParams(listOf(AtUri(feeds.uri))))
@@ -132,7 +137,9 @@ class FeedsDetailViewModel @Inject constructor(
                                 pinned = feeds.pinned,
                             )
                         }?.let { feed ->
-                            _uiState.update { it.copy(feeds = feed) }
+                            _uiState.update {
+                                it?.copy(feeds = feed) ?: FeedsDetailUiState.default(feeds)
+                            }
                             _feedsUpdateFlow.emit(feed)
                         }
                 }

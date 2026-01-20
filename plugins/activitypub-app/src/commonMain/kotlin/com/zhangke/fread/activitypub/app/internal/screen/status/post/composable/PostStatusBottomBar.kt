@@ -34,10 +34,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import com.zhangke.framework.composable.BackHandler
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
-import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.freadPlaceholder
@@ -53,7 +53,7 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.SensitiveIconButton
 import com.zhangke.fread.commonbiz.shared.screen.publish.bottomPaddingAsBottomBar
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 
-@OptIn(InternalVoyagerApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun PostStatusBottomBar(
     uiState: PostStatusUiState,

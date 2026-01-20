@@ -9,27 +9,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class HomeFeedsScreen(
-    private val feedsJson: String,
-    private val locator: PlatformLocator,
-) : BaseScreen() {
+@Serializable
+data class HomeFeedsScreenNavKey(
+    val feedsJson: String,
+    val locator: PlatformLocator,
+) : NavKey {
 
     companion object {
 
-        fun create(feeds: BlueskyFeeds, locator: PlatformLocator): HomeFeedsScreen {
-            return HomeFeedsScreen(
+        fun create(feeds: BlueskyFeeds, locator: PlatformLocator): HomeFeedsScreenNavKey {
+            return HomeFeedsScreenNavKey(
                 locator = locator,
                 feedsJson = globalJson.encodeToString(
                     serializer = BlueskyFeeds.serializer(),
@@ -38,37 +40,39 @@ class HomeFeedsScreen(
             )
         }
     }
+}
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val snackbarHostState = rememberSnackbarHostState()
+@Composable
+fun HomeFeedsScreen(
+    feedsJson: String,
+    locator: PlatformLocator,
+) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val snackbarHostState = rememberSnackbarHostState()
 
-        val tab = remember {
-            HomeFeedsTab(
-                feeds = globalJson.decodeFromString(feedsJson),
-                locator = locator,
+    val tab = remember {
+        HomeFeedsTab(
+            feeds = globalJson.decodeFromString(feedsJson),
+            locator = locator,
+        )
+    }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Toolbar(
+                title = stringResource(LocalizedString.feeds),
+                onBackClick = backStack::removeLastOrNull,
             )
-        }
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                Toolbar(
-                    title = stringResource(LocalizedString.feeds),
-                    onBackClick = navigator::pop,
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-        ) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-                CompositionLocalProvider(
-                    LocalSnackbarHostState provides snackbarHostState,
-                ) {
-                    tab.TabContent(this@HomeFeedsScreen, null)
-                }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            CompositionLocalProvider(
+                LocalSnackbarHostState provides snackbarHostState,
+            ) {
+                tab.Content()
             }
         }
     }

@@ -8,9 +8,8 @@ import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: SystemBrowserLauncher) {
+class BrowserLauncher (private val systemBrowserLauncher: SystemBrowserLauncher) {
 
     fun launchBySystemBrowser(url: String) {
         launchBySystemBrowser(url.toPlatformUri())
@@ -41,8 +40,8 @@ class BrowserLauncher @Inject constructor(private val systemBrowserLauncher: Sys
         isFromExternal: Boolean = false,
     ) {
         if (checkAppSupportPage) {
-            GlobalScreenNavigation.navigateByTransparent(
-                screen = UrlRedirectScreen(
+            GlobalScreenNavigation.navigate(
+                screen = UrlRedirectScreenKey(
                     uri = uri.toString(),
                     locator = locator,
                     isFromExternal = isFromExternal,

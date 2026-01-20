@@ -27,9 +27,7 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.androidx.room)
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.auto.service.annotations)
-                implementation(libs.bundles.voyager)
                 implementation(libs.uri.kmp)
                 implementation(libs.rssparser)
                 implementation(libs.okio)
@@ -53,7 +51,6 @@ kotlin {
 
 dependencies {
     kspAll(libs.androidx.room.compiler)
-    kspAll(libs.kotlinInject.compiler)
     kspAll(libs.auto.service.ksp)
     kspAll(libs.krouter.collecting.compiler)
 }

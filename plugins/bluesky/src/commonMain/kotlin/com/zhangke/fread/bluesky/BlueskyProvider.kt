@@ -11,12 +11,10 @@ import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.status.IStatusResolver
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyProvider @Inject constructor(
+class BlueskyProvider(
     blueskyContentManager: BlueskyContentManager,
     screenProvider: BlueskyScreenProvider,
-    platformResolver: BlueskyPlatformResolver,
     searchEngine: BlueskySearchEngine,
     statusResolver: BlueskyStatusResolver,
     statusSourceResolver: BlueskyStatusSourceResolver,
@@ -28,8 +26,6 @@ class BlueskyProvider @Inject constructor(
     override val contentManager: IContentManager = blueskyContentManager
 
     override val screenProvider: IStatusScreenProvider = screenProvider
-
-    override val platformResolver: IPlatformResolver = platformResolver
 
     override val searchEngine: ISearchEngine = searchEngine
 

@@ -7,24 +7,16 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.usecase.content.ReorderActivityPubTabUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class EditContentConfigViewModel @Inject constructor(
+class EditContentConfigViewModel (
     private val contentRepo: FreadContentRepo,
     private val reorderTab: ReorderActivityPubTabUseCase,
-    @Assisted private val contentId: String
+    private val contentId: String
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-        fun create(contentId: String): EditContentConfigViewModel
-    }
 
     private val _uiState = MutableStateFlow<EditContentConfigUiState?>(null)
     val uiState = _uiState.asStateFlow()

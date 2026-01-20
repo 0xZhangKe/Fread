@@ -4,17 +4,17 @@ ksp = "2.2.21-2.0.4"
 kotlin-coroutine = "1.8.1"
 kotlin-coroutine-test = "1.8.1"
 kotlinx-serialization = "1.9.0"
-kotlinx-datetime = "0.6.2"
+kotlinx-datetime = "0.7.1-0.6.x-compat"
 
 arrow = "2.1.2"
 
 compose-multiplatform = "1.9.3"
 
-androidx-core = "1.13.1"
+androidx-core = "1.17.0"
 androidx-fragment = "1.7.1"
 androidx-appcompat = "1.6.1"
 androidx-annotation = "1.9.1"
-androidxActivity = "1.11.0"
+androidxActivity = "1.11.1"
 androidx-preference = "1.2.1"
 androidx-collection = "1.3.0"
 androidx-sqlite = "2.6.1"
@@ -24,21 +24,23 @@ androidx-browser = "1.4.0"
 androidx-paging = "3.3.6"
 androidx-media3 = "1.5.1"
 
+nav3Core = "1.0.0"
+jetbrainsNav3 = "1.0.0-alpha06"
+lifecycleViewmodelNav3 = "2.10.0-alpha07"
+
 compose-runtime-tracing = "1.9.2"
 
 jetbrains-lifecycle = "2.9.4"
 
-accompanist = "0.37.3"
+koin = "4.1.1"
 
-kotlinInject = "0.8.0"
+accompanist = "0.37.3"
 
 okhttp3 = "4.12.0"
 ktor = "3.3.0"
 ktorfit = "2.2.0"
 
 auto_service = "1.0.1"
-
-voyager = "1.1.0-beta03"
 
 krouter = "1.3.7"
 
@@ -78,16 +80,9 @@ androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okht
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
-voyager = [
-    "voyager-navigator",
-    "voyager-bottom-sheet-navigator",
-    "voyager-tab-navigator",
-    "voyager-transitions",
-    "voyager-screenModel",
-    "voyager-lifecycle-kmp",
-]
-
 googlePlayReview = ["googlePlayReview", "googlePlayReviewKtx"]
+
+androidx-nav3 = ["androidx-nav3-runtime", "jetbrains-nav3-ui", "lifecycle-viewmodel-nav3"]
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx.core" }
@@ -126,6 +121,11 @@ androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasou
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3"}
 androidx-media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "androidx.media3"}
 
+lifecycle-viewmodel-nav3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+androidx-nav3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
+androidx-nav3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+jetbrains-nav3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "jetbrainsNav3" }
+
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 firebase-kmp-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "firebaseKmp"}
@@ -140,9 +140,6 @@ kotlin-coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-corou
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
-
-kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
-kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
 
 okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
 okhttp3-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3" }
@@ -176,13 +173,6 @@ compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin",
 composeCompiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-jb-backhandler = { group = "org.jetbrains.compose.ui", name = "ui-backhandler", version.ref = "compose-multiplatform" }
 
-voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
-voyager-bottom-sheet-navigator = {  module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
-voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-voyager-lifecycle-kmp = { module = "cafe.adriel.voyager:voyager-lifecycle-kmp", version.ref = "voyager" }
-
 krouter-reducing-compiler = { group = "io.github.0xzhangke", name = "krouter-reducing-compiler", version.ref = "krouter"}
 krouter-collecting-compiler = { group = "io.github.0xzhangke", name = "krouter-collecting-compiler", version.ref = "krouter"}
 krouter-runtime = { group = "io.github.0xzhangke", name = "krouter-runtime", version.ref = "krouter"}
@@ -215,6 +205,13 @@ googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", 
 composeRuntimeTracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "compose-runtime-tracing" }
 
 bluesky = { module = "sh.christian.ozone:bluesky", version.ref = "bluesky" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+koin-compose-nav3 = { module = "io.insert-koin:koin-compose-navigation3", version = "4.2.0-alpha3" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

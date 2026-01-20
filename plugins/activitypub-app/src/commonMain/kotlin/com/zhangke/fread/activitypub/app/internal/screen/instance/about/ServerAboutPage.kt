@@ -24,8 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
@@ -35,14 +33,15 @@ import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun Screen.ServerAboutPage(
+internal fun ServerAboutPage(
     baseUrl: FormalBaseUrl,
     rules: List<ActivityPubInstanceEntity.Rule> = emptyList(),
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
-    val viewModel: ServerAboutViewModel = getViewModel()
+    val viewModel: ServerAboutViewModel = koinViewModel()
     LaunchedEffect(viewModel) {
         viewModel.rules = rules
         viewModel.baseUrl = baseUrl

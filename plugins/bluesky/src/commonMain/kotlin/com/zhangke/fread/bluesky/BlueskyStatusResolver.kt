@@ -26,11 +26,10 @@ import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
 
-class BlueskyStatusResolver @Inject constructor(
+class BlueskyStatusResolver(
     private val clientManager: BlueskyClientManager,
     private val statusAdapter: BlueskyStatusAdapter,
     private val platformRepo: BlueskyPlatformRepo,

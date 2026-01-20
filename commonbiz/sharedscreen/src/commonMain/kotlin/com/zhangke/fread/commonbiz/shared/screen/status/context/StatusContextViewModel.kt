@@ -11,9 +11,8 @@ import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class StatusContextViewModel @Inject constructor(
+class StatusContextViewModel (
     private val mixedStatusRepo: MixedStatusRepo,
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,

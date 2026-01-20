@@ -6,9 +6,8 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.status.model.Status
-import me.tatarka.inject.annotations.Inject
 
-class VotePollUseCase @Inject constructor(
+class VotePollUseCase (
     private val clientManager: ActivityPubClientManager,
     private val pollAdapter: ActivityPubPollAdapter,
 ) {

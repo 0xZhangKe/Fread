@@ -14,10 +14,9 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.DescendantStatus
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 
-class GetStatusContextUseCase @Inject constructor(
+class GetStatusContextUseCase(
     private val clientManager: BlueskyClientManager,
     private val blogPlatformRepo: BlueskyPlatformRepo,
     private val statusAdapter: BlueskyStatusAdapter,

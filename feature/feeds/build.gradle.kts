@@ -26,11 +26,8 @@ kotlin {
 
                 implementation(libs.arrow.core)
 
-                implementation(libs.bundles.voyager)
-
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.krouter.runtime)
                 implementation(libs.androidx.room)
                 implementation(libs.androidx.constraintlayout.compose.kmp)
@@ -59,7 +56,6 @@ kotlin {
 dependencies {
     kspAll(libs.androidx.room.compiler)
     kspAll(libs.auto.service.ksp)
-    kspAll(libs.kotlinInject.compiler)
     kspAll(libs.krouter.collecting.compiler)
 }
 

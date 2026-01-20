@@ -8,9 +8,8 @@ import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Inject
 
-class ServerTrendsTagsViewModel @Inject constructor(
+class ServerTrendsTagsViewModel (
     private val getServerTrendsTags: GetServerTrendTagsUseCase,
 ) : ViewModel() {
 

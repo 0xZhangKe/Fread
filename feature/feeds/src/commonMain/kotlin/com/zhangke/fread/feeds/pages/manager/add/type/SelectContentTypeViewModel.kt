@@ -1,7 +1,7 @@
 package com.zhangke.fread.feeds.pages.manager.add.type
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.onboarding.OnboardingComponent
 import com.zhangke.fread.status.StatusProvider
@@ -11,14 +11,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class SelectContentTypeViewModel @Inject constructor(
+class SelectContentTypeViewModel(
     private val onboardingComponent: OnboardingComponent,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
+    private val _openScreenFlow = MutableSharedFlow<NavKey>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
     private val _finishPageFlow = MutableSharedFlow<Unit>()

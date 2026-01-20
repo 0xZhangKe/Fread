@@ -2,9 +2,9 @@ package com.zhangke.fread.screen.main.drawer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
+import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreenNavKey
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.model.FreadContent
@@ -14,9 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class MainDrawerViewModel @Inject constructor(
+class MainDrawerViewModel (
     private val contentRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
@@ -24,7 +23,7 @@ class MainDrawerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MainDrawerUiState(emptyList()))
     val uiState: StateFlow<MainDrawerUiState> get() = _uiState
 
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
+    private val _openScreenFlow = MutableSharedFlow<NavKey>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
     init {
@@ -58,7 +57,7 @@ class MainDrawerViewModel @Inject constructor(
     fun onContentConfigEditClick(content: FreadContent) {
         viewModelScope.launch {
             if (content is MixedContent) {
-                _openScreenFlow.emit(EditMixedContentScreen(content.id))
+                _openScreenFlow.emit(EditMixedContentScreenNavKey(content.id))
             } else {
                 statusProvider.screenProvider.getEditContentConfigScreenScreen(content)
                     ?.let { _openScreenFlow.emit(it) }

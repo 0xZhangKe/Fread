@@ -5,9 +5,8 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.SearchResult
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubSearchAdapter @Inject constructor(
+class ActivityPubSearchAdapter (
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val hashtagAdapter: ActivityPubTagAdapter,
     private val statusAdapter: ActivityPubStatusAdapter,

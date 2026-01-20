@@ -32,9 +32,8 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyStatusAdapter @Inject constructor(
+class BlueskyStatusAdapter(
     private val accountAdapter: BlueskyAccountAdapter,
 ) {
 

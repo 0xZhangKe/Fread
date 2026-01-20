@@ -3,7 +3,7 @@ package com.zhangke.fread.bluesky
 import app.bsky.actor.GetProfileQueryParams
 import app.bsky.feed.GetPostThreadQueryParams
 import app.bsky.feed.GetPostThreadResponseThreadUnion
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.atproto.repo.GetRecordQueryParams
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
@@ -16,18 +16,17 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
-import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
+import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreenNavKey
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.InterceptorResult
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
+import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreenNavKey
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.createBlueskyProtocol
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Handle
 import sh.christian.ozone.api.RKey
 
-class BskyUrlInterceptor @Inject constructor(
+class BskyUrlInterceptor(
     private val accountManager: BlueskyLoggedAccountManager,
     private val clientManager: BlueskyClientManager,
     private val statusAdapter: BlueskyStatusAdapter,
@@ -94,7 +93,7 @@ class BskyUrlInterceptor @Inject constructor(
         return true
     }
 
-    private suspend fun parseProfile(locator: PlatformLocator, uri: SimpleUri): Screen? {
+    private suspend fun parseProfile(locator: PlatformLocator, uri: SimpleUri): NavKey? {
         if (!isProfileUrl(uri)) return null
         val handle = uri.path?.split('/')?.lastOrNull()
         if (handle.isNullOrEmpty()) return null
@@ -102,7 +101,7 @@ class BskyUrlInterceptor @Inject constructor(
             .getProfileCatching(GetProfileQueryParams(Handle(handle)))
             .getOrNull()
         if (profile == null) return null
-        return BskyUserDetailScreen(locator = locator, did = profile.did.did)
+        return BskyUserDetailScreenNavKey(locator = locator, did = profile.did.did)
     }
 
     private fun isPostUrl(uri: SimpleUri): Boolean {
@@ -119,7 +118,7 @@ class BskyUrlInterceptor @Inject constructor(
         locator: PlatformLocator,
         uri: SimpleUri,
         account: BlueskyLoggedAccount?
-    ): Screen? {
+    ): NavKey? {
         if (!isPostUrl(uri)) return null
         val groupedPath = uri.path
             ?.removePrefix("/")
@@ -150,6 +149,6 @@ class BskyUrlInterceptor @Inject constructor(
                 null
             }
         }.getOrNull() ?: return null
-        return StatusContextScreen.create(statusUiState)
+        return StatusContextScreenNavKey.create(statusUiState)
     }
 }

@@ -10,9 +10,8 @@ import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.ActivityPubAccountLogoutUseCase
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class UserDetailContainerViewModel @Inject constructor(
+class UserDetailContainerViewModel (
     private val accountManager: ActivityPubAccountManager,
     private val userUriTransformer: UserUriTransformer,
     private val clientManager: ActivityPubClientManager,
@@ -43,9 +42,7 @@ class UserDetailContainerViewModel @Inject constructor(
         userId: String?,
     ): UserDetailViewModel {
         return obtainSubViewModel(Params(locator, userUri, webFinger, userId))
-    }
-
-    class Params(
+    } class Params(
         val locator: PlatformLocator,
         val userUri: FormalUri?,
         val webFinger: WebFinger?,

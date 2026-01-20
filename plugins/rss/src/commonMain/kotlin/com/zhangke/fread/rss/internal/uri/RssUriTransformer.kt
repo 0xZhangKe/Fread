@@ -1,9 +1,8 @@
 package com.zhangke.fread.rss.internal.uri
 
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class RssUriTransformer @Inject constructor() {
+class RssUriTransformer() {
 
     companion object {
         private const val PARAM_URL = "url"

@@ -2,9 +2,8 @@ package com.zhangke.fread.commonbiz.shared.repo
 
 import com.zhangke.fread.commonbiz.shared.db.SelectedAccountPublishing
 import com.zhangke.fread.commonbiz.shared.db.SelectedAccountPublishingDatabase
-import me.tatarka.inject.annotations.Inject
 
-class SelectedAccountPublishingRepo @Inject constructor(
+class SelectedAccountPublishingRepo (
     private val database: SelectedAccountPublishingDatabase,
 ) {
 

@@ -12,23 +12,22 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
+import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreenKey
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun Screen.ServerTrendsTagsPage(
+internal fun ServerTrendsTagsPage(
     baseUrl: FormalBaseUrl,
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
-    val viewModel = getViewModel<ServerTrendsTagsViewModel>()
+    val backStack = LocalNavBackStack.currentOrThrow
+    val viewModel = koinViewModel<ServerTrendsTagsViewModel>()
     viewModel.baseUrl = baseUrl
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
@@ -39,8 +38,8 @@ internal fun Screen.ServerTrendsTagsPage(
         contentCanScrollBackward = contentCanScrollBackward,
         onHashtagClick = { tag ->
             val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
-            navigator.push(
-                HashtagTimelineScreen(
+            backStack.add(
+                HashtagTimelineScreenKey(
                     locator = locator,
                     hashtag = tag.name.removePrefix("#"),
                 )

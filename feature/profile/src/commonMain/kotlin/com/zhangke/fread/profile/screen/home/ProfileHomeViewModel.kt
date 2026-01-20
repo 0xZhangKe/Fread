@@ -2,7 +2,7 @@ package com.zhangke.fread.profile.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
@@ -21,9 +21,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class ProfileHomeViewModel @Inject constructor(
+class ProfileHomeViewModel(
     private val statusProvider: StatusProvider,
     private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
 ) : ViewModel() {
@@ -31,7 +30,7 @@ class ProfileHomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ProfileHomeUiState(emptyList()))
     val uiState: StateFlow<ProfileHomeUiState> get() = _uiState.asStateFlow()
 
-    private val _openPageFlow = MutableSharedFlow<Screen>()
+    private val _openPageFlow = MutableSharedFlow<NavKey>()
     val openPageFlow = _openPageFlow.asSharedFlow()
 
     private var refreshAccountJob: Job? = null

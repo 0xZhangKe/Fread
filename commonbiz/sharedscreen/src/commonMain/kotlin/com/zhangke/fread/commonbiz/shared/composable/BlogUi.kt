@@ -8,9 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -35,8 +34,7 @@ fun BlogUi(
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
-    val navigator = LocalNavigator.currentOrThrow
-    val transparentNavigator = LocalTransparentNavigator.current
+    val backState = LocalNavBackStack.currentOrThrow
     val fixedThreadType = if (blog.isReply) {
         ThreadsType.CONTINUED_THREAD
     } else {
@@ -75,8 +73,7 @@ fun BlogUi(
             },
             onMediaClick = { event ->
                 onStatusMediaClick(
-                    transparentNavigator = transparentNavigator,
-                    navigator = navigator,
+                    navigator = backState,
                     event = event,
                 )
             },

@@ -10,9 +10,8 @@ import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class TrendingStatusViewModel @Inject constructor(
+class TrendingStatusViewModel (
     private val statusProvider: StatusProvider,
     private val clientManager: ActivityPubClientManager,
     private val statusUpdater: StatusUpdater,
@@ -42,9 +41,7 @@ class TrendingStatusViewModel @Inject constructor(
     ): TrendingStatusSubViewModel {
         val params = Params(locator)
         return obtainSubViewModel(params)
-    }
-
-    class Params(val locator: PlatformLocator) : SubViewModelParams() {
+    } class Params(val locator: PlatformLocator) : SubViewModelParams() {
         override val key: String
             get() = locator.toString()
     }

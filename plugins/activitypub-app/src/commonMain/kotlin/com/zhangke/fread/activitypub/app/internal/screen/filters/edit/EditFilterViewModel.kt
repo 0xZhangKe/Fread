@@ -9,7 +9,6 @@ import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
@@ -18,20 +17,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.time.ExperimentalTime
 import kotlinx.datetime.Instant
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-class EditFilterViewModel @Inject constructor(
+class EditFilterViewModel(
     private val clientManager: ActivityPubClientManager,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted private val id: String?,
+    private val locator: PlatformLocator,
+    private val id: String?,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(locator: PlatformLocator, id: String?): EditFilterViewModel
-    }
 
     private val _uiState = MutableStateFlow(EditFilterUiState.default())
     val uiState: StateFlow<EditFilterUiState> = _uiState
@@ -52,6 +45,7 @@ class EditFilterViewModel @Inject constructor(
         _uiState.update { it.copy(title = title, hasInputtedSomething = true) }
     }
 
+    @OptIn(ExperimentalTime::class)
     fun onExpiredDateSelected(date: Instant?) {
         _uiState.update { it.copy(expiresDate = date, hasInputtedSomething = true) }
     }

@@ -4,10 +4,9 @@ import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.client.adjustToRkey
 import com.zhangke.fread.bluesky.internal.client.blockRecord
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 
-class UpdateBlockUseCase @Inject constructor(
+class UpdateBlockUseCase(
     private val createRecord: CreateRecordUseCase,
     private val deleteRecord: DeleteRecordUseCase,
 ) {

@@ -9,9 +9,8 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmoji
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.MapCustomEmojiUseCase
 import com.zhangke.fread.status.source.StatusSource
-import me.tatarka.inject.annotations.Inject
 
-class UserSourceTransformer @Inject constructor(
+class UserSourceTransformer (
     private val userUriTransformer: UserUriTransformer,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val mapCustomEmoji: MapCustomEmojiUseCase,

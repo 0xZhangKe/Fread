@@ -36,16 +36,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import com.zhangke.framework.composable.BackHandler
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.internal.BackHandler
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
@@ -54,8 +51,9 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
-import com.zhangke.fread.explore.screens.search.SearchScreen
+import com.zhangke.fread.explore.screens.search.SearchScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -63,18 +61,19 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
 import kotlinx.coroutines.flow.Flow
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class, InternalVoyagerApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun Screen.ExplorerSearchBar(
+fun ExplorerSearchBar(
     selectedAccount: LoggedAccount?,
     accountList: List<LoggedAccount>,
     onAccountSelected: (LoggedAccount) -> Unit,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
+    val backStack = LocalNavBackStack.currentOrThrow
     var active by rememberSaveable { mutableStateOf(false) }
-    val viewModel = getViewModel<SearchBarViewModel>()
+    val viewModel = koinViewModel<SearchBarViewModel>()
     LaunchedEffect(selectedAccount) {
         viewModel.selectedAccount = selectedAccount
     }
@@ -115,7 +114,13 @@ fun Screen.ExplorerSearchBar(
                     val locator = uiState.locator
                     val protocol = uiState.account?.platform?.protocol
                     if (locator != null && protocol != null) {
-                        navigator.push(SearchScreen(locator, protocol, uiState.query))
+                        backStack.add(
+                            SearchScreenNavKey(
+                                locator = locator,
+                                protocol = protocol,
+                                query = uiState.query,
+                            )
+                        )
                     }
                 },
                 expanded = active,
@@ -175,7 +180,7 @@ fun Screen.ExplorerSearchBar(
         },
     )
     ConsumeFlow(viewModel.openScreenFlow) {
-        navigator.push(it)
+        backStack.add(it)
     }
 }
 

@@ -9,10 +9,9 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 
-class BlueskyStatusSourceResolver @Inject constructor(
+class BlueskyStatusSourceResolver(
     private val clientManager: BlueskyClientManager,
     private val platformRepo: BlueskyPlatformRepo,
     private val accountAdapter: BlueskyAccountAdapter,

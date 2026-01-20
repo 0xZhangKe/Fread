@@ -1,7 +1,10 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.bluesky.internal.utils
 
-import kotlinx.datetime.Clock
 import kotlin.random.Random
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 object Tid {
 

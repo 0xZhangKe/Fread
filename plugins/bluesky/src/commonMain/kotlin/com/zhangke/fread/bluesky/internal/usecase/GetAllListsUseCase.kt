@@ -4,10 +4,9 @@ import app.bsky.graph.GetListsQueryParams
 import app.bsky.graph.ListView
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtIdentifier
 
-class GetAllListsUseCase @Inject constructor(
+class GetAllListsUseCase(
     private val clientManager: BlueskyClientManager,
 ) {
 

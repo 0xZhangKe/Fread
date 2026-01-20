@@ -20,11 +20,8 @@ kotlin {
 
                 implementation(compose.components.resources)
 
-                implementation(libs.bundles.voyager)
-
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.krouter.runtime)
             }
         }
@@ -42,7 +39,6 @@ kotlin {
 }
 
 dependencies {
-    add("kspAndroid", libs.kotlinInject.compiler)
     kspAll(libs.krouter.collecting.compiler)
 }
 

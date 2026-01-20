@@ -99,6 +99,6 @@ interface ISearchEngine {
         locator: PlatformLocator,
         url: String,
     ): Result<StatusUiState?>? {
-        return Result.success(null)
+        return null
     }
 }

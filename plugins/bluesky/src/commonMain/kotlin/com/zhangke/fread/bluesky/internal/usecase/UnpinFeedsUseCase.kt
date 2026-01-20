@@ -3,9 +3,8 @@ package com.zhangke.fread.bluesky.internal.usecase
 import app.bsky.actor.PreferencesUnion.SavedFeedsPrefV2
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class UnpinFeedsUseCase @Inject constructor(
+class UnpinFeedsUseCase(
     private val updatePreferences: UpdatePreferencesUseCase,
 ) {
 

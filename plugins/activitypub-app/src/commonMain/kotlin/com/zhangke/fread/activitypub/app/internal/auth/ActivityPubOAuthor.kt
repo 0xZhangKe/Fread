@@ -14,16 +14,12 @@ import com.zhangke.fread.activitypub.app.internal.repo.application.ActivityPubAp
 import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
 /**
  * Created by ZhangKe on 2022/12/4.
- */
-@ApplicationScope
-class ActivityPubOAuthor @Inject constructor(
+ */ class ActivityPubOAuthor (
     private val repo: ActivityPubLoggedAccountRepo,
     private val applicationRepo: ActivityPubApplicationRepo,
     private val clientManager: ActivityPubClientManager,

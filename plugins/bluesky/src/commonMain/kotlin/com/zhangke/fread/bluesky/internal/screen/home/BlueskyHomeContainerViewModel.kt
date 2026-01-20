@@ -5,9 +5,8 @@ import com.zhangke.framework.lifecycle.ContainerViewModel.SubViewModelParams
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyHomeContainerViewModel @Inject constructor(
+class BlueskyHomeContainerViewModel(
     private val contentRepo: FreadContentRepo,
     private val accountManager: BlueskyLoggedAccountManager,
     private val updateHomeTab: UpdateHomeTabUseCase,

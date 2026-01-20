@@ -2,39 +2,20 @@ package com.zhangke.fread.commonbiz.shared.screen.status.account
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.PlatformLocator
-import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-class SelectAccountOpenStatusViewModel @Inject constructor(
+class SelectAccountOpenStatusViewModel(
     private val statusProvider: StatusProvider,
-    @Assisted private val blogId: String,
-    @Assisted private val blogUrl: String,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted private val protocol: StatusProviderProtocol,
 ) : ViewModel() {
 
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            blogId: String,
-            blogUrl: String,
-            locator: PlatformLocator,
-            protocol: StatusProviderProtocol,
-        ): SelectAccountOpenStatusViewModel
-    }
-
     private val _uiState = MutableStateFlow(
-        SelectAccountOpenStatusUiState.default(loadingAccounts = true),
+        SelectAccountOpenStatusUiState.default(loadingAccounts = false),
     )
     val uiState = _uiState
 
@@ -43,7 +24,13 @@ class SelectAccountOpenStatusViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
-    init {
+    private var blogUrl: String? = null
+
+    fun initialize(statusUiState: StatusUiState) {
+        val protocol = statusUiState.status.platform.protocol
+        val locator = statusUiState.locator
+        this.blogUrl = statusUiState.status.intrinsicBlog.url
+        _uiState.update { it.copy(loadingAccounts = true) }
         launchInViewModel {
             val availableAccounts = statusProvider.accountManager
                 .getAllLoggedAccount()
@@ -72,7 +59,7 @@ class SelectAccountOpenStatusViewModel @Inject constructor(
                 .searchStatusByUrl(
                     protocol = account.platform.protocol,
                     locator = account.locator,
-                    url = blogUrl,
+                    url = blogUrl.orEmpty(),
                 ).onSuccess { status ->
                     if (status != null) {
                         _searchedStatusFlow.emit(status)
@@ -103,5 +90,10 @@ class SelectAccountOpenStatusViewModel @Inject constructor(
                 searchingAccount = null,
             )
         }
+    }
+
+    fun clearState() {
+        _uiState.update { it.reset() }
+        searchJob?.cancel()
     }
 }

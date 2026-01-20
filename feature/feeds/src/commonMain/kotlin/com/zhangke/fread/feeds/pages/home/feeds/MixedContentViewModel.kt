@@ -7,9 +7,8 @@ import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import me.tatarka.inject.annotations.Inject
 
-class MixedContentViewModel @Inject constructor(
+class MixedContentViewModel(
     private val contentRepo: FreadContentRepo,
     private val mixedRepo: MixedStatusRepo,
     private val statusUpdater: StatusUpdater,

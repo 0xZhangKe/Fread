@@ -4,9 +4,8 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.PagedStatusNotification
-import me.tatarka.inject.annotations.Inject
 
-class RssNotificationResolver @Inject constructor() : INotificationResolver {
+class RssNotificationResolver() : INotificationResolver {
 
     override suspend fun getNotifications(
         account: LoggedAccount,

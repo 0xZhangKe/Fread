@@ -12,9 +12,8 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class ExplorerContainerViewModel @Inject constructor(
+class ExplorerContainerViewModel (
     private val clientManager: ActivityPubClientManager,
     private val loggedAccountProvider: LoggedAccountProvider,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
@@ -49,9 +48,7 @@ class ExplorerContainerViewModel @Inject constructor(
         type: ExplorerFeedsTabType,
     ): ExplorerViewModel {
         return obtainSubViewModel(Params(locator, platform, type))
-    }
-
-    class Params(
+    } class Params(
         val locator: PlatformLocator,
         val platform: BlogPlatform,
         val type: ExplorerFeedsTabType,

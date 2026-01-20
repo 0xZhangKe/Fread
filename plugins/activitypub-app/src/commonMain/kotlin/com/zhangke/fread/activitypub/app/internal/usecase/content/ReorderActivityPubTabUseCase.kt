@@ -2,9 +2,8 @@ package com.zhangke.fread.activitypub.app.internal.usecase.content
 
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.common.content.FreadContentRepo
-import me.tatarka.inject.annotations.Inject
 
-class ReorderActivityPubTabUseCase @Inject constructor(
+class ReorderActivityPubTabUseCase (
     private val contentRepo: FreadContentRepo,
 ) {
 

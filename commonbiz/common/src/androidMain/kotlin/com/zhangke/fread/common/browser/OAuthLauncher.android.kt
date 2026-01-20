@@ -4,12 +4,9 @@ import android.content.Intent
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import com.zhangke.fread.common.di.ApplicationContext
-import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.CompletableDeferred
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-actual class OAuthHandler @Inject constructor(
+actual class OAuthHandler (
     private val context: ApplicationContext,
 ) {
 

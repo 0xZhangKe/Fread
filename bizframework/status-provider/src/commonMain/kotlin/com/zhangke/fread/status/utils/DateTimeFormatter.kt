@@ -1,6 +1,5 @@
 package com.zhangke.fread.status.utils
 
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.Composable
 import com.zhangke.fread.localization.LocalizedString
 import kotlinx.datetime.Clock
@@ -10,13 +9,14 @@ import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
-
+import kotlin.time.ExperimentalTime
 
 object DateTimeFormatter {
 
@@ -29,6 +29,7 @@ object DateTimeFormatter {
         )
     }
 
+    @OptIn(ExperimentalTime::class)
     fun format(
         datetime: Long,
         config: DatetimeFormatConfig,

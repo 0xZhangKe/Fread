@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.framework.date
 
 import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
 
 expect class InstantFormater() {
 

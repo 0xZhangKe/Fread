@@ -5,11 +5,10 @@ import app.bsky.actor.SavedFeed
 import app.bsky.actor.Type
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class PinFeedsUseCase @Inject constructor(
+class PinFeedsUseCase(
     private val updatePreferences: UpdatePreferencesUseCase,
 ) {
 

@@ -2,14 +2,13 @@ package com.zhangke.fread.explore.screens.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.ic_explorer
 import org.jetbrains.compose.resources.painterResource
 
-class ExploreTab(private val tabIndex: UShort) : Tab {
+class ExploreTab() : BaseTab() {
 
     override val options: TabOptions
         @Composable get() {
@@ -18,13 +17,13 @@ class ExploreTab(private val tabIndex: UShort) : Tab {
                 TabOptions(
                     title = "Explore",
                     icon = icon,
-                    index = tabIndex
                 )
             }
         }
 
     @Composable
     override fun Content() {
-        Navigator(ExplorerScreen())
+        super.Content()
+        ExplorerScreen()
     }
 }

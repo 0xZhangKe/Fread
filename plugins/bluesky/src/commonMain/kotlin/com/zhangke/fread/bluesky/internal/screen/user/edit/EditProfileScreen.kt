@@ -39,227 +39,223 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class EditProfileScreen(
-    private val locator: PlatformLocator,
-) : BaseScreen() {
+@Serializable
+data class EditProfileScreenNavKey(
+    val locator: PlatformLocator,
+) : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<EditProfileViewModel, EditProfileViewModel.Factory> {
-            it.create(locator)
-        }
-        val uiState by viewModel.uiState.collectAsState()
-        val snackbarHostState = rememberSnackbarHostState()
-        EditProfileContent(
-            uiState = uiState,
-            snackbarHostState = snackbarHostState,
-            onBackClick = navigator::pop,
-            onAvatarSelected = viewModel::onAvatarSelected,
-            onBannerSelected = viewModel::onBannerSelected,
-            onUserNameChanged = viewModel::onUserNameChanged,
-            onDescriptionChanged = viewModel::onDescriptionChanged,
-            onSaveClick = viewModel::onSaveClick,
-        )
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
-        ConsumeFlow(viewModel.finishScreenFlow) { navigator.pop() }
-    }
+@Composable
+fun EditProfileScreen(viewModel: EditProfileViewModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = rememberSnackbarHostState()
+    EditProfileContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onBackClick = backStack::removeLastOrNull,
+        onAvatarSelected = viewModel::onAvatarSelected,
+        onBannerSelected = viewModel::onBannerSelected,
+        onUserNameChanged = viewModel::onUserNameChanged,
+        onDescriptionChanged = viewModel::onDescriptionChanged,
+        onSaveClick = viewModel::onSaveClick,
+    )
+    ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
+    ConsumeFlow(viewModel.finishScreenFlow) { backStack.removeLastOrNull() }
+}
 
-    @Composable
-    private fun EditProfileContent(
-        uiState: EditProfileUiState,
-        snackbarHostState: SnackbarHostState,
-        onBackClick: () -> Unit,
-        onAvatarSelected: (PlatformUri) -> Unit,
-        onBannerSelected: (PlatformUri) -> Unit,
-        onUserNameChanged: (TextFieldValue) -> Unit,
-        onDescriptionChanged: (TextFieldValue) -> Unit,
-        onSaveClick: () -> Unit,
-    ) {
-        Scaffold(
-            topBar = {
-                var showConfirmExitDialog by remember { mutableStateOf(false) }
-                Toolbar(
-                    title = stringResource(LocalizedString.bsky_edit_profile_title),
-                    onBackClick = {
-                        if (uiState.modified) {
-                            showConfirmExitDialog = true
-                        } else {
-                            onBackClick()
-                        }
-                    },
-                    actions = {
-                        if (uiState.requesting) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .padding(end = 8.dp)
-                                    .size(24.dp)
-                            )
-                        } else {
-                            SimpleIconButton(
-                                onClick = {
-                                    onSaveClick()
-                                },
-                                imageVector = Icons.Default.Check,
-                                contentDescription = "Save",
-                            )
-                        }
+@Composable
+private fun EditProfileContent(
+    uiState: EditProfileUiState,
+    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    onAvatarSelected: (PlatformUri) -> Unit,
+    onBannerSelected: (PlatformUri) -> Unit,
+    onUserNameChanged: (TextFieldValue) -> Unit,
+    onDescriptionChanged: (TextFieldValue) -> Unit,
+    onSaveClick: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            var showConfirmExitDialog by remember { mutableStateOf(false) }
+            Toolbar(
+                title = stringResource(LocalizedString.bsky_edit_profile_title),
+                onBackClick = {
+                    if (uiState.modified) {
+                        showConfirmExitDialog = true
+                    } else {
+                        onBackClick()
                     }
-                )
-                if (showConfirmExitDialog) {
-                    AlertConfirmDialog(
-                        content = stringResource(LocalizedString.editProfileEditConfirmMessage),
-                        onConfirm = onBackClick,
-                        onDismissRequest = { showConfirmExitDialog = false }
-                    )
-                }
-            },
-            snackbarHost = {
-                SnackbarHost(
-                    modifier = Modifier.padding(bottom = 60.dp),
-                    hostState = snackbarHostState,
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(bottom = 30.dp)
-                    .verticalScroll(rememberScrollState())
-                    .imePadding(),
-            ) {
-                val headerHeight = 150.dp
-                val avatarSize = 80.dp
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(headerHeight + avatarSize / 2)
-                ) {
-                    HeaderInEdit(
-                        uiState = uiState,
-                        headerHeight = headerHeight,
-                        onHeaderSelected = onBannerSelected,
-                    )
-                    AvatarInEdit(
-                        uiState = uiState,
-                        avatarSize = avatarSize,
-                        onAvatarSelected = onAvatarSelected,
-                    )
-                }
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                        .fillMaxWidth(),
-                    value = uiState.userName,
-                    onValueChange = onUserNameChanged,
-                    placeholder = {
-                        Text(
-                            modifier = Modifier.alpha(0.7F),
-                            text = stringResource(LocalizedString.editProfileInputNameHint)
-                        )
-                    },
-                    label = {
-                        Text(text = stringResource(LocalizedString.editProfileLabelName))
-                    },
-                )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                        .fillMaxWidth(),
-                    value = uiState.description,
-                    onValueChange = onDescriptionChanged,
-                    placeholder = {
-                        Text(
-                            modifier = Modifier.alpha(0.7F),
-                            text = stringResource(LocalizedString.editProfileInputNoteHint),
-                        )
-                    },
-                    label = {
-                        Text(text = stringResource(LocalizedString.editProfileLabelNote))
-                    },
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun HeaderInEdit(
-        uiState: EditProfileUiState,
-        headerHeight: Dp,
-        onHeaderSelected: (PlatformUri) -> Unit,
-    ) {
-        PickVisualMediaLauncherContainer(
-            onResult = { it.firstOrNull()?.let(onHeaderSelected) },
-        ) {
-            AutoSizeImage(
-                url = uiState.bannerLocalUri?.toString() ?: uiState.banner,
-                modifier = Modifier
-                    .height(headerHeight)
-                    .fillMaxWidth()
-                    .freadPlaceholder(uiState.banner.isEmpty() && uiState.bannerLocalUri == null)
-                    .clickable { launchImage() },
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-            )
-        }
-    }
-
-    @Composable
-    private fun BoxScope.AvatarInEdit(
-        uiState: EditProfileUiState,
-        avatarSize: Dp,
-        onAvatarSelected: (PlatformUri) -> Unit,
-    ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 16.dp)
-                .size(avatarSize)
-                .clip(CircleShape)
-                .border(2.dp, Color.White, CircleShape)
-                .freadPlaceholder(uiState.avatar.isEmpty() && uiState.avatarLocalUri == null),
-        ) {
-            AutoSizeImage(
-                url = uiState.avatarLocalUri?.toString() ?: uiState.avatar,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                contentDescription = "avatar",
-            )
-            PickVisualMediaLauncherContainer(
-                onResult = {
-                    it.firstOrNull()?.let(onAvatarSelected)
                 },
-            ) {
-                SimpleIconButton(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5F))
-                        .padding(10.dp),
-                    onClick = { launchImage() },
-                    imageVector = Icons.Default.Edit,
-                    tint = Color.White,
-                    contentDescription = "Edit Avatar",
+                actions = {
+                    if (uiState.requesting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(24.dp)
+                        )
+                    } else {
+                        SimpleIconButton(
+                            onClick = {
+                                onSaveClick()
+                            },
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Save",
+                        )
+                    }
+                }
+            )
+            if (showConfirmExitDialog) {
+                AlertConfirmDialog(
+                    content = stringResource(LocalizedString.editProfileEditConfirmMessage),
+                    onConfirm = onBackClick,
+                    onDismissRequest = { showConfirmExitDialog = false }
                 )
             }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                modifier = Modifier.padding(bottom = 60.dp),
+                hostState = snackbarHostState,
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(bottom = 30.dp)
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
+        ) {
+            val headerHeight = 150.dp
+            val avatarSize = 80.dp
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(headerHeight + avatarSize / 2)
+            ) {
+                HeaderInEdit(
+                    uiState = uiState,
+                    headerHeight = headerHeight,
+                    onHeaderSelected = onBannerSelected,
+                )
+                AvatarInEdit(
+                    uiState = uiState,
+                    avatarSize = avatarSize,
+                    onAvatarSelected = onAvatarSelected,
+                )
+            }
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                    .fillMaxWidth(),
+                value = uiState.userName,
+                onValueChange = onUserNameChanged,
+                placeholder = {
+                    Text(
+                        modifier = Modifier.alpha(0.7F),
+                        text = stringResource(LocalizedString.editProfileInputNameHint)
+                    )
+                },
+                label = {
+                    Text(text = stringResource(LocalizedString.editProfileLabelName))
+                },
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                    .fillMaxWidth(),
+                value = uiState.description,
+                onValueChange = onDescriptionChanged,
+                placeholder = {
+                    Text(
+                        modifier = Modifier.alpha(0.7F),
+                        text = stringResource(LocalizedString.editProfileInputNoteHint),
+                    )
+                },
+                label = {
+                    Text(text = stringResource(LocalizedString.editProfileLabelNote))
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun HeaderInEdit(
+    uiState: EditProfileUiState,
+    headerHeight: Dp,
+    onHeaderSelected: (PlatformUri) -> Unit,
+) {
+    PickVisualMediaLauncherContainer(
+        onResult = { it.firstOrNull()?.let(onHeaderSelected) },
+    ) {
+        AutoSizeImage(
+            url = uiState.bannerLocalUri?.toString() ?: uiState.banner,
+            modifier = Modifier
+                .height(headerHeight)
+                .fillMaxWidth()
+                .freadPlaceholder(uiState.banner.isEmpty() && uiState.bannerLocalUri == null)
+                .clickable { launchImage() },
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
+private fun BoxScope.AvatarInEdit(
+    uiState: EditProfileUiState,
+    avatarSize: Dp,
+    onAvatarSelected: (PlatformUri) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .align(Alignment.BottomStart)
+            .padding(start = 16.dp)
+            .size(avatarSize)
+            .clip(CircleShape)
+            .border(2.dp, Color.White, CircleShape)
+            .freadPlaceholder(uiState.avatar.isEmpty() && uiState.avatarLocalUri == null),
+    ) {
+        AutoSizeImage(
+            url = uiState.avatarLocalUri?.toString() ?: uiState.avatar,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            contentDescription = "avatar",
+        )
+        PickVisualMediaLauncherContainer(
+            onResult = {
+                it.firstOrNull()?.let(onAvatarSelected)
+            },
+        ) {
+            SimpleIconButton(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5F))
+                    .padding(10.dp),
+                onClick = { launchImage() },
+                imageVector = Icons.Default.Edit,
+                tint = Color.White,
+                contentDescription = "Edit Avatar",
+            )
         }
     }
 }

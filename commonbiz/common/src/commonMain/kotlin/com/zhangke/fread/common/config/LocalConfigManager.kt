@@ -2,14 +2,8 @@ package com.zhangke.fread.common.config
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.russhwolf.settings.coroutines.FlowSettings
-import com.zhangke.fread.common.di.ApplicationScope
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class LocalConfigManager @Inject constructor(
-    configSettingsFactory: Lazy<FlowSettings>,
-) {
-    private val configSettings by configSettingsFactory
+class LocalConfigManager(private val configSettings: FlowSettings) {
 
     suspend fun getString(key: String): String? {
         return configSettings.getStringOrNull(key)
@@ -32,11 +26,11 @@ class LocalConfigManager @Inject constructor(
         configSettings.putInt(key, value)
     }
 
-    suspend fun getLong(key: String): Long?{
+    suspend fun getLong(key: String): Long? {
         return configSettings.getLongOrNull(key)
     }
 
-    suspend fun putLong(key: String, value: Long){
+    suspend fun putLong(key: String, value: Long) {
         configSettings.putLong(key, value)
     }
 

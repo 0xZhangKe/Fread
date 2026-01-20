@@ -2,9 +2,8 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubPollEntity
 import com.zhangke.fread.status.blog.BlogPoll
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubPollAdapter @Inject constructor() {
+class ActivityPubPollAdapter () {
 
     fun adapt(entity: ActivityPubPollEntity): BlogPoll {
         return BlogPoll(

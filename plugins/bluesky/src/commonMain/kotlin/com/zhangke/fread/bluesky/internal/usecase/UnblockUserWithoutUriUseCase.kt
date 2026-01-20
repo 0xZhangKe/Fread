@@ -4,10 +4,9 @@ import app.bsky.actor.GetProfileQueryParams
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 
-class UnblockUserWithoutUriUseCase @Inject constructor(
+class UnblockUserWithoutUriUseCase(
     private val clientManager: BlueskyClientManager,
     private val updateBlock: UpdateBlockUseCase,
 ) {

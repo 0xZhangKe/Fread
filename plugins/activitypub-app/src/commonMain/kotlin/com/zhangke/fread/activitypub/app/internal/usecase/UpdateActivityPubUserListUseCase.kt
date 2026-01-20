@@ -4,9 +4,8 @@ import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent.ContentTab
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent.ContentTab.ListTimeline
 import com.zhangke.fread.common.content.FreadContentRepo
-import me.tatarka.inject.annotations.Inject
 
-class UpdateActivityPubUserListUseCase @Inject constructor(
+class UpdateActivityPubUserListUseCase (
     private val contentRepo: FreadContentRepo,
 ) {
 

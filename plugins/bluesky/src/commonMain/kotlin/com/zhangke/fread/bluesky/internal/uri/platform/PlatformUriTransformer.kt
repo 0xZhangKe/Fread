@@ -5,9 +5,8 @@ import com.zhangke.fread.bluesky.internal.uri.BlueskyUriPath
 import com.zhangke.fread.bluesky.internal.uri.createBlueskyUri
 import com.zhangke.fread.bluesky.internal.uri.isBlueskyUri
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class PlatformUriTransformer @Inject constructor() {
+class PlatformUriTransformer() {
 
     companion object {
         private const val QUERY_SERVER_BASE_URL = "serverBaseUrl"

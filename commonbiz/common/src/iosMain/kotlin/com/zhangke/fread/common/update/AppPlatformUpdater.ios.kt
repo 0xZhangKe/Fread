@@ -3,7 +3,6 @@ package com.zhangke.fread.common.update
 import com.zhangke.fread.common.utils.SystemUtils
 import platform.Foundation.NSBundle
 
-
 actual class AppPlatformUpdater {
 
     actual val platformName: String = "ios"

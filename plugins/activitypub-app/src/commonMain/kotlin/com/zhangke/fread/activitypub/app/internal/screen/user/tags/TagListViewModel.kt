@@ -8,7 +8,6 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
@@ -17,19 +16,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class TagListViewModel @Inject constructor(
+class TagListViewModel (
     private val clientManager: ActivityPubClientManager,
     private val activityPubTagAdapter: ActivityPubTagAdapter,
-    @Assisted private val locator: PlatformLocator,
+    private val locator: PlatformLocator,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(locator: PlatformLocator): TagListViewModel
-    }
 
     private val _uiState = MutableStateFlow(TagListUiState.default(locator))
     val uiState: StateFlow<TagListUiState> = _uiState

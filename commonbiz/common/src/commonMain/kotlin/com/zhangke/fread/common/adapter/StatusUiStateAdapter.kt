@@ -4,9 +4,8 @@ import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
-import me.tatarka.inject.annotations.Inject
 
-class StatusUiStateAdapter @Inject constructor() {
+class StatusUiStateAdapter () {
 
     fun toStatusUiState(
         statusUiStatus: StatusUiState,

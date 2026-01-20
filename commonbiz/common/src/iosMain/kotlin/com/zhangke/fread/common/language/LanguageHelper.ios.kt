@@ -2,19 +2,19 @@ package com.zhangke.fread.common.language
 
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.fread.common.config.LocalConfigManager
-import com.zhangke.fread.common.di.ActivityScope
-import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class LanguageHelper @Inject constructor(
+class LanguageHelper (
     private val localConfigManager: LocalConfigManager,
 ) {
 
     var currentLanguage = readLocalFromStorage()
         private set
+
+    fun initialize() {
+
+    }
 
     private fun readLocalFromStorage(): LanguageSettingItem {
         return runBlocking {
@@ -36,12 +36,15 @@ class LanguageHelper @Inject constructor(
     }
 }
 
-@ActivityScope
-actual class ActivityLanguageHelper @Inject constructor(
+actual class ActivityLanguageHelper(
     private val languageHelper: LanguageHelper,
 ) {
 
     actual val currentLanguage get() = languageHelper.currentLanguage
+
+    actual fun initialize() {
+        languageHelper.initialize()
+    }
 
     actual fun setLanguage(item: LanguageSettingItem) {
         languageHelper.setLanguage(item)

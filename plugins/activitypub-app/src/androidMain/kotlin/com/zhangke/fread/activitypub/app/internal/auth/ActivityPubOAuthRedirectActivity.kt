@@ -4,15 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.toast.toast
-import com.zhangke.fread.common.commonComponent
+import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 /**
  * Created by ZhangKe on 2022/12/4.
  */
 class ActivityPubOAuthRedirectActivity : ComponentActivity() {
+
+    private val oauthHandler by inject<OAuthHandler>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +26,7 @@ class ActivityPubOAuthRedirectActivity : ComponentActivity() {
                 toast(org.jetbrains.compose.resources.getString(LocalizedString.activity_pub_login_exception))
                 delay(2000)
             } else {
-                commonComponent.oauthHandler.onOauthSuccess(code)
+                oauthHandler.onOauthSuccess(code)
             }
             finish()
         }

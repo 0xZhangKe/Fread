@@ -41,10 +41,7 @@ kotlin {
                 implementation(libs.jetbrains.lifecycle.viewmodel)
                 implementation(libs.jetbrains.lifecycle.viewmodel.compose)
 
-                implementation(libs.kotlinInject.runtime)
-
                 implementation(libs.androidx.room)
-                implementation(libs.bundles.voyager)
                 implementation(libs.uri.kmp)
 
                 implementation(libs.imageLoader)
@@ -91,7 +88,6 @@ kotlin {
 
 dependencies {
     kspAll(libs.androidx.room.compiler)
-    kspAll(libs.kotlinInject.compiler)
     kspAll(libs.krouter.collecting.compiler)
 }
 
@@ -105,8 +101,4 @@ compose {
 
 room {
     schemaDirectory("$projectDir/schemas")
-}
-
-ksp {
-    arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }

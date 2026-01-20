@@ -3,7 +3,7 @@ package com.zhangke.fread.bluesky
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
-import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
+import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreenNavKey
 import com.zhangke.fread.bluesky.internal.usecase.UnblockUserWithoutUriUseCase
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.account.AccountRefreshResult
@@ -19,9 +19,8 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyAccountManager @Inject constructor(
+class BlueskyAccountManager(
     private val accountManager: BlueskyLoggedAccountManager,
     private val unblockUserWithoutUri: UnblockUserWithoutUriUseCase,
 ) : IAccountManager {
@@ -49,7 +48,7 @@ class BlueskyAccountManager @Inject constructor(
     override suspend fun triggerLaunchAuth(platform: BlogPlatform, account: LoggedAccount?) {
         if (platform.protocol.notBluesky) return
         GlobalScreenNavigation.navigate(
-            AddBlueskyContentScreen(
+            AddBlueskyContentScreenNavKey(
                 baseUrl = platform.baseUrl,
                 loginMode = true,
                 avatar = account?.avatar,

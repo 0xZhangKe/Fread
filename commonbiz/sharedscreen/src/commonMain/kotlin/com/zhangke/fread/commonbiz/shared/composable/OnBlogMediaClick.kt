@@ -1,11 +1,10 @@
 package com.zhangke.fread.commonbiz.shared.composable
 
-import cafe.adriel.voyager.navigator.Navigator
-import com.zhangke.framework.voyager.TransparentNavigator
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 
 expect fun onStatusMediaClick(
-    transparentNavigator: TransparentNavigator,
-    navigator: Navigator,
+    navigator: NavBackStack<NavKey>,
     event: BlogMediaClickEvent,
 )

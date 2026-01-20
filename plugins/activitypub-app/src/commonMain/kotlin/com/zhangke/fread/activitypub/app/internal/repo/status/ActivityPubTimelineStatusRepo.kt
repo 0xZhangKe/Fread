@@ -7,9 +7,8 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.GetTimelineStat
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.status.model.Status
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubTimelineStatusRepo @Inject constructor(
+class ActivityPubTimelineStatusRepo (
     activityPubStatusDatabases: ActivityPubStatusDatabases,
     private val getTimeline: GetTimelineStatusUseCase,
 ) {

@@ -3,12 +3,11 @@ package com.zhangke.fread.bluesky.internal.usecase
 import com.atproto.repo.DeleteRecordRequest
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Nsid
 import sh.christian.ozone.api.RKey
 
-class DeleteRecordUseCase @Inject constructor(
+class DeleteRecordUseCase(
     private val clientManager: BlueskyClientManager,
 ) {
 

@@ -13,10 +13,9 @@ import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.model.Blob
 
-class UploadBlobUseCase @Inject constructor(
+class UploadBlobUseCase(
     private val clientManager: BlueskyClientManager,
     private val platformUriHelper: PlatformUriHelper,
 ) {

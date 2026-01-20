@@ -15,7 +15,6 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.status.model.Status
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
 import sh.christian.ozone.api.Did
@@ -23,7 +22,7 @@ import sh.christian.ozone.api.Nsid
 import sh.christian.ozone.api.RKey
 import sh.christian.ozone.api.model.JsonContent
 
-class BskyStatusInteractiveUseCase @Inject constructor(
+class BskyStatusInteractiveUseCase(
     private val clientManager: BlueskyClientManager,
     private val updateProfileRecord: UpdateProfileRecordUseCase,
 ) {

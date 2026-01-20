@@ -1,6 +1,6 @@
 package com.zhangke.fread.activitypub.app
 
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.network.SimpleUri
@@ -12,18 +12,17 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
+import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreenKey
+import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreenKey
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.InterceptorResult
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
+import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreenNavKey
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubUrlInterceptor @Inject constructor(
+class ActivityPubUrlInterceptor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val clientManager: ActivityPubClientManager,
     private val loggedAccountProvider: LoggedAccountProvider,
@@ -81,7 +80,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
             val platform = parsePlatform(uri)
             if (platform != null) {
                 return InterceptorResult.SuccessWithOpenNewScreen(
-                    InstanceDetailScreen(fixedLocator, platform.baseUrl)
+                    InstanceDetailScreenKey(fixedLocator, platform.baseUrl)
                 )
             }
         }
@@ -97,7 +96,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
         return true
     }
 
-    private suspend fun parseMastodonProfile(locator: PlatformLocator, uri: SimpleUri): Screen? {
+    private suspend fun parseMastodonProfile(locator: PlatformLocator, uri: SimpleUri): NavKey? {
         if (!isProfileUrl(uri)) return null
         val path = uri.path?.removePrefix("/") ?: return null
         val baseUrl = FormalBaseUrl.parse(uri.toString()) ?: return null
@@ -105,7 +104,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
         val accountRepo = clientManager.getClient(locator).accountRepo
         val account = accountRepo.lookup(acct).getOrNull() ?: return null
         val webFinger = accountEntityAdapter.toWebFinger(account)
-        return UserDetailScreen(locator = locator, webFinger = webFinger)
+        return UserDetailScreenKey(locator = locator, webFinger = webFinger)
     }
 
     private fun isMastodonStatusUrl(uri: SimpleUri): Boolean {
@@ -129,7 +128,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
         locator: PlatformLocator,
         uri: SimpleUri,
         account: ActivityPubLoggedAccount?,
-    ): Screen? {
+    ): NavKey? {
         val statusId = parseMastodonStatusParams(uri) ?: return null
         val baseUrl = FormalBaseUrl.parse(uri.toString()) ?: return null
         val client = clientManager.getClient(locator)
@@ -160,7 +159,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
                 )
             }
         }
-        return status?.let { StatusContextScreen.create(it) }
+        return status?.let { StatusContextScreenNavKey.create(it) }
     }
 
     private suspend fun parsePlatform(uri: SimpleUri): BlogPlatform? {

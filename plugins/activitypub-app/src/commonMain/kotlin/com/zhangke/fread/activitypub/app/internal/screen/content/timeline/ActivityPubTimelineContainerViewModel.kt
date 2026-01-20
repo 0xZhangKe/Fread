@@ -13,9 +13,8 @@ import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubTimelineContainerViewModel @Inject constructor(
+class ActivityPubTimelineContainerViewModel (
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
     private val statusAdapter: ActivityPubStatusAdapter,
@@ -58,9 +57,7 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
                 listId = listId,
             )
         )
-    }
-
-    class Params(
+    } class Params(
         val locator: PlatformLocator,
         val type: ActivityPubStatusSourceType,
         val listId: String?,

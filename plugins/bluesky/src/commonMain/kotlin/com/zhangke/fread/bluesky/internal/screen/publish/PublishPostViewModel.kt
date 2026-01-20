@@ -18,7 +18,6 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PublishingPostUseCase
 import com.zhangke.fread.common.config.FreadConfigManager
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
@@ -37,31 +36,19 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 
-class PublishPostViewModel @Inject constructor(
+class PublishPostViewModel(
     private val clientManager: BlueskyClientManager,
     private val getAllLists: GetAllListsUseCase,
     private val platformUriHelper: PlatformUriHelper,
     private val configManager: FreadConfigManager,
     private val publishingPost: PublishingPostUseCase,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted private val defaultText: String?,
-    @Assisted replyBlogJsonString: String?,
-    @Assisted quoteBlogJsonString: String?,
+    private val locator: PlatformLocator,
+    defaultText: String?,
+    replyBlogJsonString: String?,
+    quoteBlogJsonString: String?,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            locator: PlatformLocator,
-            defaultText: String?,
-            replyBlogJsonString: String?,
-            quoteBlogJsonString: String?,
-        ): PublishPostViewModel
-    }
 
     private val _uiState = MutableStateFlow(PublishPostUiState.default(defaultText))
     val uiState = _uiState.asStateFlow()

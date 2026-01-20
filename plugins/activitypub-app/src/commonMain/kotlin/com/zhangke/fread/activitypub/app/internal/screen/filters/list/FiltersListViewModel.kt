@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.activitypub.app.internal.screen.filters.list
 
 import androidx.lifecycle.ViewModel
@@ -8,7 +10,6 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -17,18 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
+import kotlin.time.ExperimentalTime
 
-class FiltersListViewModel @Inject constructor(
+class FiltersListViewModel (
     private val clientManager: ActivityPubClientManager,
-    @Assisted private val locator: PlatformLocator,
+    private val locator: PlatformLocator,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(locator: PlatformLocator): FiltersListViewModel
-    }
 
     private val _uiState = MutableStateFlow(FiltersListUiState.default())
     val uiState: StateFlow<FiltersListUiState> = _uiState

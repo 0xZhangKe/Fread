@@ -4,35 +4,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.toPlatformUri
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.video.full.FullScreenVideoPlayer
+import kotlinx.serialization.Serializable
 
-class FullVideoScreen(private val uri: String) : BaseScreen() {
+@Serializable
+data class FullVideoScreenNavKey(val uri: String): NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val playerManager = remember {
-            ExoPlayerManager()
-        }
-        CompositionLocalProvider(
-            LocalExoPlayerManager provides playerManager
-        ) {
-            FullScreenVideoPlayer(
-                uri = uri.toPlatformUri(),
-                onBackClick = navigator::pop,
-            )
-        }
-        DisposableEffect(Unit) {
-            onDispose {
-                playerManager.recycler()
-            }
+@Composable
+fun FullVideoScreen(uri: String) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val playerManager = remember {
+        ExoPlayerManager()
+    }
+    CompositionLocalProvider(
+        LocalExoPlayerManager provides playerManager
+    ) {
+        FullScreenVideoPlayer(
+            uri = uri.toPlatformUri(),
+            onBackClick = backStack::removeLastOrNull,
+        )
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            playerManager.recycler()
         }
     }
 }

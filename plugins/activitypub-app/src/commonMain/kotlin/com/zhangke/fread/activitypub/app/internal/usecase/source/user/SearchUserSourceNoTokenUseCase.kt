@@ -12,9 +12,8 @@ import com.zhangke.fread.activitypub.app.internal.usecase.GetDefaultBaseUrlUseCa
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class SearchUserSourceNoTokenUseCase @Inject constructor(
+class SearchUserSourceNoTokenUseCase (
     private val clientManager: ActivityPubClientManager,
     private val userRepo: UserRepo,
     private val userUriTransformer: UserUriTransformer,

@@ -20,9 +20,8 @@ import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
-import me.tatarka.inject.annotations.Inject
 
-class BlueskySearchEngine @Inject constructor(
+class BlueskySearchEngine(
     private val clientManager: BlueskyClientManager,
     private val accountAdapter: BlueskyAccountAdapter,
     private val getAtIdentifier: GetAtIdentifierUseCase,

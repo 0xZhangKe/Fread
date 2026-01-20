@@ -1,6 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.architect.json.fromJson
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.status.blog.Blog
@@ -13,8 +13,8 @@ object PostStatusScreenRoute {
     fun buildReplyScreen(
         accountUri: FormalUri,
         blog: Blog,
-    ): PostStatusScreen {
-        return PostStatusScreen(
+    ): NavKey {
+        return PostStatusScreenKey(
             accountUri = accountUri,
             replyingBlogJsonString = globalJson.encodeToString(serializer(), blog)
         )
@@ -23,8 +23,8 @@ object PostStatusScreenRoute {
     fun buildEditBlogRoute(
         accountUri: FormalUri,
         blog: Blog,
-    ): Screen {
-        return PostStatusScreen(
+    ): NavKey {
+        return PostStatusScreenKey(
             accountUri = accountUri,
             editBlogJsonString = globalJson.encodeToString(serializer(), blog),
         )
@@ -33,8 +33,8 @@ object PostStatusScreenRoute {
     fun buildQuoteBlogScreen(
         accountUri: FormalUri,
         quoteBlog: Blog,
-    ): Screen {
-        return PostStatusScreen(
+    ): NavKey {
+        return PostStatusScreenKey(
             accountUri = accountUri,
             quoteBlogJsonString = globalJson.encodeToString(serializer(), quoteBlog),
         )

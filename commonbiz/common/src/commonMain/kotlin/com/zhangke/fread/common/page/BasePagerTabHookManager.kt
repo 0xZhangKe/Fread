@@ -1,7 +1,6 @@
 package com.zhangke.fread.common.page
 
 import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.core.screen.Screen
 
 object BasePagerTabHookManager {
 
@@ -16,7 +15,7 @@ object BasePagerTabHookManager {
 interface BasePagerTabHook {
 
     @Composable
-    fun HookContent(screen: Screen, tab: BasePagerTab)
+    fun HookContent()
 }
 
 internal expect fun findBasePagerTabImplementers(): List<BasePagerTabHook>

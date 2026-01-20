@@ -2,9 +2,8 @@ package com.zhangke.fread.bluesky.internal.adapter
 
 import app.bsky.actor.ProfileView
 import com.zhangke.fread.bluesky.internal.model.BlueskyProfile
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyProfileAdapter @Inject constructor() {
+class BlueskyProfileAdapter() {
 
     fun convertToProfile(profile: ProfileView): BlueskyProfile {
         return BlueskyProfile(

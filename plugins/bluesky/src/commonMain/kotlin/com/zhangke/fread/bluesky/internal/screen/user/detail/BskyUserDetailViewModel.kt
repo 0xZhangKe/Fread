@@ -17,7 +17,6 @@ import com.zhangke.fread.bluesky.internal.usecase.RefreshSessionUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
@@ -27,11 +26,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 
-class BskyUserDetailViewModel @Inject constructor(
+class BskyUserDetailViewModel(
     private val clientManager: BlueskyClientManager,
     private val accountAdapter: BlueskyAccountAdapter,
     private val updateRelationship: UpdateRelationshipUseCase,
@@ -39,17 +36,9 @@ class BskyUserDetailViewModel @Inject constructor(
     private val accountManager: BlueskyLoggedAccountManager,
     private val refreshSession: RefreshSessionUseCase,
     private val userUriTransformer: UserUriTransformer,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted private val did: String,
+    private val locator: PlatformLocator,
+    private val did: String,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            locator: PlatformLocator,
-            did: String,
-        ): BskyUserDetailViewModel
-    }
 
     private val _uiState = MutableStateFlow(BskyUserDetailUiState.default(did = did))
     val uiState = _uiState.asStateFlow()

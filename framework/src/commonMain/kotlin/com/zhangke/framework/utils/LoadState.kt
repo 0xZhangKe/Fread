@@ -2,7 +2,6 @@ package com.zhangke.framework.utils
 
 import com.zhangke.framework.composable.TextString
 
-
 sealed interface LoadState {
 
     val loading: Boolean

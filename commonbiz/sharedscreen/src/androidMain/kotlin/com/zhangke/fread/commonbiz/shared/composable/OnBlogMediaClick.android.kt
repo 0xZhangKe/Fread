@@ -1,35 +1,33 @@
 package com.zhangke.fread.commonbiz.shared.composable
 
-import cafe.adriel.voyager.navigator.Navigator
-import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.commonbiz.shared.screen.FullVideoScreen
-import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.fread.commonbiz.shared.screen.FullVideoScreenNavKey
+import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreenNavKey
 import com.zhangke.fread.commonbiz.shared.screen.toImages
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 
 actual fun onStatusMediaClick(
-    transparentNavigator: TransparentNavigator,
-    navigator: Navigator,
+    navigator: NavBackStack<NavKey>,
     event: BlogMediaClickEvent,
 ) {
     when (event) {
         is BlogMediaClickEvent.BlogImageClickEvent -> {
             if (event.mediaList[event.index].type == BlogMediaType.GIFV) {
-                navigator.push(FullVideoScreen(event.mediaList[event.index].url))
+                navigator.add(FullVideoScreenNavKey(event.mediaList[event.index].url))
                 return
             }
-            transparentNavigator.push(
-                ImageViewerScreen(
+            navigator.add(
+                ImageViewerScreenNavKey(
                     imageList = event.mediaList.toImages(),
                     selectedIndex = event.index,
-                    coordinatesList = event.coordinatesList,
                 )
             )
         }
 
         is BlogMediaClickEvent.BlogVideoClickEvent -> {
-            navigator.push(FullVideoScreen(event.media.url))
+            navigator.add(FullVideoScreenNavKey(event.media.url))
         }
     }
 }

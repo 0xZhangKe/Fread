@@ -13,9 +13,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.supervisorScope
-import me.tatarka.inject.annotations.Inject
 
-class MixedStatusRepo @Inject constructor(
+class MixedStatusRepo (
     private val statusProvider: StatusProvider,
     mixedStatusDatabases: MixedStatusDatabases,
 ) {

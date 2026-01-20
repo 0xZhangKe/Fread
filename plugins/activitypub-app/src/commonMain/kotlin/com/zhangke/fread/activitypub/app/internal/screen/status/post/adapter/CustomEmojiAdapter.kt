@@ -2,9 +2,8 @@ package com.zhangke.fread.activitypub.app.internal.screen.status.post.adapter
 
 import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
-import me.tatarka.inject.annotations.Inject
 
-class CustomEmojiAdapter @Inject constructor() {
+class CustomEmojiAdapter () {
 
     fun toEmojiCell(
         customEmojiList: List<CustomEmoji>

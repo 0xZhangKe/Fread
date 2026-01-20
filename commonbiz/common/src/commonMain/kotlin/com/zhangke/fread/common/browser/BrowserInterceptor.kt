@@ -1,6 +1,6 @@
 package com.zhangke.fread.common.browser
 
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol
@@ -18,7 +18,7 @@ sealed interface InterceptorResult {
 
     data object CanNotIntercept : InterceptorResult
 
-    data class SuccessWithOpenNewScreen(val screen: Screen) : InterceptorResult
+    data class SuccessWithOpenNewScreen(val screen: NavKey) : InterceptorResult
 
     data class SwitchHomeContent(val content: FreadContent) : InterceptorResult
 

@@ -18,7 +18,6 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(path = ":localization"))
-                implementation(libs.bundles.voyager)
 
                 implementation(compose.components.resources)
 
@@ -33,6 +32,8 @@ kotlin {
 
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.kotlinx.datetime)
 
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.serialization.kotlinx.json)

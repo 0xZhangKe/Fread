@@ -25,10 +25,11 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.fread.localization.LocalizedString
 import io.ktor.util.date.getTimeMillis
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,12 +80,12 @@ fun DatePickerDialog(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun rememberFutureDatePickerState(
     initialSelectedDateMillis: Long? = null,
 ): DatePickerState {
-    val currentYear = remember {
+    val currentYear: Int = remember {
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
     }
     return rememberDatePickerState(

@@ -1,6 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.feeds
 
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
@@ -8,10 +8,9 @@ import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
-import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreen
-import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
+import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreenNavKey
+import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreenNavKey
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
@@ -28,7 +27,6 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
-import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -42,7 +40,7 @@ class InteractiveHandler(
 ) : IInteractiveHandler {
 
     override val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
-    override val mutableOpenScreenFlow = MutableSharedFlow<Screen>()
+    override val mutableOpenScreenFlow = MutableSharedFlow<NavKey>()
 
     private lateinit var onInteractiveHandleResult: suspend (InteractiveHandleResult) -> Unit
 
@@ -198,11 +196,9 @@ class InteractiveHandler(
     override fun onStatusClick(status: StatusUiState) {
         coroutineScope.launch {
             val screen = if (status.status.intrinsicBlog.platform.protocol.isRss) {
-                RssBlogDetailScreen(
-                    serializedBlog = globalJson.encodeToString(status.status.intrinsicBlog),
-                )
+                RssBlogDetailScreenNavKey(serializedBlog = globalJson.encodeToString(status.status.intrinsicBlog))
             } else {
-                StatusContextScreen.create(refactorToNewStatus(status))
+                StatusContextScreenNavKey.create(refactorToNewStatus(status))
             }
             mutableOpenScreenFlow.emit(screen)
         }
@@ -211,11 +207,14 @@ class InteractiveHandler(
     override fun onBlogClick(locator: PlatformLocator, blog: Blog) {
         coroutineScope.launch {
             val screen = if (blog.platform.protocol.isRss) {
-                RssBlogDetailScreen(
-                    serializedBlog = globalJson.encodeToString(serializer(), blog),
+                RssBlogDetailScreenNavKey(
+                    serializedBlog = globalJson.encodeToString(
+                        serializer(),
+                        blog
+                    ),
                 )
             } else {
-                StatusContextScreen.create(
+                StatusContextScreenNavKey.create(
                     locator = locator,
                     blog = blog,
                 )
@@ -230,7 +229,7 @@ class InteractiveHandler(
         blogId: String,
     ) {
         coroutineScope.launch {
-            StatusContextScreen.create(
+            StatusContextScreenNavKey.create(
                 locator = locator,
                 blogId = blogId,
                 platform = platform,
@@ -415,14 +414,9 @@ class InteractiveHandler(
         )
     }
 
-    private fun openScreen(screen: Screen) {
+    private fun openScreen(screen: NavKey) {
         coroutineScope.launch {
             mutableOpenScreenFlow.emit(screen)
         }
-    }
-
-    private fun tryOpenScreenByRoute(route: String) = coroutineScope.launch {
-        KRouter.routeScreen(route)
-            ?.let { mutableOpenScreenFlow.emit(it) }
     }
 }

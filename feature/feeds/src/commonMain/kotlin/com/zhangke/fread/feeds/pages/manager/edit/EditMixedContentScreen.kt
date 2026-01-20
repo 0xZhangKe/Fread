@@ -28,9 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
@@ -39,100 +38,98 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
-import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
-import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
+import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
-class EditMixedContentScreen(private val contentId: String) : BaseScreen() {
+@Serializable
+data class EditMixedContentScreenNavKey(val contentId: String) : NavKey
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<EditMixedContentViewModel, EditMixedContentViewModel.Factory> {
-            it.create(contentId)
-        }
-        val uiState by viewModel.uiState.collectAsState()
-        EditFeedsScreenContent(
-            uiState = uiState,
-            onRemoveSourceClick = viewModel::onSourceDelete,
-            onEditNameClick = viewModel::onEditName,
-            onBackClick = navigator::pop,
-            onAddSourceClick = {
-                navigator.push(SearchSourceForAddScreen().apply {
-                    onSourceSelected = { viewModel.onAddSource(it) }
-                })
-            },
-            onDeleteClick = viewModel::onDeleteFeeds,
-        )
-        ConsumeFlow(viewModel.finishScreenFlow) {
-            navigator.pop()
+@Composable
+fun EditMixedContentScreen(viewModel: EditMixedContentViewModel) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    EditFeedsScreenContent(
+        uiState = uiState,
+        onRemoveSourceClick = viewModel::onSourceDelete,
+        onEditNameClick = viewModel::onEditName,
+        onBackClick = backStack::removeLastOrNull,
+        onAddSourceClick = {
+            backStack.add(SearchSourceForAddScreenNavKey)
+        },
+        onDeleteClick = viewModel::onDeleteFeeds,
+    )
+    ConsumeFlow(SearchSourceForAddScreenNavKey.sourceSelectedFlow.flow) {
+        viewModel.onAddSource(it)
+    }
+    ConsumeFlow(viewModel.finishScreenFlow) {
+        backStack.removeLastOrNull()
+    }
+}
+
+@Composable
+private fun EditFeedsScreenContent(
+    uiState: LoadableState<EditMixedContentUiState>,
+    onRemoveSourceClick: (StatusSourceUiState) -> Unit,
+    onEditNameClick: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onAddSourceClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+) {
+    val snackbarHostState = rememberSnackbarHostState()
+    val errorMessage = uiState.successDataOrNull()?.errorMessage?.take(180)
+    if (errorMessage.isNullOrEmpty().not()) {
+        LaunchedEffect(errorMessage) {
+            snackbarHostState.showSnackbar(errorMessage.orEmpty())
         }
     }
-
-    @Composable
-    private fun EditFeedsScreenContent(
-        uiState: LoadableState<EditMixedContentUiState>,
-        onRemoveSourceClick: (StatusSourceUiState) -> Unit,
-        onEditNameClick: (String) -> Unit,
-        onBackClick: () -> Unit,
-        onAddSourceClick: () -> Unit,
-        onDeleteClick: () -> Unit,
-    ) {
-        val snackbarHostState = rememberSnackbarHostState()
-        val errorMessage = uiState.successDataOrNull()?.errorMessage?.take(180)
-        if (errorMessage.isNullOrEmpty().not()) {
-            LaunchedEffect(errorMessage) {
-                snackbarHostState.showSnackbar(errorMessage.orEmpty())
-            }
-        }
-        Scaffold(
-            topBar = {
-                EditFeedsScreenTopBar(
-                    uiState = uiState,
-                    onEditNameClick = onEditNameClick,
-                    onBackClick = onBackClick,
-                    onDeleteClick = onDeleteClick,
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-            floatingActionButton = {
-                if (uiState.isSuccess) {
-                    FloatingActionButton(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        onClick = onAddSourceClick,
-                        shape = CircleShape,
-                    ) {
-                        Icon(
-                            painter = rememberVectorPainter(image = Icons.Default.Add),
-                            contentDescription = "Add Source",
-                        )
-                    }
+    Scaffold(
+        topBar = {
+            EditFeedsScreenTopBar(
+                uiState = uiState,
+                onEditNameClick = onEditNameClick,
+                onBackClick = onBackClick,
+                onDeleteClick = onDeleteClick,
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        floatingActionButton = {
+            if (uiState.isSuccess) {
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    onClick = onAddSourceClick,
+                    shape = CircleShape,
+                ) {
+                    Icon(
+                        painter = rememberVectorPainter(image = Icons.Default.Add),
+                        contentDescription = "Add Source",
+                    )
                 }
-            },
-        ) { paddings ->
-            LoadableLayout(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddings),
-                state = uiState,
-            ) { uiState ->
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(uiState.sourceList) { item ->
-                        RemovableStatusSource(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {},
-                            source = item,
-                            onRemoveClick = {
-                                onRemoveSourceClick(item)
-                            }
-                        )
-                    }
+            }
+        },
+    ) { paddings ->
+        LoadableLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddings),
+            state = uiState,
+        ) { uiState ->
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(uiState.sourceList) { item ->
+                    RemovableStatusSource(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {},
+                        source = item,
+                        onRemoveClick = {
+                            onRemoveSourceClick(item)
+                        }
+                    )
                 }
             }
         }

@@ -29,9 +29,6 @@ kotlin {
 
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
-                implementation(libs.bundles.voyager)
-
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.imageLoader)
 
                 implementation(libs.krouter.runtime)
@@ -64,7 +61,6 @@ kotlin {
 
 dependencies {
     kspAll(libs.androidx.room.compiler)
-    add("kspAndroid", libs.kotlinInject.compiler)
     add("kspAndroid", libs.auto.service.ksp)
     kspAll(libs.krouter.collecting.compiler)
 }

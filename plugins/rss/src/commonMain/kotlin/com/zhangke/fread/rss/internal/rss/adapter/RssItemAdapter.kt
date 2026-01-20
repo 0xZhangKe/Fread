@@ -1,11 +1,14 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.rss.internal.rss.adapter
 
 import com.prof18.rssparser.model.RssItem
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.Clock
+import kotlin.time.ExperimentalTime
 
 fun RssItem.convert(): com.zhangke.fread.rss.internal.rss.RssItem {
     return com.zhangke.fread.rss.internal.rss.RssItem(

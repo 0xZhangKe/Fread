@@ -18,7 +18,6 @@ import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.client.selfRkey
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,22 +26,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.supervisorScope
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.model.Blob
 
-class EditProfileViewModel @Inject constructor(
+class EditProfileViewModel(
     private val accountManager: BlueskyLoggedAccountManager,
     private val clientManager: BlueskyClientManager,
     private val uploadBlob: UploadBlobUseCase,
-    @Assisted private val locator: PlatformLocator,
+    private val locator: PlatformLocator,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(locator: PlatformLocator): EditProfileViewModel
-    }
 
     private val _uiState = MutableStateFlow(EditProfileUiState.default())
     val uiState = _uiState.asStateFlow()

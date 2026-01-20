@@ -3,17 +3,14 @@ package com.zhangke.fread.common.review
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 
-@ApplicationScope
-class FreadReviewManager @Inject constructor(
+class FreadReviewManager (
     private val localConfigManager: LocalConfigManager,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
 

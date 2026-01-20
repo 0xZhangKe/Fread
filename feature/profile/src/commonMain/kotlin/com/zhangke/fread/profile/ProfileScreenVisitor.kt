@@ -1,12 +1,12 @@
 package com.zhangke.fread.profile
 
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.fread.commonbiz.shared.IProfileScreenVisitor
-import com.zhangke.fread.profile.screen.donate.DonateScreen
+import com.zhangke.fread.profile.screen.donate.DonateScreenNavKey
 
 class ProfileScreenVisitor : IProfileScreenVisitor {
 
-    override fun getDonateScreen(): Screen {
-        return DonateScreen()
+    override fun getDonateScreen(): NavKey {
+        return DonateScreenNavKey
     }
 }

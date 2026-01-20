@@ -8,9 +8,8 @@ import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdR
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
-import me.tatarka.inject.annotations.Inject
 
-class GetUserStatusUseCase @Inject constructor(
+class GetUserStatusUseCase (
     private val clientManager: ActivityPubClientManager,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,

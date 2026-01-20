@@ -5,9 +5,8 @@ import com.zhangke.fread.rss.internal.model.RssSource
 import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.rss.internal.webfinger.RssSourceWebFingerTransformer
 import com.zhangke.fread.status.author.BlogAuthor
-import me.tatarka.inject.annotations.Inject
 
-class BlogAuthorAdapter @Inject constructor(
+class BlogAuthorAdapter(
     private val rssSourceWebFingerTransformer: RssSourceWebFingerTransformer,
 ) {
 

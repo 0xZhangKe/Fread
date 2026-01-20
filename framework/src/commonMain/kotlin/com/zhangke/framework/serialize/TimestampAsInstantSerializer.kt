@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.framework.serialize
 
 import com.zhangke.framework.datetime.Instant
@@ -7,6 +9,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.time.ExperimentalTime
 
 object TimestampAsInstantSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor =

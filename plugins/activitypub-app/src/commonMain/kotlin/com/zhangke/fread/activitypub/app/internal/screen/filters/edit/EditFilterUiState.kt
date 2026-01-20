@@ -6,11 +6,12 @@ import com.zhangke.framework.utils.PlatformParcelable
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.localization.LocalizedString
-import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Instant
 
-data class EditFilterUiState(
+data class EditFilterUiState @OptIn(ExperimentalTime::class) constructor(
     val title: String,
     val expiresDate: Instant?,
     val keywordList: List<Keyword>,
@@ -22,6 +23,7 @@ data class EditFilterUiState(
     val keywordCount: Int
         get() = keywordList.filter { !it.deleted }.size
 
+    @OptIn(ExperimentalTime::class)
     private val expiresDateString: String by lazy {
         if (expiresDate == null) return@lazy ""
         // val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
@@ -30,6 +32,7 @@ data class EditFilterUiState(
         expiresDate.formatDefault()
     }
 
+    @OptIn(ExperimentalTime::class)
     @Composable
     fun getExpiresDateDesc(): String {
         if (expiresDate == null) {
@@ -52,6 +55,7 @@ data class EditFilterUiState(
 
     companion object {
 
+        @OptIn(ExperimentalTime::class)
         fun default(): EditFilterUiState {
             return EditFilterUiState(
                 title = "",

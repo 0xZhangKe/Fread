@@ -3,9 +3,8 @@ package com.zhangke.fread.bluesky.internal.usecase
 import com.zhangke.fread.bluesky.BlueskyAccountManager
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class RefreshSessionUseCase @Inject constructor(
+class RefreshSessionUseCase(
     private val clientManager: BlueskyClientManager,
     private val accountManager: BlueskyAccountManager,
 ) {

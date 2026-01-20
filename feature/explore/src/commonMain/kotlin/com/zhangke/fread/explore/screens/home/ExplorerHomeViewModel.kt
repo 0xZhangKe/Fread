@@ -1,8 +1,8 @@
 package com.zhangke.fread.explore.screens.home
 
 import androidx.lifecycle.ViewModel
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.nav.Tab
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
@@ -11,9 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Inject
 
-class ExplorerHomeViewModel @Inject constructor(
+class ExplorerHomeViewModel(
     private val statusProvider: StatusProvider,
     private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
 ) : ViewModel() {
@@ -66,7 +65,7 @@ class ExplorerHomeViewModel @Inject constructor(
         }
     }
 
-    private fun convertContentsToWithTab(accounts: List<LoggedAccount>): List<Pair<LoggedAccount, PagerTab>> {
+    private fun convertContentsToWithTab(accounts: List<LoggedAccount>): List<Pair<LoggedAccount, Tab>> {
         return accounts.mapNotNull { account ->
             statusProvider.screenProvider.getExplorerTab(
                 locator = PlatformLocator(

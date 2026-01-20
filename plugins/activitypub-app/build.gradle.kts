@@ -38,11 +38,9 @@ kotlin {
                 implementation(libs.jetbrains.lifecycle.viewmodel)
                 implementation(libs.androidx.constraintlayout.compose.kmp)
                 implementation(libs.imageLoader)
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.androidx.room)
                 implementation(libs.auto.service.annotations)
                 implementation(libs.androidx.paging.common)
-                implementation(libs.bundles.voyager)
                 implementation(libs.leftright)
 
                 implementation(libs.krouter.runtime)
@@ -66,7 +64,6 @@ kotlin {
 
 dependencies {
     kspAll(libs.androidx.room.compiler)
-    kspAll(libs.kotlinInject.compiler)
     kspAll(libs.auto.service.ksp)
     kspAll(libs.krouter.collecting.compiler)
 }

@@ -1,9 +1,8 @@
 package com.zhangke.fread.utils
 
-import me.tatarka.inject.annotations.Inject
 import platform.UIKit.UIViewController
 
-actual class ActivityHelper @Inject constructor(
+actual class ActivityHelper(
     private val viewController: Lazy<UIViewController>,
 ) {
     actual fun goHome() {

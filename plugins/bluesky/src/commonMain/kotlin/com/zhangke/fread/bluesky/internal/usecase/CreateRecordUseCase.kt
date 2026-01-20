@@ -4,12 +4,11 @@ import com.atproto.repo.CreateRecordRequest
 import com.atproto.repo.CreateRecordResponse
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Nsid
 import sh.christian.ozone.api.model.JsonContent
 
-class CreateRecordUseCase @Inject constructor(
+class CreateRecordUseCase(
     private val clientManager: BlueskyClientManager,
 ) {
 

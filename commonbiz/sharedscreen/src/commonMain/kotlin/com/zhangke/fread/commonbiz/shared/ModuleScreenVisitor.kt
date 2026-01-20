@@ -2,7 +2,7 @@ package com.zhangke.fread.commonbiz.shared
 
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 
 class ModuleScreenVisitor(
     val feedsScreenVisitor: IFeedsScreenVisitor,
@@ -11,12 +11,12 @@ class ModuleScreenVisitor(
 
 interface IFeedsScreenVisitor {
 
-    fun getAddContentScreen(): Screen
+    fun getAddContentScreen(): NavKey
 }
 
 interface IProfileScreenVisitor {
 
-    fun getDonateScreen(): Screen
+    fun getDonateScreen(): NavKey
 }
 
 val LocalModuleScreenVisitor: ProvidableCompositionLocal<ModuleScreenVisitor> =

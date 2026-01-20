@@ -3,9 +3,8 @@ package com.zhangke.fread.bluesky.internal.usecase
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class UpdateHomeTabUseCase @Inject constructor(
+class UpdateHomeTabUseCase(
     private val getFeeds: GetFollowingFeedsUseCase,
     private val contentRepo: FreadContentRepo,
 ) {

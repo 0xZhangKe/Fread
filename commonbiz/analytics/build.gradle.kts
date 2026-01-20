@@ -21,8 +21,6 @@ kotlin {
                 implementation(project(path = ":framework"))
                 implementation(project(path = ":commonbiz:common"))
 
-                implementation(libs.bundles.voyager)
-
                 implementation(libs.krouter.runtime)
             }
         }

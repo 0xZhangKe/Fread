@@ -6,9 +6,8 @@ import com.zhangke.fread.common.db.old.OldFreadContentDatabase
 import com.zhangke.fread.status.model.FreadContent
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
-import me.tatarka.inject.annotations.Inject
 
-class FreadContentRepo @Inject constructor(
+class FreadContentRepo (
     database: FreadContentDatabase,
     private val oldContentDatabase: OldFreadContentDatabase,
 ) {

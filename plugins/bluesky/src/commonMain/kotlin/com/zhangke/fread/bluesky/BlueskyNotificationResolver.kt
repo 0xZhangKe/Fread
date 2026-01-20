@@ -13,11 +13,11 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.PagedStatusNotification
-import kotlinx.datetime.Clock
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
+import kotlinx.datetime.Clock
+import kotlin.time.ExperimentalTime
 
-class BlueskyNotificationResolver @Inject constructor(
+class BlueskyNotificationResolver(
     private val clientManager: BlueskyClientManager,
     private val getCompletedNotification: GetCompletedNotificationUseCase,
     private val notificationAdapter: BlueskyNotificationAdapter,
@@ -88,6 +88,7 @@ class BlueskyNotificationResolver @Inject constructor(
         return null
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun updateUnreadNotification(
         account: LoggedAccount,
         notificationLastReadId: String

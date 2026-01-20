@@ -15,7 +15,6 @@ import com.zhangke.fread.bluesky.internal.adapter.BlueskyFeedsAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.PinFeedsUseCase
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -26,26 +25,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class ExplorerFeedsViewModel @Inject constructor(
+class ExplorerFeedsViewModel(
     private val clientManager: BlueskyClientManager,
     private val feedsAdapter: BlueskyFeedsAdapter,
     private val followFeeds: PinFeedsUseCase,
-    @Assisted private val locator: PlatformLocator,
+    private val locator: PlatformLocator,
 ) : ViewModel() {
 
     companion object {
 
         private const val FLAG_CURSOR_ENDING = "flag_cursor_ending_for_suggested_feeds"
-    }
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            locator: PlatformLocator,
-        ): ExplorerFeedsViewModel
     }
 
     private val _uiState = MutableStateFlow(ExplorerFeedsUiState.default())

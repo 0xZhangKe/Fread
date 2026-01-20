@@ -20,36 +20,23 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
 
-class UserListViewModel @Inject constructor(
+class UserListViewModel(
     private val clientManager: BlueskyClientManager,
     private val accountAdapter: BlueskyAccountAdapter,
     private val updateRelationship: UpdateRelationshipUseCase,
     private val updateBlock: UpdateBlockUseCase,
-    @Assisted private val locator: PlatformLocator,
-    @Assisted private val type: UserListType,
-    @Assisted private val postUri: String?,
-    @Assisted private val userDid: String?
+    private val locator: PlatformLocator,
+    private val type: UserListType,
+    private val postUri: String?,
+    userDid: String?,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(
-            locator: PlatformLocator,
-            type: UserListType,
-            postUri: String?,
-            userDid: String?,
-        ): UserListViewModel
-    }
 
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage
@@ -62,6 +49,8 @@ class UserListViewModel @Inject constructor(
     val uiState: StateFlow<CommonLoadableUiState<UserListItemUiState>> get() = loadController.uiState
 
     private var cursor: String? = null
+
+    private val userDid: Did? = userDid?.let { Did(it) }
 
     init {
         loadController.initData(
@@ -209,7 +198,7 @@ class UserListViewModel @Inject constructor(
             }
 
             UserListType.FOLLOWERS -> {
-                val did = userDid?.let { Did(it) }
+                val did = userDid ?: client.loggedAccountProvider()?.did?.let { Did(it) }
                 if (did == null) return Result.success(emptyList())
                 client.getFollowersCatching(
                     GetFollowersQueryParams(
@@ -220,7 +209,7 @@ class UserListViewModel @Inject constructor(
             }
 
             UserListType.FOLLOWING -> {
-                val did = userDid?.let { Did(it) }
+                val did = userDid ?: client.loggedAccountProvider()?.did?.let { Did(it) }
                 if (did == null) return Result.success(emptyList())
                 client.getFollowsCatching(GetFollowsQueryParams(actor = did, cursor = cursor))
             }

@@ -10,9 +10,8 @@ import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class RssStatusSourceResolver @Inject constructor(
+class RssStatusSourceResolver(
     private val rssUriTransformer: RssUriTransformer,
     private val rssSourceTransformer: RssSourceTransformer,
     private val rssRepo: RssRepo,

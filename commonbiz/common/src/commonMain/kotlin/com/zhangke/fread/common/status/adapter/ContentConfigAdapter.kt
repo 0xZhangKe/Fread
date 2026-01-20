@@ -3,9 +3,8 @@ package com.zhangke.fread.common.status.adapter
 import com.zhangke.fread.common.db.ContentConfigEntity
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.ContentType
-import me.tatarka.inject.annotations.Inject
 
-class ContentConfigAdapter @Inject constructor() {
+class ContentConfigAdapter () {
 
     fun toContentConfig(entity: ContentConfigEntity): ContentConfig {
         return when (entity.type) {

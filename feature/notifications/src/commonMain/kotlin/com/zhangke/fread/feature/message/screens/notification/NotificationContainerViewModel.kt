@@ -8,9 +8,8 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.feature.message.repo.notification.NotificationsRepo
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
-import me.tatarka.inject.annotations.Inject
 
-class NotificationContainerViewModel @Inject constructor(
+class NotificationContainerViewModel(
     private val statusProvider: StatusProvider,
     private val notificationsRepo: NotificationsRepo,
     private val statusUiStateAdapter: StatusUiStateAdapter,

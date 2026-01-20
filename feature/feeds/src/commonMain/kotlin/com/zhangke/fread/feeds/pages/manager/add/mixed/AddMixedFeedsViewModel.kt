@@ -8,7 +8,6 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.onboarding.OnboardingComponent
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.localization.LocalizedString
@@ -22,22 +21,15 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class AddMixedFeedsViewModel @Inject constructor(
+class AddMixedFeedsViewModel(
     private val statusProvider: StatusProvider,
     private val contentRepo: FreadContentRepo,
     private val onboardingComponent: OnboardingComponent,
-    @Assisted private val statusSource: StatusSource? = null
+    private val statusSource: StatusSource? = null
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-
-        fun create(statusSource: StatusSource?): AddMixedFeedsViewModel
-    }
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
 

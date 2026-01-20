@@ -5,33 +5,28 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.activitypub.app.internal.composable.ActivityPubTabNames
-import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import org.koin.compose.viewmodel.koinViewModel
 
-internal class TrendingStatusTab(private val locator: PlatformLocator) : BasePagerTab() {
+internal class TrendingStatusTab(private val locator: PlatformLocator) : BaseTab() {
 
-    override val options: PagerTabOptions
-        @Composable get() = PagerTabOptions(
+    override val options: TabOptions
+        @Composable get() = TabOptions(
             title = ActivityPubTabNames.trending
         )
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun Content() {
+        super.Content()
         val snackbarHostState = LocalSnackbarHostState.current
-        val viewModel = screen.getViewModel<TrendingStatusViewModel>().getSubViewModel(locator)
+        val viewModel = koinViewModel<TrendingStatusViewModel>().getSubViewModel(locator)
         val uiState by viewModel.uiState.collectAsState()
         val mainTabConnection = LocalNestedTabConnection.current
         val coroutineScope = rememberCoroutineScope()
@@ -43,7 +38,7 @@ internal class TrendingStatusTab(private val locator: PlatformLocator) : BasePag
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             observeScrollToTopEvent = true,
-            nestedScrollConnection = nestedScrollConnection,
+            nestedScrollConnection = null,
             onImmersiveEvent = {
                 if (it) {
                     mainTabConnection.openImmersiveMode(coroutineScope)

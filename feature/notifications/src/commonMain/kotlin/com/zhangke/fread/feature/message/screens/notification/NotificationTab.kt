@@ -21,18 +21,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.commonbiz.shared.notification.StatusNotificationUi
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
@@ -42,23 +40,21 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 class NotificationTab(
     private val loggedAccount: LoggedAccount,
-) : BasePagerTab() {
+) : BaseTab() {
 
-    override val options: PagerTabOptions?
+    override val options: TabOptions?
         @Composable get() = null
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
-        val navigator = LocalNavigator.currentOrThrow
+    override fun Content() {
+        super.Content()
+        val backstack = LocalNavBackStack.currentOrThrow
         val viewModel =
-            screen.getViewModel<NotificationContainerViewModel>().getSubViewModel(loggedAccount)
+            koinViewModel<NotificationContainerViewModel>().getSubViewModel(loggedAccount)
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = LocalSnackbarHostState.current
         TabPageContent(
@@ -67,7 +63,7 @@ class NotificationTab(
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             composedStatusInteraction = viewModel.composedStatusInteraction,
-            nestedScrollConnection = nestedScrollConnection,
+            nestedScrollConnection = null,
             onAcceptClick = viewModel::onAcceptClick,
             onRejectClick = viewModel::onRejectClick,
             onNotificationShown = viewModel::onNotificationShown,
@@ -76,7 +72,7 @@ class NotificationTab(
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.push(it)
+            backstack.add(it)
         }
         if (uiState.dataList.isNotEmpty()) {
             val first = uiState.dataList.first()

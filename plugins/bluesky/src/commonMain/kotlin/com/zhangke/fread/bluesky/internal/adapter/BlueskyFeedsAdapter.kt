@@ -4,9 +4,8 @@ import app.bsky.actor.SavedFeed
 import app.bsky.feed.GeneratorView
 import app.bsky.graph.ListView
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import me.tatarka.inject.annotations.Inject
 
-class BlueskyFeedsAdapter @Inject constructor(
+class BlueskyFeedsAdapter(
     private val profileAdapter: BlueskyProfileAdapter,
 ) {
 

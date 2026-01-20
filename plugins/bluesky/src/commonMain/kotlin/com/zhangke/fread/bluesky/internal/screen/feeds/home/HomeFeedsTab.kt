@@ -6,38 +6,32 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTab
-import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
+import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreenNavKey
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import org.koin.compose.viewmodel.koinViewModel
 
 class HomeFeedsTab(
     private val feeds: BlueskyFeeds,
     private val locator: PlatformLocator,
     private val contentCanScrollBackward: MutableState<Boolean>? = null,
-) : PagerTab {
+) : BaseTab() {
 
-    override val options: PagerTabOptions
-        @Composable get() = PagerTabOptions(title = feeds.displayName())
+    override val options: TabOptions
+        @Composable get() = TabOptions(title = feeds.displayName())
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel =
-            screen.getViewModel<HomeFeedsContainerViewModel>().getViewModel(feeds, locator)
+    override fun Content() {
+        val backStack = LocalNavBackStack.currentOrThrow
+        val viewModel = koinViewModel<HomeFeedsContainerViewModel>().getViewModel(feeds, locator)
         val uiState by viewModel.uiState.collectAsState()
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalNestedTabConnection.current
@@ -50,7 +44,7 @@ class HomeFeedsTab(
             composedStatusInteraction = viewModel.composedStatusInteraction,
             observeScrollToTopEvent = true,
             contentCanScrollBackward = contentCanScrollBackward,
-            nestedScrollConnection = nestedScrollConnection,
+            nestedScrollConnection = null,
             onImmersiveEvent = {
                 if (it) {
                     mainTabConnection.openImmersiveMode(coroutineScope)
@@ -60,8 +54,12 @@ class HomeFeedsTab(
             },
             onScrollInProgress = {},
             onLoginClick = {
-                AddBlueskyContentScreen(baseUrl = locator.baseUrl, loginMode = true)
-                    .let { navigator.push(it) }
+                backStack.add(
+                    AddBlueskyContentScreenNavKey(
+                        baseUrl = locator.baseUrl,
+                        loginMode = true,
+                    )
+                )
             },
         )
 

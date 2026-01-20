@@ -12,9 +12,8 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.DescendantStatus
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
-import me.tatarka.inject.annotations.Inject
 
-class GetStatusContextUseCase @Inject constructor(
+class GetStatusContextUseCase (
     private val clientManager: ActivityPubClientManager,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val loggedAccountProvider: LoggedAccountProvider,

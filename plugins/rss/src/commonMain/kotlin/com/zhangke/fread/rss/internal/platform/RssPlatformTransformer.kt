@@ -5,9 +5,8 @@ import com.zhangke.fread.status.model.createRssProtocol
 import com.zhangke.fread.rss.internal.model.RssSource
 import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.status.platform.BlogPlatform
-import me.tatarka.inject.annotations.Inject
 
-class RssPlatformTransformer @Inject constructor() {
+class RssPlatformTransformer() {
 
     suspend fun create(
         uriInsight: RssUriInsight,

@@ -11,9 +11,8 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.LoggedAccountDetail
 import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubAccountEntityAdapter @Inject constructor(
+class ActivityPubAccountEntityAdapter (
     private val userUriTransformer: UserUriTransformer,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) {

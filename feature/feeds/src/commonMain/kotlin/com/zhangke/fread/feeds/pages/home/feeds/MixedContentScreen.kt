@@ -14,37 +14,31 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
-import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.framework.nav.Tab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 internal class MixedContentScreen(
     private val configId: String,
     private val isLatestTab: Boolean,
-) : BasePagerTab() {
+) : Tab {
 
-    override val options: PagerTabOptions?
+    override val options: TabOptions?
         @Composable get() = null
 
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
+    override fun Content() {
         val snackBarHostState = rememberSnackbarHostState()
-        val viewModel = screen.getViewModel<MixedContentViewModel>().getSubViewModel(configId)
+        val viewModel = koinViewModel<MixedContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
         ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)

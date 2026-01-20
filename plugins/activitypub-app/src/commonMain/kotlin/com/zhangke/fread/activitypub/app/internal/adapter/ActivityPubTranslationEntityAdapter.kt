@@ -2,9 +2,8 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubTranslationEntity
 import com.zhangke.fread.status.blog.BlogTranslation
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubTranslationEntityAdapter @Inject constructor() {
+class ActivityPubTranslationEntityAdapter () {
 
     fun toTranslation(entity: ActivityPubTranslationEntity): BlogTranslation {
         return BlogTranslation(

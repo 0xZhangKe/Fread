@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
@@ -10,9 +12,9 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import me.tatarka.inject.annotations.Inject
+import kotlin.time.ExperimentalTime
 
-class ActivityPubTagAdapter @Inject constructor() {
+class ActivityPubTagAdapter () {
 
     suspend fun adapt(entity: ActivityPubTagEntity): Hashtag {
         val yesterdayTimeInMillis = getYesterdayTimeInMillis()

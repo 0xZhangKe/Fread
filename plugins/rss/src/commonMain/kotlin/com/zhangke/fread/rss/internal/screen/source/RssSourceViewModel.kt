@@ -4,24 +4,16 @@ import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.rss.internal.repo.RssRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-
-class RssSourceViewModel @Inject constructor(
+class RssSourceViewModel(
     private val rssRepo: RssRepo,
-    @Assisted private val url: String,
+    private val url: String,
 ) : ViewModel() {
-
-    fun interface Factory : ViewModelFactory {
-        fun create(url: String): RssSourceViewModel
-    }
 
     private val _uiState = MutableStateFlow(
         RssSourceUiState(

@@ -6,9 +6,8 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.db.WebFingerBaseurlToIdEntity
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-class WebFingerBaseUrlToUserIdRepo @Inject constructor(
+class WebFingerBaseUrlToUserIdRepo (
     activityPubDatabases: ActivityPubDatabases,
     private val clientManager: ActivityPubClientManager,
 ) {

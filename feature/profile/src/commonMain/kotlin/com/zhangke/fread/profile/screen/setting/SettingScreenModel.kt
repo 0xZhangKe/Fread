@@ -14,9 +14,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class SettingScreenModel @Inject constructor(
+class SettingScreenModel(
     private val textHandler: TextHandler,
     private val freadConfigManager: FreadConfigManager,
     private val dayNightHelper: DayNightHelper,

@@ -1,6 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.feeds
 
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.TextString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
@@ -23,8 +23,8 @@ interface IInteractiveHandler {
     val mutableErrorMessageFlow: MutableSharedFlow<TextString>
     val errorMessageFlow: SharedFlow<TextString> get() = mutableErrorMessageFlow
 
-    val mutableOpenScreenFlow: MutableSharedFlow<Screen>
-    val openScreenFlow: SharedFlow<Screen> get() = mutableOpenScreenFlow
+    val mutableOpenScreenFlow: MutableSharedFlow<NavKey>
+    val openScreenFlow: SharedFlow<NavKey> get() = mutableOpenScreenFlow
 
     val composedStatusInteraction: ComposedStatusInteraction
 

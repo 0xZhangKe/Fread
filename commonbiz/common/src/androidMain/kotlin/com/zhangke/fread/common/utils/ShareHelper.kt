@@ -3,6 +3,7 @@ package com.zhangke.fread.common.utils
 import android.content.Context
 import android.content.Intent
 import androidx.core.text.HtmlCompat
+import com.zhangke.framework.utils.startActivityCompat
 
 object ShareHelper {
 
@@ -18,6 +19,6 @@ object ShareHelper {
             putExtra(Intent.EXTRA_TEXT, url)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        context.startActivity(Intent.createChooser(intent, null))
+        context.startActivityCompat(Intent.createChooser(intent, null))
     }
 }

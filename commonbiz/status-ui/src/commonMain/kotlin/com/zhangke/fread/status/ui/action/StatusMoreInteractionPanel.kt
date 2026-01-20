@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.handler.LocalActivityTextHandler
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -157,7 +157,7 @@ private fun AdditionalMoreOptions(
     onOpenBlogWithOtherAccountClick: (Blog) -> Unit,
     showOpenBlogWithOtherAccountBtn: Boolean,
 ) {
-    val textHandler = LocalActivityTextHandler.current
+    val textHandler = LocalTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
     val coroutineScope = rememberCoroutineScope()
     DropDownOpenInBrowserItem {

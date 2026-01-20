@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.activitypub.app.internal.model
 
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.fread.status.status.model.Status
 import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
 
 data class StatusNotification(
     val id: String,

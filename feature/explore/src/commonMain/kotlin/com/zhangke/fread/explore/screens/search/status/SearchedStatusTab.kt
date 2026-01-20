@@ -10,47 +10,41 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.fread.common.page.BasePagerTab
-import com.zhangke.fread.common.tryPush
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-internal class SearchedStatusTab(private val locator: PlatformLocator, private val query: String) :
-    BasePagerTab() {
+internal class SearchedStatusTab(
+    private val locator: PlatformLocator,
+    private val query: String,
+) : BaseTab() {
 
-    override val options: PagerTabOptions
-        @Composable get() = PagerTabOptions(
+    override val options: TabOptions
+        @Composable get() = TabOptions(
             title = stringResource(LocalizedString.explorerSearchTabTitleStatus),
         )
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = screen.getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory> {
-            it.create(locator)
-        }
+    override fun Content() {
+        super.Content()
+        val backStack = LocalNavBackStack.currentOrThrow
+        val viewModel = koinViewModel<SearchStatusViewModel> { parametersOf(locator) }
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(query) {
@@ -66,10 +60,10 @@ internal class SearchedStatusTab(private val locator: PlatformLocator, private v
             onLoadMore = {
                 viewModel.onLoadMore(query)
             },
-            nestedScrollConnection = nestedScrollConnection,
+            nestedScrollConnection = null,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.tryPush(it)
+            backStack.add(it)
         }
         val snackbarHostState = LocalSnackbarHostState.currentOrThrow
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

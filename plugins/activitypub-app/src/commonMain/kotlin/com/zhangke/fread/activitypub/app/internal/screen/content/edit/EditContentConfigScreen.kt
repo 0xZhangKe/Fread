@@ -33,228 +33,223 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
-import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.bar.EditContentTopBar
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.Serializable
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 import org.jetbrains.compose.resources.stringResource
+import androidx.navigation3.runtime.NavKey
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-class EditContentConfigScreen(
-    private val contentId: String,
-) : BaseScreen() {
+@Serializable
+data class EditContentConfigScreenKey(val contentId: String) : NavKey
 
-    companion object {
+private val TAB_ITEM_HEIGHT = 56.dp
 
-        private val TAB_ITEM_HEIGHT = 56.dp
+@Composable
+fun EditContentConfigScreen(
+    contentId: String,
+    viewModel: EditContentConfigViewModel = koinViewModel { parametersOf(contentId) },
+) {
+    val backStack = LocalNavBackStack.currentOrThrow
+    val uiState by viewModel.uiState.collectAsState()
+    EditContentConfigScreenContent(
+        uiState = uiState,
+        snackbarMessageFlow = viewModel.snackbarMessageFlow,
+        onBackClick = { backStack.removeLastOrNull() },
+        onShowingTabMove = viewModel::onShowingTabMove,
+        onShowingTabMoveDown = viewModel::onShowingTabMoveDown,
+        onHiddenTabMoveUp = viewModel::onHiddenTabMoveUp,
+        onDeleteClick = viewModel::onDeleteClick,
+        onEditNameClick = viewModel::onEditNameClick,
+    )
+    ConsumeFlow(viewModel.finishScreenFlow) {
+        backStack.removeLastOrNull()
     }
+}
 
-    @Composable
-    override fun Content() {
-        super.Content()
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel =
-            getViewModel<EditContentConfigViewModel, EditContentConfigViewModel.Factory> {
-                it.create(contentId)
-            }
-        val uiState by viewModel.uiState.collectAsState()
-        EditContentConfigScreenContent(
-            uiState = uiState,
-            snackbarMessageFlow = viewModel.snackbarMessageFlow,
-            onBackClick = navigator::pop,
-            onShowingTabMove = viewModel::onShowingTabMove,
-            onShowingTabMoveDown = viewModel::onShowingTabMoveDown,
-            onHiddenTabMoveUp = viewModel::onHiddenTabMoveUp,
-            onDeleteClick = viewModel::onDeleteClick,
-            onEditNameClick = viewModel::onEditNameClick,
-        )
-        ConsumeFlow(viewModel.finishScreenFlow) {
-            navigator.pop()
+@Composable
+private fun EditContentConfigScreenContent(
+    uiState: EditContentConfigUiState?,
+    snackbarMessageFlow: Flow<TextString>,
+    onBackClick: () -> Unit,
+    onShowingTabMove: (from: Int, to: Int) -> Unit,
+    onShowingTabMoveDown: (ActivityPubContent.ContentTab) -> Unit,
+    onHiddenTabMoveUp: (ActivityPubContent.ContentTab) -> Unit,
+    onEditNameClick: (String) -> Unit,
+    onDeleteClick: () -> Unit,
+) {
+    val snackbarHostState = rememberSnackbarHostState()
+    ConsumeSnackbarFlow(snackbarHostState, snackbarMessageFlow)
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+        topBar = {
+            EditContentTopBar(
+                contentName = uiState?.content?.name.orEmpty(),
+                onBackClick = onBackClick,
+                onNameEdit = onEditNameClick,
+                onDeleteClick = onDeleteClick,
+            )
         }
-    }
-
-    @Composable
-    private fun EditContentConfigScreenContent(
-        uiState: EditContentConfigUiState?,
-        snackbarMessageFlow: Flow<TextString>,
-        onBackClick: () -> Unit,
-        onShowingTabMove: (from: Int, to: Int) -> Unit,
-        onShowingTabMoveDown: (ActivityPubContent.ContentTab) -> Unit,
-        onHiddenTabMoveUp: (ActivityPubContent.ContentTab) -> Unit,
-        onEditNameClick: (String) -> Unit,
-        onDeleteClick: () -> Unit,
-    ) {
-        val snackbarHostState = rememberSnackbarHostState()
-        ConsumeSnackbarFlow(snackbarHostState, snackbarMessageFlow)
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
-            topBar = {
-                EditContentTopBar(
-                    contentName = uiState?.content?.name.orEmpty(),
-                    onBackClick = onBackClick,
-                    onNameEdit = onEditNameClick,
-                    onDeleteClick = onDeleteClick,
+    ) { innerPaddings ->
+        Column(
+            modifier = Modifier
+                .padding(innerPaddings)
+                .fillMaxSize()
+                .freadPlaceholder(uiState == null)
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (uiState != null) {
+                ShowingUserList(
+                    uiState = uiState,
+                    onShowingTabMove = onShowingTabMove,
+                    onMoveDown = onShowingTabMoveDown,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                HiddenUserList(
+                    uiState = uiState,
+                    onMoveUp = onHiddenTabMoveUp,
                 )
             }
-        ) { innerPaddings ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPaddings)
-                    .fillMaxSize()
-                    .freadPlaceholder(uiState == null)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (uiState != null) {
-                    ShowingUserList(
-                        uiState = uiState,
-                        onShowingTabMove = onShowingTabMove,
-                        onMoveDown = onShowingTabMoveDown,
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    HiddenUserList(
-                        uiState = uiState,
-                        onMoveUp = onHiddenTabMoveUp,
-                    )
-                }
-            }
         }
     }
+}
 
-    @Composable
-    private fun ShowingUserList(
-        uiState: EditContentConfigUiState,
-        onShowingTabMove: (from: Int, to: Int) -> Unit,
-        onMoveDown: (ActivityPubContent.ContentTab) -> Unit,
-    ) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(LocalizedString.statusUiEditContentConfigShowingListTitle),
-            style = MaterialTheme.typography.titleMedium,
+@Composable
+private fun ShowingUserList(
+    uiState: EditContentConfigUiState,
+    onShowingTabMove: (from: Int, to: Int) -> Unit,
+    onMoveDown: (ActivityPubContent.ContentTab) -> Unit,
+) {
+    Text(
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+        text = stringResource(LocalizedString.statusUiEditContentConfigShowingListTitle),
+        style = MaterialTheme.typography.titleMedium,
+    )
+    var tabsInUi by remember(uiState.content.showingTabList) {
+        mutableStateOf(uiState.content.showingTabList)
+    }
+    key(uiState.content.showingTabList) {
+        val state = rememberReorderableLazyListState(
+            onMove = { from, to ->
+                if (tabsInUi.isEmpty()) return@rememberReorderableLazyListState
+                tabsInUi = tabsInUi.toMutableList().apply {
+                    add(to.index, removeAt(from.index))
+                }
+            },
+            onDragEnd = { startIndex, endIndex ->
+                onShowingTabMove(startIndex, endIndex)
+            },
         )
-        var tabsInUi by remember(uiState.content.showingTabList) {
-            mutableStateOf(uiState.content.showingTabList)
-        }
-        key(uiState.content.showingTabList) {
-            val state = rememberReorderableLazyListState(
-                onMove = { from, to ->
-                    if (tabsInUi.isEmpty()) return@rememberReorderableLazyListState
-                    tabsInUi = tabsInUi.toMutableList().apply {
-                        add(to.index, removeAt(from.index))
-                    }
-                },
-                onDragEnd = { startIndex, endIndex ->
-                    onShowingTabMove(startIndex, endIndex)
-                },
-            )
-            LazyColumn(
-                state = state.listState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TAB_ITEM_HEIGHT * tabsInUi.size + 4.dp)
-                    .reorderable(state)
-                    .detectReorderAfterLongPress(state)
-            ) {
-                itemsIndexed(
-                    items = tabsInUi,
-                    key = { _, item -> item.uiKey }
-                ) { _, tabItem ->
-                    ReorderableItem(state, tabItem.uiKey) { dragging ->
-                        val elevation by animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(TAB_ITEM_HEIGHT),
-                            shadowElevation = elevation,
-                            tonalElevation = elevation,
+        LazyColumn(
+            state = state.listState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(TAB_ITEM_HEIGHT * tabsInUi.size + 4.dp)
+                .reorderable(state)
+                .detectReorderAfterLongPress(state)
+        ) {
+            itemsIndexed(
+                items = tabsInUi,
+                key = { _, item -> item.uiKey }
+            ) { _, tabItem ->
+                ReorderableItem(state, tabItem.uiKey) { dragging ->
+                    val elevation by animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(TAB_ITEM_HEIGHT),
+                        shadowElevation = elevation,
+                        tonalElevation = elevation,
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(start = 16.dp),
-                                    text = tabItem.tabName(),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                                Spacer(modifier = Modifier.weight(1F))
-                                SimpleIconButton(
-                                    onClick = { onMoveDown(tabItem) },
-                                    imageVector = Icons.Default.VisibilityOff,
-                                    contentDescription = "Move Down",
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = null,
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                            }
+                            Text(
+                                modifier = Modifier.padding(start = 16.dp),
+                                text = tabItem.tabName(),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            Spacer(modifier = Modifier.weight(1F))
+                            SimpleIconButton(
+                                onClick = { onMoveDown(tabItem) },
+                                imageVector = Icons.Default.VisibilityOff,
+                                contentDescription = "Move Down",
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = null,
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
                         }
                     }
                 }
             }
         }
     }
+}
 
-    @Composable
-    private fun HiddenUserList(
-        uiState: EditContentConfigUiState,
-        onMoveUp: (ActivityPubContent.ContentTab) -> Unit,
-    ) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(LocalizedString.statusUiEditContentConfigHiddenListTitle),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        uiState.content.hidingTabList.forEach { tabItem ->
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TAB_ITEM_HEIGHT),
+@Composable
+private fun HiddenUserList(
+    uiState: EditContentConfigUiState,
+    onMoveUp: (ActivityPubContent.ContentTab) -> Unit,
+) {
+    Text(
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+        text = stringResource(LocalizedString.statusUiEditContentConfigHiddenListTitle),
+        style = MaterialTheme.typography.titleMedium,
+    )
+    uiState.content.hidingTabList.forEach { tabItem ->
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(TAB_ITEM_HEIGHT),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        modifier = Modifier.padding(start = 16.dp),
-                        text = tabItem.tabName(),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    SimpleIconButton(
-                        onClick = { onMoveUp(tabItem) },
-                        imageVector = Icons.Default.Visibility,
-                        contentDescription = "Move Up",
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = tabItem.tabName(),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(modifier = Modifier.weight(1F))
+                SimpleIconButton(
+                    onClick = { onMoveUp(tabItem) },
+                    imageVector = Icons.Default.Visibility,
+                    contentDescription = "Move Up",
+                )
+                Spacer(modifier = Modifier.width(8.dp))
             }
         }
     }
-
-    private val ActivityPubContent.showingTabList: List<ActivityPubContent.ContentTab>
-        get() = tabList.filter { !it.hide }
-
-    private val ActivityPubContent.hidingTabList: List<ActivityPubContent.ContentTab>
-        get() = tabList.filter { it.hide }
-
-    private val ActivityPubContent.ContentTab.uiKey: String
-        get() = "${this::class.simpleName}@${hashCode()}"
 }
+
+private val ActivityPubContent.showingTabList: List<ActivityPubContent.ContentTab>
+    get() = tabList.filter { !it.hide }
+
+private val ActivityPubContent.hidingTabList: List<ActivityPubContent.ContentTab>
+    get() = tabList.filter { it.hide }
+
+private val ActivityPubContent.ContentTab.uiKey: String
+    get() = "${this::class.simpleName}@${hashCode()}"

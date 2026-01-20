@@ -4,7 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 
-
 object SystemUtils {
 
     fun getAppVersionName(context: Context): String {

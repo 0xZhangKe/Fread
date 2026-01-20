@@ -6,9 +6,8 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubSourceResolver @Inject constructor(
+class ActivityPubSourceResolver(
     private val userRepo: UserRepo,
     private val userUriTransformer: UserUriTransformer,
 ) : IStatusSourceResolver {

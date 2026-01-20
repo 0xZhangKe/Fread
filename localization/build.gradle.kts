@@ -17,7 +17,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.bundles.voyager)
 
                 implementation(compose.components.resources)
 

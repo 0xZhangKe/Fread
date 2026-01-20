@@ -10,47 +10,40 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-internal class SearchedHashtagTab(private val locator: PlatformLocator, private val query: String) :
-    BasePagerTab() {
+internal class SearchedHashtagTab(
+    private val locator: PlatformLocator,
+    private val query: String
+) : BaseTab() {
 
-    override val options: PagerTabOptions
-        @Composable get() = PagerTabOptions(
+    override val options: TabOptions
+        @Composable get() = TabOptions(
             title = stringResource(LocalizedString.explorerSearchTabTitleHashtag),
         )
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun TabContent(
-        screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
-    ) {
-        super.TabContent(screen, nestedScrollConnection)
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel = with(screen) {
-            getViewModel<SearchHashtagViewModel, SearchHashtagViewModel.Factory> {
-                it.create(locator)
-            }
-        }
+    override fun Content() {
+        super.Content()
+        val backStack = LocalNavBackStack.currentOrThrow
+        val viewModel = koinViewModel<SearchHashtagViewModel> { parametersOf(locator) }
         val uiState by viewModel.uiState.collectAsState()
 
         val snackbarHostState = LocalSnackbarHostState.current
@@ -68,10 +61,10 @@ internal class SearchedHashtagTab(private val locator: PlatformLocator, private 
                 viewModel.onLoadMore(query)
             },
             onHashtagClick = viewModel::onHashtagClick,
-            nestedScrollConnection = nestedScrollConnection,
+            nestedScrollConnection = null,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.push(it)
+            backStack.add(it)
         }
         ConsumeSnackbarFlow(
             hostState = snackbarHostState,

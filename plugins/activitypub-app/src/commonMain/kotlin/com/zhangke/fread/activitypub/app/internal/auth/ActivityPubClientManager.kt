@@ -5,12 +5,9 @@ import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.architect.http.createHttpClientEngine
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.PlatformLocator
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
-class ActivityPubClientManager @Inject constructor(
+class ActivityPubClientManager (
     private val loggedAccountProvider: LoggedAccountProvider,
 ) {
 

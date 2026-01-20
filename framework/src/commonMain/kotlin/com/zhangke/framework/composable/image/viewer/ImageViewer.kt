@@ -4,6 +4,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -25,15 +27,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.toSize
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
-import cafe.adriel.voyager.navigator.internal.BackHandler
-import com.zhangke.framework.ktx.isSingle
+import com.zhangke.framework.composable.BackHandler
+import com.zhangke.framework.utils.asSize
 import com.zhangke.framework.utils.pxToDp
 import kotlinx.coroutines.launch
 
 private val infinityConstraints = Constraints()
 
-@OptIn(InternalVoyagerApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ImageViewer(
     state: ImageViewerState,
@@ -46,79 +47,80 @@ fun ImageViewer(
         mutableStateOf(null)
     }
     BackHandler(true) {
-        coroutineScope.launch {
-            state.startDismiss()
-        }
+        coroutineScope.launch { state.startDismiss() }
     }
-    Layout(
-        modifier = modifier
-            .onGloballyPositioned { position ->
-                val currentSize = position.size.toSize()
-                if (currentSize != latestSize) {
-                    coroutineScope.launch {
+    BoxWithConstraints(modifier = modifier) {
+        if (constraints.hasBoundedWidth && constraints.hasBoundedHeight) {
+            state.updateLayoutSize(constraints.asSize())
+        }
+        Layout(
+            modifier = Modifier
+                .onGloballyPositioned { position ->
+                    val currentSize = position.size.toSize()
+                    if (currentSize != latestSize) {
                         state.updateLayoutSize(currentSize)
+                        latestSize = currentSize
                     }
-                    latestSize = currentSize
                 }
-            }
-            .pointerInput(state) {
-                detectTapGestures(
-                    onDoubleTap = {
-                        if (state.exceed) {
-                            coroutineScope.launch {
-                                state.animateToStandard()
+                .pointerInput(state) {
+                    detectTapGestures(
+                        onDoubleTap = {
+                            if (state.exceed) {
+                                coroutineScope.launch {
+                                    state.animateToStandard()
+                                }
+                            } else {
+                                coroutineScope.launch {
+                                    state.animateToBig(it)
+                                }
                             }
-                        } else {
+                        },
+                        onTap = {
                             coroutineScope.launch {
-                                state.animateToBig(it)
+                                state.startDismiss()
                             }
-                        }
+                        },
+                    )
+                }
+                .draggableInfinity(
+                    exceed = state.exceed,
+                    isBigVerticalImage = state.isBigVerticalImage,
+                    onDrag = { offset ->
+                        state.drag(offset)
                     },
-                    onTap = {
+                    onDragStopped = { velocity ->
                         coroutineScope.launch {
-                            state.startDismiss()
+                            state.dragStop(velocity)
                         }
                     },
                 )
-            }
-            .draggableInfinity(
-                exceed = state.exceed,
-                isBigVerticalImage = state.isBigVerticalImage,
-                onDrag = { offset ->
-                    state.drag(offset)
-                },
-                onDragStopped = { velocity ->
-                    coroutineScope.launch {
-                        state.dragStop(velocity)
+                .pointerInput(state) {
+                    detectZoom { centroid, zoom ->
+                        state.zoom(centroid, zoom)
                     }
                 },
-            )
-            .pointerInput(state) {
-                detectZoom { centroid, zoom ->
-                    state.zoom(centroid, zoom)
+            content = {
+                Box(
+                    modifier = Modifier
+                        .offset(
+                            x = state.currentOffsetXPixel.pxToDp(density),
+                            y = state.currentOffsetYPixel.pxToDp(density)
+                        )
+                        .width(state.currentWidthPixel.pxToDp(density))
+                        .height(state.currentHeightPixel.pxToDp(density))
+                ) {
+                    content()
                 }
-            },
-        content = {
-            Box(
-                modifier = Modifier
-                    .offset(
-                        x = state.currentOffsetXPixel.pxToDp(density),
-                        y = state.currentOffsetYPixel.pxToDp(density)
-                    )
-                    .width(state.currentWidthPixel.pxToDp(density))
-                    .height(state.currentHeightPixel.pxToDp(density))
-            ) {
-                content()
             }
-        }
-    ) { measurables, constraints ->
-        if (measurables.isSingle().not()) {
-            throw IllegalStateException("InfiniteBox is only allowed to have one children!")
-        }
-        val placeable = measurables.first().measure(infinityConstraints)
+        ) { measurables, constraints ->
+            if (measurables.size != 1) {
+                throw IllegalStateException("InfiniteBox is only allowed to have one children!")
+            }
+            val placeable = measurables.first().measure(infinityConstraints)
 
-        layout(constraints.maxWidth, constraints.maxHeight) {
-            placeable.placeRelative(0, 0)
+            layout(constraints.maxWidth, constraints.maxHeight) {
+                placeable.placeRelative(0, 0)
+            }
         }
     }
 }

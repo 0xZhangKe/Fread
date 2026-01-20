@@ -12,9 +12,8 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-class ActivityPubPlatformRepo @Inject constructor(
+class ActivityPubPlatformRepo (
     databases: ActivityPubDatabases,
     private val clientManager: ActivityPubClientManager,
     private val activityPubPlatformEntityAdapter: ActivityPubPlatformEntityAdapter,

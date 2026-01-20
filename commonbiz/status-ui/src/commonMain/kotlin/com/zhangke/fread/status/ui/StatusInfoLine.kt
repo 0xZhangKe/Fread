@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.zhangke.fread.status.ui
 
 import androidx.compose.foundation.layout.Column
@@ -33,6 +35,7 @@ import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
 import kotlinx.datetime.Instant
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.ExperimentalTime
 
 /**
  * Status 头部信息行，主要包括头像，

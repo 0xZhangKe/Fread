@@ -10,18 +10,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,23 +56,87 @@ import com.zhangke.fread.status.ui.action.likeIcon
 import com.zhangke.fread.status.ui.action.pinAlt
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
+fun rememberFeedsDetailBottomSheetState(): FeedsDetailBottomSheetState {
+    return remember { FeedsDetailBottomSheetState() }
+}
+
+class FeedsDetailBottomSheetState {
+
+    internal var feeds: BlueskyFeeds? = null
+
+    internal var locator: PlatformLocator? = null
+
+    internal var visible by mutableStateOf(false)
+
+    fun show(locator: PlatformLocator, feeds: BlueskyFeeds) {
+        this.locator = locator
+        this.feeds = feeds
+        visible = true
+    }
+
+    fun hide() {
+        locator = null
+        feeds = null
+        visible = false
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun FeedsDetailScreenContent(
-    feeds: BlueskyFeeds,
+    state: FeedsDetailBottomSheetState,
+    sheetState: SheetState,
+    onFeedsUpdate: (BlueskyFeeds.Feeds) -> Unit,
+) {
+    val viewModel = koinViewModel<FeedsDetailViewModel>()
+    if (!state.visible) {
+        viewModel.clearState()
+        return
+    }
+    val feeds = state.feeds ?: run {
+        viewModel.clearState()
+        return
+    }
+    val locator = state.locator ?: run {
+        viewModel.clearState()
+        return
+    }
+    DisposableEffect(feeds, locator) {
+        viewModel.initialize(locator, feeds)
+        onDispose {
+            viewModel.clearState()
+        }
+    }
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = {
+            state.hide()
+            viewModel.clearState()
+        },
+    ) {
+        FeedsDetailContentHost(
+            viewModel = viewModel,
+            locator = locator,
+            onFeedsUpdate = onFeedsUpdate,
+        )
+    }
+}
+
+@Composable
+private fun FeedsDetailContentHost(
+    viewModel: FeedsDetailViewModel,
     locator: PlatformLocator,
     onFeedsUpdate: (BlueskyFeeds.Feeds) -> Unit,
 ) {
     val backStack = LocalNavBackStack.currentOrThrow
-    val viewModel = koinViewModel<FeedsDetailViewModel> {
-        parametersOf(locator, feeds)
-    }
     val uiState by viewModel.uiState.collectAsState()
     val textHandler = LocalTextHandler.current
     val snackbarHostState = rememberSnackbarHostState()
+    val currentState = uiState ?: return
     FeedsDetailContent(
-        uiState = uiState,
+        uiState = currentState,
         snackbarHostState = snackbarHostState,
         onCreatorClick = {
             backStack.add(BskyUserDetailScreenNavKey(locator = locator, did = it.did))
@@ -91,31 +160,27 @@ private fun FeedsDetailContent(
     onLikeClick: () -> Unit,
     onPinClick: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp)) {
-            val feeds = uiState.feeds
-            if (feeds is BlueskyFeeds.Feeds) {
-                FeedsDetail(
-                    feeds = feeds,
-                    onCreatorClick = onCreatorClick,
-                    onShareClick = onShareFeedsClick,
-                    onLikeClick = onLikeClick,
-                    onPinClick = onPinClick,
-                )
-            } else if (feeds is BlueskyFeeds.List) {
-                ListDetail(
-                    feeds = feeds,
-                    onShareClick = onShareListClick,
-                )
-            }
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp)) {
+        val feeds = uiState.feeds
+        if (feeds is BlueskyFeeds.Feeds) {
+            FeedsDetail(
+                feeds = feeds,
+                onCreatorClick = onCreatorClick,
+                onShareClick = onShareFeedsClick,
+                onLikeClick = onLikeClick,
+                onPinClick = onPinClick,
+            )
+        } else if (feeds is BlueskyFeeds.List) {
+            ListDetail(
+                feeds = feeds,
+                onShareClick = onShareListClick,
+            )
         }
-        SnackbarHost(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-            hostState = snackbarHostState,
-        )
     }
+    SnackbarHost(
+        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+        hostState = snackbarHostState,
+    )
 }
 
 @Composable

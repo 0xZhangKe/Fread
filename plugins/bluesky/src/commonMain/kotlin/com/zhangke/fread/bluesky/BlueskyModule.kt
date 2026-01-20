@@ -49,9 +49,11 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.status.IStatusProvider
+import com.zhangke.fread.status.model.PlatformLocator
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -111,7 +113,16 @@ val blueskyModule = module {
     viewModelOf(::AddBlueskyContentViewModel)
     viewModelOf(::BlueskyHomeContainerViewModel)
     viewModelOf(::HomeFeedsContainerViewModel)
-    viewModelOf(::BskyFollowingFeedsViewModel)
+    viewModel { params ->
+        BskyFollowingFeedsViewModel(
+            getFollowingFeeds = get(),
+            contentRepo = get(),
+            updatePinnedFeedsOrder = get(),
+            accountManager = get(),
+            contentId = params.getOrNull<String>(),
+            locator = params.getOrNull<PlatformLocator>(),
+        )
+    }
     viewModelOf(::ExplorerFeedsViewModel)
     viewModelOf(::FeedsDetailViewModel)
     viewModelOf(::SearchStatusViewModel)

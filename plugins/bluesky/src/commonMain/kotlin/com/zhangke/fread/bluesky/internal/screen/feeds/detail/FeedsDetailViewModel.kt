@@ -24,9 +24,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
-import kotlinx.datetime.Clock
 import kotlin.time.ExperimentalTime
 
 class FeedsDetailViewModel(
@@ -36,11 +36,9 @@ class FeedsDetailViewModel(
     private val deleteRecord: DeleteRecordUseCase,
     private val followFeeds: PinFeedsUseCase,
     private val unfollowFeeds: UnpinFeedsUseCase,
-    private val locator: PlatformLocator,
-    feeds: BlueskyFeeds,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(FeedsDetailUiState.default(feeds))
+    private val _uiState = MutableStateFlow<FeedsDetailUiState?>(null)
     val uiState = _uiState.asStateFlow()
 
     private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
@@ -52,15 +50,27 @@ class FeedsDetailViewModel(
     private var likeJob: Job? = null
     private var pinJob: Job? = null
 
-    init {
+    private var locator: PlatformLocator? = null
+
+    fun initialize(locator: PlatformLocator, feeds: BlueskyFeeds) {
+        this.locator = locator
+        _uiState.value = FeedsDetailUiState.default(feeds)
         getFeedsDetail()
+    }
+
+    fun clearState() {
+        likeJob?.cancel()
+        pinJob?.cancel()
+        locator = null
+        _uiState.value = null
     }
 
     @OptIn(ExperimentalTime::class)
     fun onLikeClick() {
         if (likeJob?.isActive == true) return
-        val feeds = _uiState.value.feeds
+        val feeds = _uiState.value?.feeds
         if (feeds !is BlueskyFeeds.Feeds) return
+        val locator = locator ?: return
         likeJob?.cancel()
         likeJob = launchInViewModel {
             if (feeds.liked) {
@@ -90,9 +100,10 @@ class FeedsDetailViewModel(
     }
 
     fun onPinClick() {
-        val feeds = _uiState.value.feeds
+        val feeds = _uiState.value?.feeds
         if (feeds !is BlueskyFeeds.Feeds) return
         if (pinJob?.isActive == true) return
+        val locator = locator ?: return
         pinJob?.cancel()
         pinJob = launchInViewModel {
             if (feeds.pinned) {
@@ -101,7 +112,9 @@ class FeedsDetailViewModel(
                 followFeeds(locator = locator, feeds = feeds)
             }.onSuccess {
                 val newFeeds = feeds.copy(pinned = !feeds.pinned)
-                _uiState.update { state -> state.copy(feeds = newFeeds) }
+                _uiState.update { state ->
+                    state?.copy(feeds = newFeeds) ?: FeedsDetailUiState.default(newFeeds)
+                }
                 _feedsUpdateFlow.emit(newFeeds)
             }.onFailure {
                 _snackBarMessageFlow.emitTextMessageFromThrowable(it)
@@ -111,7 +124,8 @@ class FeedsDetailViewModel(
 
     private fun getFeedsDetail() {
         launchInViewModel {
-            val feeds = _uiState.value.feeds
+            val locator = locator ?: return@launchInViewModel
+            val feeds = _uiState.value?.feeds
             if (feeds !is BlueskyFeeds.Feeds) return@launchInViewModel
             clientManager.getClient(locator)
                 .getFeedGeneratorsCatching(GetFeedGeneratorsQueryParams(listOf(AtUri(feeds.uri))))
@@ -123,7 +137,9 @@ class FeedsDetailViewModel(
                                 pinned = feeds.pinned,
                             )
                         }?.let { feed ->
-                            _uiState.update { it.copy(feeds = feed) }
+                            _uiState.update {
+                                it?.copy(feeds = feed) ?: FeedsDetailUiState.default(feeds)
+                            }
                             _feedsUpdateFlow.emit(feed)
                         }
                 }

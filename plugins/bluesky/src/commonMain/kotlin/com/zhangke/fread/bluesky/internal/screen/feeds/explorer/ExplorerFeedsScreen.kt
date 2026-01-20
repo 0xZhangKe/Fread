@@ -8,17 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
@@ -32,6 +30,7 @@ import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.bluesky.internal.composable.BlueskyExploringFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreenContent
+import com.zhangke.fread.bluesky.internal.screen.feeds.detail.rememberFeedsDetailBottomSheetState
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
@@ -56,19 +55,13 @@ fun ExplorerFeedsScreen(
     val uiState by viewModel.uiState.collectAsState()
     val snackBarState = rememberSnackbarHostState()
 
-    var clickedFeeds: BlueskyFeeds? by remember { mutableStateOf(null) }
-    var showFeedsDetailBottomSheet by remember { mutableStateOf(false) }
-    if (showFeedsDetailBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showFeedsDetailBottomSheet = false },
-        ) {
-            FeedsDetailScreenContent(
-                feeds = clickedFeeds!!,
-                locator = locator,
-                onFeedsUpdate = viewModel::onFeedsUpdate,
-            )
-        }
-    }
+    val feedsDetailBottomSheetState = rememberFeedsDetailBottomSheetState()
+    val feedsDetailSheetState = rememberModalBottomSheetState()
+    FeedsDetailScreenContent(
+        state = feedsDetailBottomSheetState,
+        sheetState = feedsDetailSheetState,
+        onFeedsUpdate = viewModel::onFeedsUpdate,
+    )
     ExplorerFeedsContent(
         uiState = uiState,
         snackBarState = snackBarState,
@@ -77,8 +70,7 @@ fun ExplorerFeedsScreen(
         onRefresh = viewModel::onRefresh,
         onLoadMore = viewModel::onLoadMore,
         onFeedsClick = { feeds ->
-            clickedFeeds = feeds.feeds
-            showFeedsDetailBottomSheet = true
+            feedsDetailBottomSheetState.show(locator = locator, feeds = feeds.feeds)
         },
         onFollowClick = viewModel::onFollowClick,
     )

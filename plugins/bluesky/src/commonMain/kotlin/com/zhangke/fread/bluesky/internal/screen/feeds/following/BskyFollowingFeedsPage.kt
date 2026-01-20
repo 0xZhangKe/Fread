@@ -19,7 +19,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -51,6 +51,7 @@ import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreenContent
+import com.zhangke.fread.bluesky.internal.screen.feeds.detail.rememberFeedsDetailBottomSheetState
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -75,27 +76,22 @@ fun BskyFollowingFeedsPage(viewModel: BskyFollowingFeedsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val snackBarState = rememberSnackbarHostState()
 
-    var clickedFeeds: BlueskyFeeds? by remember { mutableStateOf(null) }
-    var showFeedsDetailBottomSheet by remember { mutableStateOf(false) }
-    if (showFeedsDetailBottomSheet && uiState.locator != null) {
-        ModalBottomSheet(
-            onDismissRequest = { showFeedsDetailBottomSheet = false },
-        ) {
-            FeedsDetailScreenContent(
-                feeds = clickedFeeds!!,
-                locator = uiState.locator!!,
-                onFeedsUpdate = viewModel::onFeedsUpdate,
-            )
-        }
-    }
+    val feedsDetailBottomSheetState = rememberFeedsDetailBottomSheetState()
+    val feedsDetailSheetState = rememberModalBottomSheetState()
+    FeedsDetailScreenContent(
+        state = feedsDetailBottomSheetState,
+        sheetState = feedsDetailSheetState,
+        onFeedsUpdate = viewModel::onFeedsUpdate,
+    )
     BskyFeedsExplorerContent(
         uiState = uiState,
         snackBarState = snackBarState,
         onBackClick = backStack::removeLastOrNull,
         onRefresh = viewModel::onRefresh,
         onFeedsClick = { feed ->
-            clickedFeeds = feed
-            showFeedsDetailBottomSheet = true
+            uiState.locator?.let { locator ->
+                feedsDetailBottomSheetState.show(locator = locator, feeds = feed)
+            }
         },
         onExplorerClick = {
             uiState.locator?.let { backStack.add(ExplorerFeedsScreenNavKey(it)) }

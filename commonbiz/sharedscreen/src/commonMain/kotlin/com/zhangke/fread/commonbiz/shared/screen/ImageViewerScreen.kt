@@ -57,6 +57,7 @@ import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.sharedElement
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
@@ -229,7 +230,8 @@ private fun ImagePageContent(
                 painter = rememberImagePainter(request = request),
                 modifier = Modifier
                     .fillMaxSize()
-                    .blurhash(image.blurhash),
+                    .blurhash(image.blurhash)
+                    .sharedElement("blog_image"),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = image.description,
             )

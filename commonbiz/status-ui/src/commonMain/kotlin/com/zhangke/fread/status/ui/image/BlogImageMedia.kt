@@ -42,6 +42,7 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.framework.nav.sharedElement
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -259,7 +260,7 @@ private fun BlogAutoSizeImage(
                 data(imageUrl)
             }
         },
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().sharedElement("blog_image"),
         contentScale = ContentScale.Crop,
         contentDescription = description.ifNullOrEmpty { "Blog Image Media" },
     )

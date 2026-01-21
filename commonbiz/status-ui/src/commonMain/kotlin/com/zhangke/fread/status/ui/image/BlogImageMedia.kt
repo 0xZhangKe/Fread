@@ -46,6 +46,7 @@ import com.zhangke.framework.nav.sharedElement
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
 
 typealias OnBlogMediaClick = (BlogMediaClickEvent) -> Unit
 
@@ -254,14 +255,21 @@ private fun BlogAutoSizeImage(
     imageUrl: String?,
     description: String?,
 ) {
+    val sharedElementConfig = LocalStatusSharedElementConfig.current
+    val finalModifier = modifier.then(
+        if (sharedElementConfig.imageAttachmentEnabled) {
+            Modifier.sharedElement(sharedElementConfig.buildImageKey(imageUrl.orEmpty()))
+        } else {
+            Modifier
+        }
+    )
     AutoSizeImage(
         request = remember {
             ImageRequest {
                 data(imageUrl)
             }
         },
-        modifier = modifier.fillMaxSize()
-            .sharedElement(buildFeedsImageSharedKey(imageUrl.orEmpty())),
+        modifier = finalModifier.fillMaxSize(),
         contentScale = ContentScale.Crop,
         contentDescription = description.ifNullOrEmpty { "Blog Image Media" },
     )
@@ -344,8 +352,4 @@ internal fun BlogImageMediaStyle.decideFirstImageWeightInHorizontalMode(aspect: 
     val factor = 1F / aspect - 1F
     val weight = minWeightInHorizontal + floatingWeight * factor
     return weight.coerceAtLeast(minWeightInHorizontal).coerceAtMost(maxWeightInHorizontal)
-}
-
-fun buildFeedsImageSharedKey(url: String): String {
-    return "feeds_img_$url"
 }

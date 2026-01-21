@@ -54,11 +54,12 @@ import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.sharedElement
 import com.zhangke.framework.permission.RequireLocalStoragePermission
+import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
-import com.zhangke.fread.status.ui.image.buildFeedsImageSharedKey
+import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 
@@ -73,6 +74,8 @@ fun ImageViewerScreen(
     selectedIndex: Int,
     imageList: List<ImageViewerImage>,
 ) {
+    val statusSharedElementConfig = LocalStatusSharedElementConfig.current
+    Log.d("Z_TEST") { "image viewer screen: ${statusSharedElementConfig.label}" }
     val backStack = LocalNavBackStack.currentOrThrow
     val backgroundCommonAlpha = 0.95F
     if (imageList.isEmpty()) {
@@ -168,6 +171,7 @@ private fun ImagePageContent(
             state = viewerState,
             modifier = Modifier.fillMaxSize(),
         ) {
+            val sharedElementConfig = LocalStatusSharedElementConfig.current
             val request = remember(image.url) {
                 ImageRequest(image.url)
             }
@@ -176,7 +180,7 @@ private fun ImagePageContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .blurhash(image.blurhash)
-                    .sharedElement(buildFeedsImageSharedKey(image.url)),
+                    .sharedElement(sharedElementConfig.buildImageKey(image.url)),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = image.description,
             )

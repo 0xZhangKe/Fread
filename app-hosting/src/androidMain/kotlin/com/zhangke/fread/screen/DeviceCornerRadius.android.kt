@@ -23,6 +23,6 @@ actual fun rememberDeviceCornerRadius(): Dp {
     return if (radiusPx > 0) {
         with(density) { radiusPx.toDp() }
     } else {
-        0.dp
+        16.dp
     }
 }

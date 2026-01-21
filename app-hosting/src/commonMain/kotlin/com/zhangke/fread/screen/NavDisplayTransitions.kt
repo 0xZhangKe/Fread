@@ -33,7 +33,7 @@ fun <T : Any> freadPredictivePopTransitionSpec(): AnimatedContentTransitionScope
     {
         ContentTransform(
             targetContentEnter = defaultFadeIn(),
-            initialContentExit = scaleOut(targetScale = 0.85F) + fadeOut(targetAlpha = 0.9F),
+            initialContentExit = scaleOut(targetScale = 0.85F),
         )
     }
 

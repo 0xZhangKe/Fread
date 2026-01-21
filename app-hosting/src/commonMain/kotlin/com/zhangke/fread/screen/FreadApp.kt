@@ -154,11 +154,10 @@ fun FreadApp() {
                 )
                 val currentInfo = SceneInfo(sceneState.currentScene)
                 val previousSceneInfos = sceneState.previousScenes.map { SceneInfo(it) }
-                val navigationEventState =
-                    rememberNavigationEventState(
-                        currentInfo = currentInfo,
-                        backInfo = previousSceneInfos,
-                    )
+                val navigationEventState = rememberNavigationEventState(
+                    currentInfo = currentInfo,
+                    backInfo = previousSceneInfos,
+                )
                 NavigationBackHandler(
                     state = navigationEventState,
                     isBackEnabled = sceneState.currentScene.previousEntries.isNotEmpty(),

@@ -11,9 +11,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
@@ -40,6 +42,7 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
+import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.threads.ThreadsType
 import kotlinx.serialization.Serializable
@@ -221,93 +224,101 @@ private fun StatusInContextUi(
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val selectAccountOpenStatusBottomSheetState = rememberSelectAccountOpenStatusSheetState()
-    when (statusInContext.type) {
-        StatusInContextType.ANCESTOR -> StatusUi(
-            modifier = modifier.clickable {
-                composedStatusInteraction.onStatusClick(statusInContext.status)
-            },
-            threadsType = if (indexInList == 0) {
-                ThreadsType.FIRST_ANCESTOR
-            } else {
-                ThreadsType.ANCESTOR
-            },
-            status = statusInContext.status,
-            indexInList = indexInList,
-            onMediaClick = onMediaClick,
-            composedStatusInteraction = composedStatusInteraction,
-            onOpenBlogWithOtherAccountClick = {
-                selectAccountOpenStatusBottomSheetState.show(it)
-            },
-        )
+    val preSharedElementConfig = LocalStatusSharedElementConfig.current
+    val statusSharedElementConfig = remember(preSharedElementConfig) {
+        preSharedElementConfig.copy(label = "status-context")
+    }
+    CompositionLocalProvider(
+        LocalStatusSharedElementConfig provides statusSharedElementConfig
+    ) {
+        when (statusInContext.type) {
+            StatusInContextType.ANCESTOR -> StatusUi(
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
+                threadsType = if (indexInList == 0) {
+                    ThreadsType.FIRST_ANCESTOR
+                } else {
+                    ThreadsType.ANCESTOR
+                },
+                status = statusInContext.status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+                composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    selectAccountOpenStatusBottomSheetState.show(it)
+                },
+            )
 
-        StatusInContextType.ANCHOR -> StatusUi(
-            modifier = modifier,
-            status = statusInContext.status,
-            indexInList = indexInList,
-            threadsType = if (indexInList == 0) ThreadsType.ANCHOR_FIRST else ThreadsType.ANCHOR,
-            onMediaClick = onMediaClick,
-            detailModel = true,
-            composedStatusInteraction = composedStatusInteraction,
-            onOpenBlogWithOtherAccountClick = {
-                selectAccountOpenStatusBottomSheetState.show(it)
-            },
-        )
+            StatusInContextType.ANCHOR -> StatusUi(
+                modifier = modifier,
+                status = statusInContext.status,
+                indexInList = indexInList,
+                threadsType = if (indexInList == 0) ThreadsType.ANCHOR_FIRST else ThreadsType.ANCHOR,
+                onMediaClick = onMediaClick,
+                detailModel = true,
+                composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    selectAccountOpenStatusBottomSheetState.show(it)
+                },
+            )
 
-        StatusInContextType.DESCENDANT -> StatusUi(
-            modifier = modifier.clickable {
-                composedStatusInteraction.onStatusClick(statusInContext.status)
-            },
-            status = statusInContext.status,
-            indexInList = indexInList,
-            onMediaClick = onMediaClick,
-            threadsType = ThreadsType.NONE,
-            composedStatusInteraction = composedStatusInteraction,
-            onOpenBlogWithOtherAccountClick = {
-                selectAccountOpenStatusBottomSheetState.show(it)
-            },
-        )
+            StatusInContextType.DESCENDANT -> StatusUi(
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
+                status = statusInContext.status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+                threadsType = ThreadsType.NONE,
+                composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    selectAccountOpenStatusBottomSheetState.show(it)
+                },
+            )
 
-        StatusInContextType.DESCENDANT_ANCHOR -> StatusUi(
-            modifier = modifier.clickable {
-                composedStatusInteraction.onStatusClick(statusInContext.status)
-            },
-            threadsType = ThreadsType.FIRST_ANCESTOR,
-            status = statusInContext.status,
-            indexInList = indexInList,
-            onMediaClick = onMediaClick,
-            composedStatusInteraction = composedStatusInteraction,
-            onOpenBlogWithOtherAccountClick = {
-                selectAccountOpenStatusBottomSheetState.show(it)
-            },
-        )
+            StatusInContextType.DESCENDANT_ANCHOR -> StatusUi(
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
+                threadsType = ThreadsType.FIRST_ANCESTOR,
+                status = statusInContext.status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+                composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    selectAccountOpenStatusBottomSheetState.show(it)
+                },
+            )
 
-        StatusInContextType.DESCENDANT_WITH_ANCESTOR_DESCENDANT -> StatusUi(
-            modifier = modifier.clickable {
-                composedStatusInteraction.onStatusClick(statusInContext.status)
-            },
-            threadsType = ThreadsType.ANCESTOR,
-            status = statusInContext.status,
-            indexInList = indexInList,
-            onMediaClick = onMediaClick,
-            composedStatusInteraction = composedStatusInteraction,
-            onOpenBlogWithOtherAccountClick = {
-                selectAccountOpenStatusBottomSheetState.show(it)
-            },
-        )
+            StatusInContextType.DESCENDANT_WITH_ANCESTOR_DESCENDANT -> StatusUi(
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
+                threadsType = ThreadsType.ANCESTOR,
+                status = statusInContext.status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+                composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    selectAccountOpenStatusBottomSheetState.show(it)
+                },
+            )
 
-        StatusInContextType.DESCENDANT_WITH_ANCESTOR -> StatusUi(
-            modifier = modifier.clickable {
-                composedStatusInteraction.onStatusClick(statusInContext.status)
-            },
-            threadsType = ThreadsType.ANCHOR,
-            status = statusInContext.status,
-            indexInList = indexInList,
-            onMediaClick = onMediaClick,
-            composedStatusInteraction = composedStatusInteraction,
-            onOpenBlogWithOtherAccountClick = {
-                selectAccountOpenStatusBottomSheetState.show(it)
-            },
-        )
+            StatusInContextType.DESCENDANT_WITH_ANCESTOR -> StatusUi(
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
+                threadsType = ThreadsType.ANCHOR,
+                status = statusInContext.status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+                composedStatusInteraction = composedStatusInteraction,
+                onOpenBlogWithOtherAccountClick = {
+                    selectAccountOpenStatusBottomSheetState.show(it)
+                },
+            )
+        }
     }
     SelectAccountOpenStatusBottomSheet(selectAccountOpenStatusBottomSheetState)
 }

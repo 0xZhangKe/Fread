@@ -11,7 +11,7 @@ import androidx.compose.animation.scaleOut
 import androidx.navigation3.scene.Scene
 import androidx.navigationevent.NavigationEvent.SwipeEdge
 
-private const val DEFAULT_TRANSITION_DURATION_MILLISECOND = 500
+private const val DEFAULT_TRANSITION_DURATION_MILLISECOND = 700
 
 fun <T : Any> freadTransitionSpec(): AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
     {
@@ -33,10 +33,7 @@ fun <T : Any> freadPredictivePopTransitionSpec(): AnimatedContentTransitionScope
     {
         ContentTransform(
             targetContentEnter = defaultFadeIn(),
-            initialContentExit = scaleOut(
-                animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND),
-                targetScale = 0.85F,
-            ),
+            initialContentExit = scaleOut(targetScale = 0.85F) + fadeOut(targetAlpha = 0.9F),
         )
     }
 

@@ -2,7 +2,6 @@ package com.zhangke.fread.status.ui.common
 
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
-import com.zhangke.framework.utils.Log
 
 data class StatusSharedElementConfig(
     val wholeBlogEnabled: Boolean,
@@ -11,9 +10,7 @@ data class StatusSharedElementConfig(
 ) {
 
     fun buildImageKey(url: String): String {
-        return "$label-$url".also {
-            Log.d("Z_TEST") { "image key: $it" }
-        }
+        return buildKey(label, url)
     }
 
     fun buildBlogKey(id: String): String {
@@ -28,6 +25,10 @@ data class StatusSharedElementConfig(
                 imageAttachmentEnabled = true,
                 label = "feeds"
             )
+        }
+
+        fun buildKey(label: String, url: String): String {
+            return "$label-$url"
         }
     }
 }

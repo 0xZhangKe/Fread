@@ -56,6 +56,7 @@ import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.DetailPageScaffold
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.UserFollowLine
@@ -96,10 +97,22 @@ fun BskyUserDetailScreen(
         onUnblockClick = viewModel::onUnblockClick,
         onUnfollowClick = viewModel::onUnfollowClick,
         onFollowerClick = {
-            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.FOLLOWERS, did = did))
+            backStack.add(
+                UserListScreenNavKey(
+                    locator = locator,
+                    type = UserListType.FOLLOWERS,
+                    did = did
+                )
+            )
         },
         onFollowingClick = {
-            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.FOLLOWING, did = did))
+            backStack.add(
+                UserListScreenNavKey(
+                    locator = locator,
+                    type = UserListType.FOLLOWING,
+                    did = did
+                )
+            )
         },
         onOpenInBrowserClick = {
             uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(coroutineScope, it) }
@@ -111,10 +124,22 @@ fun BskyUserDetailScreen(
         onMuteClick = { viewModel.onMuteClick(true) },
         onUnmuteClick = { viewModel.onMuteClick(false) },
         onBlockedUserListClick = {
-            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.BLOCKED, did = did))
+            backStack.add(
+                UserListScreenNavKey(
+                    locator = locator,
+                    type = UserListType.BLOCKED,
+                    did = did
+                )
+            )
         },
         onMuteUserListClick = {
-            backStack.add(UserListScreenNavKey(locator = locator, type = UserListType.MUTED, did = did))
+            backStack.add(
+                UserListScreenNavKey(
+                    locator = locator,
+                    type = UserListType.MUTED,
+                    did = did
+                )
+            )
         },
         onHashtagClick = { tag ->
             backStack.add(
@@ -248,9 +273,14 @@ private fun UserDetailContent(
                 )
             }
         }
+        val preSharedElementConfig = LocalStatusSharedElementConfig.current
+        val sharedElementConfig = remember(preSharedElementConfig) {
+            preSharedElementConfig.copy(label = "user-timeline")
+        }
         val nestedTabConnection = remember { NestedTabConnection() }
         CompositionLocalProvider(
             LocalNestedTabConnection provides nestedTabConnection,
+            LocalStatusSharedElementConfig provides sharedElementConfig,
         ) {
             val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
             HorizontalPagerWithTab(

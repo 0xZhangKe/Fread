@@ -1,9 +1,11 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user.timeline
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.nav.BaseTab
@@ -12,6 +14,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
+import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -44,20 +47,27 @@ internal class UserTimelineTab(
         )
         val uiState by viewModel.uiState.collectAsState()
 
-        FeedsContent(
-            uiState = uiState,
-            openScreenFlow = viewModel.openScreenFlow,
-            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            onRefresh = viewModel::onRefresh,
-            onLoadMore = viewModel::onLoadMore,
-            composedStatusInteraction = viewModel.composedStatusInteraction,
-            observeScrollToTopEvent = true,
-            contentCanScrollBackward = contentCanScrollBackward,
-            nestedScrollConnection = null,
-            onImmersiveEvent = {},
-            onScrollInProgress = {},
-        )
-
+        val preSharedElementConfig = LocalStatusSharedElementConfig.current
+        val sharedElementConfig = remember(preSharedElementConfig) {
+            preSharedElementConfig.copy(label = "user-timeline")
+        }
+        CompositionLocalProvider(
+            LocalStatusSharedElementConfig provides sharedElementConfig
+        ) {
+            FeedsContent(
+                uiState = uiState,
+                openScreenFlow = viewModel.openScreenFlow,
+                newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
+                onRefresh = viewModel::onRefresh,
+                onLoadMore = viewModel::onLoadMore,
+                composedStatusInteraction = viewModel.composedStatusInteraction,
+                observeScrollToTopEvent = true,
+                contentCanScrollBackward = contentCanScrollBackward,
+                nestedScrollConnection = null,
+                onImmersiveEvent = {},
+                onScrollInProgress = {},
+            )
+        }
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }

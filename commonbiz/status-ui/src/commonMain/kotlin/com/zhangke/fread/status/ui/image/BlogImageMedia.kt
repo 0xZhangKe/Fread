@@ -32,8 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.LocalImageLoader
@@ -55,7 +53,7 @@ sealed interface BlogMediaClickEvent {
     data class BlogImageClickEvent(
         val index: Int,
         val mediaList: List<BlogMedia>,
-        val coordinatesList: List<LayoutCoordinates?>,
+        val sharedElementLabel: String,
     ) : BlogMediaClickEvent
 
     data class BlogVideoClickEvent(
@@ -78,9 +76,6 @@ fun BlogImageMedias(
     showAlt: Boolean = true,
 ) {
     val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
-    val mediaPosition: Array<LayoutCoordinates?> = remember(mediaList) {
-        arrayOfNulls(mediaList.size)
-    }
     BlogImageLayout(
         modifier = Modifier.clip(RoundedCornerShape(style.radius)),
         containerWidth = containerWidth,
@@ -88,18 +83,16 @@ fun BlogImageMedias(
         style = style,
         itemContent = { index ->
             val media = mediaList[index]
+            val sharedElementLabel = LocalStatusSharedElementConfig.current.label
             BlogImage(
                 modifier = Modifier
                     .fillMaxSize()
-                    .onGloballyPositioned {
-                        mediaPosition[index] = it
-                    }
                     .clickable(enabled = !hideContent) {
                         onMediaClick(
                             BlogMediaClickEvent.BlogImageClickEvent(
                                 index = index,
                                 mediaList = mediaList,
-                                coordinatesList = mediaPosition.toList(),
+                                sharedElementLabel = sharedElementLabel,
                             )
                         )
                     },

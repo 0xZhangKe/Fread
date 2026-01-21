@@ -21,6 +21,7 @@ actual fun onStatusMediaClick(
             navigator.add(
                 ImageViewerScreenNavKey(
                     imageList = event.mediaList.toImages(),
+                    sharedElementLabel = event.sharedElementLabel,
                     selectedIndex = event.index,
                 )
             )

@@ -54,12 +54,11 @@ import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.sharedElement
 import com.zhangke.framework.permission.RequireLocalStoragePermission
-import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
-import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
+import com.zhangke.fread.status.ui.common.StatusSharedElementConfig
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 
@@ -67,15 +66,15 @@ import kotlinx.serialization.Serializable
 data class ImageViewerScreenNavKey(
     val selectedIndex: Int,
     val imageList: List<ImageViewerImage>,
+    val sharedElementLabel: String? = null,
 ) : NavKey
 
 @Composable
 fun ImageViewerScreen(
     selectedIndex: Int,
     imageList: List<ImageViewerImage>,
+    sharedElementLabel: String?,
 ) {
-    val statusSharedElementConfig = LocalStatusSharedElementConfig.current
-    Log.d("Z_TEST") { "image viewer screen: ${statusSharedElementConfig.label}" }
     val backStack = LocalNavBackStack.currentOrThrow
     val backgroundCommonAlpha = 0.95F
     if (imageList.isEmpty()) {
@@ -122,6 +121,7 @@ fun ImageViewerScreen(
                 val currentMedia = imageList[pageIndex]
                 ImagePageContent(
                     image = currentMedia,
+                    sharedElementLabel = sharedElementLabel,
                     onDismissRequest = backStack::removeLastOrNull,
                 )
             }
@@ -149,6 +149,7 @@ fun ImageViewerScreen(
 @Composable
 private fun ImagePageContent(
     image: ImageViewerImage,
+    sharedElementLabel: String?,
     onDismissRequest: () -> Unit,
 ) {
     val imageLoader = LocalImageLoader.current
@@ -171,7 +172,6 @@ private fun ImagePageContent(
             state = viewerState,
             modifier = Modifier.fillMaxSize(),
         ) {
-            val sharedElementConfig = LocalStatusSharedElementConfig.current
             val request = remember(image.url) {
                 ImageRequest(image.url)
             }
@@ -180,7 +180,18 @@ private fun ImagePageContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .blurhash(image.blurhash)
-                    .sharedElement(sharedElementConfig.buildImageKey(image.url)),
+                    .let {
+                        if (sharedElementLabel.isNullOrEmpty()) {
+                            it
+                        } else {
+                            it.sharedElement(
+                                StatusSharedElementConfig.buildKey(
+                                    label = sharedElementLabel,
+                                    url = image.url
+                                )
+                            )
+                        }
+                    },
                 contentScale = ContentScale.FillBounds,
                 contentDescription = image.description,
             )

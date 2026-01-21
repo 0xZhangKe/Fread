@@ -141,6 +141,9 @@ fun FreadApp() {
                             with(provider) { build() }
                         }
                     },
+                    transitionSpec = freadTransitionSpec(),
+                    popTransitionSpec = freadPopTransitionSpec(),
+                    predictivePopTransitionSpec = freadPredictivePopTransitionSpec(),
                 )
                 LaunchedEffect(Unit) {
                     GlobalScreenNavigation.openScreenFlow

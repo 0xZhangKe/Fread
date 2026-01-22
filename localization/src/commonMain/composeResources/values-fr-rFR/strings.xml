@@ -237,4 +237,10 @@
     <string name="main_request_notification_dialog_content">Pour recevoir les messages d’interaction, veuillez autoriser les notifications.</string>
     <string name="setting_item_amoled_mode">Mode AMOLED</string>
     <string name="setting_item_amoled_mode_description">Une fois activé, l’arrière-plan devient noir pur en mode sombre afin de réduire la consommation d’énergie et d’améliorer le contraste dans les environnements sombres.</string>
+    <string name="setting_group_appearance">Apparence</string>
+    <string name="setting_group_behavior">Comportement</string>
+    <string name="setting_item_home_tab_next_title">Afficher le bouton de changement de contenu en haut de l’accueil</string>
+    <string name="setting_item_home_tab_next_subtitle">Afficher en haut à droite de l’accueil le bouton pour passer au contenu suivant</string>
+    <string name="setting_item_home_tab_refresh_title">Afficher le bouton d’actualisation en haut de l’accueil</string>
+    <string name="setting_item_home_tab_refresh_subtitle">Afficher en haut à droite de l’accueil le bouton pour actualiser le contenu</string>
 </resources>

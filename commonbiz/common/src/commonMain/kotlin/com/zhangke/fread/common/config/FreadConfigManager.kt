@@ -18,6 +18,9 @@ class FreadConfigManager (
         private const val LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE =
             "fread_status_always_show_sensitive"
         private const val LOCAL_KEY_IMMERSIVE_NAV_BAR = "immersiveNavBar"
+        private const val LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE = "home_tab_next_button_visible"
+        private const val LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE =
+            "home_tab_refresh_button_visible"
         private const val LOCAL_KEY_DEVICE_ID = "device_id"
         private const val LOCAL_KEY_IGNORE_UPDATE_VERSION = "ignore_update_version"
         private const val LOCAL_KEY_BSKY_PUBLISH_LAN = "bsky_publish_lan"
@@ -49,10 +52,16 @@ class FreadConfigManager (
             ?.toContentSize()
             ?: StatusContentSize.default()
         val immersiveNavBar = localConfigManager.getBoolean(LOCAL_KEY_IMMERSIVE_NAV_BAR) != false
+        val homeTabNextButtonVisible =
+            localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE) != false
+        val homeTabRefreshButtonVisible =
+            localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE) != false
         return StatusConfig(
             alwaysShowSensitiveContent = alwaysShowSensitiveContent,
             contentSize = contentSize,
             immersiveNavBar = immersiveNavBar,
+            homeTabNextButtonVisible = homeTabNextButtonVisible,
+            homeTabRefreshButtonVisible = homeTabRefreshButtonVisible,
         )
     }
 
@@ -88,6 +97,24 @@ class FreadConfigManager (
         _statusConfigFlow.value = _statusConfigFlow.value.copy(immersiveNavBar = immersive)
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_IMMERSIVE_NAV_BAR, immersive)
+        }
+    }
+
+    suspend fun updateHomeTabNextButtonVisible(visible: Boolean) {
+        _statusConfigFlow.value = _statusConfigFlow.value.copy(
+            homeTabNextButtonVisible = visible,
+        )
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE, visible)
+        }
+    }
+
+    suspend fun updateHomeTabRefreshButtonVisible(visible: Boolean) {
+        _statusConfigFlow.value = _statusConfigFlow.value.copy(
+            homeTabRefreshButtonVisible = visible,
+        )
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE, visible)
         }
     }
 

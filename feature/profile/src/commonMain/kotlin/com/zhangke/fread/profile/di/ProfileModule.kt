@@ -7,6 +7,8 @@ import com.zhangke.fread.profile.ProfileScreenVisitor
 import com.zhangke.fread.profile.screen.home.ProfileHomeViewModel
 import com.zhangke.fread.profile.screen.setting.SettingScreenModel
 import com.zhangke.fread.profile.screen.setting.about.AboutViewModel
+import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsViewModel
+import com.zhangke.fread.profile.screen.setting.behavior.BehaviorSettingsViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -20,6 +22,8 @@ val profileModule = module {
     viewModelOf(::ProfileHomeViewModel)
     viewModelOf(::SettingScreenModel)
     viewModelOf(::AboutViewModel)
+    viewModelOf(::AppearanceSettingsViewModel)
+    viewModelOf(::BehaviorSettingsViewModel)
 
     singleOf(::ProfileScreenVisitor) bind IProfileScreenVisitor::class
 }

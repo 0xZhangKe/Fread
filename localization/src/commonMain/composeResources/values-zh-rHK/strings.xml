@@ -237,4 +237,10 @@
     <string name="main_request_notification_dialog_content">為接收互動訊息，請允許通知權限。</string>
     <string name="setting_item_amoled_mode">Amoled 模式</string>
     <string name="setting_item_amoled_mode_description">啟用此功能後，深色模式下會把背景變成純黑，以減低耗電量，並在昏暗環境中提升對比度。</string>
+    <string name="setting_group_appearance">外觀</string>
+    <string name="setting_group_behavior">行為</string>
+    <string name="setting_item_home_tab_next_title">首頁頂部的切換內容按鈕顯示</string>
+    <string name="setting_item_home_tab_next_subtitle">首頁右上角是否顯示用於切換到下一個內容的按鈕</string>
+    <string name="setting_item_home_tab_refresh_title">首頁頂部的重新整理按鈕顯示</string>
+    <string name="setting_item_home_tab_refresh_subtitle">首頁右上角是否顯示用於重新整理內容的按鈕</string>
 </resources>

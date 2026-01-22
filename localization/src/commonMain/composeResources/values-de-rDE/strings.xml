@@ -237,4 +237,10 @@
     <string name="main_request_notification_dialog_content">Um Interaktions-Benachrichtigungen zu erhalten, bitte Berechtigung für Benachrichtigungen erteilen.</string>
     <string name="setting_item_amoled_mode">AMOLED-Modus</string>
     <string name="setting_item_amoled_mode_description">Wenn aktiviert, wechselt der Hintergrund im Dunkelmodus zu reinem Schwarz, um Energie zu sparen und den Kontrast in dunklen Umgebungen zu erhöhen.</string>
+    <string name="setting_group_appearance">Aussehen</string>
+    <string name="setting_group_behavior">Verhalten</string>
+    <string name="setting_item_home_tab_next_title">Schaltfläche zum Wechseln des Inhalts oben auf der Startseite anzeigen</string>
+    <string name="setting_item_home_tab_next_subtitle">Oben rechts auf der Startseite die Schaltfläche zum Wechseln zum nächsten Inhalt anzeigen</string>
+    <string name="setting_item_home_tab_refresh_title">Aktualisierungsschaltfläche oben auf der Startseite anzeigen</string>
+    <string name="setting_item_home_tab_refresh_subtitle">Oben rechts auf der Startseite die Schaltfläche zum Aktualisieren von Inhalten anzeigen</string>
 </resources>

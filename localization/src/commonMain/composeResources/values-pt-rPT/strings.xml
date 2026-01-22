@@ -237,4 +237,10 @@
     <string name="main_request_notification_dialog_content">Para receber mensagens de interação, permita as notificações.</string>
     <string name="setting_item_amoled_mode">Modo AMOLED</string>
     <string name="setting_item_amoled_mode_description">Quando ativado, o fundo muda para preto puro no modo escuro para reduzir o consumo de energia e aumentar o contraste em ambientes escuros.</string>
+    <string name="setting_group_appearance">Aparência</string>
+    <string name="setting_group_behavior">Comportamento</string>
+    <string name="setting_item_home_tab_next_title">Mostrar o botão para mudar de conteúdo no topo da Página inicial</string>
+    <string name="setting_item_home_tab_next_subtitle">Mostrar no canto superior direito da Página inicial o botão para mudar para o conteúdo seguinte</string>
+    <string name="setting_item_home_tab_refresh_title">Mostrar o botão de atualizar no topo da Página inicial</string>
+    <string name="setting_item_home_tab_refresh_subtitle">Mostrar no canto superior direito da Página inicial o botão para atualizar o conteúdo</string>
 </resources>

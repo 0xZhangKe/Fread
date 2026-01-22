@@ -237,4 +237,10 @@
     <string name="main_request_notification_dialog_content">交流に関する通知を受け取るには、通知を許可してください。</string>
     <string name="setting_item_amoled_mode">AMOLEDモード</string>
     <string name="setting_item_amoled_mode_description">有効にすると、ダークモードで背景が純黒になり、消費電力を抑えつつ暗い環境でのコントラストが向上します。</string>
+    <string name="setting_group_appearance">外観</string>
+    <string name="setting_group_behavior">動作</string>
+    <string name="setting_item_home_tab_next_title">ホーム上部のコンテンツ切り替えボタンを表示</string>
+    <string name="setting_item_home_tab_next_subtitle">ホーム右上に次のコンテンツへ切り替えるボタンを表示する</string>
+    <string name="setting_item_home_tab_refresh_title">ホーム上部の更新ボタンを表示</string>
+    <string name="setting_item_home_tab_refresh_subtitle">ホーム右上に内容を更新するボタンを表示する</string>
 </resources>

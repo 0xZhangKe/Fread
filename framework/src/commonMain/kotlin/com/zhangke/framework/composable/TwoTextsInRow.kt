@@ -25,14 +25,13 @@ fun TwoTextsInRow(
                 secondText()
             },
             measurePolicy = { measurables, constraints ->
-                val secondTextMeasurable = measurables[1]
-                val secondTextPlaceable = secondTextMeasurable.measure(
-                    constraints.copy(maxWidth = constraints.maxWidth - spacingPx.toInt())
-                )
-
                 val firstTextMeasurable = measurables[0]
                 val firstTextPlaceable = firstTextMeasurable.measure(
-                    constraints.copy(maxWidth = constraints.maxWidth - spacingPx.toInt() - secondTextPlaceable.width)
+                    constraints.copy(maxWidth = constraints.maxWidth - spacingPx.toInt())
+                )
+                val secondTextMeasurable = measurables[1]
+                val secondTextPlaceable = secondTextMeasurable.measure(
+                    constraints.copy(maxWidth = constraints.maxWidth - spacingPx.toInt() - firstTextPlaceable.width)
                 )
                 val firstBaseLine = firstTextPlaceable[FirstBaseline]
                 val secondBaseLine = secondTextPlaceable[FirstBaseline]

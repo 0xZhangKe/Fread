@@ -7,6 +7,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusUpdater
@@ -33,6 +34,7 @@ class MixedContentSubViewModel(
     private val contentRepo: FreadContentRepo,
     private val mixedRepo: MixedStatusRepo,
     statusUpdater: StatusUpdater,
+    private val freadConfigManager: FreadConfigManager,
     private val statusUiStateAdapter: StatusUiStateAdapter,
     private val statusProvider: StatusProvider,
     private val refactorToNewStatus: RefactorToNewStatusUseCase,
@@ -125,6 +127,18 @@ class MixedContentSubViewModel(
                     delay(50)
                     _uiState.update { it.copy(content = content) }
                     mixedRepo.refresh(content)
+                }
+        }
+        launchInViewModel {
+            freadConfigManager.homeTabRefreshButtonVisibleFlow
+                .collect { visible ->
+                    _uiState.update { it.copy(showRefreshButton = visible) }
+                }
+        }
+        launchInViewModel {
+            freadConfigManager.homeTabNextButtonVisibleFlow
+                .collect { visible ->
+                    _uiState.update { it.copy(showNextButton = visible) }
                 }
         }
     }

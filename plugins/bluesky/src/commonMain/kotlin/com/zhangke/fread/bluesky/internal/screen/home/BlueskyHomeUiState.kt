@@ -10,6 +10,8 @@ data class BlueskyHomeUiState(
     val content: BlueskyContent?,
     val account: BlueskyLoggedAccount?,
     val showAccountInTopBar: Boolean,
+    val showRefreshButton: Boolean,
+    val showNextButton: Boolean,
     val errorMessage: String? = null,
 ) {
 
@@ -29,6 +31,8 @@ data class BlueskyHomeUiState(
                 account = account,
                 showAccountInTopBar = false,
                 errorMessage = errorMessage,
+                showRefreshButton = false,
+                showNextButton = false,
             )
         }
     }

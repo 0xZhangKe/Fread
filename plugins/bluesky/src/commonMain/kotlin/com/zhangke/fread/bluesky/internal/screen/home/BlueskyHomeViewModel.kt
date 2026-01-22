@@ -6,6 +6,7 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
 import com.zhangke.fread.bluesky.internal.utils.createPlatformLocator
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.update
 class BlueskyHomeViewModel(
     private val contentId: String,
     private val contentRepo: FreadContentRepo,
+    private val freadConfigManager: FreadConfigManager,
     private val updateHomeTab: UpdateHomeTabUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
 ) : SubViewModel() {
@@ -53,6 +55,18 @@ class BlueskyHomeViewModel(
         launchInViewModel {
             delay(200)
             _uiState.update { it.copy(initializing = false) }
+        }
+        launchInViewModel {
+            freadConfigManager.homeTabRefreshButtonVisibleFlow
+                .collect { visible ->
+                    _uiState.update { it.copy(showRefreshButton = visible) }
+                }
+        }
+        launchInViewModel {
+            freadConfigManager.homeTabNextButtonVisibleFlow
+                .collect { visible ->
+                    _uiState.update { it.copy(showNextButton = visible) }
+                }
         }
     }
 

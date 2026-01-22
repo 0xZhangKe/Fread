@@ -2,6 +2,7 @@ package com.zhangke.fread.feeds.pages.home.feeds
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusUpdater
@@ -12,6 +13,7 @@ class MixedContentViewModel(
     private val contentRepo: FreadContentRepo,
     private val mixedRepo: MixedStatusRepo,
     private val statusUpdater: StatusUpdater,
+    private val freadConfigManager: FreadConfigManager,
     private val statusUiStateAdapter: StatusUiStateAdapter,
     private val statusProvider: StatusProvider,
     private val refactorToNewStatus: RefactorToNewStatusUseCase,
@@ -22,6 +24,7 @@ class MixedContentViewModel(
             contentRepo = contentRepo,
             mixedRepo = mixedRepo,
             statusUpdater = statusUpdater,
+            freadConfigManager = freadConfigManager,
             statusUiStateAdapter = statusUiStateAdapter,
             statusProvider = statusProvider,
             configId = params.configId,

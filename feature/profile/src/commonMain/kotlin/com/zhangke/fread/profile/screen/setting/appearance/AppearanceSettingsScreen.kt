@@ -101,6 +101,14 @@ private fun AppearanceSettingsContent(
                 enabled = uiState.amoledEnabled,
                 onAmoledChanged = onAmoledChanged,
             )
+            HomeTabNextButtonItem(
+                visible = uiState.homeTabNextButtonVisible,
+                onVisibleChanged = onHomeTabNextButtonVisibleChanged,
+            )
+            HomeTabRefreshButtonItem(
+                visible = uiState.homeTabRefreshButtonVisible,
+                onVisibleChanged = onHomeTabRefreshButtonVisibleChanged,
+            )
             DayNightItem(
                 uiState = uiState,
                 onDayNightModeClick = onDayNightModeClick,
@@ -112,14 +120,6 @@ private fun AppearanceSettingsContent(
             ThemeTypeItem(
                 themeType = uiState.themeType,
                 onThemeTypeChanged = onThemeTypeChanged,
-            )
-            HomeTabNextButtonItem(
-                visible = uiState.homeTabNextButtonVisible,
-                onVisibleChanged = onHomeTabNextButtonVisibleChanged,
-            )
-            HomeTabRefreshButtonItem(
-                visible = uiState.homeTabRefreshButtonVisible,
-                onVisibleChanged = onHomeTabRefreshButtonVisibleChanged,
             )
         }
     }

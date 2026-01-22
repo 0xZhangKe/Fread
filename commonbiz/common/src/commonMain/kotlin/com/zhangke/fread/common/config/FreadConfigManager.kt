@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
-class FreadConfigManager (
+class FreadConfigManager(
     private val localConfigManager: LocalConfigManager,
 ) {
     companion object {
@@ -35,6 +35,12 @@ class FreadConfigManager (
     private val _themeTypeeFlow = MutableStateFlow(ThemeType.DEFAULT)
     val themeTypeFlow get() = _themeTypeeFlow
 
+    private val _homeTabNextButtonVisibleFlow = MutableStateFlow(false)
+    val homeTabNextButtonVisibleFlow: StateFlow<Boolean> get() = _homeTabNextButtonVisibleFlow
+
+    private val _homeTabRefreshButtonVisibleFlow = MutableStateFlow(false)
+    val homeTabRefreshButtonVisibleFlow: StateFlow<Boolean> get() = _homeTabRefreshButtonVisibleFlow
+
     var autoPlayInlineVideo: Boolean = false
         private set
 
@@ -43,6 +49,10 @@ class FreadConfigManager (
         _themeTypeeFlow.value = getThemeType()
         autoPlayInlineVideo =
             localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
+        _homeTabNextButtonVisibleFlow.value =
+            localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE) ?: false
+        _homeTabRefreshButtonVisibleFlow.value =
+            localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE) ?: false
     }
 
     private suspend fun readLocalStatusConfig(): StatusConfig {
@@ -52,16 +62,10 @@ class FreadConfigManager (
             ?.toContentSize()
             ?: StatusContentSize.default()
         val immersiveNavBar = localConfigManager.getBoolean(LOCAL_KEY_IMMERSIVE_NAV_BAR) != false
-        val homeTabNextButtonVisible =
-            localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE) != false
-        val homeTabRefreshButtonVisible =
-            localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE) != false
         return StatusConfig(
             alwaysShowSensitiveContent = alwaysShowSensitiveContent,
             contentSize = contentSize,
             immersiveNavBar = immersiveNavBar,
-            homeTabNextButtonVisible = homeTabNextButtonVisible,
-            homeTabRefreshButtonVisible = homeTabRefreshButtonVisible,
         )
     }
 
@@ -101,18 +105,14 @@ class FreadConfigManager (
     }
 
     suspend fun updateHomeTabNextButtonVisible(visible: Boolean) {
-        _statusConfigFlow.value = _statusConfigFlow.value.copy(
-            homeTabNextButtonVisible = visible,
-        )
+        _homeTabNextButtonVisibleFlow.value = visible
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE, visible)
         }
     }
 
     suspend fun updateHomeTabRefreshButtonVisible(visible: Boolean) {
-        _statusConfigFlow.value = _statusConfigFlow.value.copy(
-            homeTabRefreshButtonVisible = visible,
-        )
+        _homeTabRefreshButtonVisibleFlow.value = visible
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE, visible)
         }

@@ -32,6 +32,7 @@ fun ContentToolbar(
     account: LoggedAccount?,
     showAccountInfo: Boolean,
     showNextIcon: Boolean,
+    showRefreshButton: Boolean,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     onMenuClick: () -> Unit,
@@ -79,14 +80,16 @@ fun ContentToolbar(
             }
         },
         actions = {
-            SimpleIconButton(
-                modifier = Modifier,
-                onClick = {
-                    onRefreshClick()
-                },
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "Next Content"
-            )
+            if (showRefreshButton) {
+                SimpleIconButton(
+                    modifier = Modifier,
+                    onClick = {
+                        onRefreshClick()
+                    },
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Next Content"
+                )
+            }
             if (showNextIcon) {
                 SimpleIconButton(
                     modifier = Modifier,

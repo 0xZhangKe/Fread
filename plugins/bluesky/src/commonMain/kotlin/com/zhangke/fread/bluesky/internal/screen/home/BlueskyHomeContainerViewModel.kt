@@ -4,10 +4,12 @@ import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.lifecycle.ContainerViewModel.SubViewModelParams
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.content.FreadContentRepo
 
 class BlueskyHomeContainerViewModel(
     private val contentRepo: FreadContentRepo,
+    private val freadConfigManager: FreadConfigManager,
     private val accountManager: BlueskyLoggedAccountManager,
     private val updateHomeTab: UpdateHomeTabUseCase,
 ) : ContainerViewModel<BlueskyHomeViewModel, BlueskyHomeContainerViewModel.Params>() {
@@ -17,6 +19,7 @@ class BlueskyHomeContainerViewModel(
             contentId = params.contentId,
             contentRepo = contentRepo,
             updateHomeTab = updateHomeTab,
+            freadConfigManager = freadConfigManager,
             accountManager = accountManager,
         )
     }

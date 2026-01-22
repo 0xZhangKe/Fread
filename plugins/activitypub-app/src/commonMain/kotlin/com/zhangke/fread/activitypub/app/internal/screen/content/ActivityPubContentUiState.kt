@@ -10,6 +10,8 @@ data class ActivityPubContentUiState(
     val account: ActivityPubLoggedAccount?,
     val showAccountInTopBar: Boolean,
     val errorMessage: String?,
+    val showRefreshButton: Boolean,
+    val showNextButton: Boolean,
 ) {
 
     companion object {
@@ -21,6 +23,8 @@ data class ActivityPubContentUiState(
                 account = null,
                 showAccountInTopBar = false,
                 errorMessage = null,
+                showRefreshButton = false,
+                showNextButton = false,
             )
         }
     }

@@ -144,7 +144,7 @@ fun FeedsContent(
                 LaunchedEffect(feedsConnection, lazyListState) {
                     feedsConnection.scrollToTopFlow.collect {
                         if (lazyListState.layoutInfo.totalItemsCount > 0) {
-                            lazyListState.animateScrollToItem(0)
+                            lazyListState.scrollToItem(0)
                         }
                     }
                 }

@@ -7,6 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.usecase.UpdateActivityPubUserListUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
 import com.zhangke.fread.activitypub.app.internal.utils.createPlatformLocator
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.content.FreadContentRepo
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,7 @@ class ActivityPubContentSubViewModel(
     private val contentRepo: FreadContentRepo,
     private val getUserCreatedList: GetUserCreatedListUseCase,
     private val accountManager: ActivityPubAccountManager,
+    private val freadConfigManager: FreadConfigManager,
     private val updateActivityPubUserList: UpdateActivityPubUserListUseCase,
     val contentId: String,
 ) : SubViewModel() {
@@ -50,6 +52,18 @@ class ActivityPubContentSubViewModel(
                             )
                         }
                     }
+                }
+        }
+        launchInViewModel {
+            freadConfigManager.homeTabRefreshButtonVisibleFlow
+                .collect { visible ->
+                    _uiState.update { it.copy(showRefreshButton = visible) }
+                }
+        }
+        launchInViewModel {
+            freadConfigManager.homeTabNextButtonVisibleFlow
+                .collect { visible ->
+                    _uiState.update { it.copy(showNextButton = visible) }
                 }
         }
     }

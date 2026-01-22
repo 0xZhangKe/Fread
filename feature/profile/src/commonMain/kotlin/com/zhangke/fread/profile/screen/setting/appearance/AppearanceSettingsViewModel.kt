@@ -23,10 +23,8 @@ class AppearanceSettingsViewModel(
             dayNightMode = dayNightHelper.dayNightModeFlow.value,
             contentSize = freadConfigManager.statusConfigFlow.value.contentSize,
             themeType = ThemeType.DEFAULT,
-            homeTabNextButtonVisible =
-                freadConfigManager.statusConfigFlow.value.homeTabNextButtonVisible,
-            homeTabRefreshButtonVisible =
-                freadConfigManager.statusConfigFlow.value.homeTabRefreshButtonVisible,
+            homeTabNextButtonVisible = freadConfigManager.homeTabNextButtonVisibleFlow.value,
+            homeTabRefreshButtonVisible = freadConfigManager.homeTabRefreshButtonVisibleFlow.value,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -54,10 +52,18 @@ class AppearanceSettingsViewModel(
                     it.copy(
                         contentSize = config.contentSize,
                         immersiveNavBar = config.immersiveNavBar,
-                        homeTabNextButtonVisible = config.homeTabNextButtonVisible,
-                        homeTabRefreshButtonVisible = config.homeTabRefreshButtonVisible,
                     )
                 }
+            }
+        }
+        viewModelScope.launch {
+            freadConfigManager.homeTabRefreshButtonVisibleFlow.collect { visible ->
+                _uiState.update { it.copy(homeTabRefreshButtonVisible = visible) }
+            }
+        }
+        viewModelScope.launch {
+            freadConfigManager.homeTabNextButtonVisibleFlow.collect { visible ->
+                _uiState.update { it.copy(homeTabNextButtonVisible = visible) }
             }
         }
     }

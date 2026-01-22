@@ -69,7 +69,8 @@ internal class MixedContentScreen(
             topBar = {
                 ContentToolbar(
                     title = uiState.content?.name.orEmpty(),
-                    showNextIcon = !isLatestTab,
+                    showNextIcon = !isLatestTab && uiState.showNextButton,
+                    showRefreshButton = uiState.showRefreshButton,
                     scrollBehavior = scrollBehavior,
                     account = null,
                     showAccountInfo = false,

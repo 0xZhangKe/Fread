@@ -159,7 +159,8 @@ class BlueskyHomeTab(
                             topBarContent = {
                                 ContentToolbar(
                                     title = uiState.content.name,
-                                    showNextIcon = !isLatestContent,
+                                    showNextIcon = !isLatestContent && uiState.showNextButton,
+                                    showRefreshButton = uiState.showRefreshButton,
                                     account = uiState.account,
                                     showAccountInfo = uiState.showAccountInTopBar,
                                     onMenuClick = {

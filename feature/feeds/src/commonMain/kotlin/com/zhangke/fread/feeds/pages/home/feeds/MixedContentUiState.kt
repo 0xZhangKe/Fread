@@ -11,6 +11,8 @@ data class MixedContentUiState(
     val refreshing: Boolean,
     val loadMoreState: LoadState,
     val pageError: Throwable?,
+    val showRefreshButton: Boolean,
+    val showNextButton: Boolean,
 ) {
 
     companion object {
@@ -22,7 +24,9 @@ data class MixedContentUiState(
                 initializing = true,
                 refreshing = false,
                 loadMoreState = LoadState.Idle,
-                pageError = null
+                pageError = null,
+                showRefreshButton = false,
+                showNextButton = false,
             )
         }
     }

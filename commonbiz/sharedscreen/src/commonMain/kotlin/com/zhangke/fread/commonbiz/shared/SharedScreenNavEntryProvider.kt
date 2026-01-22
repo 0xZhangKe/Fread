@@ -2,6 +2,7 @@ package com.zhangke.fread.commonbiz.shared
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreenNavKey
@@ -40,8 +41,9 @@ class SharedScreenNavEntryProvider : NavEntryProvider {
             PublishBlogScreen()
         }
         entry<MultiAccountPublishingScreenKey> {
+            val list = globalJson.decodeFromString<List<String>>(it.userUrisJson)
             MultiAccountPublishingScreen(
-                viewModel = koinViewModel { parametersOf(it.userUrisJson) }
+                viewModel = koinViewModel { parametersOf(list) }
             )
         }
         entry<StatusContextScreenNavKey> {

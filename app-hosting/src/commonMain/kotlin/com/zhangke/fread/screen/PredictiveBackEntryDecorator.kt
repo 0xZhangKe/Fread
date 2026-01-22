@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -63,42 +62,35 @@ fun rememberPredictiveBackState(
 private fun <T : Any> PredictiveBackDecoratedEntry(entry: NavEntry<T>) {
     val predictiveBackState = LocalPredictiveBackState.current
     val transition = LocalNavAnimatedContentScope.current.transition
-    val progress = if (predictiveBackState.inProgress) {
-        predictiveBackState.progress.coerceIn(0f, 1f)
-    } else {
-        0f
-    }
-    var lastPredictiveProgress by remember { mutableFloatStateOf(0f) }
     var wasPredictiveBack by remember { mutableStateOf(false) }
-    var holdScrim by remember { mutableStateOf(false) }
+    var scrimActive by remember { mutableStateOf(false) }
     val isExiting = transition.targetState == EnterExitState.PostExit
     val isEntering =
         transition.targetState == EnterExitState.Visible && transition.currentState == EnterExitState.PreEnter
     if (predictiveBackState.inProgress) {
-        lastPredictiveProgress = progress
         wasPredictiveBack = true
-    } else if (!isExiting) {
-        lastPredictiveProgress = 0f
+    } else if (!transition.isRunning) {
         wasPredictiveBack = false
     }
     if (predictiveBackState.inProgress && isEntering) {
-        holdScrim = true
-    } else if (!isEntering) {
-        holdScrim = false
+        scrimActive = true
+    } else if (!predictiveBackState.inProgress) {
+        scrimActive = false
     }
     val deviceCornerRadius = rememberDeviceCornerRadius()
-    val clipProgress =
-        when {
-            predictiveBackState.inProgress -> progress
-            isExiting && wasPredictiveBack -> lastPredictiveProgress
-            else -> 0f
+    val clipRadius =
+        if ((predictiveBackState.inProgress && isExiting) || (isExiting && wasPredictiveBack)) {
+            deviceCornerRadius
+        } else {
+            0.dp
         }
-    val clipRadius = deviceCornerRadius * clipProgress
-    val scrimColor = if (holdScrim) {
-        MaterialTheme.colorScheme.dialogScrim
-    } else {
-        Color.Transparent
-    }
+    val scrimVisible = scrimActive
+    val scrimColor =
+        if (scrimVisible) {
+            MaterialTheme.colorScheme.dialogScrim
+        } else {
+            Color.Transparent
+        }
     val modifier = Modifier.then(
         if (clipRadius > 0.dp) {
             Modifier.clip(RoundedCornerShape(clipRadius))

@@ -111,44 +111,42 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
                 inFeedsTab = pagerState.currentPage == 0
             }
             RegisterNotificationAction(tabs, pagerState)
-            HorizontalPager(
-                state = pagerState,
-            ) { page ->
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                HorizontalPager(
+                    state = pagerState,
+                ) { page ->
+                    Box(modifier = Modifier.fillMaxSize()) {
                         tabs[page].Content()
                     }
-                    val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
-                    AnimatedVisibility(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth(),
-                        visible = !inFeedsTab || !inImmersiveMode || !statusUiConfig.immersiveNavBar,
-                        enter = slideInVertically(
-                            initialOffsetY = { it },
-                        ),
-                        exit = slideOutVertically(
-                            targetOffsetY = { it },
-                        ),
+                }
+                val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
+                AnimatedVisibility(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
+                    visible = !inFeedsTab || !inImmersiveMode || !statusUiConfig.immersiveNavBar,
+                    enter = slideInVertically(
+                        initialOffsetY = { it },
+                    ),
+                    exit = slideOutVertically(
+                        targetOffsetY = { it },
+                    ),
+                ) {
+                    NavigationBar(
+                        modifier = Modifier,
                     ) {
-                        NavigationBar(
-                            modifier = Modifier,
-                        ) {
-                            tabs.forEachIndexed { index, tab ->
-                                TabNavigationItem(
-                                    tab = tab,
-                                    index = index,
-                                    pagerState = pagerState,
-                                    detectDoubleTap = inFeedsTab,
-                                    onDoubleTap = {
-                                        coroutineScope.launch {
-                                            nestedTabConnection.scrollToTop()
-                                        }
-                                    },
-                                )
-                            }
+                        tabs.forEachIndexed { index, tab ->
+                            TabNavigationItem(
+                                tab = tab,
+                                index = index,
+                                pagerState = pagerState,
+                                detectDoubleTap = inFeedsTab,
+                                onDoubleTap = {
+                                    coroutineScope.launch {
+                                        nestedTabConnection.scrollToTop()
+                                    }
+                                },
+                            )
                         }
                     }
                 }

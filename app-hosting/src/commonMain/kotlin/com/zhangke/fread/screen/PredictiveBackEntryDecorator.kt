@@ -23,6 +23,7 @@ import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventTransitionState
 import androidx.navigationevent.compose.NavigationEventState
 import com.zhangke.framework.architect.theme.dialogScrim
+import com.zhangke.framework.nav.FREAD_DIALOG_METADATA_KEY
 
 @Immutable
 data class PredictiveBackState(
@@ -60,6 +61,11 @@ fun rememberPredictiveBackState(
 
 @Composable
 private fun <T : Any> PredictiveBackDecoratedEntry(entry: NavEntry<T>) {
+    val isDialogEntry = entry.metadata[FREAD_DIALOG_METADATA_KEY] as? Boolean
+    if (isDialogEntry == true) {
+        entry.Content()
+        return
+    }
     val predictiveBackState = LocalPredictiveBackState.current
     val transition = LocalNavAnimatedContentScope.current.transition
     var wasPredictiveBack by remember { mutableStateOf(false) }

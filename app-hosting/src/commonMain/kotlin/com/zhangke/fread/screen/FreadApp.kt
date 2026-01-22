@@ -178,11 +178,11 @@ fun FreadApp() {
                         popTransitionSpec = freadPopTransitionSpec(),
                         predictivePopTransitionSpec = freadPredictivePopTransitionSpec(),
                     )
-                }
-                LaunchedEffect(Unit) {
-                    GlobalScreenNavigation.openScreenFlow
-                        .debounce(300)
-                        .collect { key -> backStack.add(key) }
+                    LaunchedEffect(Unit) {
+                        GlobalScreenNavigation.openScreenFlow
+                            .debounce(300)
+                            .collect { key -> backStack.add(key) }
+                    }
                 }
                 val browserLauncher = LocalActivityBrowserLauncher.current
                 RegisterNotificationAction(browserLauncher)

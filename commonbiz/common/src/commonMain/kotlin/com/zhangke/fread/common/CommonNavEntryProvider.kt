@@ -2,7 +2,7 @@ package com.zhangke.fread.common
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.scene.DialogSceneStrategy
+import com.zhangke.framework.nav.dialogMetadata
 import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.common.browser.UrlRedirectScreen
 import com.zhangke.fread.common.browser.UrlRedirectScreenKey
@@ -17,12 +17,12 @@ class CommonNavEntryProvider : NavEntryProvider {
 
     override fun EntryProviderScope<NavKey>.build() {
         entry<SelectAccountForPublishScreenKey>(
-            metadata = DialogSceneStrategy.dialog(),
+            metadata = dialogMetadata(),
         ) {
             SelectAccountForPublishScreen(koinViewModel { parametersOf(it.text) })
         }
         entry<UrlRedirectScreenKey>(
-            metadata = DialogSceneStrategy.dialog(),
+            metadata = dialogMetadata(),
         ) {
             UrlRedirectScreen(
                 uri = it.uri,

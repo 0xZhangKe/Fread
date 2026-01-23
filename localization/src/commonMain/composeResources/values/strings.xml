@@ -243,4 +243,6 @@
     <string name="setting_item_home_tab_next_subtitle">Show the button in the top-right of Home to switch to the next content</string>
     <string name="setting_item_home_tab_refresh_title">Show top refresh button on Home</string>
     <string name="setting_item_home_tab_refresh_subtitle">Show the button in the top-right of Home to refresh content</string>
+    <string name="setting_item_open_url_by_system_title">Open links with system browser</string>
+    <string name="setting_item_open_url_by_system_subtitle">When enabled, Fread will open links with the system browser.</string>
 </resources>

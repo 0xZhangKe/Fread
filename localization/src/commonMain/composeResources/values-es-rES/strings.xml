@@ -243,4 +243,6 @@
     <string name="setting_item_home_tab_next_subtitle">Mostrar en la esquina superior derecha de Inicio el botón para cambiar al siguiente contenido</string>
     <string name="setting_item_home_tab_refresh_title">Mostrar el botón de actualizar en la parte superior de Inicio</string>
     <string name="setting_item_home_tab_refresh_subtitle">Mostrar en la esquina superior derecha de Inicio el botón para actualizar el contenido</string>
+    <string name="setting_item_open_url_by_system_title">Abrir enlaces con el navegador del sistema</string>
+    <string name="setting_item_open_url_by_system_subtitle">Al activarlo, Fread abrirá los enlaces con el navegador del sistema.</string>
 </resources>

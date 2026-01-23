@@ -6,4 +6,5 @@ data class BehaviorSettingsUiState(
     val autoPlayInlineVideo: Boolean,
     val alwaysShowSensitiveContent: Boolean,
     val timelineDefaultPosition: TimelineDefaultPosition,
+    val openUrlInAppBrowser: Boolean,
 )

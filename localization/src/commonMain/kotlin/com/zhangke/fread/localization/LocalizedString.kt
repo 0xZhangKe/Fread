@@ -642,4 +642,8 @@ object LocalizedString {
     val setting_item_home_tab_refresh_title = localizedString.setting_item_home_tab_refresh_title
     val setting_item_home_tab_refresh_subtitle =
         localizedString.setting_item_home_tab_refresh_subtitle
+    val setting_item_open_url_by_system_title =
+        localizedString.setting_item_open_url_by_system_title
+    val setting_item_open_url_by_system_subtitle =
+        localizedString.setting_item_open_url_by_system_subtitle
 }

@@ -243,4 +243,6 @@
     <string name="setting_item_home_tab_next_subtitle">首页的右上角是否显示用于切换到下一个内容的按钮</string>
     <string name="setting_item_home_tab_refresh_title">首页顶部的刷新按钮显示</string>
     <string name="setting_item_home_tab_refresh_subtitle">首页的右上角是否显示用于刷新内容的按钮</string>
+    <string name="setting_item_open_url_by_system_title">通过系统浏览器打开链接</string>
+    <string name="setting_item_open_url_by_system_subtitle">启用后，Fread 将通过系统浏览器打开链接。</string>
 </resources>

@@ -27,6 +27,7 @@ class FreadConfigManager(
         private const val LOCAL_KEY_LAST_SELECTED_ACCOUNT = "last_selected_account"
         private const val LOCAL_KEY_TIMELINE_DEFAULT_POSITION = "timeline_default_position"
         private const val LOCAL_KEY_THEME_TYPE = "theme_type"
+        private const val LOCAL_KEY_OPEN_URL_IN_APP_BROWSER = "open_url_in_app_browser"
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
@@ -43,12 +44,16 @@ class FreadConfigManager(
 
     var autoPlayInlineVideo: Boolean = false
         private set
+    var openUrlInAppBrowser: Boolean = true
+        private set
 
     suspend fun initConfig() {
         _statusConfigFlow.value = readLocalStatusConfig()
         _themeTypeeFlow.value = getThemeType()
         autoPlayInlineVideo =
             localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
+        openUrlInAppBrowser =
+            localConfigManager.getBoolean(LOCAL_KEY_OPEN_URL_IN_APP_BROWSER) != false
         _homeTabNextButtonVisibleFlow.value =
             localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE) ?: false
         _homeTabRefreshButtonVisibleFlow.value =
@@ -77,6 +82,13 @@ class FreadConfigManager(
         autoPlayInlineVideo = value
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO, value)
+        }
+    }
+
+    suspend fun updateOpenUrlInAppBrowser(value: Boolean) {
+        openUrlInAppBrowser = value
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_OPEN_URL_IN_APP_BROWSER, value)
         }
     }
 

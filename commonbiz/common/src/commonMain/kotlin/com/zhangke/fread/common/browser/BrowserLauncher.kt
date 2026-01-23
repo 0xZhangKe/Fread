@@ -4,12 +4,16 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class BrowserLauncher (private val systemBrowserLauncher: SystemBrowserLauncher) {
+class BrowserLauncher(
+    private val systemBrowserLauncher: SystemBrowserLauncher,
+    private val freadConfigManager: FreadConfigManager,
+) {
 
     fun launchBySystemBrowser(url: String) {
         launchBySystemBrowser(url.toPlatformUri())
@@ -48,7 +52,11 @@ class BrowserLauncher (private val systemBrowserLauncher: SystemBrowserLauncher)
                 ),
             )
         } else {
-            systemBrowserLauncher.launchWebTabInApp(uri)
+            if (freadConfigManager.openUrlInAppBrowser) {
+                systemBrowserLauncher.launchBySystemBrowser(uri)
+            } else {
+                systemBrowserLauncher.launchWebTabInApp(uri)
+            }
         }
     }
 

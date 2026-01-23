@@ -243,4 +243,6 @@
     <string name="setting_item_home_tab_next_subtitle">Показывать в правом верхнем углу главной кнопку для перехода к следующему контенту</string>
     <string name="setting_item_home_tab_refresh_title">Показывать кнопку обновления вверху главной</string>
     <string name="setting_item_home_tab_refresh_subtitle">Показывать в правом верхнем углу главной кнопку для обновления контента</string>
+    <string name="setting_item_open_url_by_system_title">Открывать ссылки в системном браузере</string>
+    <string name="setting_item_open_url_by_system_subtitle">При включении Fread будет открывать ссылки в системном браузере.</string>
 </resources>

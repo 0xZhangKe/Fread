@@ -18,6 +18,7 @@ class BehaviorSettingsViewModel(
             autoPlayInlineVideo = freadConfigManager.autoPlayInlineVideo,
             alwaysShowSensitiveContent = false,
             timelineDefaultPosition = TimelineDefaultPosition.NEWEST,
+            openUrlInAppBrowser = freadConfigManager.openUrlInAppBrowser,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -55,6 +56,13 @@ class BehaviorSettingsViewModel(
         viewModelScope.launch {
             freadConfigManager.updateTimelineDefaultPosition(position)
             _uiState.update { it.copy(timelineDefaultPosition = position) }
+        }
+    }
+
+    fun onOpenUrlInAppBrowserChanged(openInApp: Boolean) {
+        viewModelScope.launch {
+            freadConfigManager.updateOpenUrlInAppBrowser(openInApp)
+            _uiState.update { it.copy(openUrlInAppBrowser = openInApp) }
         }
     }
 }

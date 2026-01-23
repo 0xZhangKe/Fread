@@ -243,4 +243,6 @@
     <string name="setting_item_home_tab_next_subtitle">首頁右上角是否顯示用於切換到下一個內容的按鈕</string>
     <string name="setting_item_home_tab_refresh_title">首頁頂部的重新整理按鈕顯示</string>
     <string name="setting_item_home_tab_refresh_subtitle">首頁右上角是否顯示用於重新整理內容的按鈕</string>
+    <string name="setting_item_open_url_by_system_title">透過系統瀏覽器開啟連結</string>
+    <string name="setting_item_open_url_by_system_subtitle">啟用後，Fread 會透過系統瀏覽器開啟連結。</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.ViewTimeline
 import androidx.compose.material3.Scaffold
@@ -38,6 +39,7 @@ fun BehaviorSettingsScreen(viewModel: BehaviorSettingsViewModel) {
         onSwitchAutoPlayClick = viewModel::onChangeAutoPlayInlineVideo,
         onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
         onTimelineDefaultPositionChanged = viewModel::onTimelineDefaultPositionChanged,
+        onOpenUrlInAppBrowserChanged = viewModel::onOpenUrlInAppBrowserChanged,
     )
 }
 
@@ -48,6 +50,7 @@ private fun BehaviorSettingsContent(
     onSwitchAutoPlayClick: (on: Boolean) -> Unit,
     onAlwaysShowSensitive: (Boolean) -> Unit,
     onTimelineDefaultPositionChanged: (TimelineDefaultPosition) -> Unit,
+    onOpenUrlInAppBrowserChanged: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -69,6 +72,10 @@ private fun BehaviorSettingsContent(
             AlwaysShowSensitiveContentItem(
                 alwaysShowing = uiState.alwaysShowSensitiveContent,
                 onAlwaysChanged = onAlwaysShowSensitive,
+            )
+            OpenUrlBySystemBrowserItem(
+                openUrlBySystem = !uiState.openUrlInAppBrowser,
+                onOpenUrlBySystemChanged = { onOpenUrlInAppBrowserChanged(!it) },
             )
             TimelinePositionItem(
                 position = uiState.timelineDefaultPosition,
@@ -122,5 +129,19 @@ private fun TimelinePositionItem(
         onItemClick = {
             onPositionChanged(TimelineDefaultPosition.entries[it])
         },
+    )
+}
+
+@Composable
+private fun OpenUrlBySystemBrowserItem(
+    openUrlBySystem: Boolean,
+    onOpenUrlBySystemChanged: (on: Boolean) -> Unit,
+) {
+    SettingItemWithSwitch(
+        icon = Icons.Default.OpenInBrowser,
+        title = stringResource(LocalizedString.setting_item_open_url_by_system_title),
+        subtitle = stringResource(LocalizedString.setting_item_open_url_by_system_subtitle),
+        checked = openUrlBySystem,
+        onCheckedChangeRequest = onOpenUrlBySystemChanged,
     )
 }

@@ -89,14 +89,14 @@ fun TopBarWithTabLayout(
                 }
             },
         )
-        val statusBarHeight = windowInsets.getTop(density).pxToDp(density)
-        if (statusBarHeight > 0.dp) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(statusBarHeight)
-                    .background(colors.containerColor)
-            )
-        }
+//        val statusBarHeight = windowInsets.getTop(density).pxToDp(density)
+//        if (statusBarHeight > 0.dp) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(statusBarHeight)
+//                    .background(colors.containerColor)
+//            )
+//        }
     }
 }

@@ -88,8 +88,6 @@ object HtmlParser {
                     "p" -> {
                         if (node.hasClass(QUOTE_INLINE_CLASS)) {
                             inQuoteInline = true
-                        } else if (spanBuilder.length > 0) {
-                            spanBuilder.appendLine()
                         }
                     }
 
@@ -173,6 +171,8 @@ object HtmlParser {
                     "p" -> {
                         if (node.hasClass(QUOTE_INLINE_CLASS)) {
                             inQuoteInline = false
+                        } else if (node.hasNextNonBlankSibling()) {
+                            spanBuilder.appendParagraphBreak()
                         }
                     }
 
@@ -236,8 +236,12 @@ object HtmlParser {
         }
 
         override fun tail(node: Node, depth: Int) {
-            if (node is Element && node.tagName() == "p" && node.hasClass(QUOTE_INLINE_CLASS)) {
-                inQuoteInline = false
+            if (node is Element && node.tagName() == "p") {
+                if (node.hasClass(QUOTE_INLINE_CLASS)) {
+                    inQuoteInline = false
+                } else if (node.hasNextNonBlankSibling()) {
+                    builder.appendParagraphBreak()
+                }
             }
         }
 
@@ -253,6 +257,30 @@ object HtmlParser {
 }
 
 private val EMOJI_CODE_PATTERN = (":(\\w+):").toRegex()
+
+private fun AnnotatedString.Builder.appendParagraphBreak() {
+    appendLine()
+    appendLine()
+}
+
+private fun StringBuilder.appendParagraphBreak() {
+    appendLine()
+    appendLine()
+}
+
+private fun Node.hasNextNonBlankSibling(): Boolean {
+    var sibling = nextSibling()
+    while (sibling != null) {
+        when (sibling) {
+            is TextNode -> {
+                if (sibling.text().isNotBlank()) return true
+            }
+            is Element -> return true
+        }
+        sibling = sibling.nextSibling()
+    }
+    return false
+}
 
 internal fun AnnotatedString.Builder.appendWithEmoji(
     text: String,

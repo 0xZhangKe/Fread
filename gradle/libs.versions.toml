@@ -216,6 +216,7 @@ koin-compose-nav3 = { module = "io.insert-koin:koin-compose-navigation3", versio
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
+haze-materials = { group = "dev.chrisbanes.haze", name = "haze-materials", version.ref = "haze" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

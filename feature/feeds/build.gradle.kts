@@ -28,6 +28,8 @@ kotlin {
 
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
+                implementation(libs.haze)
+
                 implementation(libs.krouter.runtime)
                 implementation(libs.androidx.room)
                 implementation(libs.androidx.constraintlayout.compose.kmp)

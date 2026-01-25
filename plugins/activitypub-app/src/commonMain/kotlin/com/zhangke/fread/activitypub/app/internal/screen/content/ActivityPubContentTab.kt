@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.blur.LocalHazeState
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.TopBarWithTabLayout
@@ -52,6 +53,7 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -138,8 +140,10 @@ internal class ActivityPubContentTab(
                     .fillMaxSize()
                     .padding(paddings)
             ) {
+                val hazeState = rememberHazeState(blurEnabled = true)
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackBarHostState,
+                    LocalHazeState provides hazeState,
                 ) {
                     if (uiState.locator != null && uiState.config != null) {
                         val tabList = remember(uiState) {
@@ -155,6 +159,7 @@ internal class ActivityPubContentTab(
                                     showNextIcon = !isLatestContent && uiState.showNextButton,
                                     showRefreshButton = uiState.showRefreshButton,
                                     account = uiState.account,
+                                    hazeState = hazeState,
                                     showAccountInfo = uiState.showAccountInTopBar,
                                     onMenuClick = {
                                         coroutineScope.launch {

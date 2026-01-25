@@ -39,6 +39,9 @@ kotlin {
                 implementation(libs.ktor.client.serialization.kotlinx.json)
                 implementation(libs.ktor.client.content.negotiation)
 
+                implementation(libs.haze)
+                implementation(libs.haze.materials)
+
                 implementation(libs.imageLoader)
                 implementation(libs.okio)
                 implementation(libs.ksoup)

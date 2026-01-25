@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -23,8 +24,14 @@ import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.account.LoggedAccount
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class)
 @Composable
 fun ContentToolbar(
     modifier: Modifier = Modifier,
@@ -33,6 +40,7 @@ fun ContentToolbar(
     showAccountInfo: Boolean,
     showNextIcon: Boolean,
     showRefreshButton: Boolean,
+    hazeState: HazeState? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     onMenuClick: () -> Unit,
@@ -41,14 +49,24 @@ fun ContentToolbar(
     onTitleClick: () -> Unit,
     onDoubleClick: (() -> Unit)? = null,
 ) {
+    val surfaceColor = MaterialTheme.colorScheme.surface
     TopAppBar(
-        modifier = modifier.pointerInput(onDoubleClick) {
+        modifier = modifier.then(
+            if (hazeState == null) {
+                Modifier
+            } else {
+                Modifier.hazeEffect(hazeState, HazeMaterials.ultraThin(surfaceColor))
+            }
+        ).pointerInput(onDoubleClick) {
             detectTapGestures(
                 onDoubleTap = {
                     onDoubleClick?.invoke()
                 },
             )
         },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent,
+        ),
         windowInsets = windowInsets,
         navigationIcon = {
             SimpleIconButton(

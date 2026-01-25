@@ -58,7 +58,7 @@ fun FreadTabRow(
     FreadTabRow(
         modifier = modifier,
         selectedTabIndex = selectedTabIndex,
-        containerColor = containerColor,
+        containerColor = Color.Transparent,
         indicator = { tabPositions ->
             val position = tabPositions.getOrNull(selectedTabIndex)
             if (position != null) {

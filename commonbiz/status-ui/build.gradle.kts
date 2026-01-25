@@ -34,6 +34,7 @@ kotlin {
                 implementation(libs.androidx.constraintlayout.compose.kmp)
 
                 implementation(libs.haze)
+                implementation(libs.haze.materials)
 
                 implementation(project(":thirds:halilibo-richtext-ui"))
                 implementation(project(":thirds:halilibo-richtext-material3"))

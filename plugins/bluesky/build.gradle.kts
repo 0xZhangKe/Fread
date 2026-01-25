@@ -45,6 +45,8 @@ kotlin {
                 implementation(libs.androidx.paging.common)
                 implementation(libs.leftright)
 
+                implementation(libs.haze)
+
                 implementation(libs.krouter.runtime)
                 api(libs.bluesky)
             }

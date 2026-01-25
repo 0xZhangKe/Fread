@@ -35,6 +35,8 @@ kotlin {
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
 
+                implementation(libs.haze)
+
                 implementation(libs.jetbrains.lifecycle.viewmodel)
                 implementation(libs.androidx.constraintlayout.compose.kmp)
                 implementation(libs.imageLoader)

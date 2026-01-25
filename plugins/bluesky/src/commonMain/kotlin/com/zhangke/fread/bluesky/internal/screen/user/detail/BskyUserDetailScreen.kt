@@ -8,7 +8,6 @@ import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -30,6 +29,7 @@ import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.PopupMenu
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -331,7 +331,7 @@ private fun TopBarActions(
     var showMuteDialog by remember {
         mutableStateOf(false)
     }
-    DropdownMenu(
+    PopupMenu(
         expanded = showMorePopup,
         onDismissRequest = { showMorePopup = false },
     ) {

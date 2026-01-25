@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -32,14 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import com.zhangke.framework.composable.BackHandler
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DatePickerDialog
 import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.PopupMenu
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
@@ -49,14 +49,14 @@ import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.utils.getScreenWidth
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
-import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
-import kotlinx.datetime.Instant
 
 @Serializable
 data class EditFilterScreenKey(
@@ -231,7 +231,7 @@ private fun DurationItem(
             title = stringResource(LocalizedString.activity_pub_filter_edit_duration),
             subtitle = uiState.getExpiresDateDesc(),
         )
-        DropdownMenu(
+        PopupMenu(
             offset = DpOffset(screenWidth, 0.dp),
             expanded = showDurationPopup,
             onDismissRequest = { showDurationPopup = false },

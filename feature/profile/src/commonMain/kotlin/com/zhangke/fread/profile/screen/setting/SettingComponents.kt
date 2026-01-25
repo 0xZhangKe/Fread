@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.PopupMenu
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -87,7 +87,7 @@ internal fun SettingItemWithPopup(
                 showPopup = true
             },
         )
-        DropdownMenu(
+        PopupMenu(
             expanded = showPopup,
             offset = DpOffset(x = 36.dp, y = 0.dp),
             onDismissRequest = { showPopup = false },

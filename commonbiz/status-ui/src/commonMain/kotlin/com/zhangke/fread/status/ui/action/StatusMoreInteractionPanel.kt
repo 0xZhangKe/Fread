@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -17,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.PopupMenu
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.localization.LocalizedString
@@ -57,7 +57,7 @@ fun StatusMoreInteractionIcon(
             )
         }
 
-        DropdownMenu(
+        PopupMenu(
             expanded = showMorePopup,
             onDismissRequest = { showMorePopup = false },
         ) {

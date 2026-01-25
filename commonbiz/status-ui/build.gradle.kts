@@ -33,6 +33,8 @@ kotlin {
                 implementation(libs.krouter.runtime)
                 implementation(libs.androidx.constraintlayout.compose.kmp)
 
+                implementation(libs.haze)
+
                 implementation(project(":thirds:halilibo-richtext-ui"))
                 implementation(project(":thirds:halilibo-richtext-material3"))
             }

@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.PopupMenu
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.noRippleClick
@@ -233,7 +233,7 @@ private fun ListDetailSetting(
                     Text(text = stringResource(LocalizedString.activity_pub_add_list_replies))
                 },
             )
-            DropdownMenu(
+            PopupMenu(
                 modifier = Modifier.align(Alignment.BottomStart),
                 expanded = showPolicySelector,
                 offset = DpOffset(16.dp, 0.dp),

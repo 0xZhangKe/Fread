@@ -69,6 +69,8 @@ goolgePlayReviewKtx = "2.0.1"
 bluesky = "0.3.3"
 activity-pub-client = "1.0.0"
 
+haze = "1.7.1"
+
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
 androidx-activity = ["androidx.activity", "androidx.activity.ktx", "androidx.activity.compose"]
@@ -111,15 +113,15 @@ jetbrains-lifecycle-runtime = { group = "org.jetbrains.androidx.lifecycle", name
 jetbrains-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
 
-androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidx.media3"}
-androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidx.media3"}
-androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidx.media3"}
-androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidx.media3"}
-androidx-media3-database = { group = "androidx.media3", name = "media3-database", version.ref = "androidx.media3"}
-androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", version.ref = "androidx.media3"}
-androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "androidx.media3"}
-androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3"}
-androidx-media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "androidx.media3"}
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidx.media3" }
+androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidx.media3" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidx.media3" }
+androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidx.media3" }
+androidx-media3-database = { group = "androidx.media3", name = "media3-database", version.ref = "androidx.media3" }
+androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", version.ref = "androidx.media3" }
+androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "androidx.media3" }
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3" }
+androidx-media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "androidx.media3" }
 
 lifecycle-viewmodel-nav3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 androidx-nav3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
@@ -128,9 +130,9 @@ jetbrains-nav3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-u
 
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
-firebase-kmp-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "firebaseKmp"}
-firebase-kmp-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebaseKmp"}
-firebase-kmp-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebaseKmp"}
+firebase-kmp-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "firebaseKmp" }
+firebase-kmp-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebaseKmp" }
+firebase-kmp-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebaseKmp" }
 
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin.coroutine" }
@@ -157,7 +159,7 @@ ktorfit-converters-response = { module = "de.jensklingenberg.ktorfit:ktorfit-con
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto.service" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }
 
-arrow-core= {group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow"}
+arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
 
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
@@ -173,10 +175,10 @@ compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin",
 composeCompiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-jb-backhandler = { group = "org.jetbrains.compose.ui", name = "ui-backhandler", version.ref = "compose-multiplatform" }
 
-krouter-reducing-compiler = { group = "io.github.0xzhangke", name = "krouter-reducing-compiler", version.ref = "krouter"}
-krouter-collecting-compiler = { group = "io.github.0xzhangke", name = "krouter-collecting-compiler", version.ref = "krouter"}
-krouter-runtime = { group = "io.github.0xzhangke", name = "krouter-runtime", version.ref = "krouter"}
-krouter-annotation = { group = "io.github.0xzhangke", name = "krouter-annotation", version.ref = "krouter"}
+krouter-reducing-compiler = { group = "io.github.0xzhangke", name = "krouter-reducing-compiler", version.ref = "krouter" }
+krouter-collecting-compiler = { group = "io.github.0xzhangke", name = "krouter-collecting-compiler", version.ref = "krouter" }
+krouter-runtime = { group = "io.github.0xzhangke", name = "krouter-runtime", version.ref = "krouter" }
+krouter-annotation = { group = "io.github.0xzhangke", name = "krouter-annotation", version.ref = "krouter" }
 
 multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }
 multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformsettings" }
@@ -213,6 +215,8 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", ver
 koin-compose-nav3 = { module = "io.insert-koin:koin-compose-navigation3", version = "4.2.0-alpha3" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
+haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
+
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -223,7 +227,7 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 jetbrains-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-google-service = { id = "com.google.gms.google-services",  version.ref = "google.service.version"}
-firebase-crashlytics = { id = "com.google.firebase.crashlytics",  version = "3.0.2"}
+google-service = { id = "com.google.gms.google-services", version.ref = "google.service.version" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2" }
 ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit" }
 room = { id = "androidx.room", version.ref = "androidx-room" }

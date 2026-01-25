@@ -2,11 +2,8 @@ package com.zhangke.fread.commonbiz.shared.screen.publish.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Public
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,7 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.PopupProperties
+import com.zhangke.framework.composable.PopupMenu
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.describeStringId
@@ -37,10 +34,9 @@ fun PostStatusVisibilityUi(
             label = stringResource(visibility.describeStringId),
             icon = Icons.Default.Public,
         )
-        DropdownMenu(
+        PopupMenu(
             expanded = showSelector,
             onDismissRequest = { showSelector = false },
-            properties = PopupProperties(),
         ) {
             StatusVisibility.entries.forEach {
                 DropdownMenuItem(

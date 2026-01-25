@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.FreadTabRow
+import com.zhangke.framework.composable.PopupMenu
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
@@ -258,7 +258,7 @@ private fun InstanceDetailActions(baseUrl: FormalBaseUrl) {
         imageVector = Icons.Default.MoreVert,
         contentDescription = "More Options"
     )
-    DropdownMenu(
+    PopupMenu(
         expanded = showMorePopup,
         onDismissRequest = { showMorePopup = false },
     ) {

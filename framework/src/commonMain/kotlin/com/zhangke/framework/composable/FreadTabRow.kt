@@ -33,8 +33,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.blur.LocalHazeState
 import com.zhangke.framework.utils.pxToDp
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
 
+@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun FreadTabRow(
     selectedTabIndex: Int,
@@ -55,8 +60,18 @@ fun FreadTabRow(
     val tabContentWidth = remember {
         mutableStateMapOf<Int, Dp>()
     }
+    val hazeState = LocalHazeState.current
     FreadTabRow(
-        modifier = modifier,
+        modifier = modifier.then(
+            if (hazeState == null) {
+                Modifier
+            } else {
+                Modifier.hazeEffect(
+                    state = hazeState,
+                    style = HazeMaterials.ultraThick(MaterialTheme.colorScheme.surface),
+                )
+            }
+        ),
         selectedTabIndex = selectedTabIndex,
         containerColor = Color.Transparent,
         indicator = { tabPositions ->

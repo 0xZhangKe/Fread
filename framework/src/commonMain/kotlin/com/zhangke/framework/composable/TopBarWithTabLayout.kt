@@ -72,23 +72,22 @@ fun TopBarWithTabLayout(
                 }
             },
             measurePolicy = { measurables, constraints ->
+                val scrollableContentPlaceable = measurables[2].measure(constraints)
                 val topBarPlaceable = measurables.first().measure(constraints)
                 val tabBarPlaceable = measurables.second().measure(constraints)
-                val scrollableContentPlaceable = measurables[2].measure(constraints)
                 layout(constraints.maxWidth, constraints.maxHeight) {
+                    scrollableContentPlaceable.placeRelative(0, 0)
                     val totalHeaderHeight = topBarHeightInPx + tabHeightInPx
                     val processedOffset = totalHeaderHeight * process
                     val tabBarYOffset = topBarHeightInPx - processedOffset.coerceAtLeast(0F)
                     tabBarPlaceable.placeRelative(0, tabBarYOffset.toInt())
                     val topBarYOffset = -((processedOffset - tabHeightInPx).coerceAtLeast(0F))
                     topBarPlaceable.placeRelative(0, topBarYOffset.toInt())
-                    scrollableContentPlaceable.placeRelative(0, 0)
                 }
             },
         )
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

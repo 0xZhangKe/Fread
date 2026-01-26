@@ -25,8 +25,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.account.LoggedAccount
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
@@ -55,7 +53,7 @@ fun ContentToolbar(
             if (hazeState == null) {
                 Modifier
             } else {
-                Modifier.hazeEffect(hazeState, HazeMaterials.ultraThin(surfaceColor))
+                Modifier.hazeEffect(hazeState, HazeMaterials.ultraThick(surfaceColor))
             }
         ).pointerInput(onDoubleClick) {
             detectTapGestures(

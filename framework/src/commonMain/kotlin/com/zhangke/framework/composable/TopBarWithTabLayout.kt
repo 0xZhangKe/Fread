@@ -1,18 +1,15 @@
 package com.zhangke.framework.composable
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberUpdatedState
@@ -21,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import com.zhangke.framework.ktx.second
@@ -32,8 +30,6 @@ fun TopBarWithTabLayout(
     topBarContent: @Composable BoxScope.() -> Unit,
     tabContent: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
-    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
-    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollableContent: @Composable () -> Unit,
 ) {
     val density = LocalDensity.current
@@ -53,28 +49,38 @@ fun TopBarWithTabLayout(
             modifier = Modifier,
             content = {
                 Box(
+                    modifier = Modifier.fillMaxSize().layoutId("scrollable"),
+                ) {
+                    val topPaddingInPx = topBarHeightInPx + tabHeightInPx
+                    val newPaddings = updateTopPadding((topPaddingInPx.pxToDp(density)))
+                    CompositionLocalProvider(
+                        LocalContentPadding provides newPaddings
+                    ) {
+                        scrollableContent()
+                    }
+                }
+                Box(
                     modifier = Modifier
+                        .layoutId("topBar")
                         .fillMaxWidth()
                         .onSizeChanged { topBarHeightInPx = it.height },
                 ) {
                     topBarContent()
                 }
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.layoutId("tab").fillMaxWidth()
                         .onSizeChanged { tabHeightInPx = it.height },
                 ) {
                     tabContent()
                 }
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    scrollableContent()
-                }
             },
             measurePolicy = { measurables, constraints ->
-                val scrollableContentPlaceable = measurables[2].measure(constraints)
-                val topBarPlaceable = measurables.first().measure(constraints)
-                val tabBarPlaceable = measurables.second().measure(constraints)
+                val scrollableContentPlaceable =
+                    measurables.first { it.layoutId == "scrollable" }.measure(constraints)
+                val topBarPlaceable =
+                    measurables.first { it.layoutId == "topBar" }.measure(constraints)
+                val tabBarPlaceable =
+                    measurables.first { it.layoutId == "tab" }.measure(constraints)
                 layout(constraints.maxWidth, constraints.maxHeight) {
                     scrollableContentPlaceable.placeRelative(0, 0)
                     val totalHeaderHeight = topBarHeightInPx + tabHeightInPx

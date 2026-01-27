@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -120,6 +121,7 @@ private fun ExplorerFeedsContent(
                     .fillMaxSize()
                     .padding(innerPadding),
                 state = loadableState,
+                contentPadding = LocalContentPadding.current,
                 loadState = uiState.loadMoreState,
                 refreshing = uiState.refreshing,
             ) {

@@ -4,7 +4,6 @@ import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,8 +21,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.zhangke.framework.blur.LocalHazeState
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.utils.LoadState
 import dev.chrisbanes.haze.hazeSource
@@ -35,7 +34,6 @@ fun LoadableInlineVideoLazyColumn(
     state: LoadableLazyInlineVideoColumnState,
     refreshing: Boolean,
     loadState: LoadState,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
         if (!reverseLayout) Arrangement.Top else Arrangement.Bottom,
@@ -56,7 +54,7 @@ fun LoadableInlineVideoLazyColumn(
     ) {
         val hazeState = LocalHazeState.current
         InlineVideoLazyColumn(
-            contentPadding = contentPadding,
+            contentPadding = LocalContentPadding.current,
             state = state.lazyListState,
             modifier = Modifier.then(
                 if (hazeState != null) {

@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.composable.textString
@@ -156,9 +157,6 @@ fun FeedsContent(
                 state = state,
                 refreshing = refreshing,
                 loadState = loadMoreState,
-                contentPadding = PaddingValues(
-                    bottom = 80.dp,
-                ),
             ) {
                 itemsIndexed(feeds) { index, item ->
                     FeedsStatusNode(

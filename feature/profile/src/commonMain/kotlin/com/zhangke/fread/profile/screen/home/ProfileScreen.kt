@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
@@ -102,7 +103,7 @@ private fun ProfileHomePageContent(
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(bottom = 66.dp),
+                contentPadding = LocalContentPadding.current,
             ) {
                 items(uiState.accountDataList) { item ->
                     AccountDetail(

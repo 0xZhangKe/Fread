@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,12 +31,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import com.zhangke.framework.composable.BackHandler
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
 import com.zhangke.framework.nav.Tab
+import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.action.OpenNotificationPageAction
 import com.zhangke.fread.common.review.LocalFreadReviewManager
@@ -61,6 +67,7 @@ object FreadHomeScreenNavKey : NavKey
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FreadHomeScreenContent(viewModel: MainViewModel) {
+    val density = LocalDensity.current
     val activityHelper = LocalActivityHelper.current
     val statusUiConfig = LocalStatusUiConfig.current
     val tabs = remember { createMainTabs() }
@@ -69,6 +76,7 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val nestedTabConnection = remember { NestedTabConnection() }
     var inFeedsTab by rememberSaveable { mutableStateOf(false) }
+    var navigationBarHeight by remember { mutableStateOf(64.dp) }
     ConsumeFlow(nestedTabConnection.openDrawerFlow) {
         if (inFeedsTab) {
             drawerState.open()
@@ -76,6 +84,7 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
     }
     CompositionLocalProvider(
         LocalNestedTabConnection provides nestedTabConnection,
+        LocalContentPadding provides PaddingValues(bottom = navigationBarHeight),
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -133,7 +142,9 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
                     ),
                 ) {
                     NavigationBar(
-                        modifier = Modifier,
+                        modifier = Modifier.onSizeChanged {
+                            navigationBarHeight = it.height.pxToDp(density)
+                        },
                     ) {
                         tabs.forEachIndexed { index, tab ->
                             TabNavigationItem(

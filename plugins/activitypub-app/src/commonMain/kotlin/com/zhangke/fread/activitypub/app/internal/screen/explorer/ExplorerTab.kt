@@ -109,7 +109,6 @@ class ExplorerTab(
                 state = state,
                 refreshing = uiState.refreshing,
                 loadState = uiState.loadMoreState,
-                contentPadding = PaddingValues(bottom = 64.dp)
             ) {
                 itemsIndexed(
                     items = uiState.dataList,

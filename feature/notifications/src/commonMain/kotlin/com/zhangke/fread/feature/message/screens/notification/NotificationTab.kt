@@ -3,7 +3,6 @@ package com.zhangke.fread.feature.message.screens.notification
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -20,12 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.applyNestedScrollConnection
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.nav.BaseTab
@@ -121,7 +119,6 @@ class NotificationTab(
                         .applyNestedScrollConnection(nestedScrollConnection),
                     refreshing = uiState.refreshing,
                     loadState = uiState.loadMoreState,
-                    contentPadding = PaddingValues(bottom = 64.dp),
                 ) {
                     itemsIndexed(
                         items = uiState.dataList,

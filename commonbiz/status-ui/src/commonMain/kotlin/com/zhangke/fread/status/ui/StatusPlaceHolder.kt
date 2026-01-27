@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.status.ui.style.StatusInfoStyleDefaults
 
@@ -65,7 +66,7 @@ fun StatusPlaceHolder(
 fun StatusListPlaceholder(
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize().padding(LocalContentPadding.current)) {
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {

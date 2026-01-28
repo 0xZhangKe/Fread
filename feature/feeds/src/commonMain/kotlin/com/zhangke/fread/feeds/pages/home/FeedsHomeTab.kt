@@ -1,6 +1,5 @@
 package com.zhangke.fread.feeds.pages.home
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.zhangke.framework.nav.Tab

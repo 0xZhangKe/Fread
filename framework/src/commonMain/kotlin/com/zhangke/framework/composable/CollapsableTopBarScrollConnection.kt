@@ -71,7 +71,7 @@ class CollapsableTopBarScrollConnection(
 
         topBarHeight += available.y
 
-        return Offset(0f, available.y)
+        return Offset.Zero
     }
 
     companion object {

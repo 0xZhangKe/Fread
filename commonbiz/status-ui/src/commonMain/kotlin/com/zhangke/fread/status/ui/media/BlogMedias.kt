@@ -43,6 +43,7 @@ private var cachedContainerWidth: Dp? = null
 fun BlogMedias(
     modifier: Modifier,
     mediaList: List<BlogMedia>,
+    sharedElementId: String,
     indexInList: Int,
     sensitive: Boolean,
     onMediaClick: OnBlogMediaClick,
@@ -71,6 +72,7 @@ fun BlogMedias(
         if (containerWidth != null) {
             BlogMediaContent(
                 mediaList = mediaList,
+                sharedElementId = sharedElementId,
                 blogTranslationState = blogTranslationState,
                 hideContent = hideContent,
                 indexInList = indexInList,
@@ -119,6 +121,7 @@ fun BlogMedias(
 @Composable
 private fun BlogMediaContent(
     mediaList: List<BlogMedia>,
+    sharedElementId: String,
     blogTranslationState: BlogTranslationUiState?,
     hideContent: Boolean,
     indexInList: Int,
@@ -138,6 +141,7 @@ private fun BlogMediaContent(
             mediaList.filter { it.type == BlogMediaType.IMAGE || it.type == BlogMediaType.GIFV }
         BlogImageMedias(
             mediaList = imageMediaList,
+            sharedElementId = sharedElementId,
             hideContent = hideContent,
             containerWidth = containerWidth,
             onMediaClick = {

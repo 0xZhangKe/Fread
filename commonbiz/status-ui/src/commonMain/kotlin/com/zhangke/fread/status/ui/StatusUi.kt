@@ -31,6 +31,7 @@ fun StatusUi(
     modifier: Modifier = Modifier,
     status: StatusUiState,
     indexInList: Int,
+    sharedElementId: String? = null,
     style: StatusStyle = LocalStatusUiConfig.current.contentStyle,
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
@@ -51,6 +52,7 @@ fun StatusUi(
             threadsType
         }
     val rawStatus = status.status
+    val resolvedSharedElementId = sharedElementId ?: rawStatus.id
     var continueThreadHeight: Int? by remember { mutableStateOf(null) }
     val coroutineScope = rememberCoroutineScope()
     Box(modifier = modifier) {
@@ -75,6 +77,7 @@ fun StatusUi(
                 onContinueThreadHeightChanged = { continueThreadHeight = it }
             ),
             indexInList = indexInList,
+            sharedElementId = resolvedSharedElementId,
             threadsType = fixedThreadType,
             detailModel = detailModel,
             style = if (detailModel) style else style.contentIndentStyle(),

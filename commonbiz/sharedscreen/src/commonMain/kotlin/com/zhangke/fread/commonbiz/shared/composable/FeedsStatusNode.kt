@@ -20,6 +20,7 @@ fun FeedsStatusNode(
     indexInList: Int,
     composedStatusInteraction: ComposedStatusInteraction,
     showDivider: Boolean = true,
+    sharedElementId: String? = null,
     style: StatusStyle = LocalStatusUiConfig.current.contentStyle,
 ) {
     val backStack = LocalNavBackStack.currentOrThrow
@@ -30,6 +31,7 @@ fun FeedsStatusNode(
         },
         status = status,
         indexInList = indexInList,
+        sharedElementId = sharedElementId,
         style = style,
         showDivider = showDivider,
         composedStatusInteraction = composedStatusInteraction,

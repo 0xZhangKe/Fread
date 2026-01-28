@@ -65,6 +65,7 @@ fun BlogContent(
     isOwner: Boolean?,
     style: StatusStyle,
     indexOfFeeds: Int,
+    sharedElementId: String? = null,
     onBlogClick: (Blog) -> Unit,
     onMediaClick: OnBlogMediaClick = {},
     blogTranslationState: BlogTranslationUiState = BlogTranslationUiState.DEFAULT,
@@ -136,6 +137,7 @@ fun BlogContent(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 mediaList = blog.mediaList,
+                sharedElementId = sharedElementId ?: blog.id,
                 blogTranslationState = blogTranslationState,
                 indexInList = indexOfFeeds,
                 sensitive = sensitive,

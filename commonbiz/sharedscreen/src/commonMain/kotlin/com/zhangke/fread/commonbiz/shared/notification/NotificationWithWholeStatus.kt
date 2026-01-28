@@ -27,6 +27,7 @@ fun NotificationWithWholeStatus(
     author: BlogAuthor?,
     createAt: FormattingTime,
     indexInList: Int,
+    sharedElementId: String,
     icon: ImageVector,
     interactionDesc: String,
     style: NotificationStyle,
@@ -59,6 +60,7 @@ fun NotificationWithWholeStatus(
             blog = blog,
             locator = locator,
             indexInList = indexInList,
+            sharedElementId = sharedElementId,
             style = style.statusStyle.copy(
                 containerStartPadding = 0.dp,
                 containerEndPadding = 0.dp,

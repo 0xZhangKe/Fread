@@ -27,7 +27,7 @@ class SharedScreenNavEntryProvider : NavEntryProvider {
         entry<ImageViewerScreenNavKey> {
             ImageViewerScreen(
                 selectedIndex = it.selectedIndex,
-                sharedElementLabel = it.sharedElementLabel,
+                sharedElementKey = it.sharedElementKey,
                 imageList = it.imageList,
             )
         }

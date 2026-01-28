@@ -53,7 +53,7 @@ sealed interface BlogMediaClickEvent {
     data class BlogImageClickEvent(
         val index: Int,
         val mediaList: List<BlogMedia>,
-        val sharedElementLabel: String,
+        val sharedElementKey: String,
     ) : BlogMediaClickEvent
 
     data class BlogVideoClickEvent(
@@ -69,6 +69,7 @@ sealed interface BlogMediaClickEvent {
 @Composable
 fun BlogImageMedias(
     mediaList: List<BlogMedia>,
+    sharedElementId: String,
     containerWidth: Dp,
     hideContent: Boolean,
     style: BlogImageMediaStyle = BlogImageMediaDefault.defaultStyle,
@@ -83,7 +84,8 @@ fun BlogImageMedias(
         style = style,
         itemContent = { index ->
             val media = mediaList[index]
-            val sharedElementLabel = LocalStatusSharedElementConfig.current.label
+            val sharedElementKey =
+                LocalStatusSharedElementConfig.current.buildImageKey("$sharedElementId-${media.url}")
             BlogImage(
                 modifier = Modifier
                     .fillMaxSize()
@@ -92,11 +94,12 @@ fun BlogImageMedias(
                             BlogMediaClickEvent.BlogImageClickEvent(
                                 index = index,
                                 mediaList = mediaList,
-                                sharedElementLabel = sharedElementLabel,
+                                sharedElementKey = sharedElementKey,
                             )
                         )
                     },
                 media = media,
+                sharedElementKey = sharedElementKey,
                 hideContent = hideContent,
                 showAlt = showAlt,
             )
@@ -168,6 +171,7 @@ internal fun BlogImageLayout(
 internal fun BlogImage(
     modifier: Modifier,
     media: BlogMedia,
+    sharedElementKey: String,
     hideContent: Boolean,
     showAlt: Boolean,
 ) {
@@ -189,6 +193,7 @@ internal fun BlogImage(
                 modifier = Modifier,
                 imageUrl = imageUrl,
                 description = media.description,
+                sharedElementKey = sharedElementKey,
             )
         }
         if (media.type == BlogMediaType.GIFV) {
@@ -247,11 +252,12 @@ private fun BlogAutoSizeImage(
     modifier: Modifier,
     imageUrl: String?,
     description: String?,
+    sharedElementKey: String,
 ) {
     val sharedElementConfig = LocalStatusSharedElementConfig.current
     val finalModifier = modifier.then(
         if (sharedElementConfig.imageAttachmentEnabled) {
-            Modifier.sharedElement(sharedElementConfig.buildImageKey(imageUrl.orEmpty()))
+            Modifier.sharedElement(sharedElementKey)
         } else {
             Modifier
         }

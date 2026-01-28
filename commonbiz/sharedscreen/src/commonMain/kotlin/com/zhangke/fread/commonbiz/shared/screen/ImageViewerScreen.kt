@@ -58,7 +58,6 @@ import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
-import com.zhangke.fread.status.ui.common.StatusSharedElementConfig
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 
@@ -66,14 +65,14 @@ import kotlinx.serialization.Serializable
 data class ImageViewerScreenNavKey(
     val selectedIndex: Int,
     val imageList: List<ImageViewerImage>,
-    val sharedElementLabel: String? = null,
+    val sharedElementKey: String? = null,
 ) : NavKey
 
 @Composable
 fun ImageViewerScreen(
     selectedIndex: Int,
     imageList: List<ImageViewerImage>,
-    sharedElementLabel: String?,
+    sharedElementKey: String?,
 ) {
     val backStack = LocalNavBackStack.currentOrThrow
     val backgroundCommonAlpha = 0.95F
@@ -121,7 +120,7 @@ fun ImageViewerScreen(
                 val currentMedia = imageList[pageIndex]
                 ImagePageContent(
                     image = currentMedia,
-                    sharedElementLabel = sharedElementLabel,
+                    sharedElementKey = if (pageIndex == selectedIndex) sharedElementKey else null,
                     onDismissRequest = backStack::removeLastOrNull,
                 )
             }
@@ -149,7 +148,7 @@ fun ImageViewerScreen(
 @Composable
 private fun ImagePageContent(
     image: ImageViewerImage,
-    sharedElementLabel: String?,
+    sharedElementKey: String?,
     onDismissRequest: () -> Unit,
 ) {
     val imageLoader = LocalImageLoader.current
@@ -181,15 +180,10 @@ private fun ImagePageContent(
                     .fillMaxSize()
                     .blurhash(image.blurhash)
                     .let {
-                        if (sharedElementLabel.isNullOrEmpty()) {
+                        if (sharedElementKey.isNullOrEmpty()) {
                             it
                         } else {
-                            it.sharedElement(
-                                StatusSharedElementConfig.buildKey(
-                                    label = sharedElementLabel,
-                                    url = image.url
-                                )
-                            )
+                            it.sharedElement(sharedElementKey)
                         }
                     },
                 contentScale = ContentScale.FillBounds,

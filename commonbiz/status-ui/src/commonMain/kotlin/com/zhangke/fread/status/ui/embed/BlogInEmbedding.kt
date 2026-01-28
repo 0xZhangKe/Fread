@@ -74,6 +74,7 @@ fun BlogInEmbedding(
                     BlogMedias(
                         modifier = Modifier.weight(1F),
                         mediaList = blog.mediaList,
+                        sharedElementId = blog.id,
                         indexInList = 0,
                         sensitive = blog.sensitive,
                         onMediaClick = {},

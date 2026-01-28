@@ -9,12 +9,8 @@ data class StatusSharedElementConfig(
     val label: String,
 ) {
 
-    fun buildImageKey(url: String): String {
-        return buildKey(label, url)
-    }
-
-    fun buildBlogKey(id: String): String {
-        return "$label-$id"
+    fun buildImageKey(key: String): String {
+        return buildKey(label, key)
     }
 
     companion object {
@@ -27,8 +23,8 @@ data class StatusSharedElementConfig(
             )
         }
 
-        fun buildKey(label: String, url: String): String {
-            return "$label-$url"
+        fun buildKey(label: String, key: String): String {
+            return "$label-$key"
         }
     }
 }

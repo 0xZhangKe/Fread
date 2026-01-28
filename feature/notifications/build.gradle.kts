@@ -28,6 +28,9 @@ kotlin {
                 implementation(libs.auto.service.annotations)
                 implementation(libs.krouter.runtime)
                 implementation(libs.androidx.room)
+
+                implementation(libs.haze)
+                implementation(libs.haze.materials)
             }
         }
         commonTest {

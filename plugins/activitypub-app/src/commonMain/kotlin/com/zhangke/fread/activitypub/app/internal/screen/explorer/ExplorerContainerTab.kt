@@ -1,12 +1,22 @@
 package com.zhangke.fread.activitypub.app.internal.screen.explorer
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import com.zhangke.framework.composable.FreadTabRow
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.nav.BaseTab
-import com.zhangke.framework.nav.HorizontalPagerWithTab
 import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
+import kotlinx.coroutines.launch
 
 class ExplorerContainerTab(
     private val locator: PlatformLocator,
@@ -38,9 +48,32 @@ class ExplorerContainerTab(
                 ),
             )
         }
-        HorizontalPagerWithTab(
-            tabList = tabs,
-            pagerUserScrollEnabled = true,
+        val coroutineScope = rememberCoroutineScope()
+        val pagerState = rememberPagerState(initialPage = 0) { tabs.size }
+        HorizontalPager(
+            modifier = Modifier.fillMaxSize(),
+            state = pagerState,
+        ) { pageIndex ->
+            with(tabs[pageIndex]) {
+                Content()
+            }
+        }
+        FreadTabRow(
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = LocalContentPadding.current.calculateTopPadding()),
+            selectedTabIndex = pagerState.currentPage,
+            tabCount = tabs.size,
+            tabContent = {
+                Text(
+                    text = tabs[it].options.title,
+                    maxLines = 1,
+                )
+            },
+            onTabClick = {
+                coroutineScope.launch {
+                    pagerState.scrollToPage(it)
+                }
+            },
         )
     }
 }

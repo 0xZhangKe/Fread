@@ -1,6 +1,7 @@
 package com.zhangke.fread.feature.message.screens.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,10 +21,10 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -35,13 +36,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.composable.updateTopPadding
+import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.commonbiz.illustration_message
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
@@ -66,38 +74,21 @@ private fun NotificationsHomeScreenContent(
     uiState: NotificationsHomeUiState,
     onAccountSelected: (LoggedAccount) -> Unit,
 ) {
+    val density = LocalDensity.current
     val snackbarHost = rememberSnackbarHostState()
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            if (uiState.tabs.size > 1 && uiState.selectedAccount != null) {
-                NotificationTopBar(
-                    account = uiState.selectedAccount,
-                    accountList = uiState.accountList,
-                    onAccountSelected = onAccountSelected,
-                )
-            } else {
-                Spacer(
-                    modifier = Modifier.statusBarsPadding()
-                        .height(16.dp)
-                )
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHost,
-                modifier = Modifier.Companion.padding(bottom = 60.dp),
-            )
-        },
-    ) { paddings ->
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+    ) {
+        var topBarHeight: Dp by remember { mutableStateOf(24.dp) }
         if (uiState.tabs.isEmpty()) {
             Column(
-                modifier = Modifier.Companion
-                    .padding(paddings)
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
+                Spacer(modifier = Modifier.fillMaxWidth().height(topBarHeight))
+
                 Image(
                     modifier = Modifier.fillMaxWidth()
                         .padding(horizontal = 16.dp),
@@ -117,13 +108,8 @@ private fun NotificationsHomeScreenContent(
                 )
             }
         } else {
-            Column(
-                modifier = Modifier.padding(paddings)
-                    .fillMaxSize(),
-            ) {
-                val pagerState = rememberPagerState {
-                    uiState.tabs.size
-                }
+            Column(modifier = Modifier.fillMaxSize()) {
+                val pagerState = rememberPagerState { uiState.tabs.size }
                 LaunchedEffect(uiState) {
                     val index = uiState.accountList.indexOf(uiState.selectedAccount)
                     if (index >= 0) {
@@ -132,6 +118,7 @@ private fun NotificationsHomeScreenContent(
                 }
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackbarHost,
+                    LocalContentPadding provides updateTopPadding(topBarHeight),
                 ) {
                     HorizontalPager(
                         modifier = Modifier.fillMaxSize(),
@@ -145,6 +132,25 @@ private fun NotificationsHomeScreenContent(
                 }
             }
         }
+        if (uiState.tabs.size > 1 && uiState.selectedAccount != null) {
+            NotificationTopBar(
+                account = uiState.selectedAccount,
+                accountList = uiState.accountList,
+                onAccountSelected = onAccountSelected,
+                onHeightChanged = { topBarHeight = it },
+            )
+        } else {
+            Spacer(
+                modifier = Modifier.statusBarsPadding()
+                    .height(16.dp)
+                    .onSizeChanged { topBarHeight = it.height.pxToDp(density) }
+            )
+        }
+        SnackbarHost(
+            hostState = snackbarHost,
+            modifier = Modifier.align(Alignment.BottomCenter)
+                .padding(bottom = LocalContentPadding.current.calculateBottomPadding() + 16.dp),
+        )
     }
 }
 
@@ -154,13 +160,21 @@ private fun NotificationTopBar(
     account: LoggedAccount,
     accountList: List<LoggedAccount>,
     onAccountSelected: (LoggedAccount) -> Unit,
+    onHeightChanged: (Dp) -> Unit,
 ) {
+    val density = LocalDensity.current
+    val containerColor = MaterialTheme.colorScheme.surface
     TopAppBar(
+        modifier = Modifier.applyBlurEffect(containerColor = containerColor)
+            .onSizeChanged { onHeightChanged(it.height.pxToDp(density)) },
         title = {
             Text(
                 text = stringResource(LocalizedString.notificationTabTitle),
             )
         },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = containerColor,
+        ),
         actions = {
             var showSelectAccountPopup by remember {
                 mutableStateOf(false)
@@ -181,16 +195,16 @@ private fun NotificationTopBar(
                         Text(
                             text = account.userName,
                             style = MaterialTheme.typography.titleMedium
-                                .copy(fontWeight = FontWeight.Companion.SemiBold),
+                                .copy(fontWeight = FontWeight.SemiBold),
                             maxLines = 1,
-                            overflow = TextOverflow.Companion.Ellipsis,
+                            overflow = TextOverflow.Ellipsis,
                         )
                         Text(
                             text = account.prettyHandle,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
-                            overflow = TextOverflow.Companion.Ellipsis,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                     Icon(

@@ -24,3 +24,15 @@ fun updateTopPadding(topPadding: Dp): PaddingValues {
         bottom = paddings.calculateBottomPadding(),
     )
 }
+
+@Composable
+fun plusTopPadding(topPadding: Dp): PaddingValues {
+    val paddings = LocalContentPadding.current
+    val layoutDirection = LocalLayoutDirection.current
+    return PaddingValues(
+        start = paddings.calculateStartPadding(layoutDirection),
+        top = topPadding + paddings.calculateTopPadding(),
+        end = paddings.calculateEndPadding(layoutDirection),
+        bottom = paddings.calculateBottomPadding(),
+    )
+}

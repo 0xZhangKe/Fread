@@ -35,6 +35,7 @@ fun LoadableLazyColumn(
     state: LoadableLazyColumnState,
     refreshing: Boolean,
     loadState: LoadState,
+    lazyColumnModifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
@@ -52,7 +53,7 @@ fun LoadableLazyColumn(
             .pullRefresh(state.pullRefreshState)
     ) {
         LazyColumn(
-            modifier = Modifier,
+            modifier = lazyColumnModifier,
             state = state.lazyListState,
             contentPadding = contentPadding,
             reverseLayout = reverseLayout,

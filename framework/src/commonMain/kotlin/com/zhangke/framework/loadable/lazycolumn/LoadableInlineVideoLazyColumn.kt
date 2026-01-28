@@ -21,11 +21,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import com.zhangke.framework.blur.LocalHazeState
+import com.zhangke.framework.blur.applyBlurSource
 import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.utils.LoadState
-import dev.chrisbanes.haze.hazeSource
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -52,17 +51,10 @@ fun LoadableInlineVideoLazyColumn(
     Box(
         modifier = modifier.pullRefresh(state.pullRefreshState)
     ) {
-        val hazeState = LocalHazeState.current
         InlineVideoLazyColumn(
             contentPadding = LocalContentPadding.current,
             state = state.lazyListState,
-            modifier = Modifier.then(
-                if (hazeState != null) {
-                    Modifier.hazeSource(hazeState)
-                } else {
-                    Modifier
-                }
-            ),
+            modifier = Modifier.applyBlurSource(),
             reverseLayout = reverseLayout,
             verticalArrangement = verticalArrangement,
             horizontalAlignment = horizontalAlignment,

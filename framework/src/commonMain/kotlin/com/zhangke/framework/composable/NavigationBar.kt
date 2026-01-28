@@ -55,6 +55,8 @@ import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastFirst
 import androidx.compose.ui.util.fastFirstOrNull
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.blurEffectContainerColor
 import kotlinx.coroutines.flow.map
 import kotlin.math.roundToInt
 
@@ -68,10 +70,12 @@ fun NavigationBar(
     content: @Composable RowScope.() -> Unit
 ) {
     Surface(
-        color = containerColor,
+        color = blurEffectContainerColor(containerColor = containerColor),
         contentColor = contentColor,
         tonalElevation = tonalElevation,
-        modifier = modifier,
+        modifier = modifier.applyBlurEffect(
+            containerColor = containerColor,
+        ),
     ) {
         Row(
             modifier = Modifier

@@ -35,6 +35,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.blur.BlurController
+import com.zhangke.framework.blur.LocalBlurController
 import com.zhangke.framework.composable.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.LocalContentPadding
@@ -82,9 +84,11 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
             drawerState.open()
         }
     }
+    val blurController = remember { BlurController.create() }
     CompositionLocalProvider(
         LocalNestedTabConnection provides nestedTabConnection,
         LocalContentPadding provides PaddingValues(bottom = navigationBarHeight),
+        LocalBlurController provides blurController,
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,

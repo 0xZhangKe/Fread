@@ -38,20 +38,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import com.zhangke.framework.composable.BackHandler
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.blurEffectContainerColor
+import com.zhangke.framework.composable.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.utils.Log
+import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
 import com.zhangke.fread.explore.screens.search.SearchScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
@@ -70,7 +77,9 @@ fun ExplorerSearchBar(
     selectedAccount: LoggedAccount?,
     accountList: List<LoggedAccount>,
     onAccountSelected: (LoggedAccount) -> Unit,
+    onHeightChanged: (Dp) -> Unit,
 ) {
+    val density = LocalDensity.current
     val backStack = LocalNavBackStack.currentOrThrow
     var active by rememberSaveable { mutableStateOf(false) }
     val viewModel = koinViewModel<SearchBarViewModel>()
@@ -96,11 +105,23 @@ fun ExplorerSearchBar(
             viewModel.onSearchQueryChanged("")
         }
     }
+    val containerColor = MaterialTheme.colorScheme.surface
     SearchBar(
         modifier = Modifier
             .fillMaxWidth()
+            .applyBlurEffect(enabled = !active, containerColor = containerColor)
+            .onSizeChanged {
+                if (!active) {
+                    onHeightChanged(it.height.pxToDp(density))
+                }
+            }
             .padding(horizontal = horizontalPaddingDp.dp),
-        windowInsets = WindowInsets.statusBars,
+        windowInsets = WindowInsets.statusBars.also {
+            Log.d("Z_TEST") { "status bar height: ${it.getTop(density)}" }
+        },
+        colors = SearchBarDefaults.colors(
+            containerColor = blurEffectContainerColor(!active, containerColor),
+        ),
         inputField = {
             SearchBarDefaults.InputField(
                 modifier = Modifier.onFocusChanged {

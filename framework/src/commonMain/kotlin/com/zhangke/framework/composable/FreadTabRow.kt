@@ -33,11 +33,10 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.blur.LocalHazeState
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.utils.pxToDp
-import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
@@ -60,20 +59,10 @@ fun FreadTabRow(
     val tabContentWidth = remember {
         mutableStateMapOf<Int, Dp>()
     }
-    val hazeState = LocalHazeState.current
     FreadTabRow(
-        modifier = modifier.then(
-            if (hazeState == null) {
-                Modifier
-            } else {
-                Modifier.hazeEffect(
-                    state = hazeState,
-                    style = HazeMaterials.ultraThick(MaterialTheme.colorScheme.surface),
-                )
-            }
-        ),
+        modifier = modifier.applyBlurEffect(containerColor = containerColor),
         selectedTabIndex = selectedTabIndex,
-        containerColor = Color.Transparent,
+        containerColor = blurEffectContainerColor(containerColor = containerColor),
         indicator = { tabPositions ->
             val position = tabPositions.getOrNull(selectedTabIndex)
             if (position != null) {

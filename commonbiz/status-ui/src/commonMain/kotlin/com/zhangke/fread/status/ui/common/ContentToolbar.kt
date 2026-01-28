@@ -21,13 +21,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.account.LoggedAccount
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class)
 @Composable
@@ -38,7 +37,6 @@ fun ContentToolbar(
     showAccountInfo: Boolean,
     showNextIcon: Boolean,
     showRefreshButton: Boolean,
-    hazeState: HazeState? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     onMenuClick: () -> Unit,
@@ -49,21 +47,12 @@ fun ContentToolbar(
 ) {
     val surfaceColor = MaterialTheme.colorScheme.surface
     TopAppBar(
-        modifier = modifier.then(
-            if (hazeState == null) {
-                Modifier
-            } else {
-                Modifier.hazeEffect(hazeState, HazeMaterials.ultraThick(surfaceColor))
-            }
-        ).pointerInput(onDoubleClick) {
-            detectTapGestures(
-                onDoubleTap = {
-                    onDoubleClick?.invoke()
-                },
-            )
-        },
+        modifier = modifier.applyBlurEffect()
+            .pointerInput(onDoubleClick) {
+                detectTapGestures(onDoubleTap = { onDoubleClick?.invoke() })
+            },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
+            containerColor = blurEffectContainerColor(containerColor = surfaceColor),
         ),
         windowInsets = windowInsets,
         navigationIcon = {

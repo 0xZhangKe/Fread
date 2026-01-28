@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -103,9 +104,7 @@ class ExplorerTab(
             LoadableInlineVideoLazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .onGloballyPositioned {
-                        containerHeight = it.size.height.pxToDp(density)
-                    },
+                    .onSizeChanged { containerHeight = it.height.pxToDp(density) },
                 state = state,
                 refreshing = uiState.refreshing,
                 loadState = uiState.loadMoreState,

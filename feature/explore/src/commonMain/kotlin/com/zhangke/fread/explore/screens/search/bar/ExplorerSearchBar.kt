@@ -6,12 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -23,7 +21,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -49,6 +46,7 @@ import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.InsetAwareSearchBar
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
@@ -57,7 +55,6 @@ import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
-import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
 import com.zhangke.fread.explore.screens.search.SearchScreenNavKey
@@ -106,7 +103,7 @@ fun ExplorerSearchBar(
         }
     }
     val containerColor = MaterialTheme.colorScheme.surface
-    SearchBar(
+    InsetAwareSearchBar(
         modifier = Modifier
             .fillMaxWidth()
             .applyBlurEffect(enabled = !active, containerColor = containerColor)
@@ -116,9 +113,7 @@ fun ExplorerSearchBar(
                 }
             }
             .padding(horizontal = horizontalPaddingDp.dp),
-        windowInsets = WindowInsets.statusBars.also {
-            Log.d("Z_TEST") { "status bar height: ${it.getTop(density)}" }
-        },
+        insetContainerColor = blurEffectContainerColor(!active, containerColor),
         colors = SearchBarDefaults.colors(
             containerColor = blurEffectContainerColor(!active, containerColor),
         ),

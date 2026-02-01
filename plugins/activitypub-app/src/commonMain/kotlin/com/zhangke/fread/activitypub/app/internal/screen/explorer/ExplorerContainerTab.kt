@@ -1,5 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.explorer
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -7,11 +9,18 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.LocalContentPadding
+import com.zhangke.framework.composable.plusTopPadding
 import com.zhangke.framework.nav.BaseTab
 import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.status.model.PlatformLocator
@@ -50,30 +59,41 @@ class ExplorerContainerTab(
         }
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState(initialPage = 0) { tabs.size }
-        HorizontalPager(
-            modifier = Modifier.fillMaxSize(),
-            state = pagerState,
-        ) { pageIndex ->
-            with(tabs[pageIndex]) {
-                Content()
+        var tabBarHeight by remember { mutableStateOf(24.dp) }
+        CompositionLocalProvider(
+            LocalContentPadding provides plusTopPadding(tabBarHeight)
+        ) {
+            HorizontalPager(
+                modifier = Modifier.fillMaxSize(),
+                state = pagerState,
+            ) { pageIndex ->
+                with(tabs[pageIndex]) {
+                    Content()
+                }
             }
         }
-        FreadTabRow(
-            modifier = Modifier.fillMaxWidth()
-                .padding(top = LocalContentPadding.current.calculateTopPadding()),
-            selectedTabIndex = pagerState.currentPage,
-            tabCount = tabs.size,
-            tabContent = {
-                Text(
-                    text = tabs[it].options.title,
-                    maxLines = 1,
-                )
-            },
-            onTabClick = {
-                coroutineScope.launch {
-                    pagerState.scrollToPage(it)
-                }
-            },
-        )
+        Column {
+            Spacer(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(top = LocalContentPadding.current.calculateTopPadding())
+            )
+            FreadTabRow(
+                modifier = Modifier.fillMaxWidth()
+                    .onSizeChanged { tabBarHeight = it.height.dp },
+                selectedTabIndex = pagerState.currentPage,
+                tabCount = tabs.size,
+                tabContent = {
+                    Text(
+                        text = tabs[it].options.title,
+                        maxLines = 1,
+                    )
+                },
+                onTabClick = {
+                    coroutineScope.launch {
+                        pagerState.scrollToPage(it)
+                    }
+                },
+            )
+        }
     }
 }

@@ -34,10 +34,9 @@ fun InsetAwareSearchBar(
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .windowInsetsPadding(windowInsets)
-            .background(insetContainerColor)
-            .then(modifier),
+            .background(insetContainerColor),
     ) {
         SearchBar(
             modifier = Modifier.fillMaxWidth(),

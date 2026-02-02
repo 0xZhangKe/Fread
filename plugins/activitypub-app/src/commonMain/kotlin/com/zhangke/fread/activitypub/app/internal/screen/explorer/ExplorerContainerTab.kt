@@ -17,12 +17,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.plusTopPadding
 import com.zhangke.framework.nav.BaseTab
 import com.zhangke.framework.nav.TabOptions
+import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.coroutines.launch
@@ -57,6 +59,7 @@ class ExplorerContainerTab(
                 ),
             )
         }
+        val density = LocalDensity.current
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState(initialPage = 0) { tabs.size }
         var tabBarHeight by remember { mutableStateOf(24.dp) }
@@ -79,7 +82,7 @@ class ExplorerContainerTab(
             )
             FreadTabRow(
                 modifier = Modifier.fillMaxWidth()
-                    .onSizeChanged { tabBarHeight = it.height.dp },
+                    .onSizeChanged { tabBarHeight = it.height.pxToDp(density) },
                 selectedTabIndex = pagerState.currentPage,
                 tabCount = tabs.size,
                 tabContent = {

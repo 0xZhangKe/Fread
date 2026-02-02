@@ -62,7 +62,6 @@ internal class MixedContentScreen(
         onLoadMore: () -> Unit,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
-        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
         val mainTabConnection = LocalNestedTabConnection.current
         val coroutineScope = rememberCoroutineScope()
         Scaffold(
@@ -71,7 +70,6 @@ internal class MixedContentScreen(
                     title = uiState.content?.name.orEmpty(),
                     showNextIcon = !isLatestTab && uiState.showNextButton,
                     showRefreshButton = uiState.showRefreshButton,
-                    scrollBehavior = scrollBehavior,
                     account = null,
                     showAccountInfo = false,
                     onMenuClick = {
@@ -122,7 +120,6 @@ internal class MixedContentScreen(
                     onLoadMore = onLoadMore,
                     composedStatusInteraction = composedStatusInteraction,
                     observeScrollToTopEvent = true,
-                    nestedScrollConnection = scrollBehavior.nestedScrollConnection,
                     onImmersiveEvent = {
                         if (it) {
                             mainTabConnection.openImmersiveMode(coroutineScope)

@@ -1,6 +1,5 @@
 package com.zhangke.framework.blur
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -73,8 +72,17 @@ fun blurEffectContainerColor(
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.surface,
 ): Color {
-    val targetColor = getBlurEffectContainerColor(enabled, containerColor)
-    return animateColorAsState(targetColor).value
+    val enableContainerColor = enableContainerColor(enabled)
+    return if (enableContainerColor) containerColor else Color.Transparent
+}
+
+@Composable
+private fun enableContainerColor(enabled: Boolean = true): Boolean {
+    if (!enabled) return true
+    val controller = LocalBlurController.current
+    if (controller == null || !controller.enabled) return true
+    controller.hazeState ?: return true
+    return false
 }
 
 @Composable

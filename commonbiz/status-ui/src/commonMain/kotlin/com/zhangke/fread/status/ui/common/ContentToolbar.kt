@@ -36,7 +36,6 @@ fun ContentToolbar(
     showAccountInfo: Boolean,
     showNextIcon: Boolean,
     showRefreshButton: Boolean,
-    scrollBehavior: TopAppBarScrollBehavior? = null,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     onMenuClick: () -> Unit,
     onRefreshClick: () -> Unit,
@@ -61,7 +60,6 @@ fun ContentToolbar(
                 contentDescription = "Menu",
             )
         },
-        scrollBehavior = scrollBehavior,
         title = {
             Column {
                 Text(

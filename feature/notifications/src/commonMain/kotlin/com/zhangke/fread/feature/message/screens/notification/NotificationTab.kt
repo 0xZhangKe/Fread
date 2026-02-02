@@ -4,8 +4,10 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
@@ -107,15 +109,9 @@ class NotificationTab(
         onCancelFollowRequestClick: (PlatformLocator, BlogAuthor) -> Unit,
     ) {
         var tabTitleHeight: Dp by remember { mutableStateOf(20.dp) }
-        Column(
+        Box(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            NotificationTabTitle(
-                uiState = uiState,
-                onTabCheckedChange = onSwitchTab,
-                onHeightChanged = { tabTitleHeight = it },
-            )
             if (uiState.initializing) {
                 StatusListPlaceholder()
             } else {
@@ -129,8 +125,7 @@ class NotificationTab(
                     )
                     LoadableInlineVideoLazyColumn(
                         state = state,
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         refreshing = uiState.refreshing,
                         loadState = uiState.loadMoreState,
                     ) {
@@ -164,6 +159,17 @@ class NotificationTab(
                         }
                     }
                 }
+            }
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Spacer(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(LocalContentPadding.current.calculateTopPadding())
+                )
+                NotificationTabTitle(
+                    uiState = uiState,
+                    onTabCheckedChange = onSwitchTab,
+                    onHeightChanged = { tabTitleHeight = it },
+                )
             }
         }
     }

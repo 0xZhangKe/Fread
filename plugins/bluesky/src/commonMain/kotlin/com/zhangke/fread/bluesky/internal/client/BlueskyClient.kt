@@ -63,7 +63,6 @@ import com.atproto.server.CreateSessionRequest
 import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.utils.toResult
@@ -132,11 +131,7 @@ class BlueskyClient(
     }
 
     suspend fun getFeedCatching(params: GetFeedQueryParams): Result<GetFeedResponse> {
-        return runCatching {
-            val result = getFeed(params)
-            Log.d("Z_TEST") { "getFeedCatching result: $result" }
-            result
-        }.toResult()
+        return runCatching { getFeed(params) }.toResult()
     }
 
     suspend fun getPopularFeedGeneratorsUnspeccedCatching(params: GetPopularFeedGeneratorsQueryParams): Result<GetPopularFeedGeneratorsResponse> {

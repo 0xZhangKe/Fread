@@ -1,7 +1,9 @@
 package com.zhangke.framework.blur
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -22,7 +24,6 @@ class BlurController private constructor(
 
     var hazeState: HazeState? by mutableStateOf(null)
 
-
     companion object {
 
         fun create(): BlurController {
@@ -41,7 +42,14 @@ fun Modifier.applyBlurSource(enabled: Boolean = true): Modifier {
     val controller = LocalBlurController.current
     if (controller == null || !controller.enabled) return this
     val state = rememberHazeState(blurEnabled = true)
-    controller.hazeState = state
+    DisposableEffect(enabled, controller.hazeState) {
+        controller.hazeState = state
+        onDispose {
+            if (controller.hazeState == state) {
+                controller.hazeState = null
+            }
+        }
+    }
     return this.then(Modifier.hazeSource(state))
 }
 
@@ -56,12 +64,21 @@ fun Modifier.applyBlurEffect(
     val state = controller.hazeState ?: return this
     return this.hazeEffect(
         state = state,
-        style = HazeMaterials.ultraThick(containerColor)
+        style = HazeMaterials.regular(containerColor)
     )
 }
 
 @Composable
 fun blurEffectContainerColor(
+    enabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+): Color {
+    val targetColor = getBlurEffectContainerColor(enabled, containerColor)
+    return animateColorAsState(targetColor).value
+}
+
+@Composable
+private fun getBlurEffectContainerColor(
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.surface,
 ): Color {

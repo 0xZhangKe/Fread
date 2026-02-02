@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.noRippleClick
@@ -80,7 +81,7 @@ private fun NotificationsHomeScreenContent(
         modifier = Modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        var topBarHeight: Dp by remember { mutableStateOf(24.dp) }
+        var topBarHeight: Dp by remember { mutableStateOf(0.dp) }
         if (uiState.tabs.isEmpty()) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -108,7 +109,7 @@ private fun NotificationsHomeScreenContent(
                 )
             }
         } else {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 val pagerState = rememberPagerState { uiState.tabs.size }
                 LaunchedEffect(uiState) {
                     val index = uiState.accountList.indexOf(uiState.selectedAccount)
@@ -173,7 +174,7 @@ private fun NotificationTopBar(
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = containerColor,
+            containerColor = blurEffectContainerColor(true, containerColor),
         ),
         actions = {
             var showSelectAccountPopup by remember {

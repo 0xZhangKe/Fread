@@ -11,9 +11,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -23,6 +21,8 @@ import androidx.compose.ui.unit.sp
 import com.zhangke.framework.blur.applyBlurEffect
 import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.SingleRowTopAppBar
+import com.zhangke.framework.composable.TopAppBarColors
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.account.LoggedAccount
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
@@ -44,12 +44,12 @@ fun ContentToolbar(
     onDoubleClick: (() -> Unit)? = null,
 ) {
     val surfaceColor = MaterialTheme.colorScheme.surface
-    TopAppBar(
-        modifier = modifier.applyBlurEffect()
+    SingleRowTopAppBar(
+        modifier = modifier.applyBlurEffect(containerColor = surfaceColor)
             .pointerInput(onDoubleClick) {
                 detectTapGestures(onDoubleTap = { onDoubleClick?.invoke() })
             },
-        colors = TopAppBarDefaults.topAppBarColors(
+        colors = TopAppBarColors.default(
             containerColor = blurEffectContainerColor(containerColor = surfaceColor),
         ),
         windowInsets = windowInsets,

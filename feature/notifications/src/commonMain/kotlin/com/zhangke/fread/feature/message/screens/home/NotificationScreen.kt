@@ -23,8 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +45,8 @@ import com.zhangke.framework.blur.applyBlurEffect
 import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
+import com.zhangke.framework.composable.SingleRowTopAppBar
+import com.zhangke.framework.composable.TopAppBarColors
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.updateTopPadding
@@ -165,7 +165,7 @@ private fun NotificationTopBar(
 ) {
     val density = LocalDensity.current
     val containerColor = MaterialTheme.colorScheme.surface
-    TopAppBar(
+    SingleRowTopAppBar(
         modifier = Modifier.applyBlurEffect(containerColor = containerColor)
             .onSizeChanged { onHeightChanged(it.height.pxToDp(density)) },
         title = {
@@ -173,7 +173,7 @@ private fun NotificationTopBar(
                 text = stringResource(LocalizedString.notificationTabTitle),
             )
         },
-        colors = TopAppBarDefaults.topAppBarColors(
+        colors = TopAppBarColors.default(
             containerColor = blurEffectContainerColor(true, containerColor),
         ),
         actions = {

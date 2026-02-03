@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -20,15 +22,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.architect.json.globalJson
+import com.zhangke.framework.blur.BlurController
+import com.zhangke.framework.blur.LocalBlurController
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.applyBlurSource
+import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadErrorLineItem
 import com.zhangke.framework.composable.LoadingLineItem
+import com.zhangke.framework.composable.SingleRowTopAppBar
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.TopAppBarColors
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.fread.common.composable.NotFoundContent
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.commonbiz.shared.screen.status.account.SelectAccountOpenStatusBottomSheet
 import com.zhangke.fread.commonbiz.shared.screen.status.account.rememberSelectAccountOpenStatusSheetState
@@ -149,70 +159,100 @@ private fun StatusContextContent(
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
-        topBar = {
-            Toolbar(
-                title = stringResource(LocalizedString.sharedStatusContextScreenTitle),
-                onBackClick = onBackClick,
-                actions = {
-                    if (uiState.currentAccount != null) {
-                        BlogAuthorAvatar(
-                            modifier = Modifier.padding(end = 8.dp)
-                                .size(28.dp),
-                            imageUrl = uiState.currentAccount.avatar,
-                            onClick = { onAccountClick(uiState.currentAccount) },
+    val blurController = remember { BlurController.create() }
+    val enableBlur = uiState.contextStatus.size > 1
+    CompositionLocalProvider(
+        LocalBlurController provides blurController
+    ) {
+        val surfaceColor = MaterialTheme.colorScheme.surface
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
+            topBar = {
+                SingleRowTopAppBar(
+                    modifier = Modifier.applyBlurEffect(enableBlur, surfaceColor),
+                    colors = TopAppBarColors.default(
+                        containerColor = blurEffectContainerColor(
+                            enabled = enableBlur,
+                            containerColor = surfaceColor,
+                        )
+                    ),
+                    title = {
+                        Text(
+                            text = stringResource(LocalizedString.sharedStatusContextScreenTitle),
+                        )
+                    },
+                    navigationIcon = {
+                        Toolbar.BackButton(onBackClick = onBackClick)
+                    },
+                    actions = {
+                        if (uiState.currentAccount != null) {
+                            BlogAuthorAvatar(
+                                modifier = Modifier.padding(end = 8.dp)
+                                    .size(28.dp),
+                                imageUrl = uiState.currentAccount.avatar,
+                                onClick = { onAccountClick(uiState.currentAccount) },
+                            )
+                        }
+                    }
+                )
+            },
+            content = { contentPaddings ->
+                val contextStatus = uiState.contextStatus
+                if (contextStatus.isEmpty()) {
+                    if (!uiState.loading) {
+                        NotFoundContent(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(contentPaddings),
                         )
                     }
+                    return@Scaffold
                 }
-            )
-        },
-        content = { contentPaddings ->
-            val contextStatus = uiState.contextStatus
-            if (contextStatus.isEmpty()) return@Scaffold
-            val state = rememberLazyListState()
-            val anchorIndex = uiState.anchorIndex
-            if (!uiState.loading && uiState.needScrollToAnchor && anchorIndex in 0..contextStatus.lastIndex) {
-                LaunchedEffect(anchorIndex) {
-                    state.animateScrollToItem(anchorIndex)
-                    onScrolledToAnchor()
-                }
-            }
-            InlineVideoLazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPaddings),
-                state = state,
-            ) {
-                itemsIndexed(
-                    items = contextStatus,
-                ) { index, statusInContext ->
-                    StatusInContextUi(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        statusInContext = statusInContext,
-                        indexInList = index,
-                        onMediaClick = onMediaClick,
-                        composedStatusInteraction = composedStatusInteraction,
-                    )
-                }
-                if (uiState.loading) {
-                    item {
-                        LoadingLineItem(modifier = Modifier.fillMaxWidth())
+                val state = rememberLazyListState()
+                val anchorIndex = uiState.anchorIndex
+                if (!uiState.loading && uiState.needScrollToAnchor && anchorIndex in 0..contextStatus.lastIndex) {
+                    LaunchedEffect(anchorIndex) {
+                        state.animateScrollToItem(anchorIndex)
+                        onScrolledToAnchor()
                     }
-                } else if (uiState.errorMessage != null) {
-                    item {
-                        LoadErrorLineItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            errorMessage = uiState.errorMessage,
+                }
+                InlineVideoLazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .applyBlurSource(enableBlur),
+                    state = state,
+                    contentPadding = contentPaddings,
+                ) {
+                    itemsIndexed(
+                        items = contextStatus,
+                    ) { index, statusInContext ->
+                        StatusInContextUi(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            statusInContext = statusInContext,
+                            indexInList = index,
+                            onMediaClick = onMediaClick,
+                            composedStatusInteraction = composedStatusInteraction,
                         )
                     }
+                    if (uiState.loading) {
+                        item {
+                            LoadingLineItem(modifier = Modifier.fillMaxWidth())
+                        }
+                    } else if (uiState.errorMessage != null) {
+                        item {
+                            LoadErrorLineItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                errorMessage = uiState.errorMessage,
+                            )
+                        }
+                    }
                 }
-            }
-        },
-    )
+            },
+        )
+    }
 }
 
 @Composable

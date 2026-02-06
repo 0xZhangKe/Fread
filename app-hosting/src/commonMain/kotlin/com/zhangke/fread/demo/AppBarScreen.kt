@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +39,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
+import com.zhangke.framework.utils.Log
 import kotlinx.serialization.Serializable
 import kotlin.math.roundToInt
 
@@ -90,7 +91,7 @@ fun AppBarScreen() {
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TabsTopAppBarOld(
+            TabsTopAppBar(
                 title = { Text(text = "AppBar Demo") },
                 actions = {
                     Icon(
@@ -103,11 +104,18 @@ fun AppBarScreen() {
                         contentDescription = "Profile",
                     )
                 },
-                tabs = tabs,
+                tabs = {
+                    tabs.forEachIndexed { index, text ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = { Text(text = text) },
+                        )
+                    }
+                },
                 selectedTabIndex = selectedTabIndex,
-                onTabSelected = { selectedTabIndex = it },
                 scrollBehavior = scrollBehavior,
-                containerColor = containerColor,
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         bottomBar = {
@@ -117,14 +125,10 @@ fun AppBarScreen() {
             )
         },
     ) { paddingValues ->
+        Log.d("Z_TEST") { "top padding: ${paddingValues.calculateTopPadding()}" }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = paddingValues.calculateTopPadding() + 8.dp,
-                bottom = paddingValues.calculateBottomPadding() + 8.dp,
-            ),
+            contentPadding = paddingValues,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(items) { title ->
@@ -157,7 +161,7 @@ private fun TabsTopAppBar(
                 actions = actions,
             )
         }.first().measure(constraints)
-        val tabTowPlaceable = subcompose("tabRow") {
+        val tabRowPlaceable = subcompose("tabRow") {
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
                 edgePadding = edgePadding,
@@ -166,8 +170,23 @@ private fun TabsTopAppBar(
                 tabs = tabs,
             )
         }.first().measure(constraints)
-        layout(constraints.maxWidth, constraints.maxHeight) {
-            tabTowPlaceable.placeRelative(0, 0)
+        val totalHeight = topAppBarPlaceable.height + tabRowPlaceable.height
+        if (scrollBehavior.state.heightOffsetLimit != -totalHeight.toFloat()) {
+            scrollBehavior.state.heightOffsetLimit = -totalHeight.toFloat()
+        }
+        Log.d("Z_TEST") {
+            """
+                topAppBar height: ${topAppBarPlaceable.height}
+                tabRow height: ${tabRowPlaceable.height}
+                heightOffset: ${scrollBehavior.state.heightOffset}
+                contentOffset: ${scrollBehavior.state.contentOffset}
+                heightOffsetLimit: ${scrollBehavior.state.heightOffsetLimit}
+                collapsedFraction: ${scrollBehavior.state.collapsedFraction}
+                overlappedFraction: ${scrollBehavior.state.overlappedFraction}
+            """.trimIndent()
+        }
+        layout(constraints.maxWidth, totalHeight) {
+            tabRowPlaceable.placeRelative(0, topAppBarPlaceable.height)
             topAppBarPlaceable.placeRelative(0, 0)
         }
     }

@@ -59,6 +59,7 @@ import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.ToastHelper
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.ModuleScreenVisitor
+import com.zhangke.fread.demo.AppBarScreenNavKey
 import com.zhangke.fread.screen.rememberPredictiveBackEntryDecorator
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusUiConfig
@@ -124,7 +125,7 @@ fun FreadApp() {
                     }
                 }
             },
-            FreadHomeScreenNavKey,
+            AppBarScreenNavKey,
         )
         SharedTransitionLayout {
             CompositionLocalProvider(

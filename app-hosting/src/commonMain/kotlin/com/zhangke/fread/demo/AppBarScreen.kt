@@ -2,6 +2,9 @@
 
 package com.zhangke.fread.demo
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,7 +42,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -51,7 +53,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
@@ -61,6 +62,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
+import com.zhangke.framework.composable.TabsTopAppBar
+import com.zhangke.framework.composable.TabsTopAppBarColors
 import com.zhangke.framework.utils.Log
 import kotlinx.serialization.Serializable
 import kotlin.math.roundToInt
@@ -82,12 +85,6 @@ fun AppBarScreen() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val baseColor = MaterialTheme.colorScheme.surface
     val scrolledColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-    val containerColor by remember {
-        derivedStateOf {
-            val fraction = scrollBehavior.state.overlappedFraction.coerceIn(0F, 1F)
-            lerp(baseColor, scrolledColor, fraction)
-        }
-    }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -115,6 +112,11 @@ fun AppBarScreen() {
                 },
                 selectedTabIndex = selectedTabIndex,
                 scrollBehavior = scrollBehavior,
+                colors = TabsTopAppBarColors(
+                    containerColor = baseColor,
+                    scrolledContainerColor = scrolledColor,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ),
                 modifier = Modifier.fillMaxWidth(),
             )
         },
@@ -134,83 +136,6 @@ fun AppBarScreen() {
             items(items) { title ->
                 AppBarCardItem(title = title)
             }
-        }
-    }
-}
-
-@Composable
-private fun TabsTopAppBar(
-    modifier: Modifier,
-    title: @Composable () -> Unit,
-    actions: @Composable RowScope.() -> Unit,
-    selectedTabIndex: Int,
-    scrollBehavior: TopAppBarScrollBehavior,
-    edgePadding: Dp = TabRowDefaults.ScrollableTabRowPadding,
-    indicator: @Composable @UiComposable (tabPositions: List<TabPosition>) -> Unit =
-        @Composable { tabPositions ->
-            TabRowDefaults.Indicator(Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]))
-        },
-    divider: @Composable @UiComposable () -> Unit = @Composable { TabRowDefaults.Divider() },
-    tabs: @Composable @UiComposable () -> Unit,
-    colors: TabsTopAppBarColors = TabsTopAppBarColors.default(),
-) {
-    SubcomposeLayout(modifier = modifier) { constraints ->
-        val topAppBarPlaceable = subcompose("topAppBar") {
-            TopAppBar(
-                title = title,
-                actions = actions,
-            )
-        }.first().measure(constraints)
-        val tabRowPlaceable = subcompose("tabRow") {
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                edgePadding = edgePadding,
-                indicator = indicator,
-                divider = divider,
-                tabs = tabs,
-            )
-        }.first().measure(constraints)
-        val totalHeight = topAppBarPlaceable.height + tabRowPlaceable.height
-        if (scrollBehavior.state.heightOffsetLimit != -totalHeight.toFloat()) {
-            scrollBehavior.state.heightOffsetLimit = -totalHeight.toFloat()
-        }
-        Log.d("Z_TEST") {
-            """
-                topAppBar height: ${topAppBarPlaceable.height}
-                tabRow height: ${tabRowPlaceable.height}
-                heightOffset: ${scrollBehavior.state.heightOffset}
-                contentOffset: ${scrollBehavior.state.contentOffset}
-                heightOffsetLimit: ${scrollBehavior.state.heightOffsetLimit}
-                collapsedFraction: ${scrollBehavior.state.collapsedFraction}
-                overlappedFraction: ${scrollBehavior.state.overlappedFraction}
-            """.trimIndent()
-        }
-        layout(constraints.maxWidth, totalHeight) {
-            tabRowPlaceable.placeRelative(0, topAppBarPlaceable.height)
-            topAppBarPlaceable.placeRelative(0, 0)
-        }
-    }
-}
-
-data class TabsTopAppBarColors(
-    val containerColor: Color,
-    val scrolledContainerColor: Color,
-    val contentColor: Color,
-) {
-
-    companion object {
-
-        @Composable
-        fun default(
-            containerColor: Color = MaterialTheme.colorScheme.surface,
-            scrolledContainerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor: Color = MaterialTheme.colorScheme.onSurface,
-        ): TabsTopAppBarColors {
-            return TabsTopAppBarColors(
-                containerColor = containerColor,
-                scrolledContainerColor = scrolledContainerColor,
-                contentColor = contentColor,
-            )
         }
     }
 }

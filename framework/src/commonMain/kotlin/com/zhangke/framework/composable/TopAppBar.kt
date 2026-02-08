@@ -152,12 +152,11 @@ private fun SingleRowTopAppBarLayout(
                         max(navigationIconPlaceable.height, actionIconsPlaceable.height),
                     ),
                 )
-            val layoutHeight = maxLayoutHeight
 
-            layout(constraints.maxWidth, layoutHeight) {
+            layout(constraints.maxWidth, maxLayoutHeight) {
                 navigationIconPlaceable.placeRelative(
                     x = 0,
-                    y = (layoutHeight - navigationIconPlaceable.height) / 2,
+                    y = (maxLayoutHeight - navigationIconPlaceable.height) / 2,
                 )
 
                 val start = max(TopAppBarTitleInset.roundToPx(), navigationIconPlaceable.width)
@@ -173,12 +172,12 @@ private fun SingleRowTopAppBarLayout(
                     titleX += ((constraints.maxWidth - end) - (titleX + titlePlaceable.width))
                 }
 
-                val titleY = (layoutHeight - titlePlaceable.height) / 2
+                val titleY = (maxLayoutHeight - titlePlaceable.height) / 2
                 titlePlaceable.placeRelative(titleX, titleY)
 
                 actionIconsPlaceable.placeRelative(
                     x = constraints.maxWidth - actionIconsPlaceable.width,
-                    y = (layoutHeight - actionIconsPlaceable.height) / 2,
+                    y = (maxLayoutHeight - actionIconsPlaceable.height) / 2,
                 )
             }
         },

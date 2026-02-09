@@ -69,7 +69,7 @@ object DateTimeFormatter {
         if (minutes > 0.minutes) {
             return "${minutes.toInt(DurationUnit.MINUTES)} ${config.minutes}"
         }
-        val seconds = leftDuration.inWholeSeconds.seconds
+        val seconds = leftDuration.inWholeSeconds.seconds.coerceAtLeast(1.seconds)
         return "${seconds.toInt(DurationUnit.SECONDS)} ${config.second}"
     }
 }

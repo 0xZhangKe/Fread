@@ -44,6 +44,7 @@ fun FreadTabRow(
     selectedTabIndex: Int,
     modifier: Modifier = Modifier,
     containerColor: Color = primaryContainerColor,
+    blurEffectEnabled: Boolean = true,
     indicatorContent: @Composable (tabPosition: TabPosition) -> Unit =
         @Composable {
             FreadTabRowDefault.Indicator()
@@ -60,7 +61,7 @@ fun FreadTabRow(
         mutableStateMapOf<Int, Dp>()
     }
     FreadTabRow(
-        modifier = modifier.applyBlurEffect(containerColor = containerColor),
+        modifier = modifier.applyBlurEffect(enabled = blurEffectEnabled, containerColor = containerColor),
         selectedTabIndex = selectedTabIndex,
         containerColor = blurEffectContainerColor(containerColor = containerColor),
         indicator = { tabPositions ->

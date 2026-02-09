@@ -119,7 +119,6 @@ class NotificationTab(
                     LocalContentPadding provides plusTopPadding(tabTitleHeight)
                 ) {
                     val state = rememberLoadableInlineVideoLazyColumnState(
-                        refreshing = uiState.refreshing,
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,
                     )

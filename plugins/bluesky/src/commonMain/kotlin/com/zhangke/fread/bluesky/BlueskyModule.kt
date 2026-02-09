@@ -18,7 +18,7 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailViewMod
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsContainerViewModel
-import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeContainerViewModel
+import com.zhangke.fread.bluesky.internal.screen.content.BlueskyContentContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostViewModel
 import com.zhangke.fread.bluesky.internal.screen.search.SearchStatusViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailViewModel
@@ -124,7 +124,7 @@ val blueskyModule = module {
             handle = params.getOrNull<String>(),
         )
     }
-    viewModelOf(::BlueskyHomeContainerViewModel)
+    viewModelOf(::BlueskyContentContainerViewModel)
     viewModelOf(::HomeFeedsContainerViewModel)
     viewModel { params ->
         BskyFollowingFeedsViewModel(

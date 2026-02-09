@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.content
+package com.zhangke.fread.bluesky.internal.screen.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -11,6 +11,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -33,15 +34,13 @@ import com.zhangke.framework.composable.plusContentPadding
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.BaseTab
 import com.zhangke.framework.nav.LocalNavBackStack
-import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.nav.TabOptions
-import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
-import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.fread.activitypub.app.internal.screen.content.timeline.ActivityPubTimelineTab
-import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreenKey
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenKey
-import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusTab
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreenNavKey
+import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
+import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreenNavKey
+import com.zhangke.fread.commonbiz.shared.composable.NotLoginPageError
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.common.HomeContentTabsTopBar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
@@ -50,8 +49,8 @@ import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
-internal class ActivityPubContentTab(
-    private val configId: String,
+class BlueskyContentTab(
+    private val contentId: String,
     private val isLatestContent: Boolean,
 ) : BaseTab() {
 
@@ -61,50 +60,59 @@ internal class ActivityPubContentTab(
     @Composable
     override fun Content() {
         super.Content()
-        val navBackStack = LocalNavBackStack.currentOrThrow
-        val viewModel = koinViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
+        val backStack = LocalNavBackStack.currentOrThrow
+        val viewModel = koinViewModel<BlueskyContentContainerViewModel>().getSubViewModel(contentId)
         val uiState by viewModel.uiState.collectAsState()
-        ActivityPubContentUi(
+        val snackBarHostState = rememberSnackbarHostState()
+        BlueskyHomeContent(
             uiState = uiState,
-            onTitleClick = { content ->
-                uiState.locator?.let {
-                    navBackStack.add(InstanceDetailScreenKey(it, content.baseUrl))
-                }
-            },
+            snackBarHostState = snackBarHostState,
             onPostBlogClick = {
-                navBackStack.add(PostStatusScreenKey(accountUri = it.uri))
+                uiState.locator?.let { backStack.add(PublishPostScreenNavKey(locator = it)) }
+            },
+            onTitleClick = {},
+            onLoginClick = {
+                uiState.content?.baseUrl?.let { baseUrl ->
+                    backStack.add(
+                        AddBlueskyContentScreenNavKey(
+                            baseUrl = baseUrl,
+                            loginMode = true,
+                        )
+                    )
+                }
             },
         )
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun ActivityPubContentUi(
-        uiState: ActivityPubContentUiState,
-        onTitleClick: (ActivityPubContent) -> Unit,
-        onPostBlogClick: (ActivityPubLoggedAccount) -> Unit,
+    private fun BlueskyHomeContent(
+        uiState: BlueskyContentUiState,
+        snackBarHostState: SnackbarHostState,
+        onPostBlogClick: (BlueskyLoggedAccount) -> Unit,
+        onTitleClick: (BlueskyContent) -> Unit,
+        onLoginClick: () -> Unit,
     ) {
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalNestedTabConnection.current
-        val snackBarHostState = rememberSnackbarHostState()
         val showFb = uiState.account != null
-        val tabList = remember(uiState.locator, uiState.config) {
-            if (uiState.locator != null && uiState.config != null) {
-                createTabs(uiState.locator, uiState.config)
+        val tabList = remember(uiState.locator, uiState.content) {
+            if (uiState.content != null) {
+                createTabList(uiState.content, uiState.locator)
             } else {
                 emptyList()
             }
         }
-        val tabTitles = tabList.map { it.options?.title.orEmpty() }
+        val tabTitles = tabList.map { it.options.title }
         val pagerState = rememberPagerState(0) { tabList.size }
         val topBarState = rememberTopAppBarState()
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarState)
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                if (uiState.config != null && tabList.isNotEmpty()) {
+                if (uiState.content != null && tabList.isNotEmpty()) {
                     HomeContentTabsTopBar(
-                        title = uiState.config.name,
+                        title = uiState.content.name,
                         account = uiState.account,
                         showAccountInfo = uiState.showAccountInTopBar,
                         selectedTabIndex = pagerState.currentPage,
@@ -129,7 +137,7 @@ internal class ActivityPubContentTab(
                             }
                         },
                         onTitleClick = {
-                            onTitleClick(uiState.config)
+                            onTitleClick(uiState.content)
                         },
                         onDoubleClick = {
                             coroutineScope.launch {
@@ -144,15 +152,6 @@ internal class ActivityPubContentTab(
                     )
                 }
             },
-            snackbarHost = {
-                SnackbarHost(
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .contentBottomPadding(),
-                    hostState = snackBarHostState,
-                )
-            },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
             floatingActionButton = {
                 if (showFb) {
                     val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
@@ -163,13 +162,30 @@ internal class ActivityPubContentTab(
                     )
                 }
             },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            snackbarHost = {
+                SnackbarHost(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .contentBottomPadding(),
+                    hostState = snackBarHostState,
+                )
+            },
         ) { paddings ->
             CompositionLocalProvider(
                 LocalSnackbarHostState provides snackBarHostState,
                 LocalContentPadding provides plusContentPadding(paddings),
             ) {
-                if (uiState.locator != null && uiState.config != null) {
-                    if (tabList.isNotEmpty()) {
+                if (uiState.content != null) {
+                    if (uiState.authFailed) {
+                        NotLoginPageError(
+                            modifier = Modifier
+                                .padding(LocalContentPadding.current)
+                                .padding(top = 64.dp),
+                            message = null,
+                            onLoginClick = onLoginClick,
+                        )
+                    } else if (tabList.isNotEmpty()) {
                         val contentScrollInProgress by mainTabConnection.contentScrollInpProgress.collectAsState()
                         HorizontalPager(
                             modifier = Modifier.fillMaxSize(),
@@ -179,7 +195,7 @@ internal class ActivityPubContentTab(
                             tabList[pageIndex].Content()
                         }
                     }
-                } else if (!uiState.errorMessage.isNullOrBlank()) {
+                } else if (uiState.errorMessage != null) {
                     Box(
                         modifier = Modifier.fillMaxSize()
                             .padding(LocalContentPadding.current),
@@ -193,57 +209,26 @@ internal class ActivityPubContentTab(
                             textAlign = TextAlign.Center,
                         )
                     }
+                } else if (!uiState.initializing && uiState.account == null) {
+                    // not login
+                    NotLoginPageError(
+                        modifier = Modifier
+                            .padding(LocalContentPadding.current)
+                            .padding(top = 64.dp),
+                        message = null,
+                        onLoginClick = onLoginClick,
+                    )
                 }
             }
         }
     }
 
-    private fun createTabs(
-        locator: PlatformLocator,
-        config: ActivityPubContent,
-    ): List<Tab> {
-        return config
-            .tabList
-            .filter { !it.hide }
-            .sortedBy { it.order }
-            .map { it.toPagerTab(locator) }
-    }
-
-    private fun ActivityPubContent.ContentTab.toPagerTab(locator: PlatformLocator): Tab {
-        return when (this) {
-            is ActivityPubContent.ContentTab.HomeTimeline -> {
-                ActivityPubTimelineTab(
-                    locator = locator,
-                    type = ActivityPubStatusSourceType.TIMELINE_HOME,
-                )
-            }
-
-            is ActivityPubContent.ContentTab.LocalTimeline -> {
-                ActivityPubTimelineTab(
-                    locator = locator,
-                    type = ActivityPubStatusSourceType.TIMELINE_LOCAL,
-                )
-            }
-
-            is ActivityPubContent.ContentTab.PublicTimeline -> {
-                ActivityPubTimelineTab(
-                    locator = locator,
-                    type = ActivityPubStatusSourceType.TIMELINE_PUBLIC,
-                )
-            }
-
-            is ActivityPubContent.ContentTab.Trending -> {
-                TrendingStatusTab(locator = locator)
-            }
-
-            is ActivityPubContent.ContentTab.ListTimeline -> {
-                ActivityPubTimelineTab(
-                    locator = locator,
-                    type = ActivityPubStatusSourceType.LIST,
-                    listId = listId,
-                    listTitle = name,
-                )
-            }
-        }
+    private fun createTabList(
+        content: BlueskyContent,
+        locator: PlatformLocator?,
+    ): List<HomeFeedsTab> {
+        if (locator == null) return emptyList()
+        return content.feedsList.filter { it.pinned }
+            .map { HomeFeedsTab(feeds = it, locator = locator) }
     }
 }

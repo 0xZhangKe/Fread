@@ -50,7 +50,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreenContent
+import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailBottomSheet
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.rememberFeedsDetailBottomSheetState
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
@@ -78,7 +78,7 @@ fun BskyFollowingFeedsPage(viewModel: BskyFollowingFeedsViewModel) {
 
     val feedsDetailBottomSheetState = rememberFeedsDetailBottomSheetState()
     val feedsDetailSheetState = rememberModalBottomSheetState()
-    FeedsDetailScreenContent(
+    FeedsDetailBottomSheet(
         state = feedsDetailBottomSheetState,
         sheetState = feedsDetailSheetState,
         onFeedsUpdate = viewModel::onFeedsUpdate,

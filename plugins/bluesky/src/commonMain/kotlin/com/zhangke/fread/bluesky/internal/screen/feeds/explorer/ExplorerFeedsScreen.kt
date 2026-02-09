@@ -29,7 +29,7 @@ import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.bluesky.internal.composable.BlueskyExploringFeeds
-import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreenContent
+import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailBottomSheet
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.rememberFeedsDetailBottomSheetState
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -57,7 +57,7 @@ fun ExplorerFeedsScreen(
 
     val feedsDetailBottomSheetState = rememberFeedsDetailBottomSheetState()
     val feedsDetailSheetState = rememberModalBottomSheetState()
-    FeedsDetailScreenContent(
+    FeedsDetailBottomSheet(
         state = feedsDetailBottomSheetState,
         sheetState = feedsDetailSheetState,
         onFeedsUpdate = viewModel::onFeedsUpdate,
@@ -99,27 +99,31 @@ private fun ExplorerFeedsContent(
             }
         },
         contentWindowInsets = if (inlineMode) {
-            WindowInsets(0)
+            WindowInsets()
         } else {
             ScaffoldDefaults.contentWindowInsets
         },
         snackbarHost = {
-            SnackbarHost(hostState = snackBarState)
+            SnackbarHost(
+                modifier = Modifier.padding(LocalContentPadding.current),
+                hostState = snackBarState,
+            )
         },
     ) { innerPadding ->
         if (uiState.initializing) {
-            InitializingPlaceholder(modifier = Modifier.padding(innerPadding))
+            InitializingPlaceholder(
+                modifier = Modifier.padding(innerPadding)
+                    .padding(LocalContentPadding.current),
+            )
         } else {
             val loadableState = rememberLoadableLazyColumnState(
-                refreshing = uiState.refreshing,
                 onRefresh = onRefresh,
                 onLoadMore = onLoadMore,
             )
             LoadableLazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(LocalContentPadding.current),
+                    .padding(innerPadding),
                 state = loadableState,
                 lazyColumnModifier = Modifier.applyBlurSource(),
                 contentPadding = LocalContentPadding.current,

@@ -76,7 +76,6 @@ private fun TagListContent(
         },
     ) { innerPadding ->
         val loadableState = rememberLoadableLazyColumnState(
-            refreshing = uiState.refreshing,
             onRefresh = onRefresh,
             onLoadMore = onLoadMore,
         )

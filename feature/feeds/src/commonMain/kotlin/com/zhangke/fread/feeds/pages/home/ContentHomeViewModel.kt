@@ -6,7 +6,7 @@ import com.zhangke.framework.nav.Tab
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
-import com.zhangke.fread.feeds.pages.home.feeds.MixedContentScreen
+import com.zhangke.fread.feeds.pages.home.feeds.MixedContentTab
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.model.FreadContent
@@ -109,7 +109,7 @@ class ContentHomeViewModel(
 
     private fun FreadContent.convertToWithTab(isLatestTab: Boolean): Pair<FreadContent, Tab> {
         if (this is MixedContent) {
-            return this to MixedContentScreen(
+            return this to MixedContentTab(
                 configId = id,
                 isLatestTab = isLatestTab,
             )

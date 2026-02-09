@@ -79,7 +79,6 @@ internal class SearchedStatusTab(
         nestedScrollConnection: NestedScrollConnection?,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
-            refreshing = uiState.refreshing,
             onRefresh = onRefresh,
             onLoadMore = onLoadMore,
         )

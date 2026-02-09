@@ -3,7 +3,6 @@ package com.zhangke.fread.commonbiz.shared.composable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -116,7 +115,6 @@ fun FeedsContent(
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLoadableInlineVideoLazyColumnState(
-                refreshing = refreshing,
                 onRefresh = onRefresh,
                 onLoadMore = onLoadMore,
             )
@@ -182,6 +180,7 @@ fun FeedsContent(
             val coroutineScope = rememberCoroutineScope()
             AnimatedVisibility(
                 modifier = Modifier
+                    .padding(LocalContentPadding.current)
                     .padding(top = 32.dp)
                     .align(Alignment.TopCenter),
                 visible = showNewStatusNotifyBar,
@@ -221,10 +220,16 @@ fun InitErrorContent(
     onLoginClick: (() -> Unit)? = null,
 ) {
     if (onLoginClick != null && error.isAuthenticationFailure) {
-        NotLoginPageError(Modifier, error.message, onLoginClick)
+        NotLoginPageError(
+            modifier = Modifier.padding(LocalContentPadding.current),
+            message = error.message,
+            onLoginClick = onLoginClick,
+        )
     } else {
         Column(
-            modifier = Modifier.fillMaxSize().padding(start = 32.dp, top = 64.dp, end = 32.dp),
+            modifier = Modifier.fillMaxSize()
+                .padding(LocalContentPadding.current)
+                .padding(start = 32.dp, top = 64.dp, end = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -244,7 +249,9 @@ fun NotLoginPageError(
     onLoginClick: () -> Unit,
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(start = 32.dp, top = 64.dp, end = 32.dp),
+        modifier = modifier.fillMaxSize()
+            .padding(LocalContentPadding.current)
+            .padding(start = 32.dp, top = 64.dp, end = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -275,6 +282,7 @@ fun EmptyListContent() {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding(LocalContentPadding.current)
             .verticalScroll(rememberScrollState())
     ) {
         Text(

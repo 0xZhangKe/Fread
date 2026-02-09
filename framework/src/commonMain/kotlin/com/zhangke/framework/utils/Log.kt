@@ -6,16 +6,16 @@ import co.touchlab.kermit.platformLogWriter
 
 object Log {
 
-    private val log = Logger(
+    val log = Logger(
         loggerConfigInit(platformLogWriter()),
         "Fread",
     )
 
-    fun d(tag: String, message: () -> String) {
+    inline fun d(tag: String, message: () -> String) {
         log.d(tag = tag, message = message)
     }
 
-    fun i(tag: String, message: () -> String) {
+    inline fun i(tag: String, message: () -> String) {
         log.i(tag = tag, message = message)
     }
 }

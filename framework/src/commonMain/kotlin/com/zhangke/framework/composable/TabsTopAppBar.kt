@@ -2,10 +2,6 @@ package com.zhangke.framework.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.ScrollableTabRow
-import androidx.compose.material.TabPosition
-import androidx.compose.material.TabRowDefaults
-import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -14,11 +10,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.unit.Dp
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.blurEffectContainerColor
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,14 +25,11 @@ fun TabsTopAppBar(
     actions: @Composable RowScope.() -> Unit,
     selectedTabIndex: Int,
     scrollBehavior: TopAppBarScrollBehavior,
-    edgePadding: Dp = TabRowDefaults.ScrollableTabRowPadding,
-    indicator: @Composable @UiComposable (tabPositions: List<TabPosition>) -> Unit =
-        @Composable { tabPositions ->
-            TabRowDefaults.Indicator(Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]))
-        },
-    divider: @Composable @UiComposable () -> Unit = @Composable { TabRowDefaults.Divider() },
-    tabs: @Composable @UiComposable () -> Unit,
+    tabCount: Int,
+    tabContent: @Composable (index: Int) -> Unit,
+    onTabClick: (index: Int) -> Unit,
     colors: TabsTopAppBarColors = TabsTopAppBarColors.default(),
+    navigationIcon: @Composable () -> Unit = {},
 ) {
     val appBarContainerColor by remember(scrollBehavior, colors) {
         derivedStateOf {
@@ -47,27 +40,27 @@ fun TabsTopAppBar(
     SubcomposeLayout(
         modifier = modifier.background(appBarContainerColor),
     ) { constraints ->
+        val tabRowPlaceable = subcompose("tabRow") {
+            FreadTabRow(
+                selectedTabIndex = selectedTabIndex,
+                containerColor = appBarContainerColor,
+                tabCount = tabCount,
+                tabContent = tabContent,
+                onTabClick = onTabClick,
+            )
+        }.first().measure(constraints)
         val topAppBarPlaceable = subcompose("topAppBar") {
             SingleRowTopAppBar(
+                modifier = modifier.applyBlurEffect(containerColor = appBarContainerColor),
+                navigationIcon = navigationIcon,
                 title = title,
                 actions = actions,
                 colors = TopAppBarColors.default(
-                    containerColor = appBarContainerColor,
+                    containerColor = blurEffectContainerColor(containerColor = appBarContainerColor),
                     navigationIconContentColor = colors.contentColor,
                     titleContentColor = colors.contentColor,
                     actionIconContentColor = colors.contentColor,
                 ),
-            )
-        }.first().measure(constraints)
-        val tabRowPlaceable = subcompose("tabRow") {
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                backgroundColor = appBarContainerColor,
-                contentColor = colors.contentColor,
-                edgePadding = edgePadding,
-                indicator = indicator,
-                divider = divider,
-                tabs = tabs,
             )
         }.first().measure(constraints)
         val totalHeight = topAppBarPlaceable.height + tabRowPlaceable.height
@@ -109,4 +102,3 @@ data class TabsTopAppBarColors(
         }
     }
 }
-

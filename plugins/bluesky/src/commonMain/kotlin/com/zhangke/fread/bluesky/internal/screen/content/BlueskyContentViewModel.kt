@@ -1,13 +1,15 @@
-package com.zhangke.fread.bluesky.internal.screen.home
+package com.zhangke.fread.bluesky.internal.screen.content
 
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
+import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
 import com.zhangke.fread.bluesky.internal.utils.createPlatformLocator
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.content.FreadContentRepo
+import com.zhangke.fread.status.account.isAuthenticationFailure
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,16 +19,17 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
-class BlueskyHomeViewModel(
+class BlueskyContentViewModel(
     private val contentId: String,
     private val contentRepo: FreadContentRepo,
     private val freadConfigManager: FreadConfigManager,
     private val updateHomeTab: UpdateHomeTabUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
+    private val clientManager: BlueskyClientManager,
 ) : SubViewModel() {
 
-    private val _uiState = MutableStateFlow(BlueskyHomeUiState.default(initializing = true))
-    val uiState: StateFlow<BlueskyHomeUiState> = _uiState
+    private val _uiState = MutableStateFlow(BlueskyContentUiState.default(initializing = true))
+    val uiState: StateFlow<BlueskyContentUiState> = _uiState
 
     private var observeAccountJob: Job? = null
 
@@ -85,6 +88,13 @@ class BlueskyHomeViewModel(
                         it.copy(account = account, showAccountInTopBar = accountSize > 1)
                     }
                     updateHomeTab(contentId, locator)
+                    clientManager.getClient(locator)
+                        .getProfileCatching(account.did)
+                        .onFailure { t ->
+                            _uiState.update { it.copy(authExpired = t.isAuthenticationFailure) }
+                        }.onSuccess {
+                            _uiState.update { it.copy(authExpired = false) }
+                        }
                 }
         }
     }

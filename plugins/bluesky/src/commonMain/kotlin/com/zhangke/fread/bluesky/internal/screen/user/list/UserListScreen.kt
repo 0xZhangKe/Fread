@@ -120,7 +120,6 @@ private fun UserListContent(
                 )
             } else {
                 val loadableState = rememberLoadableLazyColumnState(
-                    refreshing = uiState.refreshing,
                     onRefresh = onRefresh,
                     onLoadMore = onLoadMore,
                 )

@@ -96,7 +96,6 @@ class ExplorerTab(
             StatusListPlaceholder()
         } else {
             val state = rememberLoadableInlineVideoLazyColumnState(
-                refreshing = uiState.refreshing,
                 onRefresh = onRefresh,
                 onLoadMore = onLoadMore,
             )

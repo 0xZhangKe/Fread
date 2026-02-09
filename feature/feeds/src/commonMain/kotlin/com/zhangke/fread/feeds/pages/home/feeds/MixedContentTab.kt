@@ -7,8 +7,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +25,7 @@ import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
-internal class MixedContentScreen(
+internal class MixedContentTab(
     private val configId: String,
     private val isLatestTab: Boolean,
 ) : Tab {

@@ -86,7 +86,6 @@ internal class ActivityPubTimelineTab(
             } else {
                 Box(modifier = Modifier.fillMaxSize()) {
                     val state = rememberLoadableInlineVideoLazyColumnState(
-                        refreshing = uiState.refreshing,
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,
                         initialFirstVisibleItemIndex = uiState.initialShowIndex,

@@ -3,16 +3,16 @@ package com.zhangke.framework.loadable.lazycolumn
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshDefaults
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,13 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import com.zhangke.framework.blur.applyBlurSource
 import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.utils.LoadState
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LoadableInlineVideoLazyColumn(
     modifier: Modifier = Modifier,
@@ -48,8 +46,17 @@ fun LoadableInlineVideoLazyColumn(
         mutableStateOf(loadState)
     }
     val loadMoreFunction by rememberUpdatedState(newValue = state.loadMoreState.onLoadMore)
-    Box(
-        modifier = modifier.pullRefresh(state.pullRefreshState)
+    PullToRefreshBox(
+        modifier = modifier,
+        state = state.pullRefreshState.pullRefreshState,
+        isRefreshing = refreshing,
+        onRefresh = { state.pullRefreshState.onRefresh() },
+        indicator = {
+            PullToRefreshIndicator(
+                state = state.pullRefreshState.pullRefreshState,
+                refreshing = refreshing,
+            )
+        },
     ) {
         InlineVideoLazyColumn(
             contentPadding = LocalContentPadding.current,
@@ -74,12 +81,6 @@ fun LoadableInlineVideoLazyColumn(
                 }
             },
         )
-        PullRefreshIndicator(
-            modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = refreshing,
-            state = state.pullRefreshState,
-            scale = true,
-        )
     }
     ObserveLazyListLoadEvent(
         lazyListState = lazyListState,
@@ -95,21 +96,19 @@ fun LoadableInlineVideoLazyColumn(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun rememberLoadableInlineVideoLazyColumnState(
-    refreshing: Boolean,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
-    refreshThreshold: Dp = PullRefreshDefaults.RefreshThreshold,
-    refreshingOffset: Dp = PullRefreshDefaults.RefreshingOffset,
     loadMoreRemainCountThreshold: Int = 3,
     initialFirstVisibleItemIndex: Int = 0,
     initialFirstVisibleItemScrollOffset: Int = 0
 ): LoadableLazyInlineVideoColumnState {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = refreshing,
-        onRefresh = onRefresh,
-        refreshingOffset = refreshingOffset,
-        refreshThreshold = refreshThreshold,
-    )
+    val pullRefreshState = rememberPullToRefreshState()
+    val pullToRefreshingState = remember(pullRefreshState, onRefresh) {
+        PullToRefreshingState(
+            pullRefreshState = pullRefreshState,
+            onRefresh = onRefresh,
+        )
+    }
 
     val lazyListState = rememberLazyListState(
         initialFirstVisibleItemScrollOffset = initialFirstVisibleItemScrollOffset,
@@ -121,7 +120,7 @@ fun rememberLoadableInlineVideoLazyColumnState(
     return remember(pullRefreshState, lazyListState, loadMoreState) {
         LoadableLazyInlineVideoColumnState(
             lazyListState = lazyListState,
-            pullRefreshState = pullRefreshState,
+            pullRefreshState = pullToRefreshingState,
             loadMoreState = loadMoreState,
         )
     }
@@ -142,9 +141,13 @@ data class LoadMoreState(
     val onLoadMore: () -> Unit,
 )
 
-@OptIn(ExperimentalMaterialApi::class)
 data class LoadableLazyInlineVideoColumnState(
     val lazyListState: LazyListState,
-    val pullRefreshState: PullRefreshState,
+    val pullRefreshState: PullToRefreshingState,
     val loadMoreState: LoadMoreState,
+)
+
+data class PullToRefreshingState(
+    val pullRefreshState: PullToRefreshState,
+    val onRefresh: () -> Unit,
 )

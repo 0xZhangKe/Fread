@@ -77,6 +77,7 @@ import kotlinx.serialization.json.Json
 import sh.christian.ozone.BlueskyApi
 import sh.christian.ozone.XrpcBlueskyApi
 import sh.christian.ozone.api.AtIdentifier
+import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Uri
 import sh.christian.ozone.api.response.AtpResponse
 
@@ -108,6 +109,10 @@ class BlueskyClient(
 
     suspend fun getProfileCatching(request: GetProfileQueryParams): Result<ProfileViewDetailed> {
         return runCatching { getProfile(request) }.toResult()
+    }
+
+    suspend fun getProfileCatching(did: String): Result<ProfileViewDetailed> {
+        return runCatching { getProfile(GetProfileQueryParams(Did(did))) }.toResult()
     }
 
     suspend fun getProfilesCatching(request: GetProfilesQueryParams): Result<GetProfilesResponse> {

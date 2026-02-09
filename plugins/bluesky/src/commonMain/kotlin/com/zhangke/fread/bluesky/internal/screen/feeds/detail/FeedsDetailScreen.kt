@@ -1,8 +1,10 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.detail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -85,7 +87,7 @@ class FeedsDetailBottomSheetState {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedsDetailScreenContent(
+fun FeedsDetailBottomSheet(
     state: FeedsDetailBottomSheetState,
     sheetState: SheetState,
     onFeedsUpdate: (BlueskyFeeds.Feeds) -> Unit,
@@ -160,7 +162,7 @@ private fun FeedsDetailContent(
     onLikeClick: () -> Unit,
     onPinClick: () -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp)) {
         val feeds = uiState.feeds
         if (feeds is BlueskyFeeds.Feeds) {
             FeedsDetail(

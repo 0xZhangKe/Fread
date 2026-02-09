@@ -7,7 +7,7 @@ import com.zhangke.framework.nav.TabOptions
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreen
 import com.zhangke.fread.status.model.PlatformLocator
 
-class ExplorerTab(
+class BlueskyExplorerTab(
     private val locator: PlatformLocator,
 ) : BaseTab() {
 

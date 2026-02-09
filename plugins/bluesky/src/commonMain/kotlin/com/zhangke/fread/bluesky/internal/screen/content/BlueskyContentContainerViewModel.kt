@@ -1,30 +1,32 @@
-package com.zhangke.fread.bluesky.internal.screen.home
+package com.zhangke.fread.bluesky.internal.screen.content
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
-import com.zhangke.framework.lifecycle.ContainerViewModel.SubViewModelParams
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
+import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.content.FreadContentRepo
 
-class BlueskyHomeContainerViewModel(
+class BlueskyContentContainerViewModel(
     private val contentRepo: FreadContentRepo,
     private val freadConfigManager: FreadConfigManager,
     private val accountManager: BlueskyLoggedAccountManager,
     private val updateHomeTab: UpdateHomeTabUseCase,
-) : ContainerViewModel<BlueskyHomeViewModel, BlueskyHomeContainerViewModel.Params>() {
+    private val clientManager: BlueskyClientManager,
+) : ContainerViewModel<BlueskyContentViewModel, BlueskyContentContainerViewModel.Params>() {
 
-    override fun createSubViewModel(params: Params): BlueskyHomeViewModel {
-        return BlueskyHomeViewModel(
+    override fun createSubViewModel(params: Params): BlueskyContentViewModel {
+        return BlueskyContentViewModel(
             contentId = params.contentId,
             contentRepo = contentRepo,
             updateHomeTab = updateHomeTab,
             freadConfigManager = freadConfigManager,
             accountManager = accountManager,
+            clientManager = clientManager,
         )
     }
 
-    fun getSubViewModel(contentId: String): BlueskyHomeViewModel {
+    fun getSubViewModel(contentId: String): BlueskyContentViewModel {
         return obtainSubViewModel(Params(contentId))
     }
 

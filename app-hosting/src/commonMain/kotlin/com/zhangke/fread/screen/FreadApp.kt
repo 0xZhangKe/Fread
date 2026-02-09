@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
@@ -25,9 +24,9 @@ import androidx.navigation3.scene.SceneInfo
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.scene.rememberSceneState
 import androidx.navigation3.ui.NavDisplay
-import androidx.savedstate.serialization.SavedStateConfiguration
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
+import androidx.savedstate.serialization.SavedStateConfiguration
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.zhangke.framework.nav.LocalNavBackStack
@@ -59,8 +58,6 @@ import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.ToastHelper
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.ModuleScreenVisitor
-import com.zhangke.fread.demo.AppBarScreenNavKey
-import com.zhangke.fread.screen.rememberPredictiveBackEntryDecorator
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
@@ -125,7 +122,7 @@ fun FreadApp() {
                     }
                 }
             },
-            AppBarScreenNavKey,
+            FreadHomeScreenNavKey,
         )
         SharedTransitionLayout {
             CompositionLocalProvider(

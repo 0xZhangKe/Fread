@@ -86,7 +86,6 @@ internal class SearchedAuthorTab(
         val browserLauncher = LocalActivityBrowserLauncher.current
         val coroutineScope = rememberCoroutineScope()
         val state = rememberLoadableInlineVideoLazyColumnState(
-            refreshing = uiState.refreshing,
             onRefresh = onRefresh,
             onLoadMore = onLoadMore,
         )

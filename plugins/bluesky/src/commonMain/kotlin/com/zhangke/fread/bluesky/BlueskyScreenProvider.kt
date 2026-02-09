@@ -7,10 +7,10 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreenNavKey
-import com.zhangke.fread.bluesky.internal.screen.explorer.ExplorerTab
+import com.zhangke.fread.bluesky.internal.screen.explorer.BlueskyExplorerTab
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPageNavKey
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreenNavKey
-import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
+import com.zhangke.fread.bluesky.internal.screen.content.BlueskyContentTab
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreenNavKey
@@ -54,7 +54,7 @@ class BlueskyScreenProvider(
         content: FreadContent,
         isLatestTab: Boolean
     ): Tab {
-        return BlueskyHomeTab(content.id, isLatestTab)
+        return BlueskyContentTab(content.id, isLatestTab)
     }
 
     override fun getEditContentConfigScreenScreen(content: FreadContent): NavKey? {
@@ -129,7 +129,7 @@ class BlueskyScreenProvider(
 
     override fun getExplorerTab(locator: PlatformLocator, platform: BlogPlatform): Tab? {
         if (platform.protocol.notBluesky) return null
-        return ExplorerTab(locator)
+        return BlueskyExplorerTab(locator)
     }
 
     override fun getAddContentScreen(protocol: StatusProviderProtocol): NavKey? {

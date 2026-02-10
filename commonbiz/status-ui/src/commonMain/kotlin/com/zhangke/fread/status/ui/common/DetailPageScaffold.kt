@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.zhangke.framework.blur.BlurController
 import com.zhangke.framework.blur.LocalBlurController
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
+import com.zhangke.framework.composable.plusContentPadding
 import com.zhangke.fread.status.richtext.RichText
 
 @Composable
@@ -41,7 +43,7 @@ fun DetailPageScaffold(
     followInfoLine: @Composable () -> Unit,
     topDetailContentAction: (@Composable () -> Unit)? = null,
     bottomArea: (@Composable () -> Unit)? = null,
-    content: @Composable () -> Unit,
+    content: @Composable (progress: Float) -> Unit,
 ) {
     DetailPageScaffold(
         modifier = modifier,
@@ -82,7 +84,7 @@ fun DetailPageScaffold(
     onBackClick: () -> Unit,
     topBarActions: @Composable RowScope.() -> Unit,
     topDetailContent: @Composable BoxScope.(Float) -> Unit,
-    content: @Composable () -> Unit,
+    content: @Composable (progress: Float) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -115,8 +117,12 @@ fun DetailPageScaffold(
                     topDetailContent(progress)
                 },
                 contentCanScrollBackward = contentCanScrollBackward,
-            ) {
-                content()
+            ) { paddingValues, progress ->
+                CompositionLocalProvider(
+                    LocalContentPadding provides plusContentPadding(paddingValues),
+                ) {
+                    content(progress)
+                }
             }
         }
     }

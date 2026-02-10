@@ -1,45 +1,42 @@
 package com.zhangke.fread.activitypub.app.internal.screen.hashtag
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.getValue
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.ExperimentalMotionApi
-import androidx.constraintlayout.compose.MotionScene
 import androidx.navigation3.runtime.NavKey
-import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.StyledTextButton
-import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
+import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.composable.plusContentPadding
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
@@ -83,6 +80,7 @@ fun HashtagTimelineScreen(
     ConsumeSnackbarFlow(LocalSnackbarHostState.current, viewModel.errorMessageFlow)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HashtagTimelineContent(
     hashtagTimelineUiState: HashtagTimelineUiState,
@@ -98,190 +96,82 @@ private fun HashtagTimelineContent(
     onUnfollowClick: () -> Unit,
 ) {
     val snackbarHostState = rememberSnackbarHostState()
-    val contentCanScrollBackward = remember {
-        mutableStateOf(false)
-    }
+    val topBarState = rememberTopAppBarState()
+    val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
+    val collapsedFraction = topBarScrollBehavior.state.collapsedFraction.coerceIn(0F, 1F)
+    val subtitleAlpha by animateFloatAsState(
+        targetValue = (1F - collapsedFraction * 1.4F).coerceIn(0F, 1F),
+        label = "hashtag_subtitle_alpha",
+    )
+    val followButtonScale by animateFloatAsState(
+        targetValue = 1F - 0.08F * collapsedFraction,
+        label = "hashtag_follow_button_scale",
+    )
     Scaffold(
+        modifier = Modifier.nestedScroll(topBarScrollBehavior.nestedScrollConnection),
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            LargeTopAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                title = {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                modifier = Modifier.weight(1F),
+                                text = hashtagTimelineUiState.hashTag,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            FollowHashtagButton(
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                                    .graphicsLayer {
+                                        scaleX = followButtonScale
+                                        scaleY = followButtonScale
+                                    },
+                                uiState = hashtagTimelineUiState,
+                                onFollowClick = onFollowClick,
+                                onUnfollowClick = onUnfollowClick,
+                            )
+                        }
+                        if (hashtagTimelineUiState.description.isNotBlank()) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(top = 2.dp)
+                                    .graphicsLayer { alpha = subtitleAlpha },
+                                text = hashtagTimelineUiState.description,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                },
+                navigationIcon = {
+                    Toolbar.BackButton(onBackClick = onBackClick)
+                },
+                scrollBehavior = topBarScrollBehavior,
+            )
+        },
     ) { innerPadding ->
-        ScrollUpTopBarLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            immersiveToTopBar = false,
-            topBarContent = {
-                Toolbar(
-                    title = hashtagTimelineUiState.hashTag,
-                    onBackClick = onBackClick,
-                )
-            },
-            headerContent = {
-                HashtagHeaderContent(
-                    uiState = hashtagTimelineUiState,
-                    onFollowClick = onFollowClick,
-                    onUnfollowClick = onUnfollowClick,
-                )
-            },
-            contentCanScrollBackward = contentCanScrollBackward,
+        CompositionLocalProvider(
+            LocalContentPadding provides plusContentPadding(innerPadding),
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                FeedsContent(
-                    uiState = statusUiState,
-                    openScreenFlow = openScreenFlow,
-                    newStatusNotifyFlow = newStatusNotifyFlow,
-                    composedStatusInteraction = composedStatusInteraction,
-                    onRefresh = onRefresh,
-                    onLoadMore = onLoadMore,
-                    nestedScrollConnection = null,
-                    contentCanScrollBackward = contentCanScrollBackward,
-                )
-            }
+            FeedsContent(
+                uiState = statusUiState,
+                openScreenFlow = openScreenFlow,
+                newStatusNotifyFlow = newStatusNotifyFlow,
+                composedStatusInteraction = composedStatusInteraction,
+                onRefresh = onRefresh,
+                onLoadMore = onLoadMore,
+                nestedScrollConnection = null,
+            )
         }
     }
     ConsumeSnackbarFlow(snackbarHostState, messageFlow)
-}
-
-@Composable
-private fun HashtagHeaderContent(
-    uiState: HashtagTimelineUiState,
-    onFollowClick: () -> Unit,
-    onUnfollowClick: () -> Unit,
-) {
-    Surface(
-        Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .weight(1F),
-                    style = MaterialTheme.typography.titleMedium,
-                    text = uiState.hashTag,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Start,
-                )
-
-                FollowHashtagButton(
-                    modifier = Modifier.padding(start = 8.dp),
-                    uiState = uiState,
-                    onFollowClick = onFollowClick,
-                    onUnfollowClick = onUnfollowClick,
-                )
-            }
-
-            Text(
-                modifier = Modifier.padding(top = 4.dp),
-                text = uiState.description,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Start,
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMotionApi::class)
-@Composable
-private fun buildMotionScene() = MotionScene {
-    val topBarRef = createRefFor("topBar")
-    val topBarBottomContentRef = createRefFor("topBarBottomContent")
-    val start1 = constraintSet {
-        constrain(topBarRef) {
-            top.linkTo(parent.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            width = Dimension.fillToConstraints
-        }
-        constrain(topBarBottomContentRef) {
-            top.linkTo(topBarRef.bottom)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            width = Dimension.fillToConstraints
-        }
-    }
-    val end1 = constraintSet {
-        constrain(topBarRef) {
-            top.linkTo(parent.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            width = Dimension.fillToConstraints
-        }
-        constrain(topBarBottomContentRef) {
-            bottom.linkTo(topBarRef.bottom, 4.dp)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            width = Dimension.fillToConstraints
-        }
-    }
-    transition(name = "default", from = start1, to = end1) {}
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun HashtagAppBar(
-    uiState: HashtagTimelineUiState,
-    onBackClick: () -> Unit,
-    onFollowClick: () -> Unit,
-    onUnfollowClick: () -> Unit,
-) {
-    Surface(
-        Modifier
-            .layoutId("topBarBottomContent")
-            .fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .weight(1F),
-                    style = MaterialTheme.typography.titleMedium,
-                    text = uiState.hashTag,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Start,
-                )
-
-                FollowHashtagButton(
-                    modifier = Modifier.padding(start = 8.dp),
-                    uiState = uiState,
-                    onFollowClick = onFollowClick,
-                    onUnfollowClick = onUnfollowClick,
-                )
-            }
-
-            Text(
-                modifier = Modifier.padding(top = 4.dp),
-                text = uiState.description,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Start,
-            )
-        }
-    }
-    TopAppBar(
-        modifier = Modifier.layoutId("topBar"),
-        navigationIcon = {
-            Toolbar.BackButton(
-                onBackClick = onBackClick,
-            )
-        },
-        title = {
-            Text(
-                fontSize = 18.sp,
-                text = uiState.hashTag,
-            )
-        },
-    )
 }
 
 @Composable
@@ -292,7 +182,7 @@ private fun FollowHashtagButton(
     onUnfollowClick: () -> Unit,
 ) {
     var showUnfollowDialog by remember { mutableStateOf(false) }
-    StyledTextButton(
+    FilledTonalButton(
         modifier = modifier,
         onClick = {
             if (uiState.following) {
@@ -301,17 +191,22 @@ private fun FollowHashtagButton(
                 onFollowClick()
             }
         },
-        style = if (uiState.following) {
-            TextButtonStyle.STANDARD
-        } else {
-            TextButtonStyle.ACTIVE
-        },
-        text = if (uiState.following) {
-            stringResource(LocalizedString.statusUiUserDetailRelationshipFollowing)
-        } else {
-            stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow)
-        },
-    )
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = if (uiState.following) {
+                MaterialTheme.colorScheme.secondaryContainer
+            } else {
+                MaterialTheme.colorScheme.primaryContainer
+            },
+        ),
+    ) {
+        Text(
+            text = if (uiState.following) {
+                stringResource(LocalizedString.statusUiUserDetailRelationshipFollowing)
+            } else {
+                stringResource(LocalizedString.statusUiUserDetailRelationshipNotFollow)
+            },
+        )
+    }
     if (showUnfollowDialog) {
         AlertConfirmDialog(
             content = stringResource(LocalizedString.activity_pub_hashtag_unfollow_dialog_message),

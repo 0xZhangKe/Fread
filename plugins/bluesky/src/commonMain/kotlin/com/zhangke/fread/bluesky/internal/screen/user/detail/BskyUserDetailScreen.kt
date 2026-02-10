@@ -33,7 +33,7 @@ import com.zhangke.framework.composable.PopupMenu
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.nav.HorizontalPagerWithTab
+import com.zhangke.framework.nav.ContentPaddingsHorizontalPagerWithTab
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPageNavKey
@@ -263,7 +263,7 @@ private fun UserDetailContent(
                 )
             }
         },
-    ) {
+    ) { progress ->
         val tabs = remember(uiState.tabs) {
             uiState.tabs.map {
                 HomeFeedsTab(
@@ -283,8 +283,9 @@ private fun UserDetailContent(
             LocalStatusSharedElementConfig provides sharedElementConfig,
         ) {
             val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
-            HorizontalPagerWithTab(
+            ContentPaddingsHorizontalPagerWithTab(
                 tabList = tabs,
+                blurEnabled = progress >= 1F,
                 pagerUserScrollEnabled = !contentScrollInProgress,
             )
         }

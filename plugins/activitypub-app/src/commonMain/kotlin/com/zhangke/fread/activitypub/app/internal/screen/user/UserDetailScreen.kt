@@ -66,7 +66,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.date.DateParser
-import com.zhangke.framework.nav.HorizontalPagerWithTab
+import com.zhangke.framework.nav.ContentPaddingsHorizontalPagerWithTab
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
@@ -424,7 +424,7 @@ private fun UserDetailContent(
         } else {
             null
         },
-    ) {
+    ) { progress ->
         if (uiState.userInsight != null) {
             val tabs: List<Tab> = remember(
                 uiState.userInsight,
@@ -444,8 +444,9 @@ private fun UserDetailContent(
                 LocalNestedTabConnection provides nestedTabConnection,
             ) {
                 val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
-                HorizontalPagerWithTab(
+                ContentPaddingsHorizontalPagerWithTab(
                     tabList = tabs,
+                    blurEnabled = progress >= 1F,
                     pagerUserScrollEnabled = !contentScrollInProgress,
                 )
             }

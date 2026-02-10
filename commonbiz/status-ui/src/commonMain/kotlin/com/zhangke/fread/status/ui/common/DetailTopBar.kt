@@ -5,13 +5,15 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.lerp
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.blurEffectContainerColor
+import com.zhangke.framework.composable.SingleRowTopAppBar
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.TopAppBarColors
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -25,7 +27,8 @@ fun DetailTopBar(
     onBackClick: () -> Unit,
     actions: @Composable RowScope.() -> Unit,
 ) {
-    val topBarContainerColor = MaterialTheme.colorScheme.surface.copy(progress)
+    val progressTopBarContainerColor = MaterialTheme.colorScheme.surface.copy(progress)
+    val blurEnabled = progress >= 1F
     val onTopBarColor = lerp(
         start = MaterialTheme.colorScheme.inverseOnSurface,
         stop = MaterialTheme.colorScheme.onSurface,
@@ -33,7 +36,11 @@ fun DetailTopBar(
     )
     val browserLauncher = LocalActivityBrowserLauncher.current
     val coroutineScope = rememberCoroutineScope()
-    TopAppBar(
+    SingleRowTopAppBar(
+        modifier = Modifier.applyBlurEffect(
+            enabled = blurEnabled,
+            containerColor = progressTopBarContainerColor,
+        ),
         title = {
             if (progress >= 1F) {
                 FreadRichText(
@@ -53,8 +60,11 @@ fun DetailTopBar(
             Toolbar.BackButton(onBackClick = onBackClick)
         },
         windowInsets = WindowInsets.statusBars,
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = topBarContainerColor,
+        colors = TopAppBarColors.default(
+            containerColor = blurEffectContainerColor(
+                enabled = blurEnabled,
+                containerColor = progressTopBarContainerColor,
+            ),
             navigationIconContentColor = onTopBarColor,
             actionIconContentColor = onTopBarColor,
         ),

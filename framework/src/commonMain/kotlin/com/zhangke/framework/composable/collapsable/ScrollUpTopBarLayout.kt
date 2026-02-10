@@ -2,6 +2,7 @@ package com.zhangke.framework.composable.collapsable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun ScrollUpTopBarLayout(
@@ -28,10 +30,14 @@ fun ScrollUpTopBarLayout(
      * false: headerContent will below the top bar.
      */
     immersiveToTopBar: Boolean = true,
-    scrollableContent: @Composable BoxScope.() -> Unit,
+    /**
+     * PaddingValues.top is the current visible height occupied by top bar + header area.
+     */
+    scrollableContent: @Composable BoxScope.(PaddingValues, Float) -> Unit,
 ) {
     var topBarHeightPx: Int by rememberSaveable { mutableIntStateOf(0) }
     var headerContentHeightPx: Int by rememberSaveable { mutableIntStateOf(0) }
+    val density = LocalDensity.current
     val nestedScrollConnection = if (immersiveToTopBar) {
         rememberCollapsableTopBarLayoutConnection(
             contentCanScrollBackward = contentCanScrollBackward,
@@ -46,6 +52,15 @@ fun ScrollUpTopBarLayout(
         )
     }
     val progress by rememberUpdatedState(newValue = nestedScrollConnection.progress)
+    val topPaddingPx = calculateScrollableTopPadding(
+        topBarHeightPx = topBarHeightPx,
+        headerContentHeightPx = headerContentHeightPx,
+        progress = progress,
+        immersiveToTopBar = immersiveToTopBar,
+    )
+    val scrollableContentPadding = with(density) {
+        PaddingValues(top = topPaddingPx.toDp())
+    }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -72,7 +87,7 @@ fun ScrollUpTopBarLayout(
                     modifier = Modifier
                         .fillMaxSize(),
                 ) {
-                    scrollableContent()
+                    scrollableContent(scrollableContentPadding, progress)
                 }
             },
             measurePolicy = { measurables, constraints ->
@@ -100,13 +115,25 @@ fun ScrollUpTopBarLayout(
                         topBarHeightPx - ((progressOffset).coerceAtLeast(0F))
                     }
                     headerContentPlaceable.placeRelative(0, headerYOffset.toInt())
-                    scrollableContentPlaceable.placeRelative(
-                        x = 0,
-                        y = headerContentHeightPx + headerYOffset.toInt()
-                    )
+                    scrollableContentPlaceable.placeRelative(0, 0)
                     topBarPlaceable.placeRelative(0, 0)
                 }
             },
         )
     }
+}
+
+private fun calculateScrollableTopPadding(
+    topBarHeightPx: Int,
+    headerContentHeightPx: Int,
+    progress: Float,
+    immersiveToTopBar: Boolean,
+): Float {
+    val headerYOffset = if (immersiveToTopBar) {
+        val totalScrollOffset = (headerContentHeightPx - topBarHeightPx).coerceAtLeast(0)
+        -(totalScrollOffset * progress)
+    } else {
+        topBarHeightPx - (headerContentHeightPx * progress)
+    }
+    return (headerContentHeightPx + headerYOffset).coerceAtLeast(0F)
 }

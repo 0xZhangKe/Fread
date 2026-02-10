@@ -63,7 +63,7 @@ fun FreadTabRow(
     FreadTabRow(
         modifier = modifier.applyBlurEffect(enabled = blurEffectEnabled, containerColor = containerColor),
         selectedTabIndex = selectedTabIndex,
-        containerColor = blurEffectContainerColor(containerColor = containerColor),
+        containerColor = blurEffectContainerColor(enabled = blurEffectEnabled,containerColor = containerColor),
         indicator = { tabPositions ->
             val position = tabPositions.getOrNull(selectedTabIndex)
             if (position != null) {

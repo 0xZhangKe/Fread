@@ -12,7 +12,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.zhangke.framework.blur.BlurController
+import com.zhangke.framework.blur.LocalBlurController
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.fread.status.richtext.RichText
@@ -91,8 +94,10 @@ fun DetailPageScaffold(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { innerPaddings ->
+        val blurController = remember { BlurController.create() }
         CompositionLocalProvider(
-            LocalSnackbarHostState provides snackbarHostState
+            LocalSnackbarHostState provides snackbarHostState,
+            LocalBlurController provides blurController,
         ) {
             ScrollUpTopBarLayout(
                 modifier = Modifier

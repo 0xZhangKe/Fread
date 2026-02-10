@@ -15,6 +15,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
@@ -89,6 +91,7 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
         LocalNestedTabConnection provides nestedTabConnection,
         LocalContentPadding provides PaddingValues(bottom = navigationBarHeight),
         LocalBlurController provides blurController,
+        LocalContentColor provides MaterialTheme.colorScheme.onSurface,
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,

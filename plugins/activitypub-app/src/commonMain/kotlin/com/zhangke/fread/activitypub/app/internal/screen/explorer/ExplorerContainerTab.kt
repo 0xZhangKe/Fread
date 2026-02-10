@@ -64,7 +64,7 @@ class ExplorerContainerTab(
         val pagerState = rememberPagerState(initialPage = 0) { tabs.size }
         var tabBarHeight by remember { mutableStateOf(24.dp) }
         CompositionLocalProvider(
-            LocalContentPadding provides plusTopPadding(tabBarHeight)
+            LocalContentPadding provides plusTopPadding(tabBarHeight),
         ) {
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),

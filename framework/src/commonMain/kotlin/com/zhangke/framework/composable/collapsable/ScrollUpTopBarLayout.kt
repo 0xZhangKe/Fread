@@ -45,7 +45,6 @@ fun ScrollUpTopBarLayout(
             minPx = 0F,
         )
     }
-
     val progress by rememberUpdatedState(newValue = nestedScrollConnection.progress)
     Box(
         modifier = modifier

@@ -646,4 +646,8 @@ object LocalizedString {
         localizedString.setting_item_open_url_by_system_title
     val setting_item_open_url_by_system_subtitle =
         localizedString.setting_item_open_url_by_system_subtitle
+    val setting_item_solid_bar_background_title =
+        localizedString.setting_item_solid_bar_background_title
+    val setting_item_solid_bar_background_subtitle =
+        localizedString.setting_item_solid_bar_background_subtitle
 }

@@ -245,4 +245,6 @@
     <string name="setting_item_home_tab_refresh_subtitle">ホーム右上に内容を更新するボタンを表示する</string>
     <string name="setting_item_open_url_by_system_title">システムブラウザでリンクを開く</string>
     <string name="setting_item_open_url_by_system_subtitle">有効にすると、Fread はリンクをシステムブラウザで開きます。</string>
+    <string name="setting_item_solid_bar_background_title">上下バーを不透明背景にする</string>
+    <string name="setting_item_solid_bar_background_subtitle">上部バーと下部バーをぼかしではなく単色にします。</string>
 </resources>

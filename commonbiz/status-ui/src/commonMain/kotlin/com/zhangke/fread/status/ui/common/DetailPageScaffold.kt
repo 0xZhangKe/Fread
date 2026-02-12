@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.zhangke.framework.blur.BlurController
 import com.zhangke.framework.blur.LocalBlurController
+import com.zhangke.framework.blur.rememberBlurController
 import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
@@ -96,7 +97,7 @@ fun DetailPageScaffold(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { innerPaddings ->
-        val blurController = remember { BlurController.create() }
+        val blurController = rememberBlurController()
         CompositionLocalProvider(
             LocalSnackbarHostState provides snackbarHostState,
             LocalBlurController provides blurController,

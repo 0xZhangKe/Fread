@@ -19,6 +19,7 @@ class AppearanceSettingsViewModel(
     private val _uiState = MutableStateFlow(
         AppearanceSettingsUiState(
             immersiveNavBar = freadConfigManager.statusConfigFlow.value.immersiveNavBar,
+            blurAppBarStyleEnabled = freadConfigManager.enableBlurAppBarStyleFlow.value,
             amoledEnabled = dayNightHelper.amoledModeFlow.value,
             dayNightMode = dayNightHelper.dayNightModeFlow.value,
             contentSize = freadConfigManager.statusConfigFlow.value.contentSize,
@@ -66,6 +67,11 @@ class AppearanceSettingsViewModel(
                 _uiState.update { it.copy(homeTabNextButtonVisible = visible) }
             }
         }
+        viewModelScope.launch {
+            freadConfigManager.enableBlurAppBarStyleFlow.collect { enabled ->
+                _uiState.update { it.copy(blurAppBarStyleEnabled = enabled) }
+            }
+        }
     }
 
     fun onThemeTypeChanged(type: ThemeType) {
@@ -96,6 +102,12 @@ class AppearanceSettingsViewModel(
     fun onHomeTabRefreshButtonVisibleChanged(visible: Boolean) {
         viewModelScope.launch {
             freadConfigManager.updateHomeTabRefreshButtonVisible(visible)
+        }
+    }
+
+    fun onBlurAppBarStyleChanged(enabled: Boolean) {
+        viewModelScope.launch {
+            freadConfigManager.updateEnableBlurAppBarStyle(enabled)
         }
     }
 }

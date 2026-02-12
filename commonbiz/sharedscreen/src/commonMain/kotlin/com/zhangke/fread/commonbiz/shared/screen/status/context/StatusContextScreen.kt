@@ -27,6 +27,7 @@ import com.zhangke.framework.blur.LocalBlurController
 import com.zhangke.framework.blur.applyBlurEffect
 import com.zhangke.framework.blur.applyBlurSource
 import com.zhangke.framework.blur.blurEffectContainerColor
+import com.zhangke.framework.blur.rememberBlurController
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadErrorLineItem
@@ -159,7 +160,7 @@ private fun StatusContextContent(
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val blurController = remember { BlurController.create() }
+    val blurController = rememberBlurController()
     val enableBlur = uiState.contextStatus.size > 1
     CompositionLocalProvider(
         LocalBlurController provides blurController

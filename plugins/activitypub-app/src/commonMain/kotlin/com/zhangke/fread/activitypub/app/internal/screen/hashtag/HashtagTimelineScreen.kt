@@ -25,6 +25,7 @@ import com.zhangke.framework.blur.BlurController
 import com.zhangke.framework.blur.LocalBlurController
 import com.zhangke.framework.blur.applyBlurEffect
 import com.zhangke.framework.blur.blurEffectContainerColor
+import com.zhangke.framework.blur.rememberBlurController
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalContentPadding
@@ -95,7 +96,7 @@ private fun HashtagTimelineContent(
 ) {
     val snackbarHostState = rememberSnackbarHostState()
     val topBarColor = MaterialTheme.colorScheme.surface
-    val blurController = remember { BlurController.create() }
+    val blurController = rememberBlurController()
     CompositionLocalProvider(
         LocalBlurController provides blurController
     ) {

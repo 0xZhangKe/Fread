@@ -245,4 +245,6 @@
     <string name="setting_item_home_tab_refresh_subtitle">Afficher en haut à droite de l’accueil le bouton pour actualiser le contenu</string>
     <string name="setting_item_open_url_by_system_title">Ouvrir les liens avec le navigateur du système</string>
     <string name="setting_item_open_url_by_system_subtitle">Lorsqu’elle est activée, Fread ouvrira les liens avec le navigateur du système.</string>
+    <string name="setting_item_solid_bar_background_title">Fond solide des barres</string>
+    <string name="setting_item_solid_bar_background_subtitle">Rend les barres supérieure et inférieure en fond uni au lieu d’un effet flou.</string>
 </resources>

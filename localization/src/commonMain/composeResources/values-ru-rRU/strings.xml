@@ -245,4 +245,6 @@
     <string name="setting_item_home_tab_refresh_subtitle">Показывать в правом верхнем углу главной кнопку для обновления контента</string>
     <string name="setting_item_open_url_by_system_title">Открывать ссылки в системном браузере</string>
     <string name="setting_item_open_url_by_system_subtitle">При включении Fread будет открывать ссылки в системном браузере.</string>
+    <string name="setting_item_solid_bar_background_title">Сплошной фон панелей</string>
+    <string name="setting_item_solid_bar_background_subtitle">Делает верхнюю и нижнюю панели сплошными вместо размытого фона.</string>
 </resources>

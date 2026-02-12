@@ -39,6 +39,7 @@ import com.zhangke.fread.common.bubble.BubbleManager
 import com.zhangke.fread.common.bubble.LocalBubbleManager
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.LocalConfigManager
+import com.zhangke.framework.blur.LocalEnableBlurAppBarStyle
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
@@ -92,6 +93,7 @@ fun FreadApp() {
     val activityHelper: ActivityHelper = koin.get()
     val moduleScreenVisitor: ModuleScreenVisitor = koin.get()
     val bubbleManager: BubbleManager = koin.get()
+    val enableBlurAppBarStyle by freadConfigManager.enableBlurAppBarStyleFlow.collectAsState()
     CompositionLocalProvider(
         LocalStatusUiConfig provides StatusUiConfig.create(config = statusConfig),
         LocalImageLoader provides imageLoader,
@@ -108,6 +110,7 @@ fun FreadApp() {
         LocalModuleScreenVisitor provides moduleScreenVisitor,
         LocalBubbleManager provides bubbleManager,
         LocalActivityBrowserLauncher provides browserLauncher,
+        LocalEnableBlurAppBarStyle provides enableBlurAppBarStyle,
     ) {
         val navEntryProviders = remember(koin) { koin.getAll<NavEntryProvider>() }
         val backStack = rememberNavBackStack(

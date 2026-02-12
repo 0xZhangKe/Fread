@@ -245,4 +245,6 @@
     <string name="setting_item_home_tab_refresh_subtitle">Show the button in the top-right of Home to refresh content</string>
     <string name="setting_item_open_url_by_system_title">Open links with system browser</string>
     <string name="setting_item_open_url_by_system_subtitle">When enabled, Fread will open links with the system browser.</string>
+    <string name="setting_item_solid_bar_background_title">Solid bar background</string>
+    <string name="setting_item_solid_bar_background_subtitle">Make the top and bottom bars solid instead of blurred.</string>
 </resources>

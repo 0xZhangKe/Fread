@@ -28,6 +28,7 @@ class FreadConfigManager(
         private const val LOCAL_KEY_TIMELINE_DEFAULT_POSITION = "timeline_default_position"
         private const val LOCAL_KEY_THEME_TYPE = "theme_type"
         private const val LOCAL_KEY_OPEN_URL_IN_APP_BROWSER = "open_url_in_app_browser"
+        private const val LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE = "enable_blur_app_bar_style"
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
@@ -41,6 +42,8 @@ class FreadConfigManager(
 
     private val _homeTabRefreshButtonVisibleFlow = MutableStateFlow(false)
     val homeTabRefreshButtonVisibleFlow: StateFlow<Boolean> get() = _homeTabRefreshButtonVisibleFlow
+    private val _enableBlurAppBarStyleFlow = MutableStateFlow(true)
+    val enableBlurAppBarStyleFlow: StateFlow<Boolean> get() = _enableBlurAppBarStyleFlow
 
     var autoPlayInlineVideo: Boolean = false
         private set
@@ -54,6 +57,8 @@ class FreadConfigManager(
             localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
         openUrlInAppBrowser =
             localConfigManager.getBoolean(LOCAL_KEY_OPEN_URL_IN_APP_BROWSER) != false
+        _enableBlurAppBarStyleFlow.value =
+            localConfigManager.getBoolean(LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE) != false
         _homeTabNextButtonVisibleFlow.value =
             localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE) ?: false
         _homeTabRefreshButtonVisibleFlow.value =
@@ -89,6 +94,13 @@ class FreadConfigManager(
         openUrlInAppBrowser = value
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_OPEN_URL_IN_APP_BROWSER, value)
+        }
+    }
+
+    suspend fun updateEnableBlurAppBarStyle(value: Boolean) {
+        _enableBlurAppBarStyleFlow.value = value
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE, value)
         }
     }
 

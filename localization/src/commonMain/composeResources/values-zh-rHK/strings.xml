@@ -245,4 +245,6 @@
     <string name="setting_item_home_tab_refresh_subtitle">首頁右上角是否顯示用於重新整理內容的按鈕</string>
     <string name="setting_item_open_url_by_system_title">透過系統瀏覽器開啟連結</string>
     <string name="setting_item_open_url_by_system_subtitle">啟用後，Fread 會透過系統瀏覽器開啟連結。</string>
+    <string name="setting_item_solid_bar_background_title">頂部和底部欄純色背景</string>
+    <string name="setting_item_solid_bar_background_subtitle">將頂部和底部欄改為純色，而不是高斯模糊。</string>
 </resources>

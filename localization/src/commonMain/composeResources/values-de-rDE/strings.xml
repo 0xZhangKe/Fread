@@ -245,4 +245,6 @@
     <string name="setting_item_home_tab_refresh_subtitle">Oben rechts auf der Startseite die Schaltfläche zum Aktualisieren von Inhalten anzeigen</string>
     <string name="setting_item_open_url_by_system_title">Links im Systembrowser öffnen</string>
     <string name="setting_item_open_url_by_system_subtitle">Wenn aktiviert, öffnet Fread Links im Systembrowser.</string>
+    <string name="setting_item_solid_bar_background_title">Solider Leistenhintergrund</string>
+    <string name="setting_item_solid_bar_background_subtitle">Macht die obere und untere Leiste einfarbig statt weichgezeichnet.</string>
 </resources>

@@ -6,6 +6,7 @@ import com.zhangke.fread.common.theme.ThemeType
 
 data class AppearanceSettingsUiState(
     val immersiveNavBar: Boolean,
+    val blurAppBarStyleEnabled: Boolean,
     val amoledEnabled: Boolean,
     val dayNightMode: DayNightMode,
     val contentSize: StatusContentSize,

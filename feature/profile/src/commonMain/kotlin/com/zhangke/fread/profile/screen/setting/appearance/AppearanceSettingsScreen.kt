@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BlurOn
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Palette
@@ -63,6 +64,7 @@ fun AppearanceSettingsScreen(viewModel: AppearanceSettingsViewModel) {
         },
         onContentSizeChanged = viewModel::onContentSizeChanged,
         onImmersiveBarChanged = viewModel::onImmersiveBarChanged,
+        onBlurAppBarStyleChanged = viewModel::onBlurAppBarStyleChanged,
         onHomeTabNextButtonVisibleChanged = viewModel::onHomeTabNextButtonVisibleChanged,
         onHomeTabRefreshButtonVisibleChanged = viewModel::onHomeTabRefreshButtonVisibleChanged,
     )
@@ -77,6 +79,7 @@ private fun AppearanceSettingsContent(
     onAmoledChanged: (on: Boolean) -> Unit,
     onContentSizeChanged: (StatusContentSize) -> Unit,
     onImmersiveBarChanged: (on: Boolean) -> Unit,
+    onBlurAppBarStyleChanged: (enabled: Boolean) -> Unit,
     onHomeTabNextButtonVisibleChanged: (on: Boolean) -> Unit,
     onHomeTabRefreshButtonVisibleChanged: (on: Boolean) -> Unit,
 ) {
@@ -96,6 +99,10 @@ private fun AppearanceSettingsContent(
             ImmersiveNavBar(
                 immersive = uiState.immersiveNavBar,
                 onImmersiveBarChanged = onImmersiveBarChanged,
+            )
+            SolidBarBackgroundItem(
+                blurEnabled = uiState.blurAppBarStyleEnabled,
+                onBlurEnabledChanged = onBlurAppBarStyleChanged,
             )
             AmoledMode(
                 enabled = uiState.amoledEnabled,
@@ -123,6 +130,21 @@ private fun AppearanceSettingsContent(
             )
         }
     }
+}
+
+@Composable
+private fun SolidBarBackgroundItem(
+    blurEnabled: Boolean,
+    onBlurEnabledChanged: (enabled: Boolean) -> Unit,
+) {
+    val checked = !blurEnabled
+    SettingItemWithSwitch(
+        icon = Icons.Default.BlurOn,
+        title = stringResource(LocalizedString.setting_item_solid_bar_background_title),
+        subtitle = stringResource(LocalizedString.setting_item_solid_bar_background_subtitle),
+        checked = checked,
+        onCheckedChangeRequest = { onBlurEnabledChanged(!it) },
+    )
 }
 
 @Composable

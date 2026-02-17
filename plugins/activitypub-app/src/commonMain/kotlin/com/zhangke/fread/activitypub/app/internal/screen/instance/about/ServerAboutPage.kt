@@ -26,6 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
+import com.zhangke.framework.composable.LocalContentPadding
+import com.zhangke.framework.nav.BaseTab
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
@@ -35,147 +38,158 @@ import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
-@Composable
-internal fun ServerAboutPage(
-    baseUrl: FormalBaseUrl,
-    rules: List<ActivityPubInstanceEntity.Rule> = emptyList(),
-    contentCanScrollBackward: MutableState<Boolean>,
-) {
-    val viewModel: ServerAboutViewModel = koinViewModel()
-    LaunchedEffect(viewModel) {
-        viewModel.rules = rules
-        viewModel.baseUrl = baseUrl
-        viewModel.onPageResume()
-    }
-    val uiState by viewModel.uiState.collectAsState()
-    ServerAboutPageContent(
-        uiState = uiState,
-        contentCanScrollBackward = contentCanScrollBackward,
-        baseUrl = baseUrl,
-    )
-}
+class ServerAboutTab(
+    val baseUrl: FormalBaseUrl,
+    val rules: List<ActivityPubInstanceEntity.Rule> = emptyList(),
+    val contentCanScrollBackward: MutableState<Boolean>,
+) : BaseTab() {
 
-@Composable
-private fun ServerAboutPageContent(
-    uiState: ServerAboutUiState,
-    contentCanScrollBackward: MutableState<Boolean>,
-    baseUrl: FormalBaseUrl,
-) {
-    val scrollState = rememberScrollState()
-    contentCanScrollBackward.value = scrollState.value > 0
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState),
-    ) {
-        if (uiState.announcement.isNotEmpty()) {
-            ServerAboutAnnouncementSection(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp),
-                announcementList = uiState.announcement,
-                baseUrl = baseUrl,
-            )
-        }
-        if (uiState.rules.isNotEmpty()) {
-            ServerAboutRulesSection(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 6.dp, end = 16.dp, bottom = 36.dp),
-                ruleList = uiState.rules,
-            )
-        }
-    }
-}
+    override val options: TabOptions
+        @Composable
+        get() = TabOptions(
+            title = stringResource(LocalizedString.activity_pub_about),
+        )
 
-@Composable
-private fun ServerAboutAnnouncementSection(
-    modifier: Modifier = Modifier,
-    announcementList: List<ActivityPubAnnouncementEntity>,
-    baseUrl: FormalBaseUrl,
-) {
-    Column(modifier = modifier) {
-        announcementList.forEach {
-            ServerAboutAnnouncement(
-                modifier = Modifier.fillMaxWidth(),
-                entity = it,
-                baseUrl = baseUrl,
-            )
+    @Composable
+    override fun Content() {
+        super.Content()
+        val viewModel: ServerAboutViewModel = koinViewModel()
+        LaunchedEffect(viewModel) {
+            viewModel.rules = rules
+            viewModel.baseUrl = baseUrl
+            viewModel.onPageResume()
         }
-    }
-}
-
-@Composable
-private fun ServerAboutAnnouncement(
-    modifier: Modifier = Modifier,
-    entity: ActivityPubAnnouncementEntity,
-    baseUrl: FormalBaseUrl,
-) {
-    val browserLauncher = LocalActivityBrowserLauncher.current
-    val coroutineScope = rememberCoroutineScope()
-    SelectionContainer {
-        FreadRichText(
-            modifier = modifier,
-            content = entity.content,
-            onUrlClick = {
-                val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
-                browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
-            },
+        val uiState by viewModel.uiState.collectAsState()
+        ServerAboutPageContent(
+            uiState = uiState,
+            contentCanScrollBackward = contentCanScrollBackward,
+            baseUrl = baseUrl,
         )
     }
-}
 
-@Composable
-private fun ServerAboutRulesSection(
-    modifier: Modifier = Modifier,
-    ruleList: List<ActivityPubInstanceEntity.Rule>,
-) {
-    SelectionContainer {
+    @Composable
+    private fun ServerAboutPageContent(
+        uiState: ServerAboutUiState,
+        contentCanScrollBackward: MutableState<Boolean>,
+        baseUrl: FormalBaseUrl,
+    ) {
+        val scrollState = rememberScrollState()
+        contentCanScrollBackward.value = scrollState.value > 0
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(LocalContentPadding.current)
+                .verticalScroll(scrollState),
+        ) {
+            if (uiState.announcement.isNotEmpty()) {
+                ServerAboutAnnouncementSection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp),
+                    announcementList = uiState.announcement,
+                    baseUrl = baseUrl,
+                )
+            }
+            if (uiState.rules.isNotEmpty()) {
+                ServerAboutRulesSection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 6.dp, end = 16.dp, bottom = 36.dp),
+                    ruleList = uiState.rules,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ServerAboutAnnouncementSection(
+        modifier: Modifier = Modifier,
+        announcementList: List<ActivityPubAnnouncementEntity>,
+        baseUrl: FormalBaseUrl,
+    ) {
         Column(modifier = modifier) {
-            Text(
-                modifier = Modifier,
-                text = stringResource(LocalizedString.activity_pub_about_rule_title),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleLarge,
+            announcementList.forEach {
+                ServerAboutAnnouncement(
+                    modifier = Modifier.fillMaxWidth(),
+                    entity = it,
+                    baseUrl = baseUrl,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ServerAboutAnnouncement(
+        modifier: Modifier = Modifier,
+        entity: ActivityPubAnnouncementEntity,
+        baseUrl: FormalBaseUrl,
+    ) {
+        val browserLauncher = LocalActivityBrowserLauncher.current
+        val coroutineScope = rememberCoroutineScope()
+        SelectionContainer {
+            FreadRichText(
+                modifier = modifier,
+                content = entity.content,
+                onUrlClick = {
+                    val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
+                    browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
+                },
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(4.dp))
-            ruleList.forEachIndexed { index, rule ->
-                ServerAboutRule(
+        }
+    }
+
+    @Composable
+    private fun ServerAboutRulesSection(
+        modifier: Modifier = Modifier,
+        ruleList: List<ActivityPubInstanceEntity.Rule>,
+    ) {
+        SelectionContainer {
+            Column(modifier = modifier) {
+                Text(
                     modifier = Modifier,
-                    rule = rule,
-                    index = index,
+                    text = stringResource(LocalizedString.activity_pub_about_rule_title),
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                if (index != ruleList.lastIndex) {
-                    HorizontalDivider()
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(4.dp))
+                ruleList.forEachIndexed { index, rule ->
+                    ServerAboutRule(
+                        modifier = Modifier,
+                        rule = rule,
+                        index = index,
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
+                    if (index != ruleList.lastIndex) {
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
                 }
+                Spacer(modifier = Modifier.height(80.dp))
             }
-            Spacer(modifier = Modifier.height(80.dp))
         }
     }
-}
 
-@Composable
-private fun ServerAboutRule(
-    modifier: Modifier = Modifier,
-    rule: ActivityPubInstanceEntity.Rule,
-    index: Int,
-) {
-    Row(modifier = modifier) {
-        Text(
-            text = "${index + 1}.",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-        )
+    @Composable
+    private fun ServerAboutRule(
+        modifier: Modifier = Modifier,
+        rule: ActivityPubInstanceEntity.Rule,
+        index: Int,
+    ) {
+        Row(modifier = modifier) {
+            Text(
+                text = "${index + 1}.",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+            )
 
-        Text(
-            modifier = Modifier.padding(start = 6.dp),
-            text = rule.text,
-            fontSize = 14.sp,
-        )
+            Text(
+                modifier = Modifier.padding(start = 6.dp),
+                text = rule.text,
+                fontSize = 14.sp,
+            )
+        }
     }
 }

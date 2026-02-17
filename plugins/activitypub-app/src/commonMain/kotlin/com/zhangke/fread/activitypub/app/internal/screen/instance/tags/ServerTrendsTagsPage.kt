@@ -12,64 +12,80 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.nav.BaseTab
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.TabOptions
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreenKey
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
-@Composable
-internal fun ServerTrendsTagsPage(
-    baseUrl: FormalBaseUrl,
-    contentCanScrollBackward: MutableState<Boolean>,
-) {
-    val backStack = LocalNavBackStack.currentOrThrow
-    val viewModel = koinViewModel<ServerTrendsTagsViewModel>()
-    viewModel.baseUrl = baseUrl
-    val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit) {
-        viewModel.onPageResume()
-    }
-    ServerTrendsTagsContent(
-        uiState = uiState,
-        contentCanScrollBackward = contentCanScrollBackward,
-        onHashtagClick = { tag ->
-            val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
-            backStack.add(
-                HashtagTimelineScreenKey(
-                    locator = locator,
-                    hashtag = tag.name.removePrefix("#"),
-                )
-            )
-        },
-    )
-}
+class ServerTrendsTagsTab(
+    val baseUrl: FormalBaseUrl,
+    val contentCanScrollBackward: MutableState<Boolean>,
+) : BaseTab() {
 
-@Composable
-private fun ServerTrendsTagsContent(
-    uiState: ServerTrendsTagsUiState,
-    contentCanScrollBackward: MutableState<Boolean>,
-    onHashtagClick: (Hashtag) -> Unit,
-) {
-    val listState = rememberLazyListState()
-    val canScrollBackward by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0
+    override val options: TabOptions
+        @Composable
+        get() = TabOptions(
+            title = stringResource(LocalizedString.activity_pub_trends_tag),
+        )
+
+    @Composable
+    override fun Content() {
+        super.Content()
+        val backStack = LocalNavBackStack.currentOrThrow
+        val viewModel = koinViewModel<ServerTrendsTagsViewModel>()
+        viewModel.baseUrl = baseUrl
+        val uiState by viewModel.uiState.collectAsState()
+        LaunchedEffect(Unit) {
+            viewModel.onPageResume()
         }
+        ServerTrendsTagsContent(
+            uiState = uiState,
+            contentCanScrollBackward = contentCanScrollBackward,
+            onHashtagClick = { tag ->
+                val locator = PlatformLocator(accountUri = null, baseUrl = baseUrl)
+                backStack.add(
+                    HashtagTimelineScreenKey(
+                        locator = locator,
+                        hashtag = tag.name.removePrefix("#"),
+                    )
+                )
+            },
+        )
     }
-    contentCanScrollBackward.value = canScrollBackward
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        state = listState,
+
+    @Composable
+    private fun ServerTrendsTagsContent(
+        uiState: ServerTrendsTagsUiState,
+        contentCanScrollBackward: MutableState<Boolean>,
+        onHashtagClick: (Hashtag) -> Unit,
     ) {
-        items(uiState.list) { item ->
-            HashtagUi(
-                tag = item,
-                onClick = onHashtagClick,
-            )
+        val listState = rememberLazyListState()
+        val canScrollBackward by remember {
+            derivedStateOf {
+                listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0
+            }
+        }
+        contentCanScrollBackward.value = canScrollBackward
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = listState,
+            contentPadding = LocalContentPadding.current,
+        ) {
+            items(uiState.list) { item ->
+                HashtagUi(
+                    tag = item,
+                    onClick = onHashtagClick,
+                )
+            }
         }
     }
 }

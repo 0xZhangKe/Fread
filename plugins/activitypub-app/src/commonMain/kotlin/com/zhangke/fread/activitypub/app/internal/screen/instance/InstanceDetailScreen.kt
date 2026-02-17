@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -29,17 +27,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.seiko.imageloader.ui.AutoSizeImage
-import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.PopupMenu
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.composable.textString
+import com.zhangke.framework.nav.ContentPaddingsHorizontalPagerWithTab
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.fread.activitypub.app.internal.screen.instance.about.ServerAboutTab
+import com.zhangke.fread.activitypub.app.internal.screen.instance.tags.ServerTrendsTagsTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreenKey
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalTextHandler
@@ -127,44 +126,25 @@ private fun InstanceDetailContent(
         onAvatarClick = {},
         topDetailContentAction = null,
         bottomArea = null,
-    ) {
+    ) { progress ->
         if (uiState.instance != null) {
-            val coroutineScope = rememberCoroutineScope()
-            val tabs = remember {
-                InstanceDetailTab.entries.toTypedArray()
-            }
-            Column {
-                val pagerState = rememberPagerState(
-                    initialPage = 0,
-                    pageCount = tabs::size,
+            val tabs = remember(uiState) {
+                listOf(
+                    ServerAboutTab(
+                        baseUrl = uiState.baseUrl,
+                        rules = uiState.instance.rules,
+                        contentCanScrollBackward = contentCanScrollBackward,
+                    ),
+                    ServerTrendsTagsTab(
+                        baseUrl = uiState.baseUrl,
+                        contentCanScrollBackward = contentCanScrollBackward,
+                    ),
                 )
-                FreadTabRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    tabCount = tabs.size,
-                    selectedTabIndex = pagerState.currentPage,
-                    tabContent = { index ->
-                        Text(text = textString(tabs[index].title))
-                    },
-                    onTabClick = { index ->
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(index)
-                        }
-                    },
-                )
-                HorizontalPager(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1F),
-                    state = pagerState,
-                ) { currentPage ->
-                    tabs[currentPage].content(
-                        uiState.baseUrl,
-                        uiState.instance.rules,
-                        contentCanScrollBackward,
-                    )
-                }
             }
+            ContentPaddingsHorizontalPagerWithTab(
+                tabList = tabs,
+                blurEnabled = progress >= 1F,
+            )
         }
     }
 }

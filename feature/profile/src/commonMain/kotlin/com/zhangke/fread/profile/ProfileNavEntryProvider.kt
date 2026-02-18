@@ -3,6 +3,7 @@ package com.zhangke.fread.profile
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.nav.NavEntryProvider
+import com.zhangke.framework.nav.dialogMetadata
 import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.donate.DonateScreenNavKey
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
@@ -37,7 +38,9 @@ class ProfileNavEntryProvider : NavEntryProvider {
         entry<OpenSourceScreenNavKey> {
             OpenSourceScreen()
         }
-        entry<DonateScreenNavKey> {
+        entry<DonateScreenNavKey>(
+            metadata = dialogMetadata(),
+        ) {
             DonateScreen()
         }
     }

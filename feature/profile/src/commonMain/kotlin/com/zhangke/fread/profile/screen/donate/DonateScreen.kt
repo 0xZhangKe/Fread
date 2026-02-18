@@ -1,15 +1,14 @@
 package com.zhangke.fread.profile.screen.donate
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,6 +24,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.config.AppCommonConfig
@@ -43,6 +45,7 @@ object DonateScreenNavKey : NavKey
 fun DonateScreen() {
     val browserLauncher = LocalActivityBrowserLauncher.current
     val coroutineScope = rememberCoroutineScope()
+    val backStack = LocalNavBackStack.currentOrThrow
     DonateContent(
         onDonateClick = {
             browserLauncher.launchWebTabInApp(
@@ -50,6 +53,7 @@ fun DonateScreen() {
                 url = it.url,
                 checkAppSupportPage = false,
             )
+            backStack.removeLastOrNull()
         },
     )
 }
@@ -58,11 +62,14 @@ fun DonateScreen() {
 private fun DonateContent(
     onDonateClick: (DonateItem) -> Unit,
 ) {
-    Surface(modifier = Modifier.fillMaxWidth()) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp)
-                .padding(bottom = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
                 text = stringResource(LocalizedString.profileDonatePageTitle),
@@ -70,11 +77,11 @@ private fun DonateContent(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(modifier = Modifier.height(16.dp))
             val donateList = remember { buildDonateList() }
             for (donateItem in donateList) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().clickable { onDonateClick(donateItem) },
+                    modifier = Modifier.fillMaxWidth()
+                        .noRippleClick { onDonateClick(donateItem) },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Image(
@@ -99,7 +106,6 @@ private fun DonateContent(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

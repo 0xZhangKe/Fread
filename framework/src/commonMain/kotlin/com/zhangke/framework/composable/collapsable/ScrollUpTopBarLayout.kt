@@ -114,8 +114,8 @@ fun ScrollUpTopBarLayout(
                     } else {
                         topBarHeightPx - ((progressOffset).coerceAtLeast(0F))
                     }
-                    headerContentPlaceable.placeRelative(0, headerYOffset.toInt())
                     scrollableContentPlaceable.placeRelative(0, 0)
+                    headerContentPlaceable.placeRelative(0, headerYOffset.toInt())
                     topBarPlaceable.placeRelative(0, 0)
                 }
             },

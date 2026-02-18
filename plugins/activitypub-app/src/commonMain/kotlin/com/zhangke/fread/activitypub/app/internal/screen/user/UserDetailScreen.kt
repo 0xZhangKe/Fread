@@ -195,7 +195,11 @@ fun UserDetailScreen(
         },
         onOpenInBrowserClick = {
             uiState.accountUiState?.account?.url?.let {
-                browserLauncher.launchWebTabInApp(coroutineScope, it)
+                browserLauncher.launchWebTabInApp(
+                    scope = coroutineScope,
+                    url = it,
+                    checkAppSupportPage = false,
+                )
             }
         },
         onCopyLinkClick = {

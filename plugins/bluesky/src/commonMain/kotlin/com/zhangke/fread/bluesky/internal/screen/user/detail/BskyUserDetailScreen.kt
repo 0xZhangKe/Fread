@@ -115,7 +115,13 @@ fun BskyUserDetailScreen(
             )
         },
         onOpenInBrowserClick = {
-            uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(coroutineScope, it) }
+            uiState.userHomePageUrl?.let {
+                browserLauncher.launchWebTabInApp(
+                    scope = coroutineScope,
+                    url = it,
+                    checkAppSupportPage = false,
+                )
+            }
         },
         onCopyLinkClick = {
             uiState.userHomePageUrl?.let { activityTextHandler.copyText(it) }

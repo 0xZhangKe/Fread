@@ -74,7 +74,7 @@ val commonModule = module {
             statusProvider = get(),
             selectedContentSwitcher = get(),
             uri = params.get(),
-            locator = params.get(),
+            locator = params.getOrNull(),
             isFromExternal = params.get(),
         )
     }

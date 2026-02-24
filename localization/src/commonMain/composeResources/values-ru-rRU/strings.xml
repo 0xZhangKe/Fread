@@ -238,7 +238,9 @@
     <string name="setting_item_amoled_mode">Режим AMOLED</string>
     <string name="setting_item_amoled_mode_description">При включении фон в тёмном режиме становится полностью чёрным, что снижает энергопотребление и повышает контраст в тёмных условиях.</string>
     <string name="setting_group_appearance">Внешний вид</string>
+    <string name="setting_group_appearance_subtitle">Настройки темы, отображения и стиля главной страницы</string>
     <string name="setting_group_behavior">Поведение</string>
+    <string name="setting_group_behavior_subtitle">Настройки отображения контента и поведения взаимодействия</string>
     <string name="setting_item_home_tab_next_title">Показывать кнопку переключения контента вверху главной</string>
     <string name="setting_item_home_tab_next_subtitle">Показывать в правом верхнем углу главной кнопку для перехода к следующему контенту</string>
     <string name="setting_item_home_tab_refresh_title">Показывать кнопку обновления вверху главной</string>

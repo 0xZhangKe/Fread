@@ -238,7 +238,9 @@
     <string name="setting_item_amoled_mode">AMOLED Mode</string>
     <string name="setting_item_amoled_mode_description">When enabled, the background will switch to pure black in dark mode to reduce power consumption and improve contrast in dark environments.</string>
     <string name="setting_group_appearance">Appearance</string>
+    <string name="setting_group_appearance_subtitle">Theme, display and Home style settings</string>
     <string name="setting_group_behavior">Behavior</string>
+    <string name="setting_group_behavior_subtitle">Content display and interaction behavior settings</string>
     <string name="setting_item_home_tab_next_title">Show top switch-content button on Home</string>
     <string name="setting_item_home_tab_next_subtitle">Show the button in the top-right of Home to switch to the next content</string>
     <string name="setting_item_home_tab_refresh_title">Show top refresh button on Home</string>

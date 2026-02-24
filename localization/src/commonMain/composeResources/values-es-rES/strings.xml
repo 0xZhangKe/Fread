@@ -238,7 +238,9 @@
     <string name="setting_item_amoled_mode">Modo AMOLED</string>
     <string name="setting_item_amoled_mode_description">Al activarlo, el fondo cambiará a negro puro en modo oscuro para reducir el consumo de energía y mejorar el contraste en entornos oscuros.</string>
     <string name="setting_group_appearance">Apariencia</string>
+    <string name="setting_group_appearance_subtitle">Ajustes de tema, visualización y estilo de Inicio</string>
     <string name="setting_group_behavior">Comportamiento</string>
+    <string name="setting_group_behavior_subtitle">Ajustes de visualización de contenido y comportamiento de interacción</string>
     <string name="setting_item_home_tab_next_title">Mostrar el botón para cambiar de contenido en la parte superior de Inicio</string>
     <string name="setting_item_home_tab_next_subtitle">Mostrar en la esquina superior derecha de Inicio el botón para cambiar al siguiente contenido</string>
     <string name="setting_item_home_tab_refresh_title">Mostrar el botón de actualizar en la parte superior de Inicio</string>

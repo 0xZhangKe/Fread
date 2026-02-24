@@ -636,7 +636,9 @@ object LocalizedString {
     val setting_item_amoled_mode = localizedString.setting_item_amoled_mode
     val setting_item_amoled_mode_description = localizedString.setting_item_amoled_mode_description
     val setting_group_appearance = localizedString.setting_group_appearance
+    val setting_group_appearance_subtitle = localizedString.setting_group_appearance_subtitle
     val setting_group_behavior = localizedString.setting_group_behavior
+    val setting_group_behavior_subtitle = localizedString.setting_group_behavior_subtitle
     val setting_item_home_tab_next_title = localizedString.setting_item_home_tab_next_title
     val setting_item_home_tab_next_subtitle = localizedString.setting_item_home_tab_next_subtitle
     val setting_item_home_tab_refresh_title = localizedString.setting_item_home_tab_refresh_title

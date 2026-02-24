@@ -238,7 +238,9 @@
     <string name="setting_item_amoled_mode">Amoled 模式</string>
     <string name="setting_item_amoled_mode_description">启用该功能后，深色模式下会将背景切换为纯黑，以降低能耗并在暗色环境中获得更高对比度。</string>
     <string name="setting_group_appearance">外观</string>
+    <string name="setting_group_appearance_subtitle">主题、显示与首页样式设置</string>
     <string name="setting_group_behavior">行为</string>
+    <string name="setting_group_behavior_subtitle">内容展示与交互行为设置</string>
     <string name="setting_item_home_tab_next_title">首页顶部的切换内容按钮显示</string>
     <string name="setting_item_home_tab_next_subtitle">首页的右上角是否显示用于切换到下一个内容的按钮</string>
     <string name="setting_item_home_tab_refresh_title">首页顶部的刷新按钮显示</string>

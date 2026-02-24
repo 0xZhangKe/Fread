@@ -45,8 +45,6 @@ import org.jetbrains.compose.resources.vectorResource
 @Serializable
 object SettingScreenNavKey : NavKey
 
-private val itemHeight = 82.dp
-
 @Composable
 fun SettingScreen(viewModel: SettingScreenModel) {
     val backStack = LocalNavBackStack.currentOrThrow
@@ -110,13 +108,13 @@ private fun SettingContent(
             SettingItem(
                 icon = Icons.Default.Palette,
                 title = stringResource(LocalizedString.setting_group_appearance),
-                subtitle = null,
+                subtitle = stringResource(LocalizedString.setting_group_appearance_subtitle),
                 onClick = onAppearanceClick,
             )
             SettingItem(
                 icon = Icons.Default.ViewTimeline,
                 title = stringResource(LocalizedString.setting_group_behavior),
-                subtitle = null,
+                subtitle = stringResource(LocalizedString.setting_group_behavior_subtitle),
                 onClick = onBehaviorClick,
             )
             LanguageItem(

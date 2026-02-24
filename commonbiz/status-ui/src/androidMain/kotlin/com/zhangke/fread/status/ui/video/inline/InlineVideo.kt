@@ -26,7 +26,7 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.composable.video.VideoPlayer
+import com.zhangke.framework.composable.video.ExoVideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.config.LocalFreadConfigManager
@@ -99,7 +99,7 @@ private fun InlineVideoPlayer(
     ) {
         if (autoPlay && playWhenReady) {
             val videoState = rememberVideoPlayerState()
-            VideoPlayer(
+            ExoVideoPlayer(
                 uri = uri,
                 playWhenReady = true,
                 state = videoState,

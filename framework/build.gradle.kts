@@ -49,6 +49,7 @@ kotlin {
                 implementation(libs.bignum)
                 implementation(libs.kermit)
                 implementation(libs.placeholder.material3)
+                implementation(libs.compose.multiplatform.media.player)
 
                 implementation(libs.krouter.runtime)
             }

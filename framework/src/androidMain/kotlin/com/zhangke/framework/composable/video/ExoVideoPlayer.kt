@@ -40,7 +40,7 @@ import kotlin.math.abs
 
 @OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
-actual fun VideoPlayer(
+actual fun ExoVideoPlayer(
     uri: PlatformUri,
     playWhenReady: Boolean,
     modifier: Modifier,

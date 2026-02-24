@@ -28,7 +28,7 @@ nav3Core = "1.0.0"
 jetbrainsNav3 = "1.0.0-alpha06"
 lifecycleViewmodelNav3 = "2.10.0-alpha07"
 
-compose-runtime-tracing = "1.9.2"
+compose-runtime-tracing = "1.10.1"
 
 jetbrains-lifecycle = "2.9.4"
 
@@ -70,6 +70,7 @@ bluesky = "0.3.3"
 activity-pub-client = "1.0.0"
 
 haze = "1.7.1"
+compose-multiplatform-media-player = "1.0.53"
 
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
@@ -217,6 +218,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 haze-materials = { group = "dev.chrisbanes.haze", name = "haze-materials", version.ref = "haze" }
+compose-multiplatform-media-player = { group = "network.chaintech", name = "compose-multiplatform-media-player", version.ref = "compose-multiplatform-media-player" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

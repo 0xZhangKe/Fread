@@ -41,7 +41,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.composable.video.VideoPlayer
+import com.zhangke.framework.composable.video.ExoVideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformUri
@@ -67,7 +67,7 @@ fun FullScreenVideoPlayer(
             .background(color = Color.Black)
     ) {
         val videoState = rememberVideoPlayerState()
-        VideoPlayer(
+        ExoVideoPlayer(
             modifier = Modifier,
             uri = uri,
             playWhenReady = true,

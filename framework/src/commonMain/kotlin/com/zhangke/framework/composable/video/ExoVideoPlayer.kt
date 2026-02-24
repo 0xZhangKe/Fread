@@ -5,12 +5,10 @@ import androidx.compose.ui.Modifier
 import com.zhangke.framework.utils.PlatformUri
 
 @Composable
-actual fun ExoVideoPlayer(
+expect fun ExoVideoPlayer(
     uri: PlatformUri,
     playWhenReady: Boolean,
-    modifier: Modifier,
-    state: VideoState,
-    useController: Boolean,
-) {
-    // TODO: ios video player
-}
+    modifier: Modifier = Modifier,
+    state: VideoState = rememberVideoPlayerState(),
+    useController: Boolean = false,
+)

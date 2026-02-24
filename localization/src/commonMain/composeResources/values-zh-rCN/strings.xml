@@ -137,7 +137,7 @@
     <string name="profile_setting_inline_video_auto_play">Inline 视频自动播放</string>
     <string name="profile_setting_inline_video_auto_play_subtitle">开启后，Feeds 流中的视频将会自动播放。</string>
     <string name="profile_setting_always_show_sensitive_content">敏感内容默认显示</string>
-    <string name="profile_setting_always_show_sensitive_content_subtitle">开启后，敏感内容默认会显示。</string>
+    <string name="profile_setting_always_show_sensitive_content_subtitle">开启后，敏感内容默认会显示（仅 Mastodon 平台）。</string>
     <string name="profile_setting_dark_mode_title">深色模式</string>
     <string name="profile_setting_dark_mode_dark">深色模式</string>
     <string name="profile_setting_dark_mode_light">浅色模式</string>

@@ -74,7 +74,7 @@ class StatusResolver(
     }
 
     suspend fun getStatusContext(locator: PlatformLocator, status: Status): Result<StatusContext> {
-        return resolverList.mapFirst { it.getStatusContext(locator, status) }
+        return resolverList.firstNotNullOf { it.getStatusContext(locator, status) }
     }
 
     suspend fun isFollowing(

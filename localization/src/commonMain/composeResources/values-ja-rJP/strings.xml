@@ -137,7 +137,7 @@
     <string name="profile_setting_inline_video_auto_play">インライン動画の自動再生</string>
     <string name="profile_setting_inline_video_auto_play_subtitle">有効にすると、フィード内の動画が自動再生されます。</string>
     <string name="profile_setting_always_show_sensitive_content">センシティブなコンテンツを常に表示</string>
-    <string name="profile_setting_always_show_sensitive_content_subtitle">有効にすると、センシティブなコンテンツを既定で表示します。</string>
+    <string name="profile_setting_always_show_sensitive_content_subtitle">有効にすると、センシティブなコンテンツを既定で表示します（Mastodonのみ）。</string>
     <string name="profile_setting_dark_mode_title">ダークモード</string>
     <string name="profile_setting_dark_mode_dark">ダークモード</string>
     <string name="profile_setting_dark_mode_light">ライトモード</string>

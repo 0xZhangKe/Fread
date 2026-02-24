@@ -137,7 +137,7 @@
     <string name="profile_setting_inline_video_auto_play">Автовоспроизведение встроенного видео</string>
     <string name="profile_setting_inline_video_auto_play_subtitle">Если включено, видео в лентах будет запускаться автоматически.</string>
     <string name="profile_setting_always_show_sensitive_content">Показывать чувствительный контент по умолчанию</string>
-    <string name="profile_setting_always_show_sensitive_content_subtitle">Если включено, чувствительный контент будет отображаться по умолчанию.</string>
+    <string name="profile_setting_always_show_sensitive_content_subtitle">Если включено, чувствительный контент будет отображаться по умолчанию (только Mastodon).</string>
     <string name="profile_setting_dark_mode_title">Тёмная тема</string>
     <string name="profile_setting_dark_mode_dark">Тёмная</string>
     <string name="profile_setting_dark_mode_light">Светлая</string>

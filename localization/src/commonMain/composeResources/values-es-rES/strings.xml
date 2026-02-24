@@ -137,7 +137,7 @@
     <string name="profile_setting_inline_video_auto_play">Reproducción automática en línea</string>
     <string name="profile_setting_inline_video_auto_play_subtitle">Si está activado, los vídeos del feed se reproducen automáticamente.</string>
     <string name="profile_setting_always_show_sensitive_content">Mostrar contenido sensible por defecto</string>
-    <string name="profile_setting_always_show_sensitive_content_subtitle">Si está activado, el contenido sensible se mostrará por defecto.</string>
+    <string name="profile_setting_always_show_sensitive_content_subtitle">Si está activado, el contenido sensible se mostrará por defecto (solo Mastodon).</string>
     <string name="profile_setting_dark_mode_title">Modo oscuro</string>
     <string name="profile_setting_dark_mode_dark">Modo oscuro</string>
     <string name="profile_setting_dark_mode_light">Modo claro</string>

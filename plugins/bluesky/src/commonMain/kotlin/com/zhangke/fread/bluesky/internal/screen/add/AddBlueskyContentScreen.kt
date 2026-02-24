@@ -147,7 +147,6 @@ private fun AddBlueskyContentContent(
                         .fillMaxWidth()
                         .padding(top = 18.dp),
                     value = uiState.hosting,
-                    readOnly = uiState.loginMode,
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Language,
@@ -240,7 +239,7 @@ private fun AccountInfoCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 BlogAuthorAvatar(
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier.size(avatarSize),
                     imageUrl = avatar,
                 )
                 Column(

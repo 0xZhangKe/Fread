@@ -127,7 +127,7 @@ private fun AddBlueskyContentContent(
                 val lineColor = MaterialTheme.colorScheme.outlineVariant
 
                 Canvas(
-                    Modifier.height(68.dp)
+                    Modifier.height(48.dp)
                         .padding(
                             start = 16.dp + avatarSize / 2,
                             top = 8.dp,

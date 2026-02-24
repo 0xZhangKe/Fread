@@ -77,7 +77,7 @@ fun Modifier.applyBlurEffect(
     val state = controller.hazeState ?: return this
     return this.hazeEffect(
         state = state,
-        style = HazeMaterials.thick(containerColor)
+        style = HazeMaterials.ultraThick(containerColor)
     )
 }
 
@@ -97,16 +97,4 @@ private fun enableContainerColor(enabled: Boolean = true): Boolean {
     if (controller == null || !controller.enabled) return true
     controller.hazeState ?: return true
     return false
-}
-
-@Composable
-private fun getBlurEffectContainerColor(
-    enabled: Boolean = true,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
-): Color {
-    if (!enabled) return containerColor
-    val controller = LocalBlurController.current
-    if (controller == null || !controller.enabled) return containerColor
-    controller.hazeState ?: return containerColor
-    return Color.Transparent
 }

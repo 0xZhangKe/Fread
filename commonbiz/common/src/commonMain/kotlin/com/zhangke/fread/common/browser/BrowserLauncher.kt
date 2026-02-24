@@ -53,9 +53,9 @@ class BrowserLauncher(
             )
         } else {
             if (freadConfigManager.openUrlInAppBrowser) {
-                systemBrowserLauncher.launchBySystemBrowser(uri)
-            } else {
                 systemBrowserLauncher.launchWebTabInApp(uri)
+            } else {
+                systemBrowserLauncher.launchBySystemBrowser(uri)
             }
         }
     }

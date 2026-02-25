@@ -15,6 +15,7 @@ import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_format_quote
+import com.zhangke.fread.statusui.ic_format_quote_in_left
 import com.zhangke.fread.statusui.ic_share
 import com.zhangke.fread.statusui.ic_status_comment
 import com.zhangke.fread.statusui.ic_status_forward
@@ -34,6 +35,11 @@ internal fun forwardIcon(): ImageVector {
 @Composable
 fun quoteIcon(): ImageVector {
     return vectorResource(Res.drawable.ic_format_quote)
+}
+
+@Composable
+fun quoteInLeftIcon(): ImageVector {
+    return vectorResource(Res.drawable.ic_format_quote_in_left)
 }
 
 @Composable

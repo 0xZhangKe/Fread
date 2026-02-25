@@ -21,6 +21,7 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.action.quoteIcon
+import com.zhangke.fread.status.ui.action.quoteInLeftIcon
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.ic_status_forward
@@ -182,7 +183,7 @@ fun StatusNotificationUi(
                         createAt = notification.formattingDisplayTime,
                         indexInList = indexInList,
                         sharedElementId = notification.id,
-                        icon = quoteIcon(),
+                        icon = quoteInLeftIcon(),
                         interactionDesc = stringResource(LocalizedString.sharedNotificationQuoteDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,

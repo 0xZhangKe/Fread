@@ -197,7 +197,7 @@ private fun ForwardActionIcon(
                     ) {
                         Icon(
                             modifier = Modifier.size(18.dp),
-                            imageVector = quoteIcon(),
+                            imageVector = quoteInLeftIcon(),
                             contentDescription = quoteAlt(),
                         )
                         Spacer(modifier = Modifier.size(8.dp))

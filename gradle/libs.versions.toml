@@ -70,7 +70,7 @@ bluesky = "0.3.3"
 activity-pub-client = "1.0.0"
 
 haze = "1.7.1"
-compose-multiplatform-media-player = "1.0.53"
+compose-media-player = "0.8.3"
 
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
@@ -218,7 +218,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 haze-materials = { group = "dev.chrisbanes.haze", name = "haze-materials", version.ref = "haze" }
-compose-multiplatform-media-player = { group = "network.chaintech", name = "compose-multiplatform-media-player", version.ref = "compose-multiplatform-media-player" }
+compose-media-player = { group = "io.github.kdroidfilter", name = "composemediaplayer", version.ref = "compose-media-player" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

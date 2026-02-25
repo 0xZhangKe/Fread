@@ -12,17 +12,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
-import com.zhangke.framework.composable.video.ExoPlayerManager
-import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.deeplink.ExternalInputHandler
@@ -73,17 +68,7 @@ class FreadActivity : ComponentActivity(), CallbackableActivity {
                 amoledMode = amoledMode,
                 dynamicColors = getDynamicColorScheme(darkTheme, themeType),
             ) {
-                val videoPlayerManager = remember { ExoPlayerManager() }
-                DisposableEffect(videoPlayerManager) {
-                    onDispose {
-                        videoPlayerManager.recycler()
-                    }
-                }
-                CompositionLocalProvider(
-                    LocalExoPlayerManager provides videoPlayerManager,
-                ) {
-                    FreadApp()
-                }
+                FreadApp()
             }
         }
     }

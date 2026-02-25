@@ -1,6 +1,5 @@
 package com.zhangke.fread.status.ui.video.inline
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -26,8 +25,8 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.composable.video.ExoVideoPlayer
-import com.zhangke.framework.composable.video.rememberVideoPlayerState
+import com.zhangke.framework.composable.video.VideoPlayer
+import com.zhangke.framework.composable.video.rememberVideoPlayerController
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 
@@ -90,7 +89,6 @@ private fun InlineVideoPlayer(
     onClick: () -> Unit,
     onPlayManually: () -> Unit,
 ) {
-    Log.d("PlayerManager", "InlineVideoPlayer($uri, $playWhenReady)")
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -98,24 +96,29 @@ private fun InlineVideoPlayer(
             .noRippleClick(onClick = onClick)
     ) {
         if (autoPlay && playWhenReady) {
-            val videoState = rememberVideoPlayerState()
-            ExoVideoPlayer(
-                uri = uri,
-                playWhenReady = true,
-                state = videoState,
+            val videoController = rememberVideoPlayerController(
+                mediaUrl = uri.toString(),
+                initialContentScale = ContentScale.Fit,
+                autoPlay = true,
+                initialMuted = true,
+                isLooping = false,
+            )
+            VideoPlayer(
+                modifier = Modifier.fillMaxSize().noRippleClick(onClick = onClick),
+                controller = videoController,
             )
             InlineVideoControlPanel(
-                playEnded = videoState.playbackEnded,
-                mute = videoState.playerVolume <= 0F,
+                playEnded = videoController.hasPlaybackEnded,
+                mute = videoController.isMuted,
                 onPlayClick = {
                     onPlayManually()
-                    videoState.play()
+                    videoController.play()
                 },
                 onMuteClick = { mute ->
                     if (mute) {
-                        videoState.mute()
+                        videoController.mute()
                     } else {
-                        videoState.unmute()
+                        videoController.unmute()
                     }
                 },
             )
@@ -156,7 +159,7 @@ private fun InlineVideoControlPanel(
         if (playEnded) {
             PlayVideoIconButton(
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(42.dp)
                     .align(Alignment.Center),
                 onClick = onPlayClick,
             )

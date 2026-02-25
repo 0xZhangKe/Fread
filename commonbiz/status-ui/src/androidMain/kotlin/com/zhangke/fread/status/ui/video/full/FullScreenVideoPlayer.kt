@@ -35,18 +35,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.composable.video.ExoVideoPlayer
-import com.zhangke.framework.composable.video.rememberVideoPlayerState
+import com.zhangke.framework.composable.video.VideoPlayer
+import com.zhangke.framework.composable.video.rememberVideoPlayerController
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.ui.video.VideoDurationFormatter
+import kotlin.math.roundToInt
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
@@ -66,12 +68,13 @@ fun FullScreenVideoPlayer(
             }
             .background(color = Color.Black)
     ) {
-        val videoState = rememberVideoPlayerState()
-        ExoVideoPlayer(
+        val videoController = rememberVideoPlayerController(
+            mediaUrl = uri.toString(),
+            initialContentScale = ContentScale.Fit,
+        )
+        VideoPlayer(
             modifier = Modifier,
-            uri = uri,
-            playWhenReady = true,
-            state = videoState,
+            controller = videoController,
         )
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
@@ -84,24 +87,24 @@ fun FullScreenVideoPlayer(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding(),
-                    playing = videoState.playing,
-                    mute = videoState.playerVolume <= 0F,
+                    playing = videoController.isPlaying,
+                    mute = videoController.isMuted,
                     onPlayClick = {
-                        videoState.play()
+                        videoController.play()
                     },
                     onPauseClick = {
-                        videoState.pause()
+                        videoController.pause()
                     },
-                    playerPosition = videoState.playerPosition,
-                    duration = videoState.duration,
+                    playerPosition = videoController.currentTimeInSeconds.roundToInt() * 1000L,
+                    duration = videoController.totalDurationInSeconds.roundToInt() * 1000L,
                     onPositionChangeRequest = {
-                        videoState.seekTo(it)
+                        videoController.seekTo(it / 1000F)
                     },
                     onMuteClick = {
-                        videoState.mute()
+                        videoController.mute()
                     },
                     onUnmuteClick = {
-                        videoState.unmute()
+                        videoController.unmute()
                     },
                 )
                 FullScreenPlayerToolBar(

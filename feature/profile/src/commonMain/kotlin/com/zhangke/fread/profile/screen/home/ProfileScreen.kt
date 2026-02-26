@@ -1,7 +1,6 @@
 package com.zhangke.fread.profile.screen.home
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,17 +17,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.blur.applyBlurEffect
+import com.zhangke.framework.blur.applyBlurSource
+import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.ConsumeFlow
-import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.SingleRowTopAppBar
+import com.zhangke.framework.composable.TopAppBarColors
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
@@ -74,10 +76,15 @@ private fun ProfileHomePageContent(
     onAccountClick: (LoggedAccount) -> Unit,
     onLoginClick: (LoggedAccount) -> Unit,
 ) {
+    val surfaceColor = MaterialTheme.colorScheme.surface
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
+            SingleRowTopAppBar(
+                modifier = Modifier.applyBlurEffect(containerColor = surfaceColor),
+                colors = TopAppBarColors.default(
+                    containerColor = blurEffectContainerColor(containerColor = surfaceColor),
+                ),
                 title = {
                     Text(
                         modifier = Modifier,
@@ -100,10 +107,10 @@ private fun ProfileHomePageContent(
             )
         },
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = LocalContentPadding.current,
+                modifier = Modifier.fillMaxWidth().applyBlurSource(),
+                contentPadding = innerPadding,
             ) {
                 items(uiState.accountDataList) { item ->
                     AccountDetail(

@@ -58,7 +58,7 @@ fun SingleRowTopAppBar(
             titleContentColor = colors.titleContentColor,
             actionIconContentColor = colors.actionIconContentColor,
             title = title,
-            titleTextStyle = MaterialTheme.typography.titleLarge,
+            titleTextStyle = ToolbarTokens.titleTextStyle,
             navigationIcon = navigationIcon,
             actions = actionsRow,
             height = TopAppBarDefaults.TopAppBarExpandedHeight,

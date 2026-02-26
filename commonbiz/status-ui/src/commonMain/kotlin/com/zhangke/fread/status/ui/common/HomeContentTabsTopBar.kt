@@ -18,10 +18,10 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TabsTopAppBar
 import com.zhangke.framework.composable.TabsTopAppBarColors
+import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.account.LoggedAccount
 
@@ -73,7 +73,7 @@ fun HomeContentTabsTopBar(
     onTabClick: (index: Int) -> Unit,
 ) {
     HomeContentTabsTopBar(
-        modifier = modifier.noRippleClick {},
+        modifier = modifier.doubleTapToScrollTop(onDoubleClick),
         selectedTabIndex = selectedTabIndex,
         tabCount = tabTitles.size,
         scrollBehavior = scrollBehavior,
@@ -88,13 +88,12 @@ fun HomeContentTabsTopBar(
         title = {
             Column(
                 modifier = Modifier
-                    .doubleTapToScrollTop(onDoubleClick)
             ) {
                 Text(
                     modifier = Modifier.titleClickable(onTitleClick),
                     text = title,
-                    fontSize = 18.sp,
                     maxLines = 1,
+                    style = ToolbarTokens.titleTextStyle,
                     overflow = TextOverflow.Ellipsis,
                 )
                 if (account != null && showAccountInfo) {

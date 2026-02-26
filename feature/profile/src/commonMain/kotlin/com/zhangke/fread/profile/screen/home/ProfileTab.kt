@@ -8,7 +8,7 @@ import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_profile_tab
 import org.jetbrains.compose.resources.painterResource
 
-class ProfileTab() : Tab {
+class ProfileTab : Tab {
 
     override val options: TabOptions
         @Composable get() {

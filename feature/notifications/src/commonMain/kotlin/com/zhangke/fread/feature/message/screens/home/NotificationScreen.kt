@@ -195,8 +195,7 @@ private fun NotificationTopBar(
                     Column {
                         Text(
                             text = account.userName,
-                            style = MaterialTheme.typography.titleMedium
-                                .copy(fontWeight = FontWeight.SemiBold),
+                            style = MaterialTheme.typography.titleMedium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )

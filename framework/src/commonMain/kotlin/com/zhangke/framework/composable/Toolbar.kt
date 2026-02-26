@@ -14,7 +14,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 object ToolbarTokens {
 
@@ -24,7 +29,28 @@ object ToolbarTokens {
 
     val TrailingIconSize = 24.0.dp
 
+    val TitleLargeSize = 22.sp
+
     val TopAppBarHorizontalPadding = 4.dp
+    val TitleLargeLineHeight = 28.0.sp
+    val TitleLargeTracking = 0.0.sp
+
+    val DefaultLineHeightStyle = LineHeightStyle(
+        alignment = LineHeightStyle.Alignment.Center,
+        trim = LineHeightStyle.Trim.None,
+    )
+
+    val DefaultTextStyle = TextStyle.Default.copy(
+        lineHeightStyle = DefaultLineHeightStyle,
+    )
+
+    val titleTextStyle = DefaultTextStyle.copy(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = TitleLargeSize,
+        lineHeight = TitleLargeLineHeight,
+        letterSpacing = TitleLargeTracking,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

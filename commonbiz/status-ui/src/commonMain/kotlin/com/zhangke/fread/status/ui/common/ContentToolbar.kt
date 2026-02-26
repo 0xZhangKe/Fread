@@ -17,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.zhangke.framework.blur.applyBlurEffect
 import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.SingleRowTopAppBar
+import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.TopAppBarColors
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.account.LoggedAccount
@@ -65,7 +65,7 @@ fun ContentToolbar(
                 Text(
                     modifier = Modifier.noRippleClick { onTitleClick() },
                     text = title,
-                    fontSize = 18.sp,
+                    style = ToolbarTokens.titleTextStyle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )

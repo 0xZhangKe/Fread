@@ -1,9 +1,9 @@
 package com.zhangke.fread.bluesky
 
+import androidx.navigation3.runtime.NavKey
 import app.bsky.actor.GetProfileQueryParams
 import app.bsky.feed.GetPostThreadQueryParams
 import app.bsky.feed.GetPostThreadResponseThreadUnion
-import androidx.navigation3.runtime.NavKey
 import com.atproto.repo.GetRecordQueryParams
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
@@ -46,12 +46,14 @@ class BskyUrlInterceptor(
         if (uri.host.isNullOrEmpty()) return InterceptorResult.CanNotIntercept
         val isProfileUrl = isProfileUrl(uri)
         val isPostUrl = isPostUrl(uri)
-        if (isFromExternal && !isProfileUrl && !isPostUrl) {
-            if (platformRepo.appViewDomains.any { uri.host == it }) {
-                val content = contentRepo.getAllContent()
-                    .firstNotNullOfOrNull { it as? BlueskyContent }
-                if (content != null) {
-                    return InterceptorResult.SwitchHomeContent(content)
+        if (!isProfileUrl && !isPostUrl) {
+            if (isFromExternal) {
+                if (platformRepo.appViewDomains.any { uri.host == it }) {
+                    val content = contentRepo.getAllContent()
+                        .firstNotNullOfOrNull { it as? BlueskyContent }
+                    if (content != null) {
+                        return InterceptorResult.SwitchHomeContent(content)
+                    }
                 }
             }
             return InterceptorResult.CanNotIntercept

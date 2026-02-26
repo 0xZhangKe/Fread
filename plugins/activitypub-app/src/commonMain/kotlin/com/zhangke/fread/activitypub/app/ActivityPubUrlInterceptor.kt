@@ -12,7 +12,6 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreenKey
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.InterceptorResult
@@ -42,14 +41,16 @@ class ActivityPubUrlInterceptor(
         }
         val isProfileUrl = isProfileUrl(uri)
         val isStatusUrl = isMastodonStatusUrl(uri)
-        if (isFromExternal && !isProfileUrl && !isStatusUrl) {
-            val platform = parsePlatform(uri)
-            if (platform != null) {
-                val content = contentRepo.getAllContent()
-                    .mapNotNull { it as? ActivityPubContent }
-                    .firstOrNull { it.baseUrl == platform.baseUrl }
-                if (content != null) {
-                    return InterceptorResult.SwitchHomeContent(content)
+        if (!isProfileUrl && !isStatusUrl) {
+            if (isFromExternal) {
+                val platform = parsePlatform(uri)
+                if (platform != null) {
+                    val content = contentRepo.getAllContent()
+                        .mapNotNull { it as? ActivityPubContent }
+                        .firstOrNull { it.baseUrl == platform.baseUrl }
+                    if (content != null) {
+                        return InterceptorResult.SwitchHomeContent(content)
+                    }
                 }
             }
             return InterceptorResult.CanNotIntercept
@@ -75,14 +76,6 @@ class ActivityPubUrlInterceptor(
         }
         parseMastodonProfile(fixedLocator, uri)?.let {
             return InterceptorResult.SuccessWithOpenNewScreen(it)
-        }
-        if (!isFromExternal) {
-            val platform = parsePlatform(uri)
-            if (platform != null) {
-                return InterceptorResult.SuccessWithOpenNewScreen(
-                    InstanceDetailScreenKey(fixedLocator, platform.baseUrl)
-                )
-            }
         }
         return InterceptorResult.CanNotIntercept
     }

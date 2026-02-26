@@ -3,6 +3,7 @@ package com.zhangke.framework.composable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -61,10 +62,22 @@ fun FreadTabRow(
         mutableStateMapOf<Int, Dp>()
     }
     FreadTabRow(
-        modifier = modifier.applyBlurEffect(enabled = blurEffectEnabled, containerColor = containerColor),
+        modifier = modifier.applyBlurEffect(
+            enabled = blurEffectEnabled,
+            containerColor = containerColor
+        ),
         selectedTabIndex = selectedTabIndex,
-        containerColor = blurEffectContainerColor(enabled = blurEffectEnabled,containerColor = containerColor),
+        containerColor = blurEffectContainerColor(
+            enabled = blurEffectEnabled,
+            containerColor = containerColor
+        ),
         indicator = { tabPositions ->
+            Box(
+                modifier = Modifier.fillMaxSize().padding(bottom = 1.5.dp),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                divider()
+            }
             val position = tabPositions.getOrNull(selectedTabIndex)
             if (position != null) {
                 Column(
@@ -80,7 +93,7 @@ fun FreadTabRow(
                 }
             }
         },
-        divider = divider,
+        divider = {},
         tabs = {
             repeat(tabCount) { index ->
                 Tab(

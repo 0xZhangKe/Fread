@@ -138,7 +138,7 @@ private fun Modifier.titleClickable(onClick: () -> Unit): Modifier {
     return this.noRippleClick { onClick() }
 }
 
-private fun Modifier.doubleTapToScrollTop(onDoubleClick: (() -> Unit)?): Modifier = composed {
+fun Modifier.doubleTapToScrollTop(onDoubleClick: (() -> Unit)?): Modifier = composed {
     if (onDoubleClick == null) {
         this
     } else {

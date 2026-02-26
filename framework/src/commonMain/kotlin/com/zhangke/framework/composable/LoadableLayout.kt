@@ -87,11 +87,9 @@ fun <T> LoadableLayout(
 
 @Composable
 fun BoxScope.DefaultLoading(modifier: Modifier = Modifier) {
-    CircularProgressIndicator(
-        modifier = modifier
-            .align(Alignment.Center)
-            .fillMaxWidth(0.3F)
-    )
+    Box(modifier = modifier.fillMaxWidth(0.3F).align(Alignment.Center)) {
+        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+    }
 }
 
 @Composable

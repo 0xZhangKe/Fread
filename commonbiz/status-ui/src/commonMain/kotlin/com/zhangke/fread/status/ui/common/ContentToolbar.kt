@@ -2,7 +2,6 @@ package com.zhangke.fread.status.ui.common
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -11,18 +10,17 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.blur.applyBlurEffect
-import com.zhangke.framework.blur.blurEffectContainerColor
+import com.zhangke.framework.composable.ScrollTopAppBar
+import com.zhangke.framework.composable.ScrollTopAppBarColors
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.composable.SingleRowTopAppBar
 import com.zhangke.framework.composable.ToolbarTokens
-import com.zhangke.framework.composable.TopAppBarColors
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.account.LoggedAccount
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
@@ -36,23 +34,22 @@ fun ContentToolbar(
     showAccountInfo: Boolean,
     showNextIcon: Boolean,
     showRefreshButton: Boolean,
-    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+    scrollBehavior: TopAppBarScrollBehavior,
     onMenuClick: () -> Unit,
     onRefreshClick: () -> Unit,
     onNextClick: () -> Unit,
     onTitleClick: () -> Unit,
     onDoubleClick: (() -> Unit)? = null,
 ) {
+    val scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
     val surfaceColor = MaterialTheme.colorScheme.surface
-    SingleRowTopAppBar(
+    ScrollTopAppBar(
         modifier = modifier.applyBlurEffect(containerColor = surfaceColor)
             .pointerInput(onDoubleClick) {
                 detectTapGestures(onDoubleTap = { onDoubleClick?.invoke() })
             },
-        colors = TopAppBarColors.default(
-            containerColor = blurEffectContainerColor(containerColor = surfaceColor),
-        ),
-        windowInsets = windowInsets,
+        scrollBehavior = scrollBehavior,
+        colors = ScrollTopAppBarColors.default(scrolledContainerColor = scrolledContainerColor),
         navigationIcon = {
             SimpleIconButton(
                 onClick = onMenuClick,

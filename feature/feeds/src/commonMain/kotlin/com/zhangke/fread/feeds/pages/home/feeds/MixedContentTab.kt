@@ -7,14 +7,22 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalContentPadding
+import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.Tab
@@ -23,6 +31,7 @@ import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.common.doubleTapToScrollTop
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -63,10 +72,18 @@ internal class MixedContentTab(
     ) {
         val mainTabConnection = LocalNestedTabConnection.current
         val coroutineScope = rememberCoroutineScope()
+        val topBarState = rememberTopAppBarState()
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarState)
         Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 ContentToolbar(
-                    modifier = Modifier.noRippleClick { },
+                    modifier = Modifier.doubleTapToScrollTop {
+                        coroutineScope.launch {
+                            mainTabConnection.scrollToTop()
+                        }
+                    },
+                    scrollBehavior = scrollBehavior,
                     title = uiState.content?.name.orEmpty(),
                     showNextIcon = !isLatestTab && uiState.showNextButton,
                     showRefreshButton = uiState.showRefreshButton,
@@ -103,34 +120,34 @@ internal class MixedContentTab(
                 )
             },
         ) { paddings ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddings)
+            CompositionLocalProvider(
+                LocalContentPadding provides paddings
             ) {
-                val nestedTabConnection = LocalNestedTabConnection.current
-                FeedsContent(
-                    feeds = uiState.dataList,
-                    refreshing = uiState.refreshing,
-                    loadMoreState = uiState.loadMoreState,
-                    showPagingLoadingPlaceholder = uiState.initializing,
-                    pageErrorContent = uiState.pageError,
-                    newStatusNotifyFlow = null,
-                    onRefresh = onRefresh,
-                    onLoadMore = onLoadMore,
-                    composedStatusInteraction = composedStatusInteraction,
-                    observeScrollToTopEvent = true,
-                    onImmersiveEvent = {
-                        if (it) {
-                            mainTabConnection.openImmersiveMode(coroutineScope)
-                        } else {
-                            mainTabConnection.closeImmersiveMode(coroutineScope)
-                        }
-                    },
-                    onScrollInProgress = {
-                        nestedTabConnection.updateContentScrollInProgress(it)
-                    },
-                )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    val nestedTabConnection = LocalNestedTabConnection.current
+                    FeedsContent(
+                        feeds = uiState.dataList,
+                        refreshing = uiState.refreshing,
+                        loadMoreState = uiState.loadMoreState,
+                        showPagingLoadingPlaceholder = uiState.initializing,
+                        pageErrorContent = uiState.pageError,
+                        newStatusNotifyFlow = null,
+                        onRefresh = onRefresh,
+                        onLoadMore = onLoadMore,
+                        composedStatusInteraction = composedStatusInteraction,
+                        observeScrollToTopEvent = true,
+                        onImmersiveEvent = {
+                            if (it) {
+                                mainTabConnection.openImmersiveMode(coroutineScope)
+                            } else {
+                                mainTabConnection.closeImmersiveMode(coroutineScope)
+                            }
+                        },
+                        onScrollInProgress = {
+                            nestedTabConnection.updateContentScrollInProgress(it)
+                        },
+                    )
+                }
             }
         }
     }

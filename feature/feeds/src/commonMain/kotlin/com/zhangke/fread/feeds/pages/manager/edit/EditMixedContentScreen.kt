@@ -29,13 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.nav.LocalNavBackStack
@@ -102,6 +102,7 @@ private fun EditFeedsScreenContent(
         floatingActionButton = {
             if (uiState.isSuccess) {
                 FloatingActionButton(
+                    modifier = Modifier.padding(bottom = 32.dp),
                     containerColor = MaterialTheme.colorScheme.surface,
                     onClick = onAddSourceClick,
                     shape = CircleShape,

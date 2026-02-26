@@ -136,6 +136,10 @@ internal class MixedContentTab(
                         onLoadMore = onLoadMore,
                         composedStatusInteraction = composedStatusInteraction,
                         observeScrollToTopEvent = true,
+                        onScrollToTopConsumed = {
+                            topBarState.contentOffset = 0F
+                            topBarState.heightOffset = 0F
+                        },
                         onImmersiveEvent = {
                             if (it) {
                                 mainTabConnection.openImmersiveMode(coroutineScope)

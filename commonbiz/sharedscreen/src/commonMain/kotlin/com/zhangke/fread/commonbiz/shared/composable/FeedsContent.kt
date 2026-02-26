@@ -61,6 +61,7 @@ fun FeedsContent(
     composedStatusInteraction: ComposedStatusInteraction,
     nestedScrollConnection: NestedScrollConnection? = null,
     observeScrollToTopEvent: Boolean = false,
+    onScrollToTopConsumed: (() -> Unit)? = null,
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
     onScrollInProgress: ((Boolean) -> Unit)? = null,
@@ -79,6 +80,7 @@ fun FeedsContent(
         composedStatusInteraction = composedStatusInteraction,
         nestedScrollConnection = nestedScrollConnection,
         observeScrollToTopEvent = observeScrollToTopEvent,
+        onScrollToTopConsumed = onScrollToTopConsumed,
         contentCanScrollBackward = contentCanScrollBackward,
         onImmersiveEvent = onImmersiveEvent,
         onScrollInProgress = onScrollInProgress,
@@ -99,6 +101,7 @@ fun FeedsContent(
     composedStatusInteraction: ComposedStatusInteraction,
     nestedScrollConnection: NestedScrollConnection? = null,
     observeScrollToTopEvent: Boolean = false,
+    onScrollToTopConsumed: (() -> Unit)? = null,
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
     onScrollInProgress: ((Boolean) -> Unit)? = null,
@@ -145,6 +148,7 @@ fun FeedsContent(
                         if (lazyListState.layoutInfo.totalItemsCount > 0) {
                             lazyListState.scrollToItem(0)
                         }
+                        onScrollToTopConsumed?.invoke()
                     }
                 }
             }
@@ -192,6 +196,7 @@ fun FeedsContent(
                         coroutineScope.launch {
                             if (feeds.isNotEmpty()) {
                                 state.lazyListState.animateScrollToItem(0)
+                                onScrollToTopConsumed?.invoke()
                             }
                         }
                     },

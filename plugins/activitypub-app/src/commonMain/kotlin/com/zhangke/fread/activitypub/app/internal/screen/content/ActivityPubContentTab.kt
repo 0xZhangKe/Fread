@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -99,6 +100,12 @@ internal class ActivityPubContentTab(
         val pagerState = rememberPagerState(0) { tabList.size }
         val topBarState = rememberTopAppBarState()
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarState)
+        LaunchedEffect(mainTabConnection, topBarState) {
+            mainTabConnection.scrollToTopFlow.collect {
+                topBarState.contentOffset = 0F
+                topBarState.heightOffset = 0F
+            }
+        }
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {

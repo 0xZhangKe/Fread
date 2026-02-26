@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.edit
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,11 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.currentOrThrow
+import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
@@ -52,14 +54,13 @@ import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 import org.jetbrains.compose.resources.stringResource
-import androidx.navigation3.runtime.NavKey
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Serializable
 data class EditContentConfigScreenKey(val contentId: String) : NavKey
 
-private val TAB_ITEM_HEIGHT = 56.dp
+private val TAB_ITEM_HEIGHT = 62.dp
 
 @Composable
 fun EditContentConfigScreen(
@@ -143,6 +144,12 @@ private fun ShowingUserList(
         text = stringResource(LocalizedString.statusUiEditContentConfigShowingListTitle),
         style = MaterialTheme.typography.titleMedium,
     )
+    Text(
+        modifier = Modifier.padding(start = 16.dp, top = 2.dp),
+        text = stringResource(LocalizedString.statusUiEditContentConfigShowingListDescription),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
     var tabsInUi by remember(uiState.content.showingTabList) {
         mutableStateOf(uiState.content.showingTabList)
     }
@@ -161,23 +168,32 @@ private fun ShowingUserList(
         LazyColumn(
             state = state.listState,
             modifier = Modifier
+                .padding(top = 16.dp)
                 .fillMaxWidth()
                 .height(TAB_ITEM_HEIGHT * tabsInUi.size + 4.dp)
                 .reorderable(state)
-                .detectReorderAfterLongPress(state)
+                .detectReorderAfterLongPress(state),
         ) {
             itemsIndexed(
                 items = tabsInUi,
                 key = { _, item -> item.uiKey }
             ) { _, tabItem ->
                 ReorderableItem(state, tabItem.uiKey) { dragging ->
-                    val elevation by animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
+                    val shadowElevation by animateDpAsState(
+                        if (dragging) 8.dp else 2.dp,
+                        label = ""
+                    )
+                    val tonalElevation by animateDpAsState(
+                        if (dragging) 16.dp else 2.dp,
+                        label = ""
+                    )
                     Surface(
                         modifier = Modifier
+                            .padding(horizontal = 16.dp)
                             .fillMaxWidth()
                             .height(TAB_ITEM_HEIGHT),
-                        shadowElevation = elevation,
-                        tonalElevation = elevation,
+                        tonalElevation = tonalElevation,
+                        shadowElevation = shadowElevation,
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -214,32 +230,49 @@ private fun HiddenUserList(
     onMoveUp: (ActivityPubContent.ContentTab) -> Unit,
 ) {
     Text(
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+        modifier = Modifier.padding(start = 16.dp, top = 24.dp),
         text = stringResource(LocalizedString.statusUiEditContentConfigHiddenListTitle),
         style = MaterialTheme.typography.titleMedium,
     )
-    uiState.content.hidingTabList.forEach { tabItem ->
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(TAB_ITEM_HEIGHT),
+    Spacer(modifier = Modifier.height(16.dp))
+    if (uiState.content.hidingTabList.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
         ) {
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically,
+            Text(
+                modifier = Modifier,
+                text = stringResource(LocalizedString.empty),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    } else {
+        uiState.content.hidingTabList.forEach { tabItem ->
+            Surface(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .height(TAB_ITEM_HEIGHT),
+                tonalElevation = 2.dp,
+                shadowElevation = 2.dp,
             ) {
-                Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = tabItem.tabName(),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Spacer(modifier = Modifier.weight(1F))
-                SimpleIconButton(
-                    onClick = { onMoveUp(tabItem) },
-                    imageVector = Icons.Default.Visibility,
-                    contentDescription = "Move Up",
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp),
+                        text = tabItem.tabName(),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Spacer(modifier = Modifier.weight(1F))
+                    SimpleIconButton(
+                        onClick = { onMoveUp(tabItem) },
+                        imageVector = Icons.Default.Visibility,
+                        contentDescription = "Move Up",
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
             }
         }
     }

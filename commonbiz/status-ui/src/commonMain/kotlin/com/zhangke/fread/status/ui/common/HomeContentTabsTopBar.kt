@@ -73,7 +73,7 @@ fun HomeContentTabsTopBar(
     onTabClick: (index: Int) -> Unit,
 ) {
     HomeContentTabsTopBar(
-        modifier = modifier,
+        modifier = modifier.noRippleClick {},
         selectedTabIndex = selectedTabIndex,
         tabCount = tabTitles.size,
         scrollBehavior = scrollBehavior,

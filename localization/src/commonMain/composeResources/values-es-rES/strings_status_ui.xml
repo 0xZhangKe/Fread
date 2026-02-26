@@ -42,6 +42,7 @@
     <string name="status_ui_edit_content_name_label">Editar nombre del contenido</string>
     <string name="status_ui_edit_content_name_hint">Introduce el nombre del contenido</string>
     <string name="status_ui_edit_content_config_showing_list_title">Feeds en la página de inicio</string>
+    <string name="status_ui_edit_content_config_showing_list_description">Mantén pulsado y arrastra para reordenar</string>
     <string name="status_ui_edit_content_config_hidden_list_title">Feeds que se pueden añadir a inicio</string>
     <string name="status_ui_user_detail_relationship_mutuals">Mutuos</string>
     <string name="status_ui_user_detail_relationship_blocking">Bloqueado</string>

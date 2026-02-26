@@ -202,6 +202,8 @@ object LocalizedString {
     val statusUiEditContentNameHint = localizedString.status_ui_edit_content_name_hint
     val statusUiEditContentConfigShowingListTitle =
         localizedString.status_ui_edit_content_config_showing_list_title
+    val statusUiEditContentConfigShowingListDescription =
+        localizedString.status_ui_edit_content_config_showing_list_description
     val statusUiEditContentConfigHiddenListTitle =
         localizedString.status_ui_edit_content_config_hidden_list_title
     val statusUiUserDetailRelationshipMutuals =

@@ -37,7 +37,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import com.zhangke.framework.blur.BlurController
 import com.zhangke.framework.blur.LocalBlurController
 import com.zhangke.framework.blur.rememberBlurController
 import com.zhangke.framework.composable.BackHandler
@@ -101,6 +100,7 @@ fun FreadHomeScreenContent(viewModel: MainViewModel) {
                 val drawerWidth = getScreenWidth() * 0.8F
                 ModalDrawerSheet(
                     modifier = Modifier.widthIn(max = drawerWidth),
+                    drawerContainerColor = MaterialTheme.colorScheme.surface,
                 ) {
                     MainDrawer(
                         onDismissRequest = {

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.nav.TabOptions
@@ -65,6 +66,7 @@ internal class MixedContentTab(
         Scaffold(
             topBar = {
                 ContentToolbar(
+                    modifier = Modifier.noRippleClick { },
                     title = uiState.content?.name.orEmpty(),
                     showNextIcon = !isLatestTab && uiState.showNextButton,
                     showRefreshButton = uiState.showRefreshButton,

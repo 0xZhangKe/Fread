@@ -42,6 +42,7 @@
     <string name="status_ui_edit_content_name_label">内容名を編集</string>
     <string name="status_ui_edit_content_name_hint">内容の名前を入力してください</string>
     <string name="status_ui_edit_content_config_showing_list_title">ホームに表示されるリスト</string>
+    <string name="status_ui_edit_content_config_showing_list_description">長押ししてドラッグで並べ替え</string>
     <string name="status_ui_edit_content_config_hidden_list_title">ホームに追加できるリスト</string>
     <string name="status_ui_user_detail_relationship_mutuals">相互フォロー</string>
     <string name="status_ui_user_detail_relationship_blocking">ブロック中</string>

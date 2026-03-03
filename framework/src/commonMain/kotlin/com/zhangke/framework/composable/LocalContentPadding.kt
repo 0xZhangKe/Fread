@@ -46,11 +46,24 @@ fun plusContentPadding(paddingValues: PaddingValues): PaddingValues {
     val layoutDirection = LocalLayoutDirection.current
     return PaddingValues(
         start = localPaddingValues.calculateStartPadding(layoutDirection) +
-            paddingValues.calculateStartPadding(layoutDirection),
+                paddingValues.calculateStartPadding(layoutDirection),
         top = localPaddingValues.calculateTopPadding() + paddingValues.calculateTopPadding(),
         end = localPaddingValues.calculateEndPadding(layoutDirection) +
-            paddingValues.calculateEndPadding(layoutDirection),
+                paddingValues.calculateEndPadding(layoutDirection),
         bottom = localPaddingValues.calculateBottomPadding() + paddingValues.calculateBottomPadding(),
+    )
+}
+
+@Composable
+fun PaddingValues.plus(paddingValues: PaddingValues): PaddingValues {
+    val layoutDirection = LocalLayoutDirection.current
+    return PaddingValues(
+        start = this.calculateStartPadding(layoutDirection) +
+                paddingValues.calculateStartPadding(layoutDirection),
+        top = this.calculateTopPadding() + paddingValues.calculateTopPadding(),
+        end = this.calculateEndPadding(layoutDirection) +
+                paddingValues.calculateEndPadding(layoutDirection),
+        bottom = this.calculateBottomPadding() + paddingValues.calculateBottomPadding(),
     )
 }
 

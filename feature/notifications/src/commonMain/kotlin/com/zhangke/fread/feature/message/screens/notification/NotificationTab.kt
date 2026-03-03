@@ -112,12 +112,12 @@ class NotificationTab(
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
-            if (uiState.initializing) {
-                StatusListPlaceholder()
-            } else {
-                CompositionLocalProvider(
-                    LocalContentPadding provides plusTopPadding(tabTitleHeight)
-                ) {
+            CompositionLocalProvider(
+                LocalContentPadding provides plusTopPadding(tabTitleHeight)
+            ) {
+                if (uiState.initializing) {
+                    StatusListPlaceholder()
+                } else {
                     val state = rememberLoadableInlineVideoLazyColumnState(
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,

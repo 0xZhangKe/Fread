@@ -49,18 +49,21 @@ private fun ExplorerHomeContent(
         modifier = Modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        var searchBarActive by remember { mutableStateOf(false) }
         CompositionLocalProvider(
             LocalContentPadding provides updateTopPadding(topBarHeight)
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                key(uiState.tab) {
-                    uiState.tab?.let { tab ->
-                        val nestedTabConnection = remember { NestedTabConnection() }
-                        CompositionLocalProvider(
-                            LocalSnackbarHostState provides snackbarHostState,
-                            LocalNestedTabConnection provides nestedTabConnection,
-                        ) {
-                            tab.Content()
+            if (!searchBarActive) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    key(uiState.tab) {
+                        uiState.tab?.let { tab ->
+                            val nestedTabConnection = remember { NestedTabConnection() }
+                            CompositionLocalProvider(
+                                LocalSnackbarHostState provides snackbarHostState,
+                                LocalNestedTabConnection provides nestedTabConnection,
+                            ) {
+                                tab.Content()
+                            }
                         }
                     }
                 }
@@ -71,6 +74,7 @@ private fun ExplorerHomeContent(
             accountList = uiState.accountWithTabList.map { it.first },
             onAccountSelected = onAccountSelected,
             onHeightChanged = { topBarHeight = it },
+            onActiveChanged = { searchBarActive = it },
         )
         SnackbarHost(
             hostState = snackbarHostState,

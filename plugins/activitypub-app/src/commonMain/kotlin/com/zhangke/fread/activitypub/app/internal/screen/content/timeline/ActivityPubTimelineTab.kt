@@ -1,7 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.timeline
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -10,7 +9,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
@@ -81,7 +79,10 @@ internal class ActivityPubTimelineTab(
                 if (uiState.showPagingLoadingPlaceholder) {
                     StatusListPlaceholder()
                 } else if (uiState.pageErrorContent != null) {
-                    InitErrorContent(uiState.pageErrorContent)
+                    InitErrorContent(
+                        errorMessage = uiState.pageErrorContent,
+                        onRetryClick = onRefresh,
+                    )
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize()) {

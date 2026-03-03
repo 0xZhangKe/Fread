@@ -27,10 +27,13 @@ import com.zhangke.framework.blur.applyBlurEffect
 import com.zhangke.framework.blur.applyBlurSource
 import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.SingleRowTopAppBar
 import com.zhangke.framework.composable.TopAppBarColors
 import com.zhangke.framework.composable.currentOrThrow
+import com.zhangke.framework.composable.plus
+import com.zhangke.framework.composable.plusContentPadding
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
@@ -110,7 +113,7 @@ private fun ProfileHomePageContent(
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().applyBlurSource(),
-                contentPadding = innerPadding,
+                contentPadding = LocalContentPadding.current.plus(innerPadding),
             ) {
                 items(uiState.accountDataList) { item ->
                     AccountDetail(

@@ -1,7 +1,5 @@
 package com.zhangke.fread.explore.screens.search.bar
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -66,7 +64,6 @@ import com.zhangke.fread.status.ui.common.SelectAccountDialog
 import kotlinx.coroutines.flow.Flow
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -75,6 +72,7 @@ fun ExplorerSearchBar(
     accountList: List<LoggedAccount>,
     onAccountSelected: (LoggedAccount) -> Unit,
     onHeightChanged: (Dp) -> Unit,
+    onActiveChanged: (Boolean) -> Unit,
 ) {
     val density = LocalDensity.current
     val backStack = LocalNavBackStack.currentOrThrow
@@ -84,20 +82,8 @@ fun ExplorerSearchBar(
         viewModel.selectedAccount = selectedAccount
     }
     val uiState by viewModel.uiState.collectAsState()
-    var horizontalPaddingDp by remember { mutableStateOf(16) }
-    if ((active && horizontalPaddingDp != 0) || (!active && horizontalPaddingDp != 16)) {
-        LaunchedEffect(Unit) {
-            Animatable(
-                initialValue = horizontalPaddingDp.toFloat()
-            ).animateTo(
-                targetValue = if (active) 0F else 16F,
-                animationSpec = tween(durationMillis = 180),
-            ) {
-                horizontalPaddingDp = value.roundToInt()
-            }
-        }
-    }
     LaunchedEffect(active) {
+        onActiveChanged(active)
         if (!active) {
             viewModel.onSearchQueryChanged("")
         }
@@ -112,7 +98,7 @@ fun ExplorerSearchBar(
                     onHeightChanged(it.height.pxToDp(density))
                 }
             }
-            .padding(horizontal = horizontalPaddingDp.dp),
+            .padding(horizontal = 16.dp),
         insetContainerColor = blurEffectContainerColor(!active, containerColor),
         colors = SearchBarDefaults.colors(
             containerColor = blurEffectContainerColor(!active, containerColor),

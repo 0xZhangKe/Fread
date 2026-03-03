@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -168,6 +169,11 @@ private fun FollowHashtagButton(
     onUnfollowClick: () -> Unit,
 ) {
     var showUnfollowDialog by remember { mutableStateOf(false) }
+    val containerColor = if (uiState.following) {
+        MaterialTheme.colorScheme.secondaryContainer
+    } else {
+        MaterialTheme.colorScheme.primaryContainer
+    }
     FilledTonalButton(
         modifier = modifier,
         onClick = {
@@ -178,12 +184,8 @@ private fun FollowHashtagButton(
             }
         },
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = if (uiState.following) {
-                MaterialTheme.colorScheme.secondaryContainer
-            } else {
-                MaterialTheme.colorScheme.primaryContainer
-            },
-            contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+            containerColor = containerColor,
+            contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor),
         ),
     ) {
         Text(

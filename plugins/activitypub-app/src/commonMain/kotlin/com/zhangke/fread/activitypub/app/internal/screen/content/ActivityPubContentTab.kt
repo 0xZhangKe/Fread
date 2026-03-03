@@ -152,10 +152,13 @@ internal class ActivityPubContentTab(
                 }
             },
             snackbarHost = {
+                val modifier = if (showFb) {
+                    Modifier.navigationBarsPadding()
+                } else {
+                    Modifier.navigationBarsPadding().contentBottomPadding()
+                }
                 SnackbarHost(
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .contentBottomPadding(),
+                    modifier = modifier,
                     hostState = snackBarHostState,
                 )
             },

@@ -207,15 +207,41 @@ fun FeedsContent(
 }
 
 @Composable
-fun InitErrorContent(errorMessage: TextString) {
-    Box(modifier = Modifier.fillMaxSize()) {
+fun InitErrorContent(
+    errorMessage: TextString,
+    onRetryClick: (() -> Unit)? = null,
+) {
+    InitErrorContent(
+        errorMessage = textString(text = errorMessage),
+        onRetryClick = onRetryClick,
+    )
+}
+
+@Composable
+fun InitErrorContent(
+    errorMessage: String,
+    onRetryClick: (() -> Unit)? = null,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .padding(LocalContentPadding.current)
+            .padding(start = 32.dp, top = 56.dp, end = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 56.dp, end = 16.dp),
-            text = textString(text = errorMessage),
+            modifier = Modifier.fillMaxWidth(),
+            text = errorMessage,
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
             textAlign = TextAlign.Center,
         )
+        if (onRetryClick != null) {
+            Button(
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = onRetryClick,
+            ) {
+                Text(text = stringResource(LocalizedString.retry))
+            }
+        }
     }
 }
 
@@ -223,6 +249,7 @@ fun InitErrorContent(errorMessage: TextString) {
 fun InitErrorContent(
     error: Throwable,
     onLoginClick: (() -> Unit)? = null,
+    onRetryClick: (() -> Unit)? = null,
 ) {
     if (onLoginClick != null && error.isAuthenticationFailure) {
         NotLoginPageError(
@@ -231,19 +258,10 @@ fun InitErrorContent(
             onLoginClick = onLoginClick,
         )
     } else {
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .padding(LocalContentPadding.current)
-                .padding(start = 32.dp, top = 64.dp, end = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = error.message.orEmpty(),
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                textAlign = TextAlign.Center,
-            )
-        }
+        InitErrorContent(
+            errorMessage = error.message.orEmpty(),
+            onRetryClick = onRetryClick,
+        )
     }
 }
 

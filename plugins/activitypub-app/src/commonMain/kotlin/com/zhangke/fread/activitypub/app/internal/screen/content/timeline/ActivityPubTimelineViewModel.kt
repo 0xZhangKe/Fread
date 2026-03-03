@@ -165,7 +165,7 @@ class ActivityPubTimelineViewModel(
         loadMoreJob?.cancel()
         refreshJob?.cancel()
         refreshJob = launchInViewModel {
-            _uiState.update { it.copy(refreshing = true) }
+            _uiState.update { it.copy(refreshing = true, showPagingLoadingPlaceholder = true) }
             val account = locator.accountUri?.let { loggedAccountProvider.getAccount(it) }
             timelineRepo.getFresherStatus(
                 locator = locator,
@@ -175,13 +175,19 @@ class ActivityPubTimelineViewModel(
                 it.preParseStatusList()
                 it.toTimelineItems(account)
             }.onFailure { t ->
-                _uiState.update { it.copy(refreshing = false) }
+                _uiState.update {
+                    it.copy(
+                        refreshing = false,
+                        showPagingLoadingPlaceholder = false
+                    )
+                }
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
             }.onSuccess { list ->
                 _uiState.update {
                     it.copy(
                         items = list,
                         refreshing = false,
+                        showPagingLoadingPlaceholder = false,
                         jumpToStatusId = list.firstOrNull()?.statusId,
                     )
                 }

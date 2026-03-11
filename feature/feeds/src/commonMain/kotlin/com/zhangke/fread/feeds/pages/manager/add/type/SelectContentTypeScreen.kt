@@ -2,15 +2,20 @@ package com.zhangke.fread.feeds.pages.manager.add.type
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,10 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.resources.blueskyDescription
 import com.zhangke.fread.common.resources.blueskyLogo
@@ -39,13 +44,19 @@ import com.zhangke.fread.common.resources.blueskyName
 import com.zhangke.fread.common.resources.mastodonDescription
 import com.zhangke.fread.common.resources.mastodonHorizontalLogo
 import com.zhangke.fread.common.resources.mastodonLogo
+import com.zhangke.fread.common.resources.mastodonName
 import com.zhangke.fread.common.resources.mixedDescription
 import com.zhangke.fread.common.resources.mixedName
 import com.zhangke.fread.common.resources.rssLogo
+import com.zhangke.fread.feeds.Res
+import com.zhangke.fread.feeds.img_add_content_bsky
+import com.zhangke.fread.feeds.img_add_content_mastodon
+import com.zhangke.fread.feeds.img_add_content_mixed
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
-import org.jetbrains.compose.resources.stringResource
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Serializable
 object SelectContentTypeScreenNavKey : NavKey
@@ -54,6 +65,9 @@ object SelectContentTypeScreenNavKey : NavKey
 @Composable
 fun SelectContentTypeScreen(viewModel: SelectContentTypeViewModel) {
     val backStack = LocalNavBackStack.currentOrThrow
+    val mastodonCardColor = Color(0xFFFFA600)
+    val blueskyCardColor = Color(0xFF0080FF)
+    val mixedCardColor = Color(0xFF3AD06B)
     Scaffold(
         topBar = {
             Toolbar(
@@ -68,20 +82,58 @@ fun SelectContentTypeScreen(viewModel: SelectContentTypeViewModel) {
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            MastodonContentCard(
-                modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
-                onClick = viewModel::onMastodonClick,
+            ContentTypeCard(
+                modifier = Modifier.fillMaxWidth(),
+                cardColor = mastodonCardColor,
+                title = mastodonName(),
+                description = mastodonDescription(),
+                onCardClick = viewModel::onMastodonClick,
+                contentImage = {
+                    Image(
+                        modifier = Modifier.fillMaxWidth(fraction = 0.5F)
+                            .fillMaxHeight()
+                            .align(Alignment.CenterEnd),
+                        painter = painterResource(Res.drawable.img_add_content_mastodon),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+                },
             )
-            BlueskyContentCard(
-                modifier = Modifier.padding(top = 16.dp)
-                    .fillMaxWidth(),
-                onClick = viewModel::onBlueskyClick,
+            ContentTypeCard(
+                modifier = Modifier.fillMaxWidth(),
+                cardColor = blueskyCardColor,
+                title = blueskyName(),
+                description = blueskyDescription(),
+                onCardClick = viewModel::onBlueskyClick,
+                contentImage = {
+                    Image(
+                        modifier = Modifier.fillMaxWidth(fraction = 0.5F)
+                            .fillMaxHeight()
+                            .align(Alignment.CenterEnd),
+                        painter = painterResource(Res.drawable.img_add_content_bsky),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+                },
             )
-            MixedContentCard(
-                modifier = Modifier.padding(top = 16.dp)
-                    .fillMaxWidth(),
-                onClick = { backStack.add(AddMixedFeedsScreenNavKey) },
+            ContentTypeCard(
+                modifier = Modifier.fillMaxWidth(),
+                cardColor = mixedCardColor,
+                title = mixedName(),
+                description = mixedDescription(),
+                onCardClick = { backStack.add(AddMixedFeedsScreenNavKey) },
+                contentImage = {
+                    Image(
+                        modifier = Modifier.fillMaxWidth(fraction = 0.5F)
+                            .fillMaxHeight()
+                            .align(Alignment.CenterEnd),
+                        painter = painterResource(Res.drawable.img_add_content_mixed),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+                },
             )
         }
     }
@@ -245,6 +297,49 @@ private fun TypeCardContainer(
                 Box(modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
                     description()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContentTypeCard(
+    modifier: Modifier,
+    cardColor: Color,
+    contentImage: @Composable BoxScope.() -> Unit,
+    title: String,
+    description: String,
+    onCardClick: () -> Unit,
+) {
+    Card(
+        modifier = modifier.padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(180.dp),
+        onClick = onCardClick,
+        colors = CardDefaults.cardColors(
+            containerColor = cardColor,
+            contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+        ),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            contentImage()
+            Column(
+                modifier = Modifier.fillMaxWidth(fraction = 0.8F)
+                    .align(Alignment.BottomStart)
+                    .padding(start = 16.dp, bottom = 22.dp),
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    modifier = Modifier.padding(top = 4.dp).fillMaxWidth(),
+                    textAlign = TextAlign.Start,
+                    text = description,
+                    style = MaterialTheme.typography.labelMedium,
+                )
             }
         }
     }

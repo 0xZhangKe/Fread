@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.di
+package com.zhangke.fread.activitypub.app
 
 import androidx.room.Room
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases

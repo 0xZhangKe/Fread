@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.nav.NavEntryProvider
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreenNavKey
 import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentScreen
@@ -42,6 +43,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListS
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenKey
+import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.subclass
 import org.koin.compose.viewmodel.koinViewModel
@@ -157,7 +159,12 @@ class ActivityPubNavEntryProvider : NavEntryProvider {
         }
         entry<EditAccountInfoScreenNavKey> {
             EditAccountInfoScreen(
-                viewModel = koinViewModel { parametersOf(it.baseUrl, it.accountUri) },
+                viewModel = koinViewModel {
+                    parametersOf(
+                        FormalBaseUrl.parse(it.baseUrl)!!,
+                        FormalUri.from(it.accountUri)!!,
+                    )
+                },
             )
         }
         entry<SearchStatusScreenNavKey> {

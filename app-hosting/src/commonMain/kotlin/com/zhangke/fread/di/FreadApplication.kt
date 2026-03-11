@@ -1,7 +1,7 @@
 package com.zhangke.fread.di
 
 import com.zhangke.framework.module.ModuleStartup
-import com.zhangke.fread.activitypub.app.di.activityPubModule
+import com.zhangke.fread.activitypub.app.activityPubModule
 import com.zhangke.fread.bluesky.blueskyModule
 import com.zhangke.fread.common.commonModule
 import com.zhangke.fread.commonbiz.shared.sharedScreenModule

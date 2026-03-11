@@ -1,18 +1,6 @@
-package com.zhangke.fread.activitypub.app.di
+package com.zhangke.fread.activitypub.app
 
 import com.zhangke.framework.nav.NavEntryProvider
-import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
-import com.zhangke.fread.activitypub.app.ActivityPubContentManager
-import com.zhangke.fread.activitypub.app.ActivityPubNavEntryProvider
-import com.zhangke.fread.activitypub.app.ActivityPubNotificationResolver
-import com.zhangke.fread.activitypub.app.ActivityPubProvider
-import com.zhangke.fread.activitypub.app.ActivityPubPublishManager
-import com.zhangke.fread.activitypub.app.ActivityPubScreenProvider
-import com.zhangke.fread.activitypub.app.ActivityPubSearchEngine
-import com.zhangke.fread.activitypub.app.ActivityPubSourceResolver
-import com.zhangke.fread.activitypub.app.ActivityPubStartup
-import com.zhangke.fread.activitypub.app.ActivityPubStatusResolver
-import com.zhangke.fread.activitypub.app.ActivityPubUrlInterceptor
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubApplicationEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubBlogMetaAdapter
@@ -174,7 +162,6 @@ val activityPubModule = module {
     factoryOf(::VotePollUseCase)
     factoryOf(::GenerateInitPostStatusUiStateUseCase)
     factoryOf(::PublishPostUseCase)
-
     viewModelOf(::EditAccountInfoViewModel)
     viewModelOf(::AddActivityPubContentViewModel)
     viewModelOf(::SelectPlatformViewModel)

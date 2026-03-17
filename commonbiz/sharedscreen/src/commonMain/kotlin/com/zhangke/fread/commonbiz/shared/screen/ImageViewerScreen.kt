@@ -56,8 +56,6 @@ import com.zhangke.framework.nav.sharedElement
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
-import com.zhangke.fread.status.blog.BlogMedia
-import com.zhangke.fread.status.blog.asImageMetaOrNull
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 
@@ -65,14 +63,12 @@ import kotlinx.serialization.Serializable
 data class ImageViewerScreenNavKey(
     val selectedIndex: Int,
     val imageList: List<ImageViewerImage>,
-    val sharedElementKey: String? = null,
 ) : NavKey
 
 @Composable
 fun ImageViewerScreen(
     selectedIndex: Int,
     imageList: List<ImageViewerImage>,
-    sharedElementKey: String?,
 ) {
     val backStack = LocalNavBackStack.currentOrThrow
     val backgroundCommonAlpha = 0.95F
@@ -120,7 +116,6 @@ fun ImageViewerScreen(
                 val currentMedia = imageList[pageIndex]
                 ImagePageContent(
                     image = currentMedia,
-                    sharedElementKey = if (pageIndex == selectedIndex) sharedElementKey else null,
                     onDismissRequest = backStack::removeLastOrNull,
                 )
             }
@@ -148,7 +143,6 @@ fun ImageViewerScreen(
 @Composable
 private fun ImagePageContent(
     image: ImageViewerImage,
-    sharedElementKey: String?,
     onDismissRequest: () -> Unit,
 ) {
     val imageLoader = LocalImageLoader.current
@@ -180,10 +174,10 @@ private fun ImagePageContent(
                     .fillMaxSize()
                     .blurhash(image.blurhash)
                     .let {
-                        if (sharedElementKey.isNullOrEmpty()) {
+                        if (image.sharedElementKey.isNullOrEmpty()) {
                             it
                         } else {
-                            it.sharedElement(sharedElementKey)
+                            it.sharedElement(image.sharedElementKey)
                         }
                     },
                 contentScale = ContentScale.FillBounds,
@@ -257,20 +251,7 @@ data class ImageViewerImage(
     val description: String? = null,
     val blurhash: String? = null,
     val aspect: Float? = null,
+    val sharedElementKey: String? = null,
 ) : PlatformSerializable
-
-fun BlogMedia.toImage(): ImageViewerImage {
-    return ImageViewerImage(
-        url = this.url,
-        previewUrl = this.previewUrl,
-        description = this.description,
-        blurhash = this.blurhash,
-        aspect = this.meta?.asImageMetaOrNull()?.original?.aspect,
-    )
-}
-
-fun List<BlogMedia>.toImages(): List<ImageViewerImage> {
-    return this.map { it.toImage() }
-}
 
 internal expect fun ImageResult.aspectRatio(): Float?

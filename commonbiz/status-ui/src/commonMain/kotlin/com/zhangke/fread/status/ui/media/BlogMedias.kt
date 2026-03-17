@@ -163,8 +163,11 @@ private fun BlogMediaClickEvent.transformTranslatedEvent(
     if (attachment.size != mediaList.size) return this
     val newMediaList = mediaList.map { media ->
         val description =
-            attachment.firstOrNull { it.id == media.id }?.description ?: media.description
-        media.copy(description = description)
+            attachment.firstOrNull { it.id == media.media.id }?.description
+                ?: media.media.description
+        media.copy(
+            media = media.media.copy(description = description),
+        )
     }
     return imageEvent.copy(
         mediaList = newMediaList,

@@ -45,6 +45,7 @@ import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
+import com.zhangke.fread.status.ui.common.StatusSharedElementConfig
 
 typealias OnBlogMediaClick = (BlogMediaClickEvent) -> Unit
 
@@ -52,8 +53,7 @@ sealed interface BlogMediaClickEvent {
 
     data class BlogImageClickEvent(
         val index: Int,
-        val mediaList: List<BlogMedia>,
-        val sharedElementKey: String,
+        val mediaList: List<ClickedBlogMedia>,
     ) : BlogMediaClickEvent
 
     data class BlogVideoClickEvent(
@@ -61,6 +61,11 @@ sealed interface BlogMediaClickEvent {
         val media: BlogMedia,
     ) : BlogMediaClickEvent
 }
+
+data class ClickedBlogMedia(
+    val media: BlogMedia,
+    val sharedElementKey: String,
+)
 
 /**
  * Image and Gifv
@@ -76,6 +81,19 @@ fun BlogImageMedias(
     onMediaClick: OnBlogMediaClick,
     showAlt: Boolean = true,
 ) {
+    val sharedElementConfig = LocalStatusSharedElementConfig.current
+    val fixedMediaList = remember(mediaList, sharedElementId, sharedElementConfig) {
+        mediaList.map {
+            ClickedBlogMedia(
+                media = it,
+                sharedElementKey = buildSharedElementKey(
+                    config = sharedElementConfig,
+                    sharedElementId = sharedElementId,
+                    media = it,
+                ),
+            )
+        }
+    }
     val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
     BlogImageLayout(
         modifier = Modifier.clip(RoundedCornerShape(style.radius)),
@@ -83,9 +101,7 @@ fun BlogImageMedias(
         aspectList = aspectList,
         style = style,
         itemContent = { index ->
-            val media = mediaList[index]
-            val sharedElementKey =
-                LocalStatusSharedElementConfig.current.buildImageKey("$sharedElementId-${media.url}")
+            val media = fixedMediaList[index]
             BlogImage(
                 modifier = Modifier
                     .fillMaxSize()
@@ -93,18 +109,24 @@ fun BlogImageMedias(
                         onMediaClick(
                             BlogMediaClickEvent.BlogImageClickEvent(
                                 index = index,
-                                mediaList = mediaList,
-                                sharedElementKey = sharedElementKey,
+                                mediaList = fixedMediaList,
                             )
                         )
                     },
-                media = media,
-                sharedElementKey = sharedElementKey,
+                clickableMedia = media,
                 hideContent = hideContent,
                 showAlt = showAlt,
             )
         }
     )
+}
+
+private fun buildSharedElementKey(
+    config: StatusSharedElementConfig,
+    sharedElementId: String,
+    media: BlogMedia,
+): String {
+    return config.buildImageKey("$sharedElementId-${media.url}")
 }
 
 /**
@@ -170,11 +192,11 @@ internal fun BlogImageLayout(
 @Composable
 internal fun BlogImage(
     modifier: Modifier,
-    media: BlogMedia,
-    sharedElementKey: String,
+    clickableMedia: ClickedBlogMedia,
     hideContent: Boolean,
     showAlt: Boolean,
 ) {
+    val media = clickableMedia.media
     val imageUrl = if (media.type == BlogMediaType.GIFV) media.previewUrl else media.url
     if (hideContent) {
         val imageLoader = LocalImageLoader.current
@@ -193,7 +215,7 @@ internal fun BlogImage(
                 modifier = Modifier,
                 imageUrl = imageUrl,
                 description = media.description,
-                sharedElementKey = sharedElementKey,
+                sharedElementKey = clickableMedia.sharedElementKey,
             )
         }
         if (media.type == BlogMediaType.GIFV) {

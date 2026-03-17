@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.nav.BaseTab
@@ -21,6 +22,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceT
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.commonbiz.shared.composable.InitErrorContent
 import com.zhangke.fread.commonbiz.shared.composable.ObserveForFeedsConnection
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
@@ -78,9 +80,10 @@ internal class ActivityPubTimelineTab(
             if (uiState.items.isEmpty()) {
                 if (uiState.showPagingLoadingPlaceholder) {
                     StatusListPlaceholder()
-                } else if (uiState.pageErrorContent != null) {
+                } else {
                     InitErrorContent(
-                        errorMessage = uiState.pageErrorContent,
+                        errorMessage = uiState.pageErrorContent
+                            ?: textOf(LocalizedString.unknownError),
                         onRetryClick = onRefresh,
                     )
                 }

@@ -16,6 +16,8 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPubli
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreenKey
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreenNavKey
+import com.zhangke.fread.commonbiz.shared.screen.video.FullVideoScreen
+import com.zhangke.fread.commonbiz.shared.screen.video.FullVideoScreenNavKey
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.subclass
 import org.koin.compose.viewmodel.koinViewModel
@@ -63,6 +65,9 @@ class SharedScreenNavEntryProvider : NavEntryProvider {
                 viewModel = koinViewModel(),
             )
         }
+        entry<FullVideoScreenNavKey> {
+            FullVideoScreen(it.uri)
+        }
     }
 
     override fun PolymorphicModuleBuilder<NavKey>.polymorph() {
@@ -72,5 +77,6 @@ class SharedScreenNavEntryProvider : NavEntryProvider {
         subclass(MultiAccountPublishingScreenKey::class)
         subclass(StatusContextScreenNavKey::class)
         subclass(RssBlogDetailScreenNavKey::class)
+        subclass(FullVideoScreenNavKey::class)
     }
 }

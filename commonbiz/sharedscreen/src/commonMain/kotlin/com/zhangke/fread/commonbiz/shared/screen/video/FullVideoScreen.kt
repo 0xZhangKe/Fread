@@ -1,4 +1,5 @@
-package com.zhangke.fread.commonbiz.shared.screen
+package com.zhangke.fread.commonbiz.shared.screen.video
+
 
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey

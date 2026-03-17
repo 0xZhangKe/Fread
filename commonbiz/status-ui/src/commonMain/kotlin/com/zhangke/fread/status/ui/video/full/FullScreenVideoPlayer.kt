@@ -50,7 +50,6 @@ import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.ui.video.VideoDurationFormatter
 import kotlin.math.roundToInt
 
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun FullScreenVideoPlayer(
     uri: PlatformUri,

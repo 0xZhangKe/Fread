@@ -90,7 +90,7 @@ private fun PublishPostMediaAttachmentImage(
     var showAltDialog by remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         AutoSizeImage(
-            url = image.uri.toString(),
+            url = image.uri,
             modifier = Modifier.fillMaxSize()
                 .clip(RoundedCornerShape(6.dp))
                 .border(
@@ -167,7 +167,7 @@ private fun PublishPostMediaAttachmentImage(
     }
     if (showAltDialog) {
         PublishPostImageAltDialog(
-            imageUri = image.uri.toString(),
+            imageUri = image.uri,
             onDismissRequest = { showAltDialog = false },
             alt = image.alt.orEmpty(),
             maxCharacters = mediaAltMaxCharacters,

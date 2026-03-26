@@ -1,4 +1,4 @@
-package com.zhangke.fread.feeds.pages.home
+package com.zhangke.fread.common.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -14,15 +14,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.commonbiz.illustration_inspiration
+import com.zhangke.fread.commonbiz.Res
+import com.zhangke.fread.commonbiz.img_empty_account
+import com.zhangke.fread.commonbiz.img_empty_content
+import com.zhangke.fread.commonbiz.img_empty_message
 import com.zhangke.fread.localization.LocalizedString
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+
+enum class EmptyContentType {
+
+    Content,
+    Message,
+    Account;
+
+    fun getDrawableResource(): DrawableResource {
+        return when (this) {
+            Content -> Res.drawable.img_empty_content
+            Message -> Res.drawable.img_empty_message
+            Account -> Res.drawable.img_empty_account
+        }
+    }
+}
 
 @Composable
 fun EmptyContent(
     modifier: Modifier,
-    onAddClick: () -> Unit,
+    type: EmptyContentType = EmptyContentType.Content,
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -34,12 +54,13 @@ fun EmptyContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+
             Image(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 contentScale = ContentScale.Inside,
-                painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.illustration_inspiration),
+                painter = painterResource(type.getDrawableResource()),
                 contentDescription = null,
             )
 
@@ -60,9 +81,10 @@ fun EmptyContent(
 
         Button(
             modifier = Modifier.padding(top = 32.dp),
-            onClick = onAddClick
+            onClick = onClick,
         ) {
             Text(text = stringResource(LocalizedString.feedsAddContent))
         }
     }
 }
+

@@ -1,14 +1,11 @@
 package com.zhangke.fread.feature.message.screens.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,11 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,26 +41,34 @@ import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SingleRowTopAppBar
 import com.zhangke.framework.composable.TopAppBarColors
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.updateTopPadding
+import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.utils.pxToDp
-import com.zhangke.fread.commonbiz.illustration_message
+import com.zhangke.fread.common.composable.EmptyContent
+import com.zhangke.fread.common.composable.EmptyContentType
+import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NotificationScreen() {
+    val backstack = LocalNavBackStack.currentOrThrow
+    val feedsScreenVisitor = LocalModuleScreenVisitor.current.feedsScreenVisitor
     val viewModel: NotificationsHomeViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     NotificationsHomeScreenContent(
         uiState = uiState,
         onAccountSelected = viewModel::onAccountSelected,
+        onAddClick = {
+            backstack.add(feedsScreenVisitor.getAddContentScreen())
+        },
     )
 }
 
@@ -74,6 +76,7 @@ fun NotificationScreen() {
 private fun NotificationsHomeScreenContent(
     uiState: NotificationsHomeUiState,
     onAccountSelected: (LoggedAccount) -> Unit,
+    onAddClick: () -> Unit,
 ) {
     val density = LocalDensity.current
     val snackbarHost = rememberSnackbarHostState()
@@ -83,31 +86,11 @@ private fun NotificationsHomeScreenContent(
     ) {
         var topBarHeight: Dp by remember { mutableStateOf(0.dp) }
         if (uiState.tabs.isEmpty()) {
-            Column(
+            EmptyContent(
                 modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Spacer(modifier = Modifier.fillMaxWidth().height(topBarHeight))
-
-                Image(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    contentScale = ContentScale.Inside,
-                    painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.illustration_message),
-                    contentDescription = null,
-                )
-
-                Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        end = 16.dp
-                    ),
-                    text = stringResource(LocalizedString.notificationsAccountEmptyTip),
-                    textAlign = TextAlign.Center,
-                )
-            }
+                type = EmptyContentType.Message,
+                onClick = onAddClick,
+            )
         } else {
             Box(modifier = Modifier.fillMaxSize()) {
                 val pagerState = rememberPagerState { uiState.tabs.size }

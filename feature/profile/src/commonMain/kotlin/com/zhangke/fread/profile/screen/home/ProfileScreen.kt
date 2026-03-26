@@ -35,6 +35,8 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.plus
 import com.zhangke.framework.composable.plusContentPadding
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.fread.common.composable.EmptyContent
+import com.zhangke.fread.common.composable.EmptyContentType
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
 import com.zhangke.fread.localization.LocalizedString
@@ -111,18 +113,26 @@ private fun ProfileHomePageContent(
         },
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth().applyBlurSource(),
-                contentPadding = LocalContentPadding.current.plus(innerPadding),
-            ) {
-                items(uiState.accountDataList) { item ->
-                    AccountDetail(
-                        modifier = Modifier.fillMaxWidth(),
-                        accountDetail = item,
-                        onAccountClick = onAccountClick,
-                        onLoginClick = onLoginClick,
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
+            if (uiState.accountDataList.isEmpty()) {
+                EmptyContent(
+                    modifier = Modifier.fillMaxSize(),
+                    type = EmptyContentType.Account,
+                    onClick = onAddAccountClick,
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().applyBlurSource(),
+                    contentPadding = LocalContentPadding.current.plus(innerPadding),
+                ) {
+                    items(uiState.accountDataList) { item ->
+                        AccountDetail(
+                            modifier = Modifier.fillMaxWidth(),
+                            accountDetail = item,
+                            onAccountClick = onAccountClick,
+                            onLoginClick = onLoginClick,
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }

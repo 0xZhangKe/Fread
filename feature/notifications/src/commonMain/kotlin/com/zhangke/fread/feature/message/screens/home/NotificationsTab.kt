@@ -10,7 +10,7 @@ import org.jetbrains.compose.resources.painterResource
 
 class NotificationsTab() : BaseTab() {
 
-    override val options: TabOptions?
+    override val options: TabOptions
         @Composable get() {
             val icon = painterResource(Res.drawable.ic_notification_tab)
             return remember {

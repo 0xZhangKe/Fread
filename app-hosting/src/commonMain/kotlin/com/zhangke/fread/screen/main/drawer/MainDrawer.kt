@@ -43,7 +43,7 @@ import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
-import com.zhangke.fread.feeds.pages.home.EmptyContent
+import com.zhangke.fread.common.composable.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingScreenNavKey
@@ -109,7 +109,7 @@ private fun MainDrawerContent(
     val contentConfigList = uiState.contentConfigList
     Surface(modifier = Modifier.fillMaxSize()) {
         if (contentConfigList.isEmpty()) {
-            EmptyContent(Modifier.fillMaxSize(), onAddContentClick)
+            EmptyContent(Modifier.fillMaxSize(), onClick = onAddContentClick)
         } else {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -124,7 +124,7 @@ private fun MainDrawerContent(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add Content",
                         )
-                    }
+                    },
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 Spacer(modifier = Modifier.height(16.dp))

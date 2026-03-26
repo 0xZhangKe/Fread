@@ -20,8 +20,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
+import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.updateTopPadding
+import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.fread.common.composable.EmptyContent
+import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.explore.screens.search.bar.ExplorerSearchBar
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
@@ -30,11 +34,16 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ExplorerScreen() {
+    val backstack = LocalNavBackStack.currentOrThrow
+    val feedsScreenVisitor = LocalModuleScreenVisitor.current.feedsScreenVisitor
     val viewModel = koinViewModel<ExplorerHomeViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     ExplorerHomeContent(
         uiState = uiState,
         onAccountSelected = viewModel::onAccountSelected,
+        onAccContentClick = {
+            backstack.add(feedsScreenVisitor.getAddContentScreen())
+        },
     )
 }
 
@@ -42,6 +51,7 @@ fun ExplorerScreen() {
 private fun ExplorerHomeContent(
     uiState: ExplorerHomeUiState,
     onAccountSelected: (LoggedAccount) -> Unit,
+    onAccContentClick: () -> Unit,
 ) {
     val snackbarHostState = rememberSnackbarHostState()
     var topBarHeight: Dp by remember { mutableStateOf(40.dp) }
@@ -56,7 +66,8 @@ private fun ExplorerHomeContent(
             if (!searchBarActive) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     key(uiState.tab) {
-                        uiState.tab?.let { tab ->
+                        val tab = uiState.tab
+                        if (tab != null) {
                             val nestedTabConnection = remember { NestedTabConnection() }
                             CompositionLocalProvider(
                                 LocalSnackbarHostState provides snackbarHostState,
@@ -64,6 +75,11 @@ private fun ExplorerHomeContent(
                             ) {
                                 tab.Content()
                             }
+                        } else {
+                            EmptyContent(
+                                modifier = Modifier.fillMaxSize(),
+                                onClick = onAccContentClick,
+                            )
                         }
                     }
                 }

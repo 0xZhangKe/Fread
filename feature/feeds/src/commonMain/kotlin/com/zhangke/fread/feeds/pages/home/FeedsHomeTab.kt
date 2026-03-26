@@ -8,7 +8,7 @@ import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.ic_home
 import org.jetbrains.compose.resources.painterResource
 
-class FeedsHomeTab() : Tab {
+class FeedsHomeTab : Tab {
 
     override val options: TabOptions
         @Composable get() {

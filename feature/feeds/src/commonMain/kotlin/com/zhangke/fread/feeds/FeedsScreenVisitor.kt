@@ -4,7 +4,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.fread.commonbiz.shared.IFeedsScreenVisitor
 import com.zhangke.fread.feeds.pages.manager.add.type.SelectContentTypeScreenNavKey
 
-class FeedsScreenVisitor() : IFeedsScreenVisitor {
+class FeedsScreenVisitor : IFeedsScreenVisitor {
 
     override fun getAddContentScreen(): NavKey {
         return SelectContentTypeScreenNavKey

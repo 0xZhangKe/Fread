@@ -25,6 +25,7 @@ import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.richtext.RichText
 
 @Composable
 internal fun SelectableAccount(
@@ -51,7 +52,7 @@ internal fun SelectableAccount(
         }
         Column(modifier = Modifier.padding(start = 16.dp).weight(1F)) {
             Text(
-                text = account.userName,
+                text = account.humanizedName.document,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

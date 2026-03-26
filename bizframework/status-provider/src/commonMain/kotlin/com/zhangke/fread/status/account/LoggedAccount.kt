@@ -21,7 +21,7 @@ interface LoggedAccount {
 
     val humanizedName: RichText
         get() = buildRichText(
-            document = userName,
+            document = getFixedName(),
             emojis = emojis,
         )
 
@@ -34,4 +34,12 @@ interface LoggedAccount {
     val locator: PlatformLocator
         get() = PlatformLocator(baseUrl = platform.baseUrl, accountUri = uri)
 
+    private fun getFixedName(): String {
+        if (userName.isNotEmpty()) return userName
+        val nameFromHandle = prettyHandle.removePrefix("@")
+            .split('@')
+            .firstOrNull()
+        if (!nameFromHandle.isNullOrEmpty() && nameFromHandle.isNotBlank()) return nameFromHandle
+        return ""
+    }
 }

@@ -51,7 +51,9 @@ data class BlogAuthor(
 
     private fun getFixedName(): String {
         if (name.isNotEmpty()) return name
-        val nameFromHandle = handle.split('@').firstOrNull()
+        val nameFromHandle = handle.removePrefix("@")
+            .split('@')
+            .firstOrNull()
         if (!nameFromHandle.isNullOrEmpty() && nameFromHandle.isNotBlank()) return nameFromHandle
         return ""
     }

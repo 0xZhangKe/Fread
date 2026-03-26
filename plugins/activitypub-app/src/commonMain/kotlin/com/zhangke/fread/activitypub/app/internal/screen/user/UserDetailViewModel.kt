@@ -280,7 +280,7 @@ class UserDetailViewModel(
         return UserDetailAccountUiState(
             account = this,
             userName = buildRichText(
-                document = displayName,
+                document = getFixedName(),
                 emojis = customEmojis,
             ),
             description = buildRichText(
@@ -289,5 +289,11 @@ class UserDetailViewModel(
             ),
             emojis = customEmojis,
         )
+    }
+
+    private fun ActivityPubAccountEntity.getFixedName(): String {
+        if (displayName.isNotEmpty()) return displayName
+        if (username.isNotEmpty()) return username
+        return ""
     }
 }

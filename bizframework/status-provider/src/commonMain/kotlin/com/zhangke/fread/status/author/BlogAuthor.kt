@@ -31,7 +31,7 @@ data class BlogAuthor(
 
     val humanizedName: RichText by lazy {
         buildRichText(
-            document = name,
+            document = getFixedName(),
             mentions = emptyList(),
             emojis = emojis,
             hashTags = emptyList(),
@@ -48,6 +48,13 @@ data class BlogAuthor(
     }
 
     val prettyHandle: String = handle.prettyHandle()
+
+    private fun getFixedName(): String {
+        if (name.isNotEmpty()) return name
+        val nameFromHandle = handle.split('@').firstOrNull()
+        if (!nameFromHandle.isNullOrEmpty() && nameFromHandle.isNotBlank()) return nameFromHandle
+        return ""
+    }
 }
 
 fun BlogAuthor.updateFollowingState(following: Boolean): BlogAuthor {

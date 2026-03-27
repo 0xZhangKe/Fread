@@ -37,12 +37,15 @@ import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.plusTopPadding
+import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.nav.BaseTab
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.TabOptions
 import com.zhangke.framework.utils.pxToDp
+import com.zhangke.fread.common.composable.ErrorContent
+import com.zhangke.fread.common.composable.ErrorType
 import com.zhangke.fread.commonbiz.shared.notification.StatusNotificationUi
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
@@ -117,6 +120,13 @@ class NotificationTab(
             ) {
                 if (uiState.initializing) {
                     StatusListPlaceholder()
+                } else if (uiState.dataList.isEmpty()) {
+                    ErrorContent(
+                        modifier = Modifier.fillMaxSize(),
+                        type = ErrorType.Network,
+                        errorMessage = uiState.errorMessage?.let { textString(it) },
+                        onRetryClick = onRefresh,
+                    )
                 } else {
                     val state = rememberLoadableInlineVideoLazyColumnState(
                         onRefresh = onRefresh,

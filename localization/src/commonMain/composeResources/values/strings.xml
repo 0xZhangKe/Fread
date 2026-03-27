@@ -13,6 +13,8 @@
     <string name="retry">Try Again</string>
     <string name="load_more_error">Oops! Couldn\'t load.</string>
     <string name="unknown_error">Unknown Error</string>
+    <string name="network_error">Network Error</string>
+    <string name="resource_not_found">Resource Not Found</string>
     <string name="mixed_content_subtitle_1">Mixed Content ·</string>
     <string name="mixed_content_subtitle_2">Sources</string>
     <string name="date_time_ago">&#160;ago</string>

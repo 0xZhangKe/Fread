@@ -13,6 +13,8 @@
     <string name="retry">再試行</string>
     <string name="load_more_error">おっと！読み込みに失敗しました。</string>
     <string name="unknown_error">不明なエラー</string>
+    <string name="network_error">ネットワークエラー</string>
+    <string name="resource_not_found">リソースが見つかりません</string>
     <string name="mixed_content_subtitle_1">ミックスコンテンツ ·</string>
     <string name="mixed_content_subtitle_2">件のフィード</string>
     <string name="date_time_ago">前</string>

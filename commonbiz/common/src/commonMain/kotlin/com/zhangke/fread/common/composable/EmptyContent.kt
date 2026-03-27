@@ -42,7 +42,9 @@ enum class EmptyContentType {
 fun EmptyContent(
     modifier: Modifier,
     type: EmptyContentType = EmptyContentType.Content,
-    onClick: () -> Unit,
+    contentTitle: String = stringResource(LocalizedString.emptyContentHintTitle),
+    subtitle: String? = stringResource(LocalizedString.emptyContentHintDesc),
+    onClick: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier,
@@ -54,7 +56,6 @@ fun EmptyContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             Image(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,28 +64,30 @@ fun EmptyContent(
                 painter = painterResource(type.getDrawableResource()),
                 contentDescription = null,
             )
-
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                text = stringResource(LocalizedString.emptyContentHintTitle),
+                text = contentTitle,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-            )
-
-            Text(
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
-                text = stringResource(LocalizedString.emptyContentHintDesc),
                 style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
             )
+            if (!subtitle.isNullOrEmpty()) {
+                Text(
+                    modifier = Modifier.padding(start = 32.dp, top = 8.dp, end = 32.dp),
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
-
-        Button(
-            modifier = Modifier.padding(top = 32.dp),
-            onClick = onClick,
-        ) {
-            Text(text = stringResource(LocalizedString.feedsAddContent))
+        if (onClick != null) {
+            Button(
+                modifier = Modifier.padding(top = 32.dp),
+                onClick = onClick,
+            ) {
+                Text(text = stringResource(LocalizedString.feedsAddContent))
+            }
         }
     }
 }
-

@@ -20,6 +20,8 @@ object LocalizedString {
     val retry = localizedString.retry
     val loadMoreError = localizedString.load_more_error
     val unknownError = localizedString.unknown_error
+    val networkError = localizedString.network_error
+    val resourceNotFound = localizedString.resource_not_found
     val imageSaving = localizedString.image_saving
     val imageSaveSuccess = localizedString.image_save_success
     val imageSaveFailed = localizedString.image_save_failed

@@ -1,26 +1,17 @@
 package com.zhangke.fread.activitypub.app.internal.screen.explorer
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
@@ -32,7 +23,8 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.framework.nav.BaseTab
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.TabOptions
-import com.zhangke.framework.utils.pxToDp
+import com.zhangke.fread.common.composable.ErrorContent
+import com.zhangke.fread.common.composable.ErrorType
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -94,6 +86,13 @@ class ExplorerTab(
         val density = LocalDensity.current
         if (uiState.initializing) {
             StatusListPlaceholder()
+        } else if (uiState.dataList.isEmpty()) {
+            ErrorContent(
+                modifier = Modifier.fillMaxSize(),
+                type = ErrorType.Network,
+                errorMessage = errorMessage,
+                onRetryClick = onRefresh,
+            )
         } else {
             val state = rememberLoadableInlineVideoLazyColumnState(
                 onRefresh = onRefresh,
@@ -101,9 +100,7 @@ class ExplorerTab(
             )
             ObserveScrollInProgressForConnection(state.lazyListState)
             LoadableInlineVideoLazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onSizeChanged { containerHeight = it.height.pxToDp(density) },
+                modifier = Modifier.fillMaxSize(),
                 state = state,
                 refreshing = uiState.refreshing,
                 loadState = uiState.loadMoreState,
@@ -118,26 +115,6 @@ class ExplorerTab(
                         composedStatusInteraction = composedStatusInteraction,
                         indexInList = index,
                     )
-                }
-                if (!errorMessage.isNullOrEmpty() && uiState.dataList.isEmpty()) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .run {
-                                    if (containerHeight != null) {
-                                        fillMaxWidth().height(containerHeight!!)
-                                    } else {
-                                        fillMaxSize()
-                                    }
-                                },
-                        ) {
-                            Text(
-                                modifier = Modifier.align(Alignment.Center),
-                                text = errorMessage,
-                            )
-                        }
-                    }
                 }
             }
         }

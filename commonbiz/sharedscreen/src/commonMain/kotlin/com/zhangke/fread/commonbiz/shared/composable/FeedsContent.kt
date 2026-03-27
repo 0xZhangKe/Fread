@@ -2,16 +2,10 @@ package com.zhangke.fread.commonbiz.shared.composable
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -24,8 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.ConsumeFlow
@@ -37,6 +29,10 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.fread.common.composable.EmptyContent
+import com.zhangke.fread.common.composable.EmptyContentType
+import com.zhangke.fread.common.composable.ErrorContent
+import com.zhangke.fread.common.composable.ErrorType
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.isAuthenticationFailure
@@ -111,7 +107,11 @@ fun FeedsContent(
         if (showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
         } else if (pageErrorContent != null) {
-            InitErrorContent(pageErrorContent, onLoginClick)
+            InitErrorContent(
+                error = pageErrorContent,
+                onLoginClick = onLoginClick,
+                onRetryClick = onRefresh,
+            )
         } else {
             EmptyListContent()
         }
@@ -222,27 +222,12 @@ fun InitErrorContent(
     errorMessage: String,
     onRetryClick: (() -> Unit)? = null,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .padding(LocalContentPadding.current)
-            .padding(start = 32.dp, top = 56.dp, end = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = errorMessage,
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-            textAlign = TextAlign.Center,
-        )
-        if (onRetryClick != null) {
-            Button(
-                modifier = Modifier.padding(top = 16.dp),
-                onClick = onRetryClick,
-            ) {
-                Text(text = stringResource(LocalizedString.retry))
-            }
-        }
-    }
+    ErrorContent(
+        modifier = Modifier.padding(LocalContentPadding.current).fillMaxSize(),
+        type = ErrorType.Network,
+        errorMessage = errorMessage,
+        onRetryClick = onRetryClick ?: {},
+    )
 }
 
 @Composable
@@ -271,49 +256,22 @@ fun NotLoginPageError(
     message: String?,
     onLoginClick: () -> Unit,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize()
-            .padding(LocalContentPadding.current)
-            .padding(start = 32.dp, top = 64.dp, end = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(LocalizedString.sharedFeedsNotLoginTitle),
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-            textAlign = TextAlign.Center,
-        )
-        if (!message.isNullOrEmpty()) {
-            Text(
-                modifier = Modifier.padding(top = 2.dp),
-                text = message,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Button(
-            modifier = Modifier.padding(top = 16.dp),
-            onClick = onLoginClick,
-        ) {
-            Text(text = stringResource(LocalizedString.sharedFeedsGoToLogin))
-        }
-    }
+    EmptyContent(
+        modifier = modifier.fillMaxSize(),
+        type = EmptyContentType.Account,
+        contentTitle = stringResource(LocalizedString.profileAccountNotLogin),
+        subtitle = message,
+        onClick = onLoginClick,
+    )
 }
 
 @Composable
 fun EmptyListContent() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(LocalContentPadding.current)
-            .verticalScroll(rememberScrollState())
-    ) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 56.dp, end = 16.dp),
-            text = stringResource(LocalizedString.listContentEmptyPlaceholder),
-            textAlign = TextAlign.Center,
-        )
-    }
+    EmptyContent(
+        modifier = Modifier.fillMaxSize().padding(LocalContentPadding.current),
+        type = EmptyContentType.Content,
+        contentTitle = stringResource(LocalizedString.listContentEmptyPlaceholder),
+        subtitle = null,
+        onClick = null,
+    )
 }

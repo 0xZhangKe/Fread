@@ -13,6 +13,8 @@
     <string name="retry">Tentar novamente</string>
     <string name="load_more_error">Ops! Não foi possível carregar.</string>
     <string name="unknown_error">Erro desconhecido</string>
+    <string name="network_error">Erro de rede</string>
+    <string name="resource_not_found">Recurso não encontrado</string>
     <string name="mixed_content_subtitle_1">Conteúdo misto ·</string>
     <string name="mixed_content_subtitle_2">Fontes</string>
     <string name="date_time_ago">&#160;atrás</string>

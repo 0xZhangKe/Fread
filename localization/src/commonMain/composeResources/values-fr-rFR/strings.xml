@@ -13,6 +13,8 @@
     <string name="retry">Réessayer</string>
     <string name="load_more_error">Oups ! Chargement impossible.</string>
     <string name="unknown_error">Erreur inconnue</string>
+    <string name="network_error">Erreur réseau</string>
+    <string name="resource_not_found">Ressource introuvable</string>
     <string name="mixed_content_subtitle_1">Contenu mixte ·</string>
     <string name="mixed_content_subtitle_2">Sources</string>
     <string name="date_time_ago">&#160;plus tôt</string>

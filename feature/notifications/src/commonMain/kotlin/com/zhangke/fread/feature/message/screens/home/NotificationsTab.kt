@@ -8,7 +8,7 @@ import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.ic_notification_tab
 import org.jetbrains.compose.resources.painterResource
 
-class NotificationsTab() : BaseTab() {
+class NotificationsTab : BaseTab() {
 
     override val options: TabOptions
         @Composable get() {

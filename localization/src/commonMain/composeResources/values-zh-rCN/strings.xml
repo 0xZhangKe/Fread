@@ -13,6 +13,8 @@
     <string name="retry">重试</string>
     <string name="load_more_error">哦！加载失败。</string>
     <string name="unknown_error">未知错误</string>
+    <string name="network_error">网络错误</string>
+    <string name="resource_not_found">资源未找到</string>
     <string name="mixed_content_subtitle_1">混合内容 ·</string>
     <string name="mixed_content_subtitle_2">条订阅源</string>
     <string name="date_time_ago">前</string>

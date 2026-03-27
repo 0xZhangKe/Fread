@@ -127,6 +127,10 @@ class StatusContextSubViewModel(
         }
     }
 
+    fun onRetryClick() {
+        onPageResume()
+    }
+
     fun onScrolledToAnchor() {
         _uiState.update { state ->
             state.copy(needScrollToAnchor = false)
@@ -163,9 +167,10 @@ class StatusContextSubViewModel(
             .getStatusContext(locator, anchorStatus.status)
             .map { statusContext ->
                 val status = statusContext.status?.let {
-                    statusUpdater.update(it)
-                    it.copy(
-                        blogTranslationState = blogTranslationUiState ?: it.blogTranslationState
+                    statusUpdater.update(
+                        it.copy(
+                            blogTranslationState = blogTranslationUiState ?: it.blogTranslationState
+                        )
                     )
                     if (anchorAuthorFollowing != null) {
                         it.updateFollowingState(anchorAuthorFollowing!!)

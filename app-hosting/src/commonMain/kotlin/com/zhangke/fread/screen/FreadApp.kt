@@ -169,6 +169,11 @@ fun FreadApp() {
                     },
                 )
                 val predictiveBackState = rememberPredictiveBackState(navigationEventState)
+                LaunchedEffect(Unit) {
+                    GlobalScreenNavigation.openScreenFlow
+                        .debounce(300)
+                        .collect { key -> backStack.add(key) }
+                }
                 CompositionLocalProvider(
                     LocalPredictiveBackState provides predictiveBackState,
                 ) {
@@ -179,11 +184,6 @@ fun FreadApp() {
                         popTransitionSpec = freadPopTransitionSpec(),
                         predictivePopTransitionSpec = freadPredictivePopTransitionSpec(),
                     )
-                    LaunchedEffect(Unit) {
-                        GlobalScreenNavigation.openScreenFlow
-                            .debounce(300)
-                            .collect { key -> backStack.add(key) }
-                    }
                 }
                 val browserLauncher = LocalActivityBrowserLauncher.current
                 RegisterNotificationAction(browserLauncher)

@@ -3,7 +3,7 @@ package com.zhangke.framework.architect.theme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF3880F2)
+val primaryLight = Color(0xFF2E87FF)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFF689CFF)
 val onPrimaryContainerLight = Color(0xFFFFFFFF)

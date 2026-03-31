@@ -24,10 +24,6 @@ class AboutViewModel(
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage.asSharedFlow()
 
-    init {
-        onCheckForUpdateClick(false)
-    }
-
     fun onCheckForUpdateClick(showLoading: Boolean = true) {
         viewModelScope.launch {
             _uiState.update { it.copy(checkingUpdate = showLoading, newReleaseInfo = null) }

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.unit.dp
 import com.zhangke.framework.blur.applyBlurEffect
 import com.zhangke.framework.blur.blurEffectContainerColor
 import kotlin.math.roundToInt
@@ -55,6 +56,7 @@ fun TabsTopAppBar(
                 navigationIcon = navigationIcon,
                 title = title,
                 actions = actions,
+                height = 48.dp,
                 colors = TopAppBarColors.default(
                     containerColor = blurEffectContainerColor(containerColor = appBarContainerColor),
                     navigationIconContentColor = colors.contentColor,

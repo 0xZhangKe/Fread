@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -36,6 +35,7 @@ fun SingleRowTopAppBar(
     actions: @Composable RowScope.() -> Unit = {},
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = TopAppBarColors.default(),
+    height: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
 ) {
     val actionsRow: @Composable () -> Unit = {
         Row(
@@ -61,7 +61,7 @@ fun SingleRowTopAppBar(
             titleTextStyle = ToolbarTokens.titleTextStyle,
             navigationIcon = navigationIcon,
             actions = actionsRow,
-            height = TopAppBarDefaults.TopAppBarExpandedHeight,
+            height = height,
         )
     }
 }

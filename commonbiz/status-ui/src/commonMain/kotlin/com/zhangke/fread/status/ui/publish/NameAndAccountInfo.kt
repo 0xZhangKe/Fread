@@ -27,7 +27,7 @@ fun NameAndAccountInfo(
                 richText = humanizedName,
                 onUrlClick = {},
                 fontWeight = FontWeight.SemiBold,
-                fontSizeSp = style.infoLineStyle.nameSize.value,
+                fontSize = style.infoLineStyle.nameSize,
             )
         },
         secondText = {

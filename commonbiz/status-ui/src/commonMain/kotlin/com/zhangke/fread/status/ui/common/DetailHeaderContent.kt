@@ -16,6 +16,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.freadPlaceholder
@@ -110,7 +111,7 @@ fun DetailHeaderContent(
                     richText = title ?: RichText.empty,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSizeSp = 18F,
+                    fontSize = 18.sp,
                     onUrlClick = onUrlClick,
                 )
 

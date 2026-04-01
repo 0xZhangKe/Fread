@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.unit.sp
 import com.zhangke.framework.blur.applyBlurEffect
 import com.zhangke.framework.blur.blurEffectContainerColor
 import com.zhangke.framework.composable.SingleRowTopAppBar
@@ -46,7 +47,7 @@ fun DetailTopBar(
                 FreadRichText(
                     modifier = Modifier,
                     richText = title,
-                    fontSizeSp = 22F,
+                    fontSize = 22.sp,
                     maxLines = 1,
                     onUrlClick = {
                         coroutineScope.launch {

@@ -264,7 +264,7 @@ fun BlogTextContentSection(
                     onHashtagClick = onHashtagInStatusClick,
                     onMaybeHashtagClick = onMaybeHashtagClick,
                     onUrlClick = onUrlClick,
-                    fontSizeSp = style.contentSize.value,
+                    fontSize = style.contentSize,
                 )
             }
         }
@@ -296,7 +296,7 @@ fun BlogTextContentSection(
                 onHashtagClick = onHashtagInStatusClick,
                 onMaybeHashtagClick = onMaybeHashtagClick,
                 onUrlClick = onUrlClick,
-                fontSizeSp = style.contentSize.value,
+                fontSize = style.contentSize,
             )
         }
         if (
@@ -319,7 +319,7 @@ fun BlogTextContentSection(
                 onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
                 onMaybeHashtagClick = onMaybeHashtagClick,
-                fontSizeSp = style.contentSize.value,
+                fontSize = style.contentSize,
                 onUrlClick = onUrlClick,
             )
         }
@@ -363,7 +363,7 @@ private fun SpoilerText(
             onMentionDidClick = onMentionDidClick,
             onHashtagClick = onHashtagInStatusClick,
             onUrlClick = onUrlClick,
-            fontSizeSp = fontSize.value,
+            fontSize = fontSize,
         )
     }
 }

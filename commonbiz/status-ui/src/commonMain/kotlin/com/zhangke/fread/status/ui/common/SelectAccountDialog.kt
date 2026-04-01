@@ -24,11 +24,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.zhangke.framework.composable.TextWithIcon
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import com.zhangke.fread.status.ui.richtext.RichTextWithIcon
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -85,11 +85,10 @@ private fun SelectableAccount(
             imageUrl = account.avatar,
         )
         Column(
-            modifier = Modifier.padding(start = 16.dp)
-                .weight(1F),
+            modifier = Modifier.padding(start = 16.dp).weight(1F),
         ) {
-            TextWithIcon(
-                text = account.userName,
+            RichTextWithIcon(
+                text = account.humanizedName,
                 style = MaterialTheme.typography.titleMedium
                     .copy(fontWeight = FontWeight.SemiBold),
                 maxLines = 1,

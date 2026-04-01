@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
@@ -73,7 +74,7 @@ fun ReblogTopLabel(
             onHashtagClick = {},
             onMentionClick = {},
             onUrlClick = {},
-            fontSizeSp = style.topLabelStyle.textSize.value,
+            fontSize = style.topLabelStyle.textSize,
             color = style.secondaryFontColor,
         )
         Text(

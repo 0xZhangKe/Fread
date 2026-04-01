@@ -91,7 +91,7 @@ fun StatusInfoLine(
                 richText = blogAuthor.humanizedName,
                 onUrlClick = onUrlClick,
                 fontWeight = FontWeight.SemiBold,
-                fontSizeSp = style.infoLineStyle.nameSize.value,
+                fontSize = style.infoLineStyle.nameSize,
             )
             Row(
                 modifier = Modifier

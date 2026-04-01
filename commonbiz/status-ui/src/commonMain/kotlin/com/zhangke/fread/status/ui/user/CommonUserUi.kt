@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.common.resources.logo
 import com.zhangke.fread.status.account.LoggedAccount
@@ -74,7 +75,7 @@ fun BasicAccountUi(
                     richText = account.humanizedName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSizeSp = 16F,
+                    fontSize = 16.sp,
                 )
                 Image(
                     modifier = Modifier.padding(start = 4.dp).size(16.dp),
@@ -152,7 +153,7 @@ private fun CommonProfileUi(
                         richText = displayName,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        fontSizeSp = 16F,
+                        fontSize = 16.sp,
                     )
                     if (showProtocolLabel && protocol != null) {
                         Image(

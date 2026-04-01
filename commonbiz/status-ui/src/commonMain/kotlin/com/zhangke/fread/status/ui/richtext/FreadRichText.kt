@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -13,9 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
@@ -41,7 +46,7 @@ fun FreadRichText(
     // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
-    fontSizeSp: Float = 14F,
+    fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
     textAlign: TextAlign? = null,
@@ -65,7 +70,7 @@ fun FreadRichText(
         textAlign = textAlign,
         onMentionClick = onMentionClick,
         onHashtagClick = onHashtagClick,
-        fontSizeSp = fontSizeSp,
+        fontSize = fontSize,
         onUrlClick = onUrlClick,
     )
 }
@@ -79,6 +84,10 @@ fun FreadRichText(
     fontWeight: FontWeight? = null,
     lineHeight: TextUnit = 1.5.em,
     textAlign: TextAlign? = null,
+    fontFamily: FontFamily? = null,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
+    softWrap: Boolean = true,
+    textDecoration: TextDecoration? = null,
     onMentionClick: (Mention) -> Unit = {},
     onMentionDidClick: (String) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
@@ -87,7 +96,9 @@ fun FreadRichText(
     // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
-    fontSizeSp: Float = 14F,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    style: TextStyle = LocalTextStyle.current
 ) {
     DisposableEffect(richText) {
         richText.onLinkTargetClick = { target ->
@@ -114,7 +125,13 @@ fun FreadRichText(
         lineHeight = lineHeight,
         fontWeight = fontWeight,
         textAlign = textAlign,
-        fontSize = fontSizeSp.sp,
+        fontSize = fontSize,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        softWrap = softWrap,
+        textDecoration = textDecoration,
+        onTextLayout = onTextLayout,
+        style = style,
         inlineContent = rememberInlineContent(richText.emojis),
     )
 }
@@ -131,7 +148,7 @@ fun SelectableRichText(
     // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
-    fontSizeSp: Float = 14F,
+    fontSize: TextUnit = TextUnit.Unspecified,
 ) {
     Box(modifier = modifier) {
         SelectionContainer {
@@ -145,39 +162,7 @@ fun SelectableRichText(
                 onUrlClick = onUrlClick,
                 overflow = overflow,
                 maxLines = maxLines,
-                fontSizeSp = fontSizeSp,
-            )
-        }
-    }
-}
-
-@Composable
-fun SelectableRichText(
-    content: String,
-    modifier: Modifier = Modifier,
-    mentions: List<Mention> = emptyList(),
-    emojis: List<Emoji> = emptyList(),
-    tags: List<HashtagInStatus> = emptyList(),
-    onMentionClick: (Mention) -> Unit = {},
-    onHashtagClick: (HashtagInStatus) -> Unit = {},
-    onUrlClick: (url: String) -> Unit = {},
-    overflow: TextOverflow = TextOverflow.Ellipsis,
-    maxLines: Int = Int.MAX_VALUE,
-    fontSizeSp: Float = 14F,
-) {
-    Box(modifier = modifier) {
-        SelectionContainer {
-            FreadRichText(
-                content = content,
-                mentions = mentions,
-                emojis = emojis,
-                tags = tags,
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick,
-                onUrlClick = onUrlClick,
-                overflow = overflow,
-                maxLines = maxLines,
-                fontSizeSp = fontSizeSp,
+                fontSize = fontSize,
             )
         }
     }

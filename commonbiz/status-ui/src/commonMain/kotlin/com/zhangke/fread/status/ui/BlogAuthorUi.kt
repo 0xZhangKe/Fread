@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
@@ -54,7 +55,7 @@ fun BlogAuthorUi(
                     richText = author.humanizedName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSizeSp = 16F,
+                    fontSize = 16.sp,
                     onUrlClick = onUrlClick,
                 )
                 Text(
@@ -134,7 +135,7 @@ private fun BaseBlogAuthor(
                             richText = author.humanizedName,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            fontSizeSp = 16F,
+                            fontSize = 16.sp,
                             onUrlClick = {
                                 browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
                             },

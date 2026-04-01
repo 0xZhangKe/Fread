@@ -54,6 +54,7 @@ import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -176,8 +177,9 @@ private fun NotificationTopBar(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Column {
-                        Text(
-                            text = account.userName,
+                        FreadRichText(
+                            modifier = Modifier,
+                            richText = account.humanizedName,
                             style = MaterialTheme.typography.titleMedium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,

@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.VerticalIndentLayout
 import com.zhangke.framework.utils.HighlightTextBuildUtil
@@ -198,7 +199,7 @@ fun BasicProfileCard(
                                         richText = nickName,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
-                                        fontSizeSp = 18F,
+                                        fontSize = 18.sp,
                                         onUrlClick = {},
                                     )
                                     if (showActiveState) {

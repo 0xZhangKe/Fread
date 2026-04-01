@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.TwoTextsInRow
 import com.zhangke.fread.status.model.FormattingTime
 import com.zhangke.fread.status.richtext.RichText
@@ -60,7 +61,7 @@ fun NotificationHeadLine(
                     richText = accountName ?: RichText.empty,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSizeSp = 12F,
+                    fontSize = 12.sp,
                 )
             },
             secondText = {

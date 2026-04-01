@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.AlertConfirmDialog
@@ -878,7 +879,7 @@ private fun MuteUserBottomSheetDialog(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 richText = account.userName,
-                fontSizeSp = 16F,
+                fontSize = 16.sp,
             )
 
             Text(

@@ -1,6 +1,7 @@
 package com.zhangke.fread.bluesky
 
 import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
@@ -32,10 +33,13 @@ class BlueskyScreenProvider(
 
     override fun getReplyBlogScreen(
         locator: PlatformLocator,
-        blog: Blog
+        blog: Blog,
     ): NavKey? {
         if (blog.platform.protocol.notBluesky) return null
-        return null
+        return PublishPostScreenNavKey(
+            locator = locator,
+            replyToJsonString = globalJson.encodeToString(blog)
+        )
     }
 
     override fun getEditBlogScreen(
@@ -47,7 +51,10 @@ class BlueskyScreenProvider(
 
     override fun getQuoteBlogScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         if (blog.platform.protocol.notBluesky) return null
-        return null
+        return PublishPostScreenNavKey(
+            locator = locator,
+            quoteJsonString = globalJson.encodeToString(blog)
+        )
     }
 
     override fun getContentScreen(

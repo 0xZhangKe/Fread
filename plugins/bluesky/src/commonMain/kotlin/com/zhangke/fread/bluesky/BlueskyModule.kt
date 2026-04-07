@@ -14,11 +14,11 @@ import com.zhangke.fread.bluesky.internal.migrate.BlueskyContentMigrator
 import com.zhangke.fread.bluesky.internal.repo.BlueskyLoggedAccountRepo
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentViewModel
+import com.zhangke.fread.bluesky.internal.screen.content.BlueskyContentContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsContainerViewModel
-import com.zhangke.fread.bluesky.internal.screen.content.BlueskyContentContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostViewModel
 import com.zhangke.fread.bluesky.internal.screen.search.SearchStatusViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailViewModel
@@ -117,11 +117,11 @@ val blueskyModule = module {
             contentRepo = get(),
             platformRepo = get(),
             onboardingComponent = get(),
-            baseUrl = params.getOrNull<FormalBaseUrl>(),
-            loginMode = params.get(),
-            avatar = params.getOrNull<String>(),
-            displayName = params.getOrNull<String>(),
-            handle = params.getOrNull<String>(),
+            baseUrl = params.values.getOrNull(0) as FormalBaseUrl?,
+            loginMode = params.values[1] as Boolean,
+            avatar = params.values.getOrNull(2) as String?,
+            displayName = params.values.getOrNull(3) as String?,
+            handle = params.values.getOrNull(4) as String?,
         )
     }
     viewModelOf(::BlueskyContentContainerViewModel)
@@ -147,23 +147,23 @@ val blueskyModule = module {
             accountAdapter = get(),
             updateRelationship = get(),
             updateBlock = get(),
-            locator = params.get(),
-            type = params.get(),
-            postUri = params.getOrNull<String>(),
-            userDid = params.getOrNull<String>(),
+            locator = params[0],
+            type = params[1],
+            postUri = params.values.getOrNull(2) as? String?,
+            userDid = params.values.getOrNull(3) as? String?,
         )
     }
-    viewModel {
+    viewModel { params ->
         PublishPostViewModel(
             clientManager = get(),
             getAllLists = get(),
             platformUriHelper = get(),
             configManager = get(),
             publishingPost = get(),
-            locator = it.get(),
-            defaultText = it.getOrNull(),
-            replyBlogJsonString = it.getOrNull(),
-            quoteBlogJsonString = it.getOrNull(),
+            locator = params[0],
+            defaultText = params.values.getOrNull(1) as String?,
+            replyBlogJsonString = params.values.getOrNull(2) as String?,
+            quoteBlogJsonString = params.values.getOrNull(3) as String?,
         )
     }
 

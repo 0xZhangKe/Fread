@@ -264,8 +264,6 @@ class FeedsViewModelController(
     override fun onRefresh() {
         val uiState = mutableUiState.value
         if (uiState.showPagingLoadingPlaceholder || uiState.refreshing || uiState.loadMoreState.loading) return
-        val feeds = uiState.feeds
-        if (feeds.isEmpty()) return
         refreshJob?.cancel()
         refreshJob = coroutineScope.launch {
             mutableUiState.update { it.copy(refreshing = true) }

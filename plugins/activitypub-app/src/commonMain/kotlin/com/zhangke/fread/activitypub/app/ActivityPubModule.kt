@@ -52,6 +52,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.Gen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailContainerViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListContainerViewModel
@@ -80,6 +81,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.fread.activitypub.app.internal.utils.MastodonHelper
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.status.IStatusProvider
+import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.uri.FormalUri
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -194,11 +196,11 @@ val activityPubModule = module {
             userUriTransformer = get(),
             webFingerBaseUrlToUserIdRepo = get(),
             accountEntityAdapter = get(),
-            locator = params.get(),
-            type = params.get(),
-            statusId = params.getOrNull<String>(),
-            userUri = params.getOrNull<FormalUri>(),
-            userId = params.getOrNull<String>(),
+            locator = params.values[0] as PlatformLocator,
+            type = params.values[1] as UserListType,
+            statusId = params.values.getOrNull(2) as String?,
+            userUri = params.values.getOrNull(3) as FormalUri?,
+            userId = params.values.getOrNull(4) as String?,
         )
     }
     viewModelOf(::SearchUserViewModel)

@@ -24,6 +24,7 @@ import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreenNavKey
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.subclass
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parameterArrayOf
 import org.koin.core.parameter.parametersOf
 
 class BlueskyNavEntryProvider : NavEntryProvider {
@@ -73,7 +74,7 @@ class BlueskyNavEntryProvider : NavEntryProvider {
                 locator = key.locator,
                 type = key.type,
                 viewModel = koinViewModel {
-                    parametersOf(
+                    parameterArrayOf(
                         key.locator,
                         key.type,
                         key.postUri,

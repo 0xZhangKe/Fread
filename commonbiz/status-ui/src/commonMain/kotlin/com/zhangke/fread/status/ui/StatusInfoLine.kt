@@ -90,7 +90,6 @@ fun StatusInfoLine(
                 overflow = TextOverflow.Ellipsis,
                 richText = blogAuthor.humanizedName,
                 onUrlClick = onUrlClick,
-                fontWeight = FontWeight.SemiBold,
                 fontSize = style.infoLineStyle.nameSize,
             )
             Row(

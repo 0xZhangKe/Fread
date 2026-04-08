@@ -1033,6 +1033,7 @@ private fun FieldLine(
                 emojis = emojis,
                 textAlign = TextAlign.End,
                 maxLines = 3,
+                fontSize = 14.sp,
                 onUrlClick = {
                     browserLauncher.launchWebTabInApp(coroutineScope, it, locator)
                 },

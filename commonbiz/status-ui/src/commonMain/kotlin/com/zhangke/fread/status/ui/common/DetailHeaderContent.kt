@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.richtext.SelectableRichText
 
@@ -174,6 +176,7 @@ fun DetailHeaderContent(
                         },
                     richText = description ?: RichText.empty,
                     onUrlClick = onUrlClick,
+                    fontSize = 14.sp,
                     onMaybeHashtagClick = onMaybeHashtagClick,
                 )
 

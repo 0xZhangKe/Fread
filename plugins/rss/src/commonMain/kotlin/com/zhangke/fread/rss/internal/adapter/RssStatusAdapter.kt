@@ -33,12 +33,13 @@ class RssStatusAdapter(
 
     private suspend fun RssChannelItem.toBlog(uriInsight: RssUriInsight, source: RssSource): Blog {
         val createAt = Instant(this.pubDate)
+        val blogLink = this.link.ifNullOrEmpty { uriInsight.url }
         return Blog(
             id = this.id,
             author = blogAuthorAdapter.createAuthor(uriInsight, source),
             title = removeMeaninglessTitle(this.title),
-            url = this.link.ifNullOrEmpty { uriInsight.url },
-            link = this.link.ifNullOrEmpty { uriInsight.url },
+            url = blogLink,
+            link = blogLink,
             content = this.content.ifNullOrEmpty { this.description.ifNullOrEmpty { this.link.orEmpty() } },
             description = this.description,
             createAt = createAt,
@@ -52,7 +53,13 @@ class RssStatusAdapter(
             supportEdit = false,
             spoilerText = "",
             platform = rssPlatformTransformer.create(uriInsight, source),
-            mediaList = emptyList(),
+            mediaList = RssBlogMediaExtractor.extract(
+                itemId = this.id,
+                articleUrl = blogLink,
+                contentHtml = this.content,
+                descriptionHtml = this.description,
+                fallbackImageUrl = this.image,
+            ),
             poll = null,
             emojis = emptyList(),
             mentions = emptyList(),

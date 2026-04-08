@@ -611,6 +611,8 @@ object LocalizedString {
     val mixed_content_subtitle_1 = localizedString.mixed_content_subtitle_1
     val mixed_content_subtitle_2 = localizedString.mixed_content_subtitle_2
     val date_time_ago = localizedString.date_time_ago
+    val date_time_ago_prefix = localizedString.date_time_ago_prefix
+    val date_time_ago_suffix = localizedString.date_time_ago_suffix
     val date_time_day = localizedString.date_time_day
     val date_time_hour = localizedString.date_time_hour
     val date_time_minute = localizedString.date_time_minute

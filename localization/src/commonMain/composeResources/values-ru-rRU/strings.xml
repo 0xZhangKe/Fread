@@ -18,6 +18,8 @@
     <string name="mixed_content_subtitle_1">Смешанный контент ·</string>
     <string name="mixed_content_subtitle_2">Источники</string>
     <string name="date_time_ago">&#160;назад</string>
+    <string name="date_time_ago_prefix"></string>
+    <string name="date_time_ago_suffix">&#160;назад</string>
     <string name="date_time_day">день</string>
     <string name="date_time_hour">час</string>
     <string name="date_time_minute">мин</string>

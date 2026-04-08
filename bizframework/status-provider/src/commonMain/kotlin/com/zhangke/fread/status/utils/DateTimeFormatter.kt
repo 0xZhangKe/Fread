@@ -48,7 +48,7 @@ object DateTimeFormatter {
                 }
             )
         }
-        return "${formatDuration(config, duration)}${config.ago}"
+        return "${config.agoPrefix}${formatDuration(config, duration)}${config.agoSuffix}"
     }
 
     private fun formatDuration(config: DatetimeFormatConfig, duration: Duration): String {
@@ -75,7 +75,8 @@ object DateTimeFormatter {
 }
 
 data class DatetimeFormatConfig(
-    val ago: String,
+    val agoPrefix: String,
+    val agoSuffix: String,
     val day: String,
     val hour: String,
     val minutes: String,
@@ -83,7 +84,8 @@ data class DatetimeFormatConfig(
 )
 
 suspend fun defaultFormatConfig() = DatetimeFormatConfig(
-    ago = getString(LocalizedString.date_time_ago),
+    agoPrefix = getString(LocalizedString.date_time_ago_prefix),
+    agoSuffix = getString(LocalizedString.date_time_ago_suffix),
     day = getString(LocalizedString.date_time_day),
     hour = getString(LocalizedString.date_time_hour),
     minutes = getString(LocalizedString.date_time_minute),
@@ -92,7 +94,8 @@ suspend fun defaultFormatConfig() = DatetimeFormatConfig(
 
 @Composable
 fun defaultUiFormatConfig() = DatetimeFormatConfig(
-    ago = stringResource(LocalizedString.date_time_ago),
+    agoPrefix = stringResource(LocalizedString.date_time_ago_prefix),
+    agoSuffix = stringResource(LocalizedString.date_time_ago_suffix),
     day = stringResource(LocalizedString.date_time_day),
     hour = stringResource(LocalizedString.date_time_hour),
     minutes = stringResource(LocalizedString.date_time_minute),

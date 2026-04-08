@@ -18,6 +18,8 @@
     <string name="mixed_content_subtitle_1">ミックスコンテンツ ·</string>
     <string name="mixed_content_subtitle_2">件のフィード</string>
     <string name="date_time_ago">前</string>
+    <string name="date_time_ago_prefix"></string>
+    <string name="date_time_ago_suffix">前</string>
     <string name="date_time_day">日</string>
     <string name="date_time_hour">時間</string>
     <string name="date_time_minute">分</string>

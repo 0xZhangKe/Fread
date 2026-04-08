@@ -18,11 +18,12 @@ class DateTimeFormatterTest {
     @BeforeTest
     fun initConfig() {
         config = DatetimeFormatConfig(
+            agoPrefix = "",
+            agoSuffix = "前",
             day = "天",
             hour = "小时",
             minutes = "分钟",
             second = "秒",
-            ago = "前",
         )
     }
 
@@ -36,5 +37,20 @@ class DateTimeFormatterTest {
         assertEquals("2 天前", DateTimeFormatter.format(datetime.minus(2.days).toEpochMilliseconds(), config))
         assertEquals("2 天前", DateTimeFormatter.format(datetime.minus(2.9.days).toEpochMilliseconds(), config))
         assertEquals("2024-09-13", DateTimeFormatter.format(1726201813038, config))
+    }
+
+    @Test
+    fun testFormatWithPrefix() {
+        val datetime = Clock.System.now()
+        val config = DatetimeFormatConfig(
+            agoPrefix = "Hace ",
+            agoSuffix = "",
+            day = "día",
+            hour = "hora",
+            minutes = "min",
+            second = "seg",
+        )
+        assertEquals("Hace 10 seg", DateTimeFormatter.format(datetime.minus(10.seconds).toEpochMilliseconds(), config))
+        assertEquals("Hace 10 min", DateTimeFormatter.format(datetime.minus(10.minutes).toEpochMilliseconds(), config))
     }
 }

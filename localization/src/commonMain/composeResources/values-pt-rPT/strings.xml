@@ -18,6 +18,8 @@
     <string name="mixed_content_subtitle_1">Conteúdo misto ·</string>
     <string name="mixed_content_subtitle_2">Fontes</string>
     <string name="date_time_ago">&#160;atrás</string>
+    <string name="date_time_ago_prefix"></string>
+    <string name="date_time_ago_suffix">&#160;atrás</string>
     <string name="date_time_day">dia</string>
     <string name="date_time_hour">hora</string>
     <string name="date_time_minute">min</string>

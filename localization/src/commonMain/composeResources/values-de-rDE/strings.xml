@@ -18,6 +18,8 @@
     <string name="mixed_content_subtitle_1">Gemischte Inhalte ·</string>
     <string name="mixed_content_subtitle_2">Quellen</string>
     <string name="date_time_ago">&#160;vor</string>
+    <string name="date_time_ago_prefix"></string>
+    <string name="date_time_ago_suffix">&#160;vor</string>
     <string name="date_time_day">Tag</string>
     <string name="date_time_hour">Stunde</string>
     <string name="date_time_minute">Min</string>

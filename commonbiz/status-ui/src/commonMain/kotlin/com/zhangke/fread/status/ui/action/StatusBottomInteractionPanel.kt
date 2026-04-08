@@ -15,7 +15,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -28,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -113,7 +113,7 @@ private fun ForwardActionIcon(
 ) {
     var showForwardDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberTransientModalBottomSheetState()
     val highlight = blog.forward.forward == true
     StatusActionIcon(
         modifier = modifier,
@@ -134,6 +134,7 @@ private fun ForwardActionIcon(
     )
     if (showForwardDialog) {
         ModalBottomSheet(
+            sheetState = sheetState,
             onDismissRequest = { showForwardDialog = false },
         ) {
             Column(

@@ -19,7 +19,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -47,6 +46,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
@@ -77,7 +77,7 @@ fun BskyFollowingFeedsPage(viewModel: BskyFollowingFeedsViewModel) {
     val snackBarState = rememberSnackbarHostState()
 
     val feedsDetailBottomSheetState = rememberFeedsDetailBottomSheetState()
-    val feedsDetailSheetState = rememberModalBottomSheetState()
+    val feedsDetailSheetState = rememberTransientModalBottomSheetState()
     FeedsDetailBottomSheet(
         state = feedsDetailBottomSheetState,
         sheetState = feedsDetailSheetState,

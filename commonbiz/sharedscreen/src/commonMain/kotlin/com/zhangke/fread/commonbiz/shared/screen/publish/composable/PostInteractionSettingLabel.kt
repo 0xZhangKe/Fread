@@ -21,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.status.model.ReplySetting
@@ -85,7 +85,7 @@ fun PostInteractionSettingLabel(
         label = setting.label,
         icon = setting.labelIcon,
     )
-    val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val state = rememberTransientModalBottomSheetState(skipPartiallyExpanded = true)
     if (showSelector) {
         ModalBottomSheet(
             onDismissRequest = { showSelector = false },

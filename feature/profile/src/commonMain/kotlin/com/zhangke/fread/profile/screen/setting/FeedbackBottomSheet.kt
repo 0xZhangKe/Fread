@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -32,6 +31,7 @@ import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_github_logo
 import com.zhangke.fread.feature.profile.ic_telegram
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -43,7 +43,7 @@ fun FeedbackBottomSheet(
 ) {
     val textHandler = LocalTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberTransientModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     ModalBottomSheet(
         sheetState = sheetState,

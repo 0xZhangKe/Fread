@@ -28,7 +28,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Grid
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
@@ -185,7 +185,7 @@ private fun PublishPostImageAltDialog(
     maxCharacters: Int,
     onAltChanged: (String) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberTransientModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,

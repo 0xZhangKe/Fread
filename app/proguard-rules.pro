@@ -35,6 +35,8 @@
   public static final android.os.Parcelable$Creator *;
 }
 
+-keep enum androidx.compose.material3.SheetValue { *; }
+
 -keepclassmembers class **.R$* {
     public static <fields>;
 }

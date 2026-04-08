@@ -12,7 +12,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,6 +24,7 @@ import com.zhangke.framework.composable.LocalContentPadding
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.framework.nav.LocalNavBackStack
@@ -56,7 +56,7 @@ fun ExplorerFeedsScreen(
     val snackBarState = rememberSnackbarHostState()
 
     val feedsDetailBottomSheetState = rememberFeedsDetailBottomSheetState()
-    val feedsDetailSheetState = rememberModalBottomSheetState()
+    val feedsDetailSheetState = rememberTransientModalBottomSheetState()
     FeedsDetailBottomSheet(
         state = feedsDetailBottomSheetState,
         sheetState = feedsDetailSheetState,

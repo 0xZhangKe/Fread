@@ -37,7 +37,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
@@ -66,6 +65,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.nav.ContentPaddingsHorizontalPagerWithTab
 import com.zhangke.framework.nav.LocalNavBackStack
@@ -856,7 +856,7 @@ private fun MuteUserBottomSheetDialog(
     onConfirmClick: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val state = rememberTransientModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         sheetState = state,
         onDismissRequest = onDismissRequest,

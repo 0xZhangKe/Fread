@@ -12,7 +12,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InteractionOption
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.describeStringId
@@ -60,7 +60,7 @@ fun PublishInteractionSettingLabel(
         icon = if (noLimit) Icons.Default.Public else Icons.Outlined.Group,
     )
     val coroutineScope = rememberCoroutineScope()
-    val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val state = rememberTransientModalBottomSheetState(skipPartiallyExpanded = true)
     if (sheetVisibility) {
         ModalBottomSheet(
             onDismissRequest = {

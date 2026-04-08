@@ -50,6 +50,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.sharedElement
@@ -227,7 +228,9 @@ private fun BoxScope.ImageTopBar(image: ImageViewerImage) {
                 contentDescription = "Image description",
             )
             if (showBottomSheet) {
+                val sheetState = rememberTransientModalBottomSheetState()
                 ModalBottomSheet(
+                    sheetState = sheetState,
                     onDismissRequest = { showBottomSheet = false },
                 ) {
                     Box(

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
@@ -82,7 +83,9 @@ fun SelectAccountOpenStatusBottomSheet(
             viewModel.clearState()
         }
     }
+    val sheetState = rememberTransientModalBottomSheetState()
     ModalBottomSheet(
+        sheetState = sheetState,
         onDismissRequest = {
             state.hide()
             viewModel.clearState()

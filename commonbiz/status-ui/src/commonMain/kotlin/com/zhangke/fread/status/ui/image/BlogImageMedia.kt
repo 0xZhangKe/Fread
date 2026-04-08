@@ -38,6 +38,7 @@ import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
+import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.nav.sharedElement
@@ -250,7 +251,9 @@ internal fun BlogImage(
             )
 
             if (showBottomSheet) {
+                val sheetState = rememberTransientModalBottomSheetState()
                 ModalBottomSheet(
+                    sheetState = sheetState,
                     onDismissRequest = { showBottomSheet = false },
                 ) {
                     Box(

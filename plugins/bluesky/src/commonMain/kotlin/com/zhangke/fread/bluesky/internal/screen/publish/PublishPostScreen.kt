@@ -16,6 +16,8 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
+import com.zhangke.framework.nav.replaceTopOrAdd
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
@@ -44,7 +46,7 @@ fun PublishPostScreen(viewModel: PublishPostViewModel) {
     PublishPostContent(
         uiState = uiState,
         snackBarHostState = snackBarHostState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onContentChanged = viewModel::onContentChanged,
         onQuoteChange = viewModel::onQuoteChange,
         onSettingSelected = viewModel::onReplySettingChange,
@@ -61,15 +63,14 @@ fun PublishPostScreen(viewModel: PublishPostViewModel) {
             if (uiState.hasInputtedData) {
                 backStack.add(key)
             } else {
-                backStack.removeLastOrNull()
-                backStack.add(key)
+                backStack.replaceTopOrAdd(key)
             }
         },
         onMentionCandidateClick = viewModel::onMentionCandidateClick,
     )
     ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
     ConsumeFlow(viewModel.finishPageFlow) {
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 }
 

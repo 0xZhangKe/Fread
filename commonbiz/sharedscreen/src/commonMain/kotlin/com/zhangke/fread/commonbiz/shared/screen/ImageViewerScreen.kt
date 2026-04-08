@@ -53,6 +53,7 @@ import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
 import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.nav.sharedElement
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
@@ -74,7 +75,7 @@ fun ImageViewerScreen(
     val backStack = LocalNavBackStack.currentOrThrow
     val backgroundCommonAlpha = 0.95F
     if (imageList.isEmpty()) {
-        LaunchedEffect(imageList) { backStack.removeLastOrNull() }
+        LaunchedEffect(imageList) { backStack.popIfNotRoot() }
         return
     }
     var backgroundColorAlpha by remember {
@@ -117,7 +118,7 @@ fun ImageViewerScreen(
                 val currentMedia = imageList[pageIndex]
                 ImagePageContent(
                     image = currentMedia,
-                    onDismissRequest = backStack::removeLastOrNull,
+                    onDismissRequest = backStack::popIfNotRoot,
                 )
             }
 

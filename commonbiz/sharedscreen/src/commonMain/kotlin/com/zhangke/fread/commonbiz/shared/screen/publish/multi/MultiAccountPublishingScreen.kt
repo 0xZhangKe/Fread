@@ -35,6 +35,7 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.languageCode
@@ -82,12 +83,12 @@ fun MultiAccountPublishingScreen(
             showExitDialog = true
             return
         }
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
     MultiAccountPublishingContent(
         uiState = uiState,
         snackBarHostState = snackBarHostState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onPublishClick = viewModel::onPublishClick,
         onMediaSelected = viewModel::onMediaSelected,
         onLanguageSelected = viewModel::onLanguageSelected,
@@ -104,7 +105,7 @@ fun MultiAccountPublishingScreen(
     val successMessage = stringResource(LocalizedString.postStatusSuccess)
     ConsumeFlow(viewModel.publishSuccessFlow) {
         toast(successMessage)
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
     BackHandler(true) { onBack() }
     if (showExitDialog) {
@@ -118,7 +119,7 @@ fun MultiAccountPublishingScreen(
             },
             onPositiveClick = {
                 showExitDialog = false
-                backStack.removeLastOrNull()
+                backStack.popIfNotRoot()
             },
         )
     }

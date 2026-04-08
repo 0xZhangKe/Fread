@@ -28,6 +28,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.composable.SelectableAccount
 import com.zhangke.fread.common.deeplink.SelectAccountForPublishScreenKey
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
@@ -55,7 +56,7 @@ data class UrlRedirectScreenKey(
 fun UrlRedirectScreen(uri: String, viewModel: UrlRedirectViewModel) {
     val backStack = LocalNavBackStack.currentOrThrow
     val browserLauncher = LocalActivityBrowserLauncher.current
-    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+    ConsumeFlow(viewModel.finishPageFlow) { backStack.popIfNotRoot() }
     ConsumeFlow(viewModel.openNewPageFlow) { GlobalScreenNavigation.navigate(it) }
     ConsumeFlow(viewModel.finishAndOpenUrlTab) {
         browserLauncher.launchWebTabInApp(
@@ -63,10 +64,10 @@ fun UrlRedirectScreen(uri: String, viewModel: UrlRedirectViewModel) {
             locator = null,
             checkAppSupportPage = false,
         )
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
     ConsumeFlow(viewModel.finishAndOpenPublishScreen) {
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
         GlobalScreenNavigation.navigate(SelectAccountForPublishScreenKey(uri))
     }
     val pageState by viewModel.pageState.collectAsState()

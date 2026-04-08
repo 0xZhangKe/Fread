@@ -26,6 +26,8 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
+import com.zhangke.framework.nav.replaceTopOrAdd
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
@@ -74,14 +76,14 @@ fun PostStatusScreen(viewModel: PostStatusViewModel) {
 
     fun onBack() {
         if (loadableUiState !is LoadableState.Success) {
-            backStack.removeLastOrNull()
+            backStack.popIfNotRoot()
             return
         }
         if (loadableUiState.requireSuccessData().hasInputtedData()) {
             showExitDialog = true
             return
         }
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
     LoadableLayout(
         modifier = Modifier.fillMaxSize(),
@@ -115,8 +117,7 @@ fun PostStatusScreen(viewModel: PostStatusViewModel) {
                 if (uiState.hasInputtedData()) {
                     backStack.add(multiAccPublishScreen)
                 } else {
-                    backStack.removeLastOrNull()
-                    backStack.add(multiAccPublishScreen)
+                    backStack.replaceTopOrAdd(multiAccPublishScreen)
                 }
             },
         )
@@ -124,7 +125,7 @@ fun PostStatusScreen(viewModel: PostStatusViewModel) {
     val successMessage = stringResource(LocalizedString.postStatusSuccess)
     ConsumeFlow(viewModel.publishSuccessFlow) {
         toast(successMessage)
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
     BackHandler(true) {
         onBack()
@@ -140,7 +141,7 @@ fun PostStatusScreen(viewModel: PostStatusViewModel) {
             },
             onPositiveClick = {
                 showExitDialog = false
-                backStack.removeLastOrNull()
+                backStack.popIfNotRoot()
             },
         )
     }

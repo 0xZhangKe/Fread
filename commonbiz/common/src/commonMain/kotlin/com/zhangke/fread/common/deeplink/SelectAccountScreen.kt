@@ -29,6 +29,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.composable.SelectableAccount
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.localization.LocalizedString
@@ -49,11 +50,11 @@ fun SelectAccountForPublishScreen(viewModel: SelectAccountForPublishViewModel) {
     val loadingAccountList by viewModel.loggedAccounts.collectAsState()
     val navigator = LocalNavBackStack.currentOrThrow
     ConsumeFlow(viewModel.openScreenFlow) {
-        navigator.removeLastOrNull()
+        navigator.popIfNotRoot()
         GlobalScreenNavigation.navigate(it)
     }
     ConsumeFlow(viewModel.finishScreenFlow) {
-        navigator.removeLastOrNull()
+        navigator.popIfNotRoot()
     }
     Box(
         modifier = Modifier,
@@ -102,7 +103,7 @@ fun SelectAccountForPublishScreen(viewModel: SelectAccountForPublishViewModel) {
             }
 
             else -> {
-                navigator.removeLastOrNull()
+                navigator.popIfNotRoot()
             }
         }
     }

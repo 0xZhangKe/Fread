@@ -29,9 +29,11 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
+import com.zhangke.framework.blur.LocalEnableBlurAppBarStyle
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.LocalSharedTransitionScope
 import com.zhangke.framework.nav.NavEntryProvider
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
@@ -39,7 +41,6 @@ import com.zhangke.fread.common.bubble.BubbleManager
 import com.zhangke.fread.common.bubble.LocalBubbleManager
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.LocalConfigManager
-import com.zhangke.framework.blur.LocalEnableBlurAppBarStyle
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
@@ -132,7 +133,7 @@ fun FreadApp() {
                 LocalSharedTransitionScope provides this,
                 LocalNavBackStack provides backStack,
             ) {
-                val onBack: () -> Unit = { backStack.removeLastOrNull() }
+                val onBack: () -> Unit = { backStack.popIfNotRoot() }
                 val entries = rememberDecoratedNavEntries(
                     backStack = backStack,
                     entryDecorators = listOf(

@@ -11,7 +11,7 @@
     <string name="empty">這裡是空的～</string>
     <string name="duration_selector_title">設定時長</string>
     <string name="retry">重試</string>
-    <string name="load_more_error">哦！載入失敗。</string>
+    <string name="load_more_error">載入失敗。</string>
     <string name="unknown_error">未知錯誤</string>
     <string name="network_error">網絡錯誤</string>
     <string name="resource_not_found">資源未找到</string>

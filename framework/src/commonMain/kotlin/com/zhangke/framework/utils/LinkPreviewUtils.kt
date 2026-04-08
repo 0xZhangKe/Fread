@@ -2,8 +2,8 @@ package com.zhangke.framework.utils
 
 object LinkPreviewUtils {
 
-    suspend fun fetchPreviewInfo(html: String): Result<LinkPreviewInfo> {
-        return Result.failure(NotImplementedError("Link preview is not implemented yet"))
+    suspend fun fetchPreviewInfo(html: String): LinkPreviewInfo? {
+        return null
     }
 }
 

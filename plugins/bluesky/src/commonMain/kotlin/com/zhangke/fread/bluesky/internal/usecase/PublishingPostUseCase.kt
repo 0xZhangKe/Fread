@@ -34,6 +34,7 @@ import com.atproto.repo.ApplyWritesCreate
 import com.atproto.repo.ApplyWritesRequest
 import com.atproto.repo.ApplyWritesRequestWriteUnion
 import com.atproto.repo.StrongRef
+import com.zhangke.framework.utils.LinkPreviewInfo
 import com.zhangke.framework.utils.mapForErrorMessage
 import com.zhangke.framework.utils.mapForMessage
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
@@ -77,6 +78,7 @@ class PublishingPostUseCase(
         attachment: PublishPostMediaAttachment? = null,
         quoteBlog: Blog? = null,
         mentionedUsers: Set<ProfileView> = emptySet(),
+        linkPreviewInfo: LinkPreviewInfo? = null,
     ): Result<Unit> {
         val client = clientManager.getClient(account.locator)
         val rkey = Tid.generateTID()

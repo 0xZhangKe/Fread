@@ -41,6 +41,13 @@ data class PostStatusUiState(
 
     val isQuotingBlogMode: Boolean get() = quotingBlog != null || unavailableQuote != null
 
+    val publishEnabled: Boolean
+        get() {
+            if (publishing) return false
+            if (content.text.isEmpty() && attachment == null) return false
+            return true
+        }
+
     fun hasInputtedData(): Boolean {
         if (content.text.isNotEmpty()) return true
         if (attachment != null) return true

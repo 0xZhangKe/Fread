@@ -19,6 +19,7 @@ import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.onboarding.OnboardingComponent
 import com.zhangke.fread.common.publish.PublishPostManager
+import com.zhangke.fread.common.repo.LinkPreviewCardRepo
 import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
@@ -52,6 +53,7 @@ val commonModule = module {
     singleOf(::StartupManager)
     singleOf(::StatusUpdater)
 
+    factoryOf(::LinkPreviewCardRepo)
     factoryOf(::AppUpdateManager)
     factoryOf(::BrowserLauncher)
     factoryOf(::ContentConfigAdapter)

@@ -17,6 +17,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun PublishTopBar(
     publishing: Boolean,
+    publishEnabled: Boolean,
     onBackClick: () -> Unit,
     onPublishClick: () -> Unit,
 ) {
@@ -34,6 +35,7 @@ fun PublishTopBar(
             } else {
                 SimpleIconButton(
                     onClick = onPublishClick,
+                    enabled = publishEnabled,
                     tint = MaterialTheme.colorScheme.primary,
                     imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Publish",

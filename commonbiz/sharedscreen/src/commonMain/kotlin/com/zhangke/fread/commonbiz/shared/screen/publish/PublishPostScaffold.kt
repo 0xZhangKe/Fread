@@ -63,6 +63,7 @@ fun PublishPostScaffold(
     content: TextFieldValue,
     showSwitchAccountIcon: Boolean,
     showAddAccountIcon: Boolean,
+    publishEnabled: Boolean,
     publishing: Boolean,
     replyingBlog: Blog? = null,
     onContentChanged: (TextFieldValue) -> Unit,
@@ -90,6 +91,7 @@ fun PublishPostScaffold(
             PublishTopBar(
                 publishing = publishing,
                 onBackClick = onBackClick,
+                publishEnabled = publishEnabled,
                 onPublishClick = onPublishClick,
             )
         },

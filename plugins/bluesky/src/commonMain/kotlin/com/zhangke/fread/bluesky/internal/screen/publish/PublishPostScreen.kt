@@ -27,6 +27,8 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostInteract
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreenKey
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.ReplySetting
+import com.zhangke.fread.status.ui.common.DetectedLinkCard
+import com.zhangke.fread.status.ui.common.LinkPreviewCard
 import com.zhangke.fread.status.ui.publish.BlogInQuoting
 import kotlinx.serialization.Serializable
 
@@ -67,6 +69,7 @@ fun PublishPostScreen(viewModel: PublishPostViewModel) {
             }
         },
         onMentionCandidateClick = viewModel::onMentionCandidateClick,
+        onLinkPreviewCardRemoveClicked = viewModel::onLinkPreviewCardRemoveClicked,
     )
     ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
     ConsumeFlow(viewModel.finishPageFlow) {
@@ -90,12 +93,14 @@ private fun PublishPostContent(
     onPublishClick: () -> Unit,
     onAddAccountClick: () -> Unit,
     onMentionCandidateClick: (ProfileView) -> Unit,
+    onLinkPreviewCardRemoveClicked: () -> Unit,
 ) {
     PublishPostScaffold(
         account = uiState.account,
         snackBarHostState = snackBarHostState,
         content = uiState.content,
         showSwitchAccountIcon = false,
+        publishEnabled = uiState.publishEnabled,
         showAddAccountIcon = uiState.showAddAccountIcon,
         publishing = uiState.publishing,
         replyingBlog = uiState.replyBlog,
@@ -148,6 +153,13 @@ private fun PublishPostContent(
                         .padding(16.dp),
                     blog = uiState.quoteBlog,
                     style = style.statusStyle,
+                )
+            }
+            if (uiState.detectedLinkCard != null && uiState.detectedLinkCard !is DetectedLinkCard.Deleted) {
+                LinkPreviewCard(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    card = uiState.detectedLinkCard,
+                    onRemoveClick = onLinkPreviewCardRemoveClicked,
                 )
             }
         },

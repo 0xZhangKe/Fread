@@ -5,12 +5,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import app.bsky.actor.ProfileView
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.utils.ContentProviderFile
+import com.zhangke.framework.utils.LinkPreviewInfo
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.status.model.ReplySetting
 import com.zhangke.fread.status.model.StatusList
+import com.zhangke.fread.status.ui.common.DetectedLinkCard
 
 data class PublishPostUiState(
     val content: TextFieldValue,
@@ -27,7 +29,19 @@ data class PublishPostUiState(
     val quoteBlog: Blog?,
     val list: List<StatusList>,
     val mentionState: LoadableState<List<ProfileView>>,
+    val detectedLinkCard: DetectedLinkCard?,
 ) {
+
+    val publishEnabled: Boolean
+        get() {
+            if (publishing) return false
+            if (content.text.isEmpty() && attachment == null) return false
+            if (content.text.length > maxCharacters) return false
+            if (detectedLinkCard != null && detectedLinkCard is DetectedLinkCard.Loading) {
+                return false
+            }
+            return true
+        }
 
     val remainingImageCount: Int
         get() {
@@ -74,6 +88,7 @@ data class PublishPostUiState(
                 publishing = false,
                 list = emptyList(),
                 mentionState = LoadableState.idle(),
+                detectedLinkCard = null,
             )
         }
     }

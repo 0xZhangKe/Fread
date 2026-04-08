@@ -13,11 +13,13 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
+import com.zhangke.framework.utils.ExtractUrlFromTextUtils
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PublishingPostUseCase
 import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.repo.LinkPreviewCardRepo
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
@@ -25,6 +27,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.ReplySetting
 import com.zhangke.fread.status.model.StatusList
+import com.zhangke.fread.status.ui.common.DetectedLinkCard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
@@ -45,6 +48,7 @@ class PublishPostViewModel(
     private val configManager: FreadConfigManager,
     private val publishingPost: PublishingPostUseCase,
     private val locator: PlatformLocator,
+    private val linkPreviewCardRepo: LinkPreviewCardRepo,
     defaultText: String?,
     replyBlogJsonString: String?,
     quoteBlogJsonString: String?,
@@ -64,6 +68,8 @@ class PublishPostViewModel(
     private var publishJob: Job? = null
 
     private val mentionedUsers = mutableSetOf<ProfileView>()
+
+    private var extractLinkPreviewCardJob: Job? = null
 
     init {
         launchInViewModel(Dispatchers.IO) {
@@ -94,6 +100,7 @@ class PublishPostViewModel(
     fun onContentChanged(text: TextFieldValue) {
         _uiState.update { it.copy(content = text) }
         maybeNeedSearchAccount(text)
+        extractLinkPreviewCard(text.text)
     }
 
     private fun maybeNeedSearchAccount(content: TextFieldValue) {
@@ -116,6 +123,42 @@ class PublishPostViewModel(
                 .onFailure {
                     _uiState.update { it.copy(mentionState = LoadableState.idle()) }
                 }
+        }
+    }
+
+    private fun extractLinkPreviewCard(content: String) {
+        if (uiState.value.quoteBlog != null || uiState.value.attachment != null) {
+            _uiState.update { it.copy(detectedLinkCard = null) }
+            return
+        }
+        extractLinkPreviewCardJob?.cancel()
+        extractLinkPreviewCardJob = launchInViewModel {
+            val link = ExtractUrlFromTextUtils.extract(content).firstOrNull()
+            if (link == null) {
+                _uiState.update { it.copy(detectedLinkCard = null) }
+                return@launchInViewModel
+            } else if (link == _uiState.value.detectedLinkCard?.link) {
+                return@launchInViewModel
+            }
+            _uiState.update { it.copy(detectedLinkCard = DetectedLinkCard.Loading(link)) }
+            linkPreviewCardRepo.fetchPreviewInfo(link)
+                .onSuccess { info ->
+                    _uiState.update {
+                        it.copy(detectedLinkCard = DetectedLinkCard.Loaded(link, info))
+                    }
+                }.onFailure { t ->
+                    _uiState.update {
+                        it.copy(detectedLinkCard = DetectedLinkCard.Failure(link, t))
+                    }
+                }
+        }
+    }
+
+    fun onLinkPreviewCardRemoveClicked() {
+        _uiState.update { state ->
+            state.copy(
+                detectedLinkCard = state.detectedLinkCard?.link?.let { DetectedLinkCard.Deleted(it) }
+            )
         }
     }
 
@@ -174,7 +217,9 @@ class PublishPostViewModel(
             } else {
                 PublishPostMediaAttachment.Image(fileList.map { it.toUiFile(false) })
             }
-            _uiState.update { it.copy(attachment = currentAttachment.merge(attachment)) }
+            _uiState.update {
+                it.copy(attachment = currentAttachment.merge(attachment), detectedLinkCard = null)
+            }
         }
     }
 
@@ -237,6 +282,9 @@ class PublishPostViewModel(
         if (publishJob?.isActive == true) return
         publishJob?.cancel()
         val account = uiState.value.account ?: return
+        if (uiState.value.detectedLinkCard is DetectedLinkCard.Loading) {
+            return
+        }
         publishJob = launchInViewModel {
             _uiState.update { it.copy(publishing = true) }
             publishingPost(
@@ -248,6 +296,7 @@ class PublishPostViewModel(
                 quoteBlog = uiState.value.quoteBlog,
                 attachment = uiState.value.attachment,
                 mentionedUsers = mentionedUsers,
+                linkPreviewInfo = (uiState.value.detectedLinkCard as? DetectedLinkCard.Loaded)?.info,
             ).onFailure { t ->
                 _uiState.update { it.copy(publishing = false) }
                 _snackBarMessageFlow.emitTextMessageFromThrowable(t)

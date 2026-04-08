@@ -178,6 +178,7 @@ private fun PostStatusScreenContent(
         account = uiState.account,
         snackBarHostState = snackMessageState,
         content = uiState.content,
+        publishEnabled = uiState.publishEnabled,
         showSwitchAccountIcon = uiState.accountChangeable && uiState.availableAccountList.size > 1,
         showAddAccountIcon = uiState.showAddAccountIcon,
         publishing = uiState.publishing,

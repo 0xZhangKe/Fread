@@ -48,6 +48,7 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdatePreferencesUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateProfileRecordUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
+import com.zhangke.fread.bluesky.internal.usecase.UploadImageByImageUrlUseCase
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
@@ -110,6 +111,7 @@ val blueskyModule = module {
     factoryOf(::UpdateProfileRecordUseCase)
     factoryOf(::PinFeedsUseCase)
     factoryOf(::RefreshSessionUseCase)
+    factoryOf(::UploadImageByImageUrlUseCase)
 
     viewModel { params ->
         AddBlueskyContentViewModel(

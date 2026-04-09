@@ -14,7 +14,7 @@ class LinkPreviewCardRepo {
     suspend fun fetchPreviewInfo(url: String): Result<LinkPreviewInfo> {
         urlToInfoMap[url]?.let { return Result.success(it) }
         val html = sharedHttpClient.get { url { takeFrom(url) } }.body<String>()
-        val info = LinkPreviewUtils.fetchPreviewInfo(html) ?: return Result.failure(
+        val info = LinkPreviewUtils.fetchPreviewInfo(url, html) ?: return Result.failure(
             IllegalStateException("Failed to fetch link preview info")
         )
         urlToInfoMap[url] = info

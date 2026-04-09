@@ -102,9 +102,15 @@ sealed interface PublishPostMediaAttachment {
             is Video -> listOf(file)
         }
 
+    val isEmpty: Boolean get() = medias.isEmpty()
+
     data class Image(val files: List<PublishPostMediaAttachmentFile>) : PublishPostMediaAttachment
 
     data class Video(val file: PublishPostMediaAttachmentFile) : PublishPostMediaAttachment
+}
+
+fun PublishPostMediaAttachment?.isNullOrEmpty(): Boolean {
+    return this == null || this.isEmpty
 }
 
 data class PublishPostMediaAttachmentFile(

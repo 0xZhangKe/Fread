@@ -3,6 +3,8 @@ package com.zhangke.fread.bluesky.internal.usecase
 import androidx.compose.ui.text.TextRange
 import app.bsky.actor.ProfileView
 import app.bsky.embed.AspectRatio
+import app.bsky.embed.External
+import app.bsky.embed.ExternalExternal
 import app.bsky.embed.Images
 import app.bsky.embed.ImagesImage
 import app.bsky.embed.Record
@@ -55,6 +57,7 @@ import com.zhangke.fread.status.model.ReplySetting
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
+import kotlinx.datetime.Clock
 import okio.utf8Size
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
@@ -62,10 +65,10 @@ import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Language
 import sh.christian.ozone.api.RKey
 import sh.christian.ozone.api.Uri
-import kotlinx.datetime.Clock
 
 class PublishingPostUseCase(
     private val clientManager: BlueskyClientManager,
+    private val uploadImageByImageUrl: UploadImageByImageUrlUseCase,
     private val uploadBlob: UploadBlobUseCase,
 ) {
 
@@ -83,7 +86,7 @@ class PublishingPostUseCase(
         val client = clientManager.getClient(account.locator)
         val rkey = Tid.generateTID()
         val postUri = "at://${account.did}/${BskyCollections.feedPost.nsid}/$rkey"
-        val embedResult = buildPostEmbed(account.locator, attachment, quoteBlog)
+        val embedResult = buildPostEmbed(account.locator, attachment, quoteBlog, linkPreviewInfo)
         if (embedResult.isFailure) return Result.failure(embedResult.exceptionOrNull()!!)
         val replyResult = buildReplyRef(account.locator, replyBlog)
         if (replyResult.isFailure) return Result.failure(replyResult.exceptionOrNull()!!)
@@ -149,6 +152,7 @@ class PublishingPostUseCase(
         locator: PlatformLocator,
         attachment: PublishPostMediaAttachment?,
         quoteBlog: Blog?,
+        linkPreviewInfo: LinkPreviewInfo?,
     ): Result<PostEmbedUnion?> {
         val videoResult =
             (attachment as? PublishPostMediaAttachment.Video)?.let { uploadVideo(locator, it.file) }
@@ -161,7 +165,9 @@ class PublishingPostUseCase(
         val quoteRecord = quoteBlog
             ?.let { StrongRef(uri = AtUri(it.url), cid = Cid(it.id)) }
             ?.let { Record(it) }
-        if (video == null && images == null && quoteRecord == null) return Result.success(null)
+        if (video == null && images == null && quoteRecord == null) {
+            return buildLinkPreviewEmbed(locator, linkPreviewInfo)
+        }
         val embed = if (quoteRecord != null) {
             if (video != null || images != null) {
                 val media = video?.let { RecordWithMediaMediaUnion.Video(it) }
@@ -179,6 +185,25 @@ class PublishingPostUseCase(
             video?.let { PostEmbedUnion.Video(it) } ?: PostEmbedUnion.Images(images!!)
         }
         return Result.success(embed)
+    }
+
+    private suspend fun buildLinkPreviewEmbed(
+        locator: PlatformLocator,
+        linkPreviewInfo: LinkPreviewInfo?
+    ): Result<PostEmbedUnion?> {
+        if (linkPreviewInfo == null) return Result.success(null)
+        val thumbnail = if (linkPreviewInfo.image.isNullOrEmpty()) {
+            null
+        } else {
+            uploadImageByImageUrl(locator, linkPreviewInfo.image!!).getOrNull()
+        }
+        val external = ExternalExternal(
+            uri = Uri(linkPreviewInfo.url),
+            title = linkPreviewInfo.title,
+            description = linkPreviewInfo.description.orEmpty(),
+            thumb = thumbnail,
+        )
+        return Result.success(PostEmbedUnion.External(External(external)))
     }
 
     private suspend fun uploadVideo(

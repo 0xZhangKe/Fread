@@ -5,13 +5,13 @@ import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.model.isActivityPub
 import com.zhangke.fread.status.model.isBluesky
-import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.StringResource
 
 data class MultiAccountPublishingUiState(
@@ -27,6 +27,14 @@ data class MultiAccountPublishingUiState(
     val sensitive: Boolean,
     val warningContent: TextFieldValue,
 ) {
+
+    val publishEnabled: Boolean
+        get() {
+            if (publishing) return false
+            if (content.text.isEmpty() && medias.isEmpty()) return false
+            if (addedAccounts.isEmpty()) return false
+            return true
+        }
 
     val mediaAvailableCount: Int
         get() = globalRules.maxMediaCount - medias.size

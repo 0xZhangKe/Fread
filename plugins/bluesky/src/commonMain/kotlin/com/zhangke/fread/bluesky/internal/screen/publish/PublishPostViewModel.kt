@@ -127,7 +127,7 @@ class PublishPostViewModel(
     }
 
     private fun extractLinkPreviewCard(content: String) {
-        if (uiState.value.quoteBlog != null || uiState.value.attachment != null) {
+        if (uiState.value.quoteBlog != null || !uiState.value.attachment.isNullOrEmpty()) {
             _uiState.update { it.copy(detectedLinkCard = null) }
             return
         }
@@ -155,6 +155,7 @@ class PublishPostViewModel(
     }
 
     fun onLinkPreviewCardRemoveClicked() {
+        extractLinkPreviewCardJob?.cancel()
         _uiState.update { state ->
             state.copy(
                 detectedLinkCard = state.detectedLinkCard?.link?.let { DetectedLinkCard.Deleted(it) }

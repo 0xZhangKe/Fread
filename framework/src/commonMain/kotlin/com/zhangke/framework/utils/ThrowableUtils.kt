@@ -11,9 +11,7 @@ fun Throwable.mapForMessage(newMessage: String): Throwable {
 
 fun <T> Result<T>.mapForErrorMessage(newErrorMessage: String): Result<T> {
     if (this.isSuccess) return this
-    val exception = this.exceptionOrNull()
-    if (exception == null) {
-        return Result.failure(RuntimeException(newErrorMessage))
-    }
+    val exception =
+        this.exceptionOrNull() ?: return Result.failure(RuntimeException(newErrorMessage))
     return Result.failure(exception.mapForMessage(newErrorMessage))
 }

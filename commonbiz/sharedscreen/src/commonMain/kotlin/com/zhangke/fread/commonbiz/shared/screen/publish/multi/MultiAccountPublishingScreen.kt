@@ -23,12 +23,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import com.zhangke.framework.composable.BackHandler
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.architect.json.globalJson
+import com.zhangke.framework.composable.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
@@ -149,6 +149,7 @@ private fun MultiAccountPublishingContent(
             PublishTopBar(
                 publishing = uiState.publishing,
                 onBackClick = onBackClick,
+                publishEnabled = uiState.publishEnabled,
                 onPublishClick = onPublishClick,
             )
         },

@@ -33,11 +33,7 @@ fun <T : Any> freadPopTransitionSpec(): AnimatedContentTransitionScope<Scene<T>>
 fun <T : Any> freadPredictivePopTransitionSpec(): AnimatedContentTransitionScope<Scene<T>>.(@SwipeEdge Int) -> ContentTransform =
     {
         ContentTransform(
-            targetContentEnter = fadeIn(
-                animationSpec = tween(
-                    PREDICTIVE_POP_END_DURATION_MILLISECOND
-                )
-            ),
+            targetContentEnter = EnterTransition.None,
             initialContentExit = ExitTransition.None,
         )
     }

@@ -6,8 +6,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
@@ -35,6 +39,12 @@ val LocalPredictiveBackState = compositionLocalOf { PredictiveBackState() }
 
 private const val PREDICTIVE_BACK_TARGET_SCALE = 0.8f
 private const val PREDICTIVE_BACK_PIVOT_EDGE_FRACTION = 0.85f
+
+@Immutable
+private data class RetainedExitPredictiveBackState(
+    val progress: Float,
+    @param:NavigationEvent.SwipeEdge val swipeEdge: Int,
+)
 
 @Composable
 fun <T : Any> rememberPredictiveBackEntryDecorator(): NavEntryDecorator<T> =
@@ -74,14 +84,40 @@ private fun <T : Any> PredictiveBackDecoratedEntry(entry: NavEntry<T>) {
     val isEntering =
         transition.targetState == EnterExitState.Visible && transition.currentState == EnterExitState.PreEnter
     val deviceCornerRadius = rememberDeviceCornerRadius()
-    val scale =
+    var retainedExitPredictiveBackState by remember {
+        mutableStateOf<RetainedExitPredictiveBackState?>(null)
+    }
+    val activeExitPredictiveBackState =
         if (predictiveBackState.inProgress && isExiting) {
-            1f - (1f - PREDICTIVE_BACK_TARGET_SCALE) * predictiveBackState.progress
+            RetainedExitPredictiveBackState(
+                progress = predictiveBackState.progress,
+                swipeEdge = predictiveBackState.swipeEdge,
+            )
+        } else {
+            null
+        }
+    SideEffect {
+        when {
+            activeExitPredictiveBackState != null -> {
+                retainedExitPredictiveBackState = activeExitPredictiveBackState
+            }
+
+            !isExiting -> {
+                retainedExitPredictiveBackState = null
+            }
+        }
+    }
+    // Keep the last predictive-back frame for the exiting entry until it is removed.
+    val effectiveExitPredictiveBackState =
+        activeExitPredictiveBackState ?: retainedExitPredictiveBackState?.takeIf { isExiting }
+    val scale =
+        if (effectiveExitPredictiveBackState != null) {
+            1f - (1f - PREDICTIVE_BACK_TARGET_SCALE) * effectiveExitPredictiveBackState.progress
         } else {
             1f
         }
     val transformOrigin =
-        when (predictiveBackState.swipeEdge) {
+        when (effectiveExitPredictiveBackState?.swipeEdge ?: predictiveBackState.swipeEdge) {
             NavigationEvent.EDGE_LEFT ->
                 TransformOrigin(PREDICTIVE_BACK_PIVOT_EDGE_FRACTION, 0.5f)
 
@@ -90,11 +126,11 @@ private fun <T : Any> PredictiveBackDecoratedEntry(entry: NavEntry<T>) {
 
             else -> TransformOrigin.Center
         }
-    val clipRadius = if (predictiveBackState.inProgress && isExiting) {
-            deviceCornerRadius
-        } else {
-            0.dp
-        }
+    val clipRadius = if (effectiveExitPredictiveBackState != null) {
+        deviceCornerRadius
+    } else {
+        0.dp
+    }
     val scrimVisible = predictiveBackState.inProgress && isEntering
     val scrimColor = if (scrimVisible) {
         MaterialTheme.colorScheme.dialogScrim

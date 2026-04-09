@@ -229,6 +229,7 @@ fun BasicProfileCard(
                                 .fillMaxWidth(),
                             richText = description,
                             onUrlClick = {},
+                            fontSize = 14.sp,
                             onMaybeHashtagClick = {},
                         )
 

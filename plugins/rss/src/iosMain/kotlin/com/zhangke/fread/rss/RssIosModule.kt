@@ -9,6 +9,9 @@ import com.zhangke.fread.rss.internal.db.RssDatabases
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.Module
+import platform.Foundation.NSBundle
+import platform.Foundation.NSMutableDictionary
+import platform.Foundation.NSURLSessionConfiguration
 import platform.Foundation.NSURLSession
 
 actual fun Module.createPlatformModule() {
@@ -22,11 +25,23 @@ actual fun Module.createPlatformModule() {
     }
     single<RssParser> {
         RssParserBuilder(
-            nsUrlSession = NSURLSession(),
+            nsUrlSession = createRssUrlSession(
+                appVersion = NSBundle.mainBundle()
+                    .infoDictionary()
+                    ?.get("CFBundleShortVersionString") as? String ?: "",
+            ),
         ).build()
     }
 }
 
 private fun getDBFilePath(dbName: String): String {
     return documentDirectory() + "/$dbName"
+}
+
+private fun createRssUrlSession(appVersion: String): NSURLSession {
+    val configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+    configuration.HTTPAdditionalHeaders = buildMap {
+        put("User-Agent", "Fread/$appVersion (iOS) +https://fread.xyz/")
+    }
+    return NSURLSession.sessionWithConfiguration(configuration)
 }

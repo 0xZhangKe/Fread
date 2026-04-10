@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -50,6 +48,7 @@ import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.common.composable.EmptyContent
 import com.zhangke.fread.common.composable.EmptyContentType
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
+import com.zhangke.fread.feature.message.screens.notification.LocalNotificationTabConsumeStatusBarInsets
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -81,6 +80,7 @@ private fun NotificationsHomeScreenContent(
 ) {
     val density = LocalDensity.current
     val snackbarHost = rememberSnackbarHostState()
+    val showTopBar = uiState.tabs.size > 1 && uiState.selectedAccount != null
     Box(
         modifier = Modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
@@ -103,7 +103,10 @@ private fun NotificationsHomeScreenContent(
                 }
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackbarHost,
-                    LocalContentPadding provides updateTopPadding(topBarHeight),
+                    LocalContentPadding provides updateTopPadding(
+                        if (showTopBar) topBarHeight else 0.dp
+                    ),
+                    LocalNotificationTabConsumeStatusBarInsets provides !showTopBar,
                 ) {
                     HorizontalPager(
                         modifier = Modifier.fillMaxSize(),
@@ -117,18 +120,12 @@ private fun NotificationsHomeScreenContent(
                 }
             }
         }
-        if (uiState.tabs.size > 1 && uiState.selectedAccount != null) {
+        if (showTopBar) {
             NotificationTopBar(
                 account = uiState.selectedAccount,
                 accountList = uiState.accountList,
                 onAccountSelected = onAccountSelected,
                 onHeightChanged = { topBarHeight = it },
-            )
-        } else {
-            Spacer(
-                modifier = Modifier.statusBarsPadding()
-                    .height(16.dp)
-                    .onSizeChanged { topBarHeight = it.height.pxToDp(density) }
             )
         }
         SnackbarHost(
@@ -157,6 +154,7 @@ private fun NotificationTopBar(
                 text = stringResource(LocalizedString.notificationTabTitle),
             )
         },
+        height = 48.dp,
         colors = TopAppBarColors.default(
             containerColor = blurEffectContainerColor(true, containerColor),
         ),

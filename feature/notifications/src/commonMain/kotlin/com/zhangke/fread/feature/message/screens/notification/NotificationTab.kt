@@ -5,9 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
@@ -18,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +60,8 @@ import com.zhangke.fread.status.ui.StatusListPlaceholder
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+
+internal val LocalNotificationTabConsumeStatusBarInsets = compositionLocalOf { false }
 
 class NotificationTab(
     private val loggedAccount: LoggedAccount,
@@ -112,6 +118,7 @@ class NotificationTab(
         onCancelFollowRequestClick: (PlatformLocator, BlogAuthor) -> Unit,
     ) {
         var tabTitleHeight: Dp by remember { mutableStateOf(20.dp) }
+        val consumeStatusBarInsets = LocalNotificationTabConsumeStatusBarInsets.current
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -176,6 +183,7 @@ class NotificationTab(
                 )
                 NotificationTabTitle(
                     uiState = uiState,
+                    consumeStatusBarInsets = consumeStatusBarInsets,
                     onTabCheckedChange = onSwitchTab,
                     onHeightChanged = { tabTitleHeight = it },
                 )
@@ -186,6 +194,7 @@ class NotificationTab(
     @Composable
     private fun NotificationTabTitle(
         uiState: NotificationUiState,
+        consumeStatusBarInsets: Boolean,
         onTabCheckedChange: (inMentionsTab: Boolean) -> Unit,
         onHeightChanged: (Dp) -> Unit,
     ) {
@@ -199,7 +208,14 @@ class NotificationTab(
             contentAlignment = Alignment.Center,
         ) {
             MultiChoiceSegmentedButtonRow(
-                modifier = Modifier.fillMaxWidth(0.7F),
+                modifier = Modifier.fillMaxWidth(0.7F)
+                    .then(
+                        if (consumeStatusBarInsets) {
+                            Modifier.windowInsetsPadding(WindowInsets.statusBars)
+                        } else {
+                            Modifier
+                        }
+                    ),
             ) {
                 SegmentedButton(
                     checked = !uiState.inOnlyMentionTab,

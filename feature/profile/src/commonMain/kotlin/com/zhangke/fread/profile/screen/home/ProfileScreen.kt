@@ -33,7 +33,6 @@ import com.zhangke.framework.composable.SingleRowTopAppBar
 import com.zhangke.framework.composable.TopAppBarColors
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.plus
-import com.zhangke.framework.composable.plusContentPadding
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.composable.EmptyContent
 import com.zhangke.fread.common.composable.EmptyContentType
@@ -90,6 +89,7 @@ private fun ProfileHomePageContent(
                 colors = TopAppBarColors.default(
                     containerColor = blurEffectContainerColor(containerColor = surfaceColor),
                 ),
+                height = 48.dp,
                 title = {
                     Text(
                         modifier = Modifier,

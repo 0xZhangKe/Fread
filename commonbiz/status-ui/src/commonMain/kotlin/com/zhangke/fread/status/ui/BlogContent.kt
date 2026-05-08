@@ -131,7 +131,8 @@ fun BlogContent(
                     onVoted(it)
                 },
             )
-        } else if (blog.mediaList.isNotEmpty()) {
+        }
+        if (blog.poll == null && blog.mediaList.isNotEmpty()) {
             BlogMedias(
                 modifier = Modifier
                     .padding(top = style.contentStyle.contentVerticalSpacing)
@@ -143,7 +144,8 @@ fun BlogContent(
                 sensitive = sensitive,
                 onMediaClick = onMediaClick,
             )
-        } else if (blog.embeds.isNotEmpty()) {
+        }
+        if (blog.poll == null && blog.embeds.isNotEmpty()) {
             BlogEmbedsUi(
                 modifier = Modifier
                     .padding(top = style.contentStyle.contentVerticalSpacing)

@@ -99,4 +99,13 @@ class BlueskyNotificationResolver(
         return client.updateSeenCatching(UpdateSeenRequest(Clock.System.now()))
             .map { }
     }
+
+    override suspend fun getUnreadNotificationsCount(account: LoggedAccount): Result<Int>? {
+        if (account !is BlueskyLoggedAccount) return null
+        return getNotifications(
+            account = account,
+            type = INotificationResolver.NotificationRequestType.ALL,
+            cursor = null,
+        )?.map { paged -> paged.notifications.count { it.unread } }
+    }
 }

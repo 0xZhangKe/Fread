@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app
 
+import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
@@ -15,6 +16,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreenKey
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
@@ -28,6 +30,7 @@ import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
+import org.koin.compose.viewmodel.koinViewModel
 
 class ActivityPubScreenProvider(
     private val userUriTransformer: UserUriTransformer,
@@ -180,5 +183,19 @@ class ActivityPubScreenProvider(
     override fun getPublishScreen(account: LoggedAccount, text: String): NavKey? {
         if (account !is ActivityPubLoggedAccount) return null
         return PostStatusScreenKey(accountUri = account.uri, defaultContent = text)
+    }
+
+    override fun getUserDetailContent(account: LoggedAccount): (@Composable () -> Unit)? {
+        if (account !is ActivityPubLoggedAccount) return null
+        val locator = account.locator
+        val userUri = account.uri
+        return {
+            UserDetailScreen(
+                viewModel = koinViewModel(),
+                locator = locator,
+                userUri = userUri,
+                showBackButton = false,
+            )
+        }
     }
 }

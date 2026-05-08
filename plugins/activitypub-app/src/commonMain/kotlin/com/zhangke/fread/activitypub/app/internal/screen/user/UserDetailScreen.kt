@@ -130,6 +130,7 @@ fun UserDetailScreen(
     userUri: FormalUri? = null,
     webFinger: WebFinger? = null,
     userId: String? = null,
+    showBackButton: Boolean = true,
 ) {
     val backstack = LocalNavBackStack.currentOrThrow
     val browserLauncher = LocalActivityBrowserLauncher.current
@@ -141,6 +142,7 @@ fun UserDetailScreen(
         uiState = uiState,
         messageFlow = viewModel.messageFlow,
         userId = userId,
+        showBackButton = showBackButton,
         onFavouritesClick = {
             backstack.add(
                 StatusListScreenKey(
@@ -293,8 +295,10 @@ fun UserDetailScreen(
             viewModel.onLogoutClick()
         },
     )
-    ConsumeFlow(viewModel.finishPageFlow) {
-        backstack.removeLastOrNull()
+    if (showBackButton) {
+        ConsumeFlow(viewModel.finishPageFlow) {
+            backstack.removeLastOrNull()
+        }
     }
 }
 
@@ -303,6 +307,7 @@ private fun UserDetailContent(
     uiState: UserDetailUiState,
     messageFlow: SharedFlow<TextString>,
     userId: String?,
+    showBackButton: Boolean,
     onBackClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFavouritesClick: () -> Unit,
@@ -357,6 +362,7 @@ private fun UserDetailContent(
         },
         onMaybeHashtagClick = onMaybeHashtagClick,
         onBackClick = onBackClick,
+        showBackButton = showBackButton,
         topBarActions = {
             ToolbarActions(
                 uiState = uiState,

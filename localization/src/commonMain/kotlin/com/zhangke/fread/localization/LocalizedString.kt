@@ -658,4 +658,8 @@ object LocalizedString {
         localizedString.setting_item_solid_bar_background_title
     val setting_item_solid_bar_background_subtitle =
         localizedString.setting_item_solid_bar_background_subtitle
+    val setting_item_jump_to_profile_title =
+        localizedString.setting_item_jump_to_profile_title
+    val setting_item_jump_to_profile_subtitle =
+        localizedString.setting_item_jump_to_profile_subtitle
 }

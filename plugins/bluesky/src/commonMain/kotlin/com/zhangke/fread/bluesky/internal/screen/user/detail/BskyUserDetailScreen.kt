@@ -75,6 +75,7 @@ fun BskyUserDetailScreen(
     locator: PlatformLocator,
     did: String,
     viewModel: BskyUserDetailViewModel,
+    showBackButton: Boolean = true,
 ) {
     val backStack = LocalNavBackStack.currentOrThrow
     val browserLauncher = LocalActivityBrowserLauncher.current
@@ -86,6 +87,7 @@ fun BskyUserDetailScreen(
         uiState = uiState,
         snackbarHostState = snackBarState,
         locator = locator,
+        showBackButton = showBackButton,
         onBackClick = backStack::removeLastOrNull,
         onSearchClick = {
             backStack.add(SearchStatusScreenNavKey(locator = locator, did = did))
@@ -167,7 +169,9 @@ fun BskyUserDetailScreen(
     )
     ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
     LaunchedEffect(Unit) { viewModel.onPageResume() }
-    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+    if (showBackButton) {
+        ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+    }
 }
 
 @Composable
@@ -175,6 +179,7 @@ private fun UserDetailContent(
     uiState: BskyUserDetailUiState,
     snackbarHostState: SnackbarHostState,
     locator: PlatformLocator,
+    showBackButton: Boolean,
     onBackClick: () -> Unit,
     onSearchClick: () -> Unit,
     onBannerClick: () -> Unit,
@@ -216,6 +221,7 @@ private fun UserDetailContent(
         onUrlClick = {},
         onMaybeHashtagClick = onHashtagClick,
         onBackClick = onBackClick,
+        showBackButton = showBackButton,
         topBarActions = {
             TopBarActions(
                 uiState = uiState,

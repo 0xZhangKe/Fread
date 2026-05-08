@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.ViewTimeline
@@ -40,6 +41,7 @@ fun BehaviorSettingsScreen(viewModel: BehaviorSettingsViewModel) {
         onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
         onTimelineDefaultPositionChanged = viewModel::onTimelineDefaultPositionChanged,
         onOpenUrlInAppBrowserChanged = viewModel::onOpenUrlInAppBrowserChanged,
+        onJumpToProfileChanged = viewModel::onJumpToProfileChanged,
     )
 }
 
@@ -51,6 +53,7 @@ private fun BehaviorSettingsContent(
     onAlwaysShowSensitive: (Boolean) -> Unit,
     onTimelineDefaultPositionChanged: (TimelineDefaultPosition) -> Unit,
     onOpenUrlInAppBrowserChanged: (Boolean) -> Unit,
+    onJumpToProfileChanged: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -81,8 +84,26 @@ private fun BehaviorSettingsContent(
                 position = uiState.timelineDefaultPosition,
                 onPositionChanged = onTimelineDefaultPositionChanged,
             )
+            JumpToProfileItem(
+                jumpToProfile = uiState.jumpToProfile,
+                onJumpToProfileChanged = onJumpToProfileChanged,
+            )
         }
     }
+}
+
+@Composable
+private fun JumpToProfileItem(
+    jumpToProfile: Boolean,
+    onJumpToProfileChanged: (on: Boolean) -> Unit,
+) {
+    SettingItemWithSwitch(
+        icon = Icons.Default.AccountCircle,
+        title = stringResource(LocalizedString.setting_item_jump_to_profile_title),
+        subtitle = stringResource(LocalizedString.setting_item_jump_to_profile_subtitle),
+        checked = jumpToProfile,
+        onCheckedChangeRequest = onJumpToProfileChanged,
+    )
 }
 
 @Composable

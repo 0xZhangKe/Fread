@@ -29,6 +29,7 @@ class FreadConfigManager(
         private const val LOCAL_KEY_THEME_TYPE = "theme_type"
         private const val LOCAL_KEY_OPEN_URL_IN_APP_BROWSER = "open_url_in_app_browser"
         private const val LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE = "enable_blur_app_bar_style"
+        private const val LOCAL_KEY_JUMP_TO_PROFILE = "jump_to_profile"
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
@@ -49,6 +50,8 @@ class FreadConfigManager(
         private set
     var openUrlInAppBrowser: Boolean = true
         private set
+    var jumpToProfile: Boolean = false
+        private set
 
     suspend fun initConfig() {
         _statusConfigFlow.value = readLocalStatusConfig()
@@ -57,6 +60,8 @@ class FreadConfigManager(
             localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
         openUrlInAppBrowser =
             localConfigManager.getBoolean(LOCAL_KEY_OPEN_URL_IN_APP_BROWSER) != false
+        jumpToProfile =
+            localConfigManager.getBoolean(LOCAL_KEY_JUMP_TO_PROFILE) ?: false
         _enableBlurAppBarStyleFlow.value =
             localConfigManager.getBoolean(LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE) != false
         _homeTabNextButtonVisibleFlow.value =
@@ -94,6 +99,13 @@ class FreadConfigManager(
         openUrlInAppBrowser = value
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_OPEN_URL_IN_APP_BROWSER, value)
+        }
+    }
+
+    suspend fun updateJumpToProfile(value: Boolean) {
+        jumpToProfile = value
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_JUMP_TO_PROFILE, value)
         }
     }
 

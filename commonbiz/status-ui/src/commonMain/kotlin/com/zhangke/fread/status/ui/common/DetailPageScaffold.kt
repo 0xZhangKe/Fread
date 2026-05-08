@@ -44,6 +44,7 @@ fun DetailPageScaffold(
     followInfoLine: @Composable () -> Unit,
     topDetailContentAction: (@Composable () -> Unit)? = null,
     bottomArea: (@Composable () -> Unit)? = null,
+    showBackButton: Boolean = true,
     content: @Composable (progress: Float) -> Unit,
 ) {
     DetailPageScaffold(
@@ -52,6 +53,7 @@ fun DetailPageScaffold(
         title = title,
         contentCanScrollBackward = contentCanScrollBackward,
         onBackClick = onBackClick,
+        showBackButton = showBackButton,
         topBarActions = topBarActions,
         topDetailContent = { progress ->
             DetailHeaderContent(
@@ -85,6 +87,7 @@ fun DetailPageScaffold(
     onBackClick: () -> Unit,
     topBarActions: @Composable RowScope.() -> Unit,
     topDetailContent: @Composable BoxScope.(Float) -> Unit,
+    showBackButton: Boolean = true,
     content: @Composable (progress: Float) -> Unit,
 ) {
     Scaffold(
@@ -112,6 +115,7 @@ fun DetailPageScaffold(
                         title = title,
                         onBackClick = onBackClick,
                         actions = topBarActions,
+                        showBackButton = showBackButton,
                     )
                 },
                 headerContent = { progress ->

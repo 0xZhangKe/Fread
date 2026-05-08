@@ -19,6 +19,7 @@ class BehaviorSettingsViewModel(
             alwaysShowSensitiveContent = false,
             timelineDefaultPosition = TimelineDefaultPosition.NEWEST,
             openUrlInAppBrowser = freadConfigManager.openUrlInAppBrowser,
+            jumpToProfile = freadConfigManager.jumpToProfile,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -63,6 +64,13 @@ class BehaviorSettingsViewModel(
         viewModelScope.launch {
             freadConfigManager.updateOpenUrlInAppBrowser(openInApp)
             _uiState.update { it.copy(openUrlInAppBrowser = openInApp) }
+        }
+    }
+
+    fun onJumpToProfileChanged(on: Boolean) {
+        viewModelScope.launch {
+            freadConfigManager.updateJumpToProfile(on)
+            _uiState.update { it.copy(jumpToProfile = on) }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky
 
+import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.nav.Tab
@@ -13,6 +14,7 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFe
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.content.BlueskyContentTab
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreenNavKey
+import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
@@ -26,6 +28,8 @@ import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 class BlueskyScreenProvider(
     private val userUriTransformer: UserUriTransformer,
@@ -150,5 +154,19 @@ class BlueskyScreenProvider(
             locator = account.locator,
             defaultText = text,
         )
+    }
+
+    override fun getUserDetailContent(account: LoggedAccount): (@Composable () -> Unit)? {
+        if (account !is BlueskyLoggedAccount) return null
+        val locator = account.locator
+        val did = account.did
+        return {
+            BskyUserDetailScreen(
+                locator = locator,
+                did = did,
+                viewModel = koinViewModel { parametersOf(locator, did) },
+                showBackButton = false,
+            )
+        }
     }
 }

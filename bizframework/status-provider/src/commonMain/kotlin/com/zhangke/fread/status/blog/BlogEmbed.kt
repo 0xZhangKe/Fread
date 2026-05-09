@@ -42,6 +42,8 @@ sealed interface BlogEmbed {
                 return DEFAULT_ASPECT_RATIO
             }
 
+        val isGif: Boolean
+            get() = url.substringBefore('?').endsWith(".gif", ignoreCase = true)
     }
 
     @Serializable

@@ -53,6 +53,12 @@ class NotificationResolver(
             it.updateUnreadNotification(account, notificationLastReadId)
         }
     }
+
+    suspend fun getUnreadNotificationsCount(account: LoggedAccount): Result<Int> {
+        return resolverList.firstNotNullOfOrNull {
+            it.getUnreadNotificationsCount(account)
+        } ?: Result.success(0)
+    }
 }
 
 interface INotificationResolver {
@@ -89,4 +95,8 @@ interface INotificationResolver {
         account: LoggedAccount,
         notificationLastReadId: String,
     ): Result<Unit>?
+
+    suspend fun getUnreadNotificationsCount(account: LoggedAccount): Result<Int>? {
+        return null
+    }
 }

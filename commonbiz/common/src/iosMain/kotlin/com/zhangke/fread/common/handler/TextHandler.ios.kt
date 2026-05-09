@@ -34,6 +34,19 @@ actual class TextHandler () {
         )
     }
 
+    actual fun translateText(text: String) {
+        if (text.isEmpty()) return
+        // iOS doesn't expose a system Translate intent like Android's ACTION_PROCESS_TEXT;
+        // present the share sheet so the user can pick the Translate extension.
+        val activityViewController = UIActivityViewController(listOf(text), null)
+        val rootViewController = UIApplication.sharedApplication.keyWindow?.rootViewController
+        rootViewController?.presentViewController(
+            activityViewController,
+            animated = true,
+            completion = null,
+        )
+    }
+
     actual fun openSendEmail() {
         val mailtoUrl = "mailto:"
         val url = NSURL.URLWithString(mailtoUrl)

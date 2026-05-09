@@ -176,14 +176,16 @@ private fun AdditionalMoreOptions(
             onOpenBlogWithOtherAccountClick(blog)
         }
     }
-    if (blogTranslationState.support) {
-        ModalDropdownMenuItem(
-            text = stringResource(LocalizedString.statusUiInteractionTranslate),
-            imageVector = Icons.Default.Language,
-            onClick = {
-                onDismissRequest()
+    ModalDropdownMenuItem(
+        text = stringResource(LocalizedString.statusUiInteractionTranslate),
+        imageVector = Icons.Default.Language,
+        onClick = {
+            onDismissRequest()
+            if (blogTranslationState.support) {
                 onTranslateClick()
-            },
-        )
-    }
+            } else {
+                textHandler.translateText(blog.content)
+            }
+        },
+    )
 }

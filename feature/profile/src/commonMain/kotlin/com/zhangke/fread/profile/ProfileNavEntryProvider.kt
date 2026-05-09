@@ -12,6 +12,8 @@ import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.profile.screen.setting.SettingScreenNavKey
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreenNavKey
+import com.zhangke.fread.profile.screen.setting.alttext.AltTextSettingsNavKey
+import com.zhangke.fread.profile.screen.setting.alttext.AltTextSettingsScreen
 import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsNavKey
 import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsScreen
 import com.zhangke.fread.profile.screen.setting.behavior.BehaviorSettingsNavKey
@@ -35,6 +37,9 @@ class ProfileNavEntryProvider : NavEntryProvider {
         entry<BehaviorSettingsNavKey> {
             BehaviorSettingsScreen(koinViewModel())
         }
+        entry<AltTextSettingsNavKey> {
+            AltTextSettingsScreen(koinViewModel())
+        }
         entry<OpenSourceScreenNavKey> {
             OpenSourceScreen()
         }
@@ -50,6 +55,7 @@ class ProfileNavEntryProvider : NavEntryProvider {
         subclass(AboutScreenNavKey::class)
         subclass(AppearanceSettingsNavKey::class)
         subclass(BehaviorSettingsNavKey::class)
+        subclass(AltTextSettingsNavKey::class)
         subclass(OpenSourceScreenNavKey::class)
         subclass(DonateScreenNavKey::class)
     }

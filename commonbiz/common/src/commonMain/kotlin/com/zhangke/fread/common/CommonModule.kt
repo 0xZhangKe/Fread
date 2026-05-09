@@ -5,6 +5,7 @@ import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.alttext.AltTextGenerator
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.browser.UrlRedirectViewModel
 import com.zhangke.fread.common.bubble.BubbleManager
@@ -54,6 +55,7 @@ val commonModule = module {
     singleOf(::StatusUpdater)
 
     factoryOf(::LinkPreviewCardRepo)
+    singleOf(::AltTextGenerator)
     factoryOf(::AppUpdateManager)
     factoryOf(::BrowserLauncher)
     factoryOf(::ContentConfigAdapter)

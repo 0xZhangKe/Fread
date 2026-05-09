@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.TimelineDefaultPosition
+import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.preference.FollowingFeedPrefs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -11,6 +14,7 @@ import kotlinx.coroutines.launch
 
 class BehaviorSettingsViewModel(
     private val freadConfigManager: FreadConfigManager,
+    private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -23,6 +27,8 @@ class BehaviorSettingsViewModel(
         )
     )
     val uiState = _uiState.asStateFlow()
+
+    private var followingFeedAccounts: List<LoggedAccount> = emptyList()
 
     init {
         viewModelScope.launch {
@@ -37,6 +43,26 @@ class BehaviorSettingsViewModel(
                     it.copy(alwaysShowSensitiveContent = config.alwaysShowSensitiveContent)
                 }
             }
+        }
+        viewModelScope.launch { loadFollowingFeedPrefs() }
+    }
+
+    private suspend fun loadFollowingFeedPrefs() {
+        val accounts = statusProvider.accountManager.getAllLoggedAccount()
+        val supported = accounts.mapNotNull { account ->
+            val prefs = statusProvider.feedPreferencesProvider
+                .getFollowingFeedPrefs(account)
+                ?.getOrNull()
+            if (prefs != null) account to prefs else null
+        }
+        if (supported.isEmpty()) return
+        followingFeedAccounts = supported.map { it.first }
+        val firstPrefs = supported.first().second
+        _uiState.update {
+            it.copy(
+                showFollowingFeedSection = true,
+                followingFeedPrefs = firstPrefs,
+            )
         }
     }
 
@@ -71,6 +97,16 @@ class BehaviorSettingsViewModel(
         viewModelScope.launch {
             freadConfigManager.updateJumpToProfile(on)
             _uiState.update { it.copy(jumpToProfile = on) }
+        }
+    }
+
+    fun onFollowingFeedPrefsChanged(prefs: FollowingFeedPrefs) {
+        _uiState.update { it.copy(followingFeedPrefs = prefs) }
+        viewModelScope.launch {
+            followingFeedAccounts.forEach { account ->
+                statusProvider.feedPreferencesProvider
+                    .updateFollowingFeedPrefs(account, prefs)
+            }
         }
     }
 }

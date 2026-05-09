@@ -662,4 +662,24 @@ object LocalizedString {
         localizedString.setting_item_jump_to_profile_title
     val setting_item_jump_to_profile_subtitle =
         localizedString.setting_item_jump_to_profile_subtitle
+    val setting_group_following_feed_title =
+        localizedString.setting_group_following_feed_title
+    val setting_group_following_feed_subtitle =
+        localizedString.setting_group_following_feed_subtitle
+    val setting_item_hide_replies_title =
+        localizedString.setting_item_hide_replies_title
+    val setting_item_hide_replies_subtitle =
+        localizedString.setting_item_hide_replies_subtitle
+    val setting_item_hide_replies_by_unfollowed_title =
+        localizedString.setting_item_hide_replies_by_unfollowed_title
+    val setting_item_hide_replies_by_unfollowed_subtitle =
+        localizedString.setting_item_hide_replies_by_unfollowed_subtitle
+    val setting_item_hide_reposts_title =
+        localizedString.setting_item_hide_reposts_title
+    val setting_item_hide_reposts_subtitle =
+        localizedString.setting_item_hide_reposts_subtitle
+    val setting_item_hide_quote_posts_title =
+        localizedString.setting_item_hide_quote_posts_title
+    val setting_item_hide_quote_posts_subtitle =
+        localizedString.setting_item_hide_quote_posts_subtitle
 }

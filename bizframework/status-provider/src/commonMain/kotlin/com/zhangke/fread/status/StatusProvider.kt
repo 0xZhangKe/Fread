@@ -8,6 +8,8 @@ import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.NotificationResolver
 import com.zhangke.fread.status.platform.IPlatformResolver
 import com.zhangke.fread.status.platform.PlatformResolver
+import com.zhangke.fread.status.preference.FeedPreferencesProvider
+import com.zhangke.fread.status.preference.IFeedPreferencesProvider
 import com.zhangke.fread.status.publish.IPublishBlogManager
 import com.zhangke.fread.status.publish.PublishBlogManager
 import com.zhangke.fread.status.screen.IStatusScreenProvider
@@ -39,6 +41,8 @@ class StatusProvider(private val providers: List<IStatusProvider>) {
     val notificationResolver = NotificationResolver(providers.map { it.notificationResolver })
 
     val publishManager = PublishBlogManager(providers.map { it.publishManager })
+
+    val feedPreferencesProvider = FeedPreferencesProvider(providers.map { it.feedPreferencesProvider })
 }
 
 interface IStatusProvider {
@@ -58,4 +62,7 @@ interface IStatusProvider {
     val notificationResolver: INotificationResolver
 
     val publishManager: IPublishBlogManager
+
+    val feedPreferencesProvider: IFeedPreferencesProvider
+        get() = object : IFeedPreferencesProvider {}
 }

@@ -159,6 +159,7 @@ class NotificationTab(
                                 modifier = Modifier.fillMaxWidth()
                                     .background(backgroundColor),
                                 notification = notification.notification,
+                                additionalActors = notification.additionalActors,
                                 composedStatusInteraction = composedStatusInteraction,
                                 indexInList = index,
                                 onAcceptClick = onAcceptClick,

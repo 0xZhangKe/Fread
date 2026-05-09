@@ -39,6 +39,7 @@ fun StatusNotificationUi(
     onUnblockClick: (PlatformLocator, BlogAuthor) -> Unit,
     onCancelFollowRequestClick: (PlatformLocator, BlogAuthor) -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
+    additionalActors: List<BlogAuthor> = emptyList(),
 ) {
     Column(modifier = modifier) {
         Box(modifier = Modifier) {
@@ -56,6 +57,7 @@ fun StatusNotificationUi(
                         interactionDesc = stringResource(LocalizedString.sharedNotificationFavouritedDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
+                        additionalActors = additionalActors,
                     )
                 }
 
@@ -95,6 +97,7 @@ fun StatusNotificationUi(
                         interactionDesc = stringResource(LocalizedString.sharedNotificationReblogDesc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
+                        additionalActors = additionalActors,
                     )
                 }
 
@@ -130,6 +133,7 @@ fun StatusNotificationUi(
                         onCancelFollowRequestClick = {
                             onCancelFollowRequestClick(notification.locator, it)
                         },
+                        additionalActors = additionalActors,
                     )
                 }
 
@@ -254,9 +258,9 @@ object NotificationStyleDefaults {
     const val nameMaxLength = 10
 
     val containerStartPadding = 16.dp
-    val containerTopPadding = 8.dp
+    val containerTopPadding = 12.dp
     val containerEndPadding = 16.dp
-    val containerBottomPadding = 8.dp
+    val containerBottomPadding = 12.dp
 
     val internalBlogStartPadding = 8.dp
     val internalBlogTopPadding = 8.dp

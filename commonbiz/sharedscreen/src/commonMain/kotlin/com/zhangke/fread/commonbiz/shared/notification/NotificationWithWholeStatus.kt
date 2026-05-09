@@ -9,6 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,7 +37,10 @@ fun NotificationWithWholeStatus(
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
     iconTint: Color = LocalContentColor.current,
+    additionalActors: List<BlogAuthor> = emptyList(),
 ) {
+    var expanded by rememberSaveable(sharedElementId) { mutableStateOf(false) }
+    val expandable = additionalActors.isNotEmpty()
     Column(
         modifier = Modifier
             .clickable { composedStatusInteraction.onBlogClick(locator, blog) }
@@ -51,7 +58,21 @@ fun NotificationWithWholeStatus(
             accountName = author?.humanizedName,
             interactionDesc = interactionDesc,
             style = style,
+            additionalAvatars = additionalActors.map { it.avatar },
+            othersCount = additionalActors.size,
+            expandable = expandable,
+            expanded = expanded,
+            onToggleExpand = { expanded = !expanded },
         )
+
+        if (expandable && expanded) {
+            val allActors = listOfNotNull(author) + additionalActors
+            NotificationActorsList(
+                modifier = Modifier.padding(top = style.headLineToContentPadding),
+                actors = allActors,
+                onActorClick = { composedStatusInteraction.onUserInfoClick(locator, it) },
+            )
+        }
 
         BlogUi(
             modifier = Modifier.padding(top = style.headLineToContentPadding)

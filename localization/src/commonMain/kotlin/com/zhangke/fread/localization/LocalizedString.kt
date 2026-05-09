@@ -684,4 +684,24 @@ object LocalizedString {
         localizedString.setting_item_hide_quote_posts_title
     val setting_item_hide_quote_posts_subtitle =
         localizedString.setting_item_hide_quote_posts_subtitle
+    val alt_text_settings_title = localizedString.alt_text_settings_title
+    val alt_text_settings_subtitle_configured =
+        localizedString.alt_text_settings_subtitle_configured
+    val alt_text_settings_subtitle_not_configured =
+        localizedString.alt_text_settings_subtitle_not_configured
+    val alt_text_settings_api_key_label = localizedString.alt_text_settings_api_key_label
+    val alt_text_settings_base_url_label = localizedString.alt_text_settings_base_url_label
+    val alt_text_settings_model_label = localizedString.alt_text_settings_model_label
+    val alt_text_settings_prompt_label = localizedString.alt_text_settings_prompt_label
+    val alt_text_settings_max_tokens_label = localizedString.alt_text_settings_max_tokens_label
+    val alt_text_settings_save = localizedString.alt_text_settings_save
+    val alt_text_generate_button = localizedString.alt_text_generate_button
+    val alt_text_cancel_button = localizedString.alt_text_cancel_button
+    val alt_text_provider_format = localizedString.alt_text_provider_format
+    val alt_text_cost_format = localizedString.alt_text_cost_format
+    val error_alt_text_not_configured = localizedString.error_alt_text_not_configured
+    val error_alt_text_load_image = localizedString.error_alt_text_load_image
+    val error_alt_text_server = localizedString.error_alt_text_server
+    val error_alt_text_network = localizedString.error_alt_text_network
+    val error_alt_text_no_text = localizedString.error_alt_text_no_text
 }

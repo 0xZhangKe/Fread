@@ -379,22 +379,19 @@ class NotificationViewModel(
         if (isEmpty()) return this
         val result = mutableListOf<StatusNotificationUiState>()
         for (item in this) {
-            val key = item.notification.groupKey() ?: run {
+            val key = item.notification.groupKey()
+            val lastIndex = result.lastIndex
+            if (key == null || lastIndex < 0 || result[lastIndex].notification.groupKey() != key) {
                 result += item
                 continue
             }
-            val existingIndex = result.indexOfFirst { it.notification.groupKey() == key }
-            if (existingIndex < 0) {
-                result += item
-                continue
-            }
-            val existing = result[existingIndex]
+            val existing = result[lastIndex]
             val newAuthor = item.notification.author ?: continue
             val primaryAuthor = existing.notification.author
             val alreadyPresent = primaryAuthor?.uri == newAuthor.uri ||
                 existing.additionalActors.any { it.uri == newAuthor.uri }
             if (alreadyPresent) continue
-            result[existingIndex] = existing.copy(
+            result[lastIndex] = existing.copy(
                 additionalActors = existing.additionalActors + newAuthor,
                 unreadState = existing.unreadState || item.unreadState,
             )

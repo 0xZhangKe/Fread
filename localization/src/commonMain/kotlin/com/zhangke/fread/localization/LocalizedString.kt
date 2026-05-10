@@ -662,4 +662,9 @@ object LocalizedString {
         localizedString.setting_item_jump_to_profile_title
     val setting_item_jump_to_profile_subtitle =
         localizedString.setting_item_jump_to_profile_subtitle
+    val threaded_view_menu_open = localizedString.threaded_view_menu_open
+    val threaded_view_screen_title = localizedString.threaded_view_screen_title
+    val threaded_view_assembling = localizedString.threaded_view_assembling
+    val threaded_view_empty = localizedString.threaded_view_empty
+    val threaded_view_back = localizedString.threaded_view_back
 }

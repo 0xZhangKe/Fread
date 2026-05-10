@@ -45,20 +45,24 @@ class GetStatusContextUseCase(
 
             is GetPostThreadResponseThreadUnion.ThreadViewPost -> {
                 val threadViewPost = thread.value
+                val opDid = threadViewPost.post.author.did.did
                 val ancestors = buildAncestors(
                     locator = locator,
                     parent = threadViewPost.parent,
                     platform = platform,
                     loggedAccount = loggedAccount,
                 )
-                val descendants = thread.value.replies.mapNotNull { reply ->
-                    convertReply(
-                        reply = reply,
-                        locator = locator,
-                        platform = platform,
-                        loggedAccount = loggedAccount,
-                    )
-                }
+                val descendants = thread.value.replies
+                    .sortedByDescending { it.authorDidOrNull() == opDid }
+                    .mapNotNull { reply ->
+                        convertReply(
+                            reply = reply,
+                            locator = locator,
+                            platform = platform,
+                            loggedAccount = loggedAccount,
+                            opDid = opDid,
+                        )
+                    }
                 return Result.success(
                     StatusContext(
                         ancestors = ancestors,
@@ -80,6 +84,7 @@ class GetStatusContextUseCase(
         locator: PlatformLocator,
         platform: BlogPlatform,
         loggedAccount: BlueskyLoggedAccount?,
+        opDid: String,
     ): DescendantStatus? {
         if (reply !is ThreadViewPostReplieUnion.ThreadViewPost) return null
         val statusUiState = statusAdapter.convertToUiState(
@@ -88,16 +93,22 @@ class GetStatusContextUseCase(
             platform = platform,
             loggedAccount = loggedAccount,
         )
-        val nested = reply.value.replies.firstNotNullOfOrNull { nestedReply ->
-            convertReply(
-                reply = nestedReply,
-                locator = locator,
-                platform = platform,
-                loggedAccount = loggedAccount,
-            )
-        }
+        val nested = reply.value.replies
+            .sortedByDescending { it.authorDidOrNull() == opDid }
+            .firstNotNullOfOrNull { nestedReply ->
+                convertReply(
+                    reply = nestedReply,
+                    locator = locator,
+                    platform = platform,
+                    loggedAccount = loggedAccount,
+                    opDid = opDid,
+                )
+            }
         return DescendantStatus(statusUiState, nested)
     }
+
+    private fun ThreadViewPostReplieUnion.authorDidOrNull(): String? =
+        (this as? ThreadViewPostReplieUnion.ThreadViewPost)?.value?.post?.author?.did?.did
 
     private fun buildAncestors(
         locator: PlatformLocator,

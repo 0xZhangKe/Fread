@@ -78,7 +78,7 @@ fun FollowRequestNotification(
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
                     textAlign = TextAlign.Left,
-                    text = notification.author.webFinger.toString(),
+                    text = notification.author.displayHandle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )

@@ -30,7 +30,7 @@ class GetStatusContextUseCase(
         val threadResult = client.getPostThreadCatching(
             GetPostThreadQueryParams(
                 uri = AtUri(status.intrinsicBlog.url),
-                depth = 6,
+                depth = 10,
             )
         )
         if (threadResult.isFailure) return Result.failure(threadResult.exceptionOrNull()!!)
@@ -52,17 +52,12 @@ class GetStatusContextUseCase(
                     loggedAccount = loggedAccount,
                 )
                 val descendants = thread.value.replies.mapNotNull { reply ->
-                    if (reply is ThreadViewPostReplieUnion.ThreadViewPost) {
-                        val statusUiState = statusAdapter.convertToUiState(
-                            locator = locator,
-                            postView = reply.value.post,
-                            platform = platform,
-                            loggedAccount = loggedAccount,
-                        )
-                        DescendantStatus(statusUiState, null)
-                    } else {
-                        null
-                    }
+                    convertReply(
+                        reply = reply,
+                        locator = locator,
+                        platform = platform,
+                        loggedAccount = loggedAccount,
+                    )
                 }
                 return Result.success(
                     StatusContext(
@@ -78,6 +73,30 @@ class GetStatusContextUseCase(
                 )
             }
         }
+    }
+
+    private fun convertReply(
+        reply: ThreadViewPostReplieUnion,
+        locator: PlatformLocator,
+        platform: BlogPlatform,
+        loggedAccount: BlueskyLoggedAccount?,
+    ): DescendantStatus? {
+        if (reply !is ThreadViewPostReplieUnion.ThreadViewPost) return null
+        val statusUiState = statusAdapter.convertToUiState(
+            locator = locator,
+            postView = reply.value.post,
+            platform = platform,
+            loggedAccount = loggedAccount,
+        )
+        val nested = reply.value.replies.firstNotNullOfOrNull { nestedReply ->
+            convertReply(
+                reply = nestedReply,
+                locator = locator,
+                platform = platform,
+                loggedAccount = loggedAccount,
+            )
+        }
+        return DescendantStatus(statusUiState, nested)
     }
 
     private fun buildAncestors(

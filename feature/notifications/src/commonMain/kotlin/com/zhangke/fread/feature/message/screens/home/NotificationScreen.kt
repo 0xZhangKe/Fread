@@ -78,7 +78,6 @@ private fun NotificationsHomeScreenContent(
     onAccountSelected: (LoggedAccount) -> Unit,
     onAddClick: () -> Unit,
 ) {
-    val density = LocalDensity.current
     val snackbarHost = rememberSnackbarHostState()
     val showTopBar = uiState.tabs.size > 1 && uiState.selectedAccount != null
     Box(

@@ -9,9 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
@@ -49,6 +51,7 @@ fun InputBlogTextField(
         value = textFieldValue,
         colors = TextFieldDefaults.transparentIndicatorColors,
         textStyle = MaterialTheme.typography.bodyLarge,
+        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
         onValueChange = {
             onContentChanged(it)
         },

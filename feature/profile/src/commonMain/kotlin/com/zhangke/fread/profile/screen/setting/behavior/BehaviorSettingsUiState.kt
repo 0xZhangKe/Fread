@@ -7,4 +7,5 @@ data class BehaviorSettingsUiState(
     val alwaysShowSensitiveContent: Boolean,
     val timelineDefaultPosition: TimelineDefaultPosition,
     val openUrlInAppBrowser: Boolean,
+    val jumpToProfile: Boolean,
 )

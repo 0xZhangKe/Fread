@@ -27,6 +27,7 @@ fun DetailTopBar(
     title: RichText,
     onBackClick: () -> Unit,
     actions: @Composable RowScope.() -> Unit,
+    showBackButton: Boolean = true,
 ) {
     val progressTopBarContainerColor = MaterialTheme.colorScheme.surface.copy(progress)
     val blurEnabled = progress >= 1F
@@ -58,7 +59,9 @@ fun DetailTopBar(
             }
         },
         navigationIcon = {
-            Toolbar.BackButton(onBackClick = onBackClick)
+            if (showBackButton) {
+                Toolbar.BackButton(onBackClick = onBackClick)
+            }
         },
         windowInsets = WindowInsets.statusBars,
         colors = TopAppBarColors.default(

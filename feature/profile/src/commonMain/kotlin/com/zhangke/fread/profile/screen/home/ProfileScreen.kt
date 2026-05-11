@@ -36,12 +36,15 @@ import com.zhangke.framework.composable.plus
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.composable.EmptyContent
 import com.zhangke.fread.common.composable.EmptyContentType
+import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingScreenNavKey
+import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -50,22 +53,35 @@ fun ProfileScreen() {
     val viewModel = koinViewModel<ProfileHomeViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val moduleScreenVisitor = LocalModuleScreenVisitor.current
+    val freadConfigManager = LocalFreadConfigManager.current
+    val statusProvider: StatusProvider = koinInject()
     LaunchedEffect(Unit) {
         viewModel.refreshAccountInfo()
     }
-    ProfileHomePageContent(
-        uiState = uiState,
-        onAddAccountClick = {
-            backStack.add(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
-        },
-        onSettingClick = {
-            backStack.add(SettingScreenNavKey)
-        },
-        onAccountClick = {
-            viewModel.onAccountClick(it)
-        },
-        onLoginClick = viewModel::onLoginClick,
-    )
+    val singleAccount = uiState.accountDataList.singleOrNull()?.account?.account
+    val jumpContent: (@Composable () -> Unit)? =
+        if (freadConfigManager.jumpToProfile && singleAccount != null) {
+            statusProvider.screenProvider.getUserDetailContent(singleAccount)
+        } else {
+            null
+        }
+    if (jumpContent != null) {
+        jumpContent()
+    } else {
+        ProfileHomePageContent(
+            uiState = uiState,
+            onAddAccountClick = {
+                backStack.add(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
+            },
+            onSettingClick = {
+                backStack.add(SettingScreenNavKey)
+            },
+            onAccountClick = {
+                viewModel.onAccountClick(it)
+            },
+            onLoginClick = viewModel::onLoginClick,
+        )
+    }
     ConsumeFlow(viewModel.openPageFlow) {
         backStack.add(it)
     }

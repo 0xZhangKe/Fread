@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.screen
 
+import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
@@ -76,6 +77,10 @@ class StatusScreenProvider(
         return providerList.firstNotNullOfOrNull {
             it.getUserDetailScreenWithoutAccount(uri)
         }
+    }
+
+    fun getUserDetailContent(account: LoggedAccount): (@Composable () -> Unit)? {
+        return providerList.firstNotNullOfOrNull { it.getUserDetailContent(account) }
     }
 
     fun getTagTimelineScreen(
@@ -159,6 +164,10 @@ interface IStatusScreenProvider {
     fun getUserDetailScreen(locator: PlatformLocator, uri: FormalUri, userId: String?): NavKey?
 
     fun getUserDetailScreenWithoutAccount(uri: FormalUri): NavKey? {
+        return null
+    }
+
+    fun getUserDetailContent(account: LoggedAccount): (@Composable () -> Unit)? {
         return null
     }
 

@@ -253,4 +253,6 @@
     <string name="setting_item_open_url_by_system_subtitle">启用后，Fread 将通过系统浏览器打开链接。</string>
     <string name="setting_item_solid_bar_background_title">顶部和底部栏纯色背景</string>
     <string name="setting_item_solid_bar_background_subtitle">将顶部和底部栏改为纯色，而不是高斯模糊。</string>
+    <string name="setting_item_jump_to_profile_title">跳转到账号</string>
+    <string name="setting_item_jump_to_profile_subtitle">如果只添加了一个账号，则直接跳转到该账号</string>
 </resources>

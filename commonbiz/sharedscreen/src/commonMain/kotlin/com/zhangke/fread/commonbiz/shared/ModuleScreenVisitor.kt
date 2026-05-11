@@ -17,6 +17,8 @@ interface IFeedsScreenVisitor {
 interface IProfileScreenVisitor {
 
     fun getDonateScreen(): NavKey
+
+    fun getSettingScreenNavKey(): NavKey
 }
 
 val LocalModuleScreenVisitor: ProvidableCompositionLocal<ModuleScreenVisitor> =

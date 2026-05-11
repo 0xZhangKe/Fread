@@ -253,4 +253,6 @@
     <string name="setting_item_open_url_by_system_subtitle">При включении Fread будет открывать ссылки в системном браузере.</string>
     <string name="setting_item_solid_bar_background_title">Сплошной фон панелей</string>
     <string name="setting_item_solid_bar_background_subtitle">Делает верхнюю и нижнюю панели сплошными вместо размытого фона.</string>
+    <string name="setting_item_jump_to_profile_title">Перейти к профилю</string>
+    <string name="setting_item_jump_to_profile_subtitle">Переходить прямо к вашему профилю, если добавлен только один аккаунт</string>
 </resources>

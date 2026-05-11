@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.ui.action
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.CloudQueue
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Language
@@ -16,6 +17,17 @@ fun DropDownCopyLinkItem(
     ModalDropdownMenuItem(
         text = stringResource(LocalizedString.statusUiInteractionCopyUrl),
         imageVector = Icons.Default.ContentCopy,
+        onClick = onClick,
+    )
+}
+
+@Composable
+fun DropDownCreateListItem(
+    onClick: () -> Unit,
+) {
+    ModalDropdownMenuItem(
+        text = stringResource(LocalizedString.activity_pub_created_list_title),
+        imageVector = Icons.AutoMirrored.Outlined.ListAlt,
         onClick = onClick,
     )
 }

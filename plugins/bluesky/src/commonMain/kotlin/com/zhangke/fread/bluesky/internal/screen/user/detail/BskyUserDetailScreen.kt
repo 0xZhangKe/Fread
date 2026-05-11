@@ -8,6 +8,8 @@ import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -23,6 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.AlertConfirmDialog
@@ -46,6 +50,7 @@ import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.handler.LocalTextHandler
+import com.zhangke.fread.commonbiz.shared.ModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerImage
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
@@ -63,6 +68,7 @@ import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.user.UserHandleLine
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 @Serializable
 data class BskyUserDetailScreenNavKey(
@@ -75,11 +81,12 @@ fun BskyUserDetailScreen(
     locator: PlatformLocator,
     did: String,
     viewModel: BskyUserDetailViewModel,
-    showBackButton: Boolean = true,
+    asProfileTab: Boolean = false,
 ) {
     val backStack = LocalNavBackStack.currentOrThrow
     val browserLauncher = LocalActivityBrowserLauncher.current
     val activityTextHandler = LocalTextHandler.current
+    val moduleScreenVisitor = koinInject<ModuleScreenVisitor>()
     val uiState by viewModel.uiState.collectAsState()
     val snackBarState = rememberSnackbarHostState()
     val coroutineScope = rememberCoroutineScope()
@@ -87,7 +94,8 @@ fun BskyUserDetailScreen(
         uiState = uiState,
         snackbarHostState = snackBarState,
         locator = locator,
-        showBackButton = showBackButton,
+        asProfileTab = asProfileTab,
+        showBackButton = !asProfileTab,
         onBackClick = backStack::removeLastOrNull,
         onSearchClick = {
             backStack.add(SearchStatusScreenNavKey(locator = locator, did = did))
@@ -166,10 +174,16 @@ fun BskyUserDetailScreen(
             )
         },
         onLogoutClick = viewModel::onLogoutClick,
+        onSettingClick = {
+            backStack.add(moduleScreenVisitor.profileScreenVisitor.getSettingScreenNavKey())
+        },
+        onAddAccountClick = {
+            backStack.add(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
+        },
     )
     ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
     LaunchedEffect(Unit) { viewModel.onPageResume() }
-    if (showBackButton) {
+    if (asProfileTab) {
         ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
     }
 }
@@ -179,6 +193,7 @@ private fun UserDetailContent(
     uiState: BskyUserDetailUiState,
     snackbarHostState: SnackbarHostState,
     locator: PlatformLocator,
+    asProfileTab: Boolean,
     showBackButton: Boolean,
     onBackClick: () -> Unit,
     onSearchClick: () -> Unit,
@@ -200,6 +215,8 @@ private fun UserDetailContent(
     onHashtagClick: (String) -> Unit,
     onFollowingFeedsClick: () -> Unit,
     onLogoutClick: () -> Unit,
+    onSettingClick: () -> Unit,
+    onAddAccountClick: () -> Unit,
 ) {
     val contentCanScrollBackward = remember { mutableStateOf(false) }
     DetailPageScaffold(
@@ -225,6 +242,7 @@ private fun UserDetailContent(
         topBarActions = {
             TopBarActions(
                 uiState = uiState,
+                asProfileTab = asProfileTab,
                 onBlockClick = onBlockClick,
                 onMuteClick = onMuteClick,
                 onSearchClick = onSearchClick,
@@ -235,6 +253,8 @@ private fun UserDetailContent(
                 onBlockedUserListClick = onBlockedUserListClick,
                 onMuteUserListClick = onMuteUserListClick,
                 onLogoutClick = onLogoutClick,
+                onSettingClick = onSettingClick,
+                onAddAccountClick = onAddAccountClick,
             )
         },
         handleLine = {
@@ -307,6 +327,7 @@ private fun UserDetailContent(
 @Composable
 private fun TopBarActions(
     uiState: BskyUserDetailUiState,
+    asProfileTab: Boolean,
     onSearchClick: () -> Unit,
     onBlockClick: () -> Unit,
     onMuteClick: () -> Unit,
@@ -317,17 +338,31 @@ private fun TopBarActions(
     onMuteUserListClick: () -> Unit,
     onFollowingFeedsClick: () -> Unit,
     onLogoutClick: () -> Unit,
+    onAddAccountClick: () -> Unit,
+    onSettingClick: () -> Unit,
 ) {
     SimpleIconButton(
         onClick = onSearchClick,
         imageVector = Icons.Default.Search,
         contentDescription = stringResource(LocalizedString.search),
     )
-    if (uiState.isOwner) {
+    if (!asProfileTab && uiState.isOwner) {
         SimpleIconButton(
             onClick = onFollowingFeedsClick,
             imageVector = Icons.AutoMirrored.Outlined.ListAlt,
             contentDescription = stringResource(LocalizedString.feeds),
+        )
+    }
+    if (asProfileTab) {
+        SimpleIconButton(
+            onClick = onAddAccountClick,
+            imageVector = Icons.Outlined.PersonAdd,
+            contentDescription = stringResource(LocalizedString.addContentTitle),
+        )
+        SimpleIconButton(
+            onClick = onSettingClick,
+            imageVector = Icons.Outlined.Settings,
+            contentDescription = stringResource(LocalizedString.settings),
         )
     }
     var showMorePopup by remember {
@@ -345,6 +380,7 @@ private fun TopBarActions(
         mutableStateOf(false)
     }
     PopupMenu(
+        offset = DpOffset(x = 32.dp, y = 0.dp),
         expanded = showMorePopup,
         onDismissRequest = { showMorePopup = false },
     ) {
@@ -358,6 +394,10 @@ private fun TopBarActions(
         }
         if (uiState.isOwner) {
             SelfAccountActions(
+                onFollowingFeedsClick = {
+                    showMorePopup = false
+                    onFollowingFeedsClick()
+                },
                 onBlockedUserListClick = onBlockedUserListClick,
                 onMuteUserListClick = onMuteUserListClick,
                 onLogoutClick = onLogoutClick,
@@ -396,10 +436,16 @@ private fun TopBarActions(
 
 @Composable
 private fun SelfAccountActions(
+    onFollowingFeedsClick: () -> Unit,
     onBlockedUserListClick: () -> Unit,
     onMuteUserListClick: () -> Unit,
     onLogoutClick: () -> Unit,
 ) {
+    ModalDropdownMenuItem(
+        text = stringResource(LocalizedString.feeds),
+        imageVector = Icons.AutoMirrored.Outlined.ListAlt,
+        onClick = onFollowingFeedsClick,
+    )
     ModalDropdownMenuItem(
         text = stringResource(LocalizedString.bsky_user_detail_action_muted_list),
         imageVector = Icons.AutoMirrored.Filled.VolumeOff,

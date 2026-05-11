@@ -25,6 +25,8 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,6 +54,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
@@ -89,6 +92,7 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.utils.formatDate
+import com.zhangke.fread.commonbiz.shared.ModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerImage
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
@@ -97,6 +101,7 @@ import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
+import com.zhangke.fread.status.ui.action.DropDownCreateListItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
@@ -114,6 +119,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import org.koin.compose.koinInject
 
 @Serializable
 data class UserDetailScreenKey(
@@ -130,19 +136,21 @@ fun UserDetailScreen(
     userUri: FormalUri? = null,
     webFinger: WebFinger? = null,
     userId: String? = null,
-    showBackButton: Boolean = true,
+    asProfileTab: Boolean = false,
 ) {
     val backstack = LocalNavBackStack.currentOrThrow
     val browserLauncher = LocalActivityBrowserLauncher.current
     val activityTextHandler = LocalTextHandler.current
     val viewModel = viewModel.getViewModel(locator, userUri, webFinger, userId)
+    val moduleScreenVisitor = koinInject<ModuleScreenVisitor>()
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     UserDetailContent(
         uiState = uiState,
         messageFlow = viewModel.messageFlow,
         userId = userId,
-        showBackButton = showBackButton,
+        asProfileTab = asProfileTab,
+        showBackButton = !asProfileTab,
         onFavouritesClick = {
             backstack.add(
                 StatusListScreenKey(
@@ -294,8 +302,14 @@ fun UserDetailScreen(
         onLogoutClick = {
             viewModel.onLogoutClick()
         },
+        onSettingClick = {
+            backstack.add(moduleScreenVisitor.profileScreenVisitor.getSettingScreenNavKey())
+        },
+        onAddAccountClick = {
+            backstack.add(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
+        },
     )
-    if (showBackButton) {
+    if (asProfileTab) {
         ConsumeFlow(viewModel.finishPageFlow) {
             backstack.removeLastOrNull()
         }
@@ -307,6 +321,7 @@ private fun UserDetailContent(
     uiState: UserDetailUiState,
     messageFlow: SharedFlow<TextString>,
     userId: String?,
+    asProfileTab: Boolean,
     showBackButton: Boolean,
     onBackClick: () -> Unit,
     onSearchClick: () -> Unit,
@@ -337,6 +352,8 @@ private fun UserDetailContent(
     onFilterClick: () -> Unit,
     onCreatedListClick: () -> Unit,
     onLogoutClick: () -> Unit,
+    onSettingClick: () -> Unit,
+    onAddAccountClick: () -> Unit,
 ) {
     val accountUiState = uiState.accountUiState
     val account = accountUiState?.account
@@ -366,6 +383,7 @@ private fun UserDetailContent(
         topBarActions = {
             ToolbarActions(
                 uiState = uiState,
+                asProfileTab = asProfileTab,
                 onFavouritesClick = onFavouritesClick,
                 onBlockClick = onBlockClick,
                 onSearchClick = onSearchClick,
@@ -384,6 +402,8 @@ private fun UserDetailContent(
                 onFilterClick = onFilterClick,
                 onCreatedListClick = onCreatedListClick,
                 onLogoutClick = onLogoutClick,
+                onSettingClick = onSettingClick,
+                onAddAccountClick = onAddAccountClick,
             )
         },
         handleLine = {
@@ -512,6 +532,7 @@ private fun buildTabList(
 @Composable
 private fun ToolbarActions(
     uiState: UserDetailUiState,
+    asProfileTab: Boolean,
     onSearchClick: () -> Unit,
     onFavouritesClick: () -> Unit,
     onBookmarksClick: () -> Unit,
@@ -530,6 +551,8 @@ private fun ToolbarActions(
     onFilterClick: () -> Unit,
     onCreatedListClick: () -> Unit,
     onLogoutClick: () -> Unit,
+    onAddAccountClick: () -> Unit,
+    onSettingClick: () -> Unit,
 ) {
     val accountUiState = uiState.accountUiState ?: return
     SimpleIconButton(
@@ -537,18 +560,30 @@ private fun ToolbarActions(
         imageVector = Icons.Default.Search,
         contentDescription = stringResource(LocalizedString.search),
     )
-    if (uiState.isAccountOwner) {
+    if (!asProfileTab && uiState.isAccountOwner) {
         SimpleIconButton(
             onClick = onCreatedListClick,
             imageVector = Icons.AutoMirrored.Outlined.ListAlt,
             contentDescription = stringResource(LocalizedString.activity_pub_created_list_title),
         )
     }
+    if (asProfileTab) {
+        SimpleIconButton(
+            onClick = onAddAccountClick,
+            imageVector = Icons.Outlined.PersonAdd,
+            contentDescription = stringResource(LocalizedString.addContentTitle),
+        )
+        SimpleIconButton(
+            onClick = onSettingClick,
+            imageVector = Icons.Outlined.Settings,
+            contentDescription = stringResource(LocalizedString.settings),
+        )
+    }
     var showMorePopup by remember { mutableStateOf(false) }
     SimpleIconButton(
         onClick = { showMorePopup = true },
         imageVector = Icons.Default.MoreVert,
-        contentDescription = "More Options"
+        contentDescription = "More Options",
     )
     var showBlockUserConfirmDialog by remember {
         mutableStateOf(false)
@@ -560,9 +595,16 @@ private fun ToolbarActions(
         mutableStateOf(false)
     }
     PopupMenu(
+        offset = DpOffset(x = 32.dp, y = 0.dp),
         expanded = showMorePopup,
         onDismissRequest = { showMorePopup = false },
     ) {
+        if (uiState.isAccountOwner) {
+            DropDownCreateListItem {
+                showMorePopup = false
+                onCreatedListClick()
+            }
+        }
         DropDownOpenInBrowserItem {
             showMorePopup = false
             onOpenInBrowserClick()

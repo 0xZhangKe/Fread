@@ -194,7 +194,7 @@ class ActivityPubScreenProvider(
                 viewModel = koinViewModel(),
                 locator = locator,
                 userUri = userUri,
-                showBackButton = false,
+                asProfileTab = true,
             )
         }
     }

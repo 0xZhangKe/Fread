@@ -253,4 +253,6 @@
     <string name="setting_item_open_url_by_system_subtitle">Wenn aktiviert, öffnet Fread Links im Systembrowser.</string>
     <string name="setting_item_solid_bar_background_title">Solider Leistenhintergrund</string>
     <string name="setting_item_solid_bar_background_subtitle">Macht die obere und untere Leiste einfarbig statt weichgezeichnet.</string>
+    <string name="setting_item_jump_to_profile_title">Zum Profil springen</string>
+    <string name="setting_item_jump_to_profile_subtitle">Direkt zu deinem Profil springen, wenn nur ein Konto hinzugefügt wurde</string>
 </resources>

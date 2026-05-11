@@ -165,7 +165,7 @@ class BlueskyScreenProvider(
                 locator = locator,
                 did = did,
                 viewModel = koinViewModel { parametersOf(locator, did) },
-                showBackButton = false,
+                asProfileTab = true,
             )
         }
     }

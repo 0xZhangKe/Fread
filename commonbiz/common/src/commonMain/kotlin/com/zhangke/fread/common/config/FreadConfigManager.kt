@@ -61,7 +61,7 @@ class FreadConfigManager(
         openUrlInAppBrowser =
             localConfigManager.getBoolean(LOCAL_KEY_OPEN_URL_IN_APP_BROWSER) != false
         jumpToProfile =
-            localConfigManager.getBoolean(LOCAL_KEY_JUMP_TO_PROFILE) ?: false
+            localConfigManager.getBoolean(LOCAL_KEY_JUMP_TO_PROFILE) ?: true
         _enableBlurAppBarStyleFlow.value =
             localConfigManager.getBoolean(LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE) != false
         _homeTabNextButtonVisibleFlow.value =

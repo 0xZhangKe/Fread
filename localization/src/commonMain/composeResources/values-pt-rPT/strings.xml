@@ -253,4 +253,6 @@
     <string name="setting_item_open_url_by_system_subtitle">Quando ativado, o Fread abrirá links no navegador do sistema.</string>
     <string name="setting_item_solid_bar_background_title">Fundo sólido das barras</string>
     <string name="setting_item_solid_bar_background_subtitle">Torna as barras superior e inferior sólidas em vez de desfocadas.</string>
+    <string name="setting_item_jump_to_profile_title">Ir para o perfil</string>
+    <string name="setting_item_jump_to_profile_subtitle">Ir diretamente para o seu perfil se houver apenas uma conta adicionada</string>
 </resources>

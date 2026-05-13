@@ -21,9 +21,10 @@ class SearchEngine(
     suspend fun searchStatus(
         locator: PlatformLocator,
         query: String,
-        maxId: String?
+        maxId: String?,
+        sort: SearchStatusSort = SearchStatusSort.LATEST,
     ): Result<List<StatusUiState>> {
-        return engineList.map { it.searchStatus(locator, query, maxId) }.collect()
+        return engineList.map { it.searchStatus(locator, query, maxId, sort) }.collect()
     }
 
     suspend fun searchHashtag(
@@ -71,6 +72,7 @@ interface ISearchEngine {
         locator: PlatformLocator,
         query: String,
         maxId: String?,
+        sort: SearchStatusSort = SearchStatusSort.LATEST,
     ): Result<List<StatusUiState>>
 
     suspend fun searchHashtag(

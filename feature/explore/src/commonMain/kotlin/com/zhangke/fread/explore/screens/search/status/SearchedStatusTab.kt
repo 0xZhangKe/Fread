@@ -25,6 +25,7 @@ import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.search.SearchStatusSort
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -33,18 +34,33 @@ import org.koin.core.parameter.parametersOf
 internal class SearchedStatusTab(
     private val locator: PlatformLocator,
     private val query: String,
+    private val sort: SearchStatusSort = SearchStatusSort.LATEST,
+    /** When true, render the Bluesky-style "Latest"/"Top" labels; otherwise keep the "Status" label. */
+    private val useBlueskyLabels: Boolean = false,
 ) : BaseTab() {
 
     override val options: TabOptions
         @Composable get() = TabOptions(
-            title = stringResource(LocalizedString.explorerSearchTabTitleStatus),
+            title = stringResource(
+                when (sort) {
+                    SearchStatusSort.LATEST -> if (useBlueskyLabels) {
+                        LocalizedString.explorerSearchTabTitleLatest
+                    } else {
+                        LocalizedString.explorerSearchTabTitleStatus
+                    }
+
+                    SearchStatusSort.TOP -> LocalizedString.explorerSearchTabTitleTop
+                }
+            ),
         )
 
     @Composable
     override fun Content() {
         super.Content()
         val backStack = LocalNavBackStack.currentOrThrow
-        val viewModel = koinViewModel<SearchStatusViewModel> { parametersOf(locator) }
+        val viewModel = koinViewModel<SearchStatusViewModel>(
+            key = "search-status-${sort.name}",
+        ) { parametersOf(locator, sort) }
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(query) {

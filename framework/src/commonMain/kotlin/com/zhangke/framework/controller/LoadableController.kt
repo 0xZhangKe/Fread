@@ -37,6 +37,16 @@ interface LoadableUiState<DATA, IMPL : LoadableUiState<DATA, IMPL>> {
 }
 
 /**
+ * Result of a single page fetch.
+ *
+ * [hasMore] should be `false` when the server signals end-of-feed (e.g. Bluesky's
+ * `cursor` field comes back null/blank, or Mastodon returns an empty `Link: next`).
+ * Loaders that don't paginate at all can pass `hasMore = false` to disable
+ * load-more entirely.
+ */
+data class Page<T>(val items: List<T>, val hasMore: Boolean)
+
+/**
  * type DATA is the type of the data to be loaded,
  * type IMPL is the type of the implementation of the LoadableUiState.
  */
@@ -52,6 +62,8 @@ open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
     private var initJob: Job? = null
     private var refreshJob: Job? = null
     private var loadMoreJob: Job? = null
+
+    private var reachEnd: Boolean = false
 
     /**
      * 一般来说初始化的时候调用一次，之后只需要调用 onRefresh 和 onLoadMore 即可。
@@ -151,6 +163,111 @@ open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
                         it.copyObject(loadMoreState = LoadState.Failed(e.toTextStringOrNull()))
                     }
                 }
+        }
+    }
+
+    /**
+     * Paged variant: callers return `Page<DATA>` which carries an explicit
+     * `hasMore` flag. Once `hasMore` is `false`, subsequent `onLoadMorePaged`
+     * calls short-circuit so the list doesn't loop back to page 1.
+     *
+     * `reachEnd` resets on every refresh/init so pull-to-refresh still works.
+     */
+    fun initDataPaged(
+        getDataFromServer: suspend () -> Result<Page<DATA>>,
+        getDataFromLocal: (suspend () -> List<DATA>)? = null,
+    ) {
+        reachEnd = false
+        mutableUiState.update { it.copyObject(dataList = emptyList()) }
+        initJob?.cancel()
+        initJob = coroutineScope.launch {
+            mutableUiState.update { it.copyObject(initializing = true) }
+            if (getDataFromLocal != null) {
+                val localData = getDataFromLocal()
+                if (localData.isNotEmpty()) {
+                    mutableUiState.update {
+                        it.copyObject(
+                            dataList = localData,
+                            initializing = false,
+                        )
+                    }
+                }
+            }
+            getDataFromServer().handlePageAsRefresh()
+        }
+    }
+
+    fun onRefreshPaged(
+        hideRefreshing: Boolean = false,
+        getDataFromServer: suspend () -> Result<Page<DATA>>,
+    ) {
+        if (mutableUiState.value.refreshing) return
+        reachEnd = false
+        mutableUiState.update {
+            it.copyObject(refreshing = !hideRefreshing, errorMessage = null)
+        }
+        loadMoreJob?.cancel()
+        refreshJob?.cancel()
+        refreshJob = coroutineScope.launch {
+            getDataFromServer().handlePageAsRefresh()
+        }
+    }
+
+    fun onLoadMorePaged(
+        loadMoreFromServer: suspend () -> Result<Page<DATA>>,
+    ) {
+        if (reachEnd) return
+        if (mutableUiState.value.refreshing) return
+        if (mutableUiState.value.loadMoreState == LoadState.Loading) return
+        mutableUiState.update { it.copyObject(loadMoreState = LoadState.Loading) }
+        loadMoreJob?.cancel()
+        loadMoreJob = coroutineScope.launch {
+            loadMoreFromServer()
+                .onSuccess { page ->
+                    if (!page.hasMore) reachEnd = true
+                    mutableUiState.update {
+                        it.copyObject(
+                            dataList = it.dataList + page.items,
+                            loadMoreState = LoadState.Idle,
+                        )
+                    }
+                }.onFailure { e ->
+                    mutableUiState.update {
+                        it.copyObject(loadMoreState = LoadState.Failed(e.toTextStringOrNull()))
+                    }
+                }
+        }
+    }
+
+    private fun Result<Page<DATA>>.handlePageAsRefresh() {
+        this.onSuccess { page ->
+            if (!page.hasMore) reachEnd = true
+            mutableUiState.update {
+                it.copyObject(
+                    dataList = page.items,
+                    refreshing = false,
+                    initializing = false,
+                )
+            }
+        }.onFailure { e ->
+            val errorMessage = e.message?.let { textOf(it) }
+            if (uiState.value.dataList.isEmpty()) {
+                mutableUiState.update {
+                    it.copyObject(
+                        errorMessage = errorMessage,
+                        refreshing = false,
+                        initializing = false,
+                    )
+                }
+            } else {
+                errorMessage?.let(onPostSnackMessage)
+                mutableUiState.update {
+                    it.copyObject(
+                        refreshing = false,
+                        initializing = false,
+                    )
+                }
+            }
         }
     }
 }

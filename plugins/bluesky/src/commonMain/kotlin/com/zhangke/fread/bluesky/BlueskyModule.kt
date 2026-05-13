@@ -79,7 +79,7 @@ val blueskyModule = module {
 
     factoryOf(::BlueskyAccountManager)
     factoryOf(::BlueskyPublishManager)
-    factoryOf(::BlueskySearchEngine)
+    singleOf(::BlueskySearchEngine)
     factoryOf(::BlueskyNotificationResolver)
     factoryOf(::BlueskyStatusResolver)
     factoryOf(::BlueskyStatusSourceResolver)

@@ -365,6 +365,8 @@ object LocalizedString {
 
     val bluesky_protocol_name = localizedString.bluesky_protocol_name
 
+    val bskyProfileLabelKey = localizedString.bsky_profile_label_key
+
     val bsky_add_content_title = localizedString.bsky_add_content_title
     val bsky_add_content_hosting_provider = localizedString.bsky_add_content_hosting_provider
     val bsky_add_content_user_name = localizedString.bsky_add_content_user_name

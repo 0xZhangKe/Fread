@@ -183,6 +183,7 @@ class BskyUserDetailViewModel(
             muted = this.viewer?.muted == true,
             blockUri = this.viewer?.blocking?.atUri,
             relationship = this.viewer?.let { accountAdapter.convertRelationship(it) },
+            labels = this.labels.filter { it.neg != true }.map { it.`val` },
         )
     }
 

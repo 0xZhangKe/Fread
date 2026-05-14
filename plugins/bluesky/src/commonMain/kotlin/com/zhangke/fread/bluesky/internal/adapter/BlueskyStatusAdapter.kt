@@ -24,6 +24,7 @@ import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.model.BlogFiltered
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
@@ -143,6 +144,7 @@ class BlueskyStatusAdapter(
             embedList = convertEmbed(postView.embed, platform),
             platform = platform,
             pinned = pinned,
+            filtered = postView.labels.toBlogFiltered(),
         )
     }
 
@@ -178,6 +180,7 @@ class BlueskyStatusAdapter(
         replyCount: Long? = null,
         embedList: List<BlogEmbed> = emptyList(),
         mediaList: List<BlogMedia> = emptyList(),
+        filtered: List<BlogFiltered>? = null,
     ): Blog {
         val createAt = Instant(post.createdAt)
         return Blog(
@@ -227,8 +230,44 @@ class BlueskyStatusAdapter(
             visibility = StatusVisibility.PUBLIC,
             embeds = embedList,
             supportTranslate = false,
+            filtered = filtered,
         )
     }
+
+    /**
+     * Maps Bluesky moderation labels into the shared [BlogFiltered] shape so the
+     * Mastodon content-warning UI can render them. Negated labels are ignored.
+     *
+     * Action mapping mirrors the AT Proto moderation defaults:
+     *  - `!hide`                                            → HIDE
+     *  - `porn`, `sexual`, `nudity`, `graphic-media`, `gore` → BLUR
+     *  - everything else (`!warn`, `spam`, custom labels)    → WARN
+     */
+    private fun List<com.atproto.label.Label>.toBlogFiltered(): List<BlogFiltered>? {
+        if (isEmpty()) return null
+        val mapped = this
+            .filter { it.neg != true }
+            .map { label ->
+                val value = label.`val`
+                val action = when (value) {
+                    "!hide" -> BlogFiltered.FilterAction.HIDE
+                    "porn", "sexual", "nudity", "graphic-media", "gore" ->
+                        BlogFiltered.FilterAction.BLUR
+
+                    else -> BlogFiltered.FilterAction.WARN
+                }
+                BlogFiltered(
+                    id = value,
+                    title = humanizeLabelValue(value),
+                    action = action,
+                    keywordMatches = emptyList(),
+                )
+            }
+        return mapped.takeIf { it.isNotEmpty() }
+    }
+
+    private fun humanizeLabelValue(value: String): String =
+        value.removePrefix("!").replace('-', ' ').replaceFirstChar { it.uppercaseChar() }
 
     private fun buildLink(
         url: String,

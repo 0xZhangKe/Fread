@@ -24,6 +24,7 @@ import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
 import com.zhangke.fread.common.startup.StartupManager
+import com.zhangke.fread.common.language.LanguageDetector
 import com.zhangke.fread.common.status.StatusIdGenerator
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.adapter.ContentConfigAdapter
@@ -52,6 +53,7 @@ val commonModule = module {
     singleOf(::SelectedContentSwitcher)
     singleOf(::StartupManager)
     singleOf(::StatusUpdater)
+    singleOf(::LanguageDetector)
 
     factoryOf(::LinkPreviewCardRepo)
     factoryOf(::AppUpdateManager)

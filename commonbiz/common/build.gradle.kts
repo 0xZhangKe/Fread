@@ -77,6 +77,8 @@ kotlin {
                 implementation(libs.androidx.browser)
 
                 implementation(libs.multiplatformsettings.datastore)
+
+                implementation("com.google.mlkit:language-id:17.0.6")
             }
         }
         iosMain {

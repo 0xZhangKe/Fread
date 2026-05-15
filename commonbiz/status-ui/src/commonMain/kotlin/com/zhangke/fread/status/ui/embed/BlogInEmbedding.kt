@@ -57,30 +57,23 @@ fun BlogInEmbedding(
                 )
             }
 
-            // text content and images
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
-            ) {
-                Column(modifier = Modifier.weight(3F)) {
-                    BlogTextContentSection(
-                        blog = blog,
-                        style = style.contentStyle.copy(
-                            maxLine = 10
-                        ),
-                    )
-                }
-                if (blog.mediaList.isNotEmpty()) {
-                    Spacer(modifier = Modifier.size(8.dp))
-                    BlogMedias(
-                        modifier = Modifier.weight(1F),
-                        mediaList = blog.mediaList,
-                        sharedElementId = blog.id,
-                        indexInList = 0,
-                        sensitive = blog.sensitive,
-                        onMediaClick = {},
-                        showAlt = false,
-                    )
-                }
+            if (blog.content.isNotEmpty()) {
+                BlogTextContentSection(
+                    blog = blog,
+                    style = style.contentStyle.copy(maxLine = 10),
+                )
+            }
+            if (blog.mediaList.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(style.contentStyle.contentVerticalSpacing))
+                BlogMedias(
+                    modifier = Modifier.fillMaxWidth(),
+                    mediaList = blog.mediaList,
+                    sharedElementId = blog.id,
+                    indexInList = 0,
+                    sensitive = blog.sensitive,
+                    onMediaClick = {},
+                    showAlt = false,
+                )
             }
 
             // link card

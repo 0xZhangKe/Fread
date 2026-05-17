@@ -255,4 +255,14 @@
     <string name="setting_item_solid_bar_background_subtitle">Make the top and bottom bars solid instead of blurred.</string>
     <string name="setting_item_jump_to_profile_title">Jump to profile</string>
     <string name="setting_item_jump_to_profile_subtitle">Jump directly to your profile if there is only one added</string>
+    <string name="setting_group_following_feed_title">Following feed (Bluesky)</string>
+    <string name="setting_group_following_feed_subtitle">Filters synced with the Bluesky network. Affects all clients.</string>
+    <string name="setting_item_hide_replies_title">Hide replies</string>
+    <string name="setting_item_hide_replies_subtitle">Filter out any replies in the Following feed.</string>
+    <string name="setting_item_hide_replies_by_unfollowed_title">Hide replies to non-followed accounts</string>
+    <string name="setting_item_hide_replies_by_unfollowed_subtitle">Filter out replies whose parent post is by someone you don't follow.</string>
+    <string name="setting_item_hide_reposts_title">Hide reposts</string>
+    <string name="setting_item_hide_reposts_subtitle">Filter out reposts in the Following feed.</string>
+    <string name="setting_item_hide_quote_posts_title">Hide quote posts</string>
+    <string name="setting_item_hide_quote_posts_subtitle">Filter out quote posts in the Following feed.</string>
 </resources>

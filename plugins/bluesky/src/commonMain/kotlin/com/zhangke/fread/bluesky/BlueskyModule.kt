@@ -74,6 +74,7 @@ val blueskyModule = module {
 
     factoryOf(::BlueskyAccountManager)
     factoryOf(::BlueskyPublishManager)
+    factoryOf(::BlueskyFeedPreferencesProvider)
     factoryOf(::BlueskySearchEngine)
     factoryOf(::BlueskyNotificationResolver)
     factoryOf(::BlueskyStatusResolver)

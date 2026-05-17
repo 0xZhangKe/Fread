@@ -662,4 +662,6 @@ object LocalizedString {
         localizedString.setting_item_jump_to_profile_title
     val setting_item_jump_to_profile_subtitle =
         localizedString.setting_item_jump_to_profile_subtitle
+    val bluesky_user_list_tab_boosts = localizedString.bluesky_user_list_tab_boosts
+    val bluesky_user_list_tab_quotes = localizedString.bluesky_user_list_tab_quotes
 }

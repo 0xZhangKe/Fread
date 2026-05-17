@@ -31,6 +31,17 @@ class BlueskySearchEngine(
     private val accountManager: BlueskyLoggedAccountManager,
 ) : ISearchEngine {
 
+    // Bluesky paginates by an opaque cursor, not by a numeric offset or
+    // post-id. The ISearchEngine interface only carries `maxId`/`offset`, so we
+    // keep the cursor here, keyed by query. A fresh call (`maxId`/`offset`
+    // null) or a query change resets the cursor; subsequent calls reuse it.
+    // Engine is bound as a singleton in BlueskyModule so this state survives
+    // across calls in a search session.
+    private var statusQuery: String? = null
+    private var statusCursor: String? = null
+    private var authorQuery: String? = null
+    private var authorCursor: String? = null
+
     override suspend fun search(
         locator: PlatformLocator,
         query: String,
@@ -59,10 +70,18 @@ class BlueskySearchEngine(
         query: String,
         maxId: String?,
     ): Result<List<StatusUiState>> {
+        val freshSearch = maxId == null || query != statusQuery
+        if (freshSearch) {
+            statusQuery = query
+            statusCursor = null
+        } else if (statusCursor.isNullOrBlank()) {
+            return Result.success(emptyList())
+        }
         val client = clientManager.getClient(locator)
         val account = client.loggedAccountProvider()
         val platform = platformRepo.getPlatform(client.baseUrl)
-        return client.searchPostsCatching(SearchPostsQueryParams(q = query))
+        return client.searchPostsCatching(SearchPostsQueryParams(q = query, cursor = statusCursor))
+            .onSuccess { statusCursor = it.cursor }
             .map { result ->
                 result.posts.map {
                     statusAdapter.convertToUiState(
@@ -88,8 +107,16 @@ class BlueskySearchEngine(
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>> {
+        val freshSearch = offset == null || offset == 0 || query != authorQuery
+        if (freshSearch) {
+            authorQuery = query
+            authorCursor = null
+        } else if (authorCursor.isNullOrBlank()) {
+            return Result.success(emptyList())
+        }
         val client = clientManager.getClient(locator)
-        return client.searchActorsCatching(SearchActorsQueryParams(q = query))
+        return client.searchActorsCatching(SearchActorsQueryParams(q = query, cursor = authorCursor))
+            .onSuccess { authorCursor = it.cursor }
             .map { result ->
                 result.actors.map { accountAdapter.convertToBlogAuthor(it) }
             }

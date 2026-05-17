@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.ViewTimeline
@@ -36,6 +37,7 @@ import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.donate.DonateScreenNavKey
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreenNavKey
 import com.zhangke.fread.profile.screen.setting.about.AboutScreenNavKey
+import com.zhangke.fread.profile.screen.setting.alttext.AltTextSettingsNavKey
 import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsNavKey
 import com.zhangke.fread.profile.screen.setting.behavior.BehaviorSettingsNavKey
 import kotlinx.serialization.Serializable
@@ -71,6 +73,9 @@ fun SettingScreen(viewModel: SettingScreenModel) {
         onBehaviorClick = {
             backStack.add(BehaviorSettingsNavKey)
         },
+        onAltTextClick = {
+            backStack.add(AltTextSettingsNavKey)
+        },
         onAboutClick = {
             backStack.add(AboutScreenNavKey)
         },
@@ -78,6 +83,9 @@ fun SettingScreen(viewModel: SettingScreenModel) {
             backStack.add(DonateScreenNavKey)
         },
     )
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.refreshAltTextStatus()
+    }
 }
 
 @Composable
@@ -91,6 +99,7 @@ private fun SettingContent(
     onDonateClick: () -> Unit,
     onAppearanceClick: () -> Unit,
     onBehaviorClick: () -> Unit,
+    onAltTextClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -116,6 +125,14 @@ private fun SettingContent(
                 title = stringResource(LocalizedString.setting_group_behavior),
                 subtitle = stringResource(LocalizedString.setting_group_behavior_subtitle),
                 onClick = onBehaviorClick,
+            )
+            SettingItem(
+                icon = Icons.Default.Description,
+                title = stringResource(LocalizedString.alt_text_settings_title),
+                subtitle = uiState.altTextConfiguredModel?.let {
+                    stringResource(LocalizedString.alt_text_settings_subtitle_configured, it)
+                } ?: stringResource(LocalizedString.alt_text_settings_subtitle_not_configured),
+                onClick = onAltTextClick,
             )
             LanguageItem(
                 onLanguageClick = onLanguageClick,

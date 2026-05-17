@@ -255,4 +255,22 @@
     <string name="setting_item_solid_bar_background_subtitle">Make the top and bottom bars solid instead of blurred.</string>
     <string name="setting_item_jump_to_profile_title">Jump to profile</string>
     <string name="setting_item_jump_to_profile_subtitle">Jump directly to your profile if there is only one added</string>
+    <string name="alt_text_settings_title">Alt text generation</string>
+    <string name="alt_text_settings_subtitle_configured">Model: %1$s</string>
+    <string name="alt_text_settings_subtitle_not_configured">Not configured</string>
+    <string name="alt_text_settings_api_key_label">API key</string>
+    <string name="alt_text_settings_base_url_label">Base URL</string>
+    <string name="alt_text_settings_model_label">Model</string>
+    <string name="alt_text_settings_prompt_label">Prompt</string>
+    <string name="alt_text_settings_max_tokens_label">Max tokens</string>
+    <string name="alt_text_settings_save">Save</string>
+    <string name="alt_text_generate_button">Generate alt text</string>
+    <string name="alt_text_cancel_button">Cancel generation</string>
+    <string name="alt_text_provider_format">Provider: %1$s</string>
+    <string name="alt_text_cost_format">Cost: %1$s</string>
+    <string name="error_alt_text_not_configured">Alt text generation is not configured. Open Settings → Alt text generation to set the API key and model.</string>
+    <string name="error_alt_text_load_image">Could not load the image for alt text generation.</string>
+    <string name="error_alt_text_server">The alt text provider returned an error.</string>
+    <string name="error_alt_text_network">Network error while generating alt text.</string>
+    <string name="error_alt_text_no_text">The alt text provider returned an empty response.</string>
 </resources>

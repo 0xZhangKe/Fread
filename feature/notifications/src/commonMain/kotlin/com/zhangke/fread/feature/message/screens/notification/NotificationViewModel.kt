@@ -7,6 +7,7 @@ import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.notification.NotificationUnreadCounter
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
@@ -31,6 +32,7 @@ class NotificationViewModel(
     private val statusUiStateAdapter: StatusUiStateAdapter,
     private val refactorToNewStatus: RefactorToNewStatusUseCase,
     private val notificationsRepo: NotificationsRepo,
+    private val notificationUnreadCounter: NotificationUnreadCounter,
     statusUpdater: StatusUpdater,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
@@ -143,6 +145,7 @@ class NotificationViewModel(
                     account = account,
                     notificationLastReadId = firstNotificationId
                 )
+            notificationUnreadCounter.refresh()
         }
     }
 

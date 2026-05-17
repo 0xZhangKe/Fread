@@ -3,6 +3,7 @@ package com.zhangke.fread.feature.message.screens.notification
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.lifecycle.ContainerViewModel.SubViewModelParams
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.notification.NotificationUnreadCounter
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.feature.message.repo.notification.NotificationsRepo
@@ -15,6 +16,7 @@ class NotificationContainerViewModel(
     private val statusUiStateAdapter: StatusUiStateAdapter,
     private val refactorToNewStatus: RefactorToNewStatusUseCase,
     private val statusUpdater: StatusUpdater,
+    private val notificationUnreadCounter: NotificationUnreadCounter,
 ) : ContainerViewModel<NotificationViewModel, NotificationContainerViewModel.Params>() {
 
     fun getSubViewModel(
@@ -33,6 +35,7 @@ class NotificationContainerViewModel(
             statusUiStateAdapter = statusUiStateAdapter,
             refactorToNewStatus = refactorToNewStatus,
             statusUpdater = statusUpdater,
+            notificationUnreadCounter = notificationUnreadCounter,
         )
     }
 

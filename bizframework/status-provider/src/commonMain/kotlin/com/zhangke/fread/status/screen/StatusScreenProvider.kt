@@ -147,6 +147,10 @@ class StatusScreenProvider(
     ): NavKey? {
         return providerList.firstNotNullOfOrNull { it.getPublishScreen(account, text) }
     }
+
+    fun getThreadedViewScreen(locator: PlatformLocator, blog: Blog): NavKey? {
+        return providerList.firstNotNullOfOrNull { it.getThreadedViewScreen(locator, blog) }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -216,6 +220,10 @@ interface IStatusScreenProvider {
     }
 
     fun getPublishScreen(account: LoggedAccount, text: String): NavKey? {
+        return null
+    }
+
+    fun getThreadedViewScreen(locator: PlatformLocator, blog: Blog): NavKey? {
         return null
     }
 }

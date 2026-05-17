@@ -3,6 +3,7 @@ package com.zhangke.fread.status.ui.action
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.StatusActionType
+import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_more
@@ -41,6 +43,7 @@ fun StatusMoreInteractionIcon(
     onTranslateClick: () -> Unit,
     onOpenBlogWithOtherAccountClick: (Blog) -> Unit,
     showOpenBlogWithOtherAccountBtn: Boolean = true,
+    onOpenThreadedViewClick: (() -> Unit)? = null,
 ) {
     var showMorePopup by remember {
         mutableStateOf(false)
@@ -68,6 +71,7 @@ fun StatusMoreInteractionIcon(
                 onTranslateClick = onTranslateClick,
                 onOpenBlogWithOtherAccountClick = onOpenBlogWithOtherAccountClick,
                 showOpenBlogWithOtherAccountBtn = showOpenBlogWithOtherAccountBtn,
+                onOpenThreadedViewClick = onOpenThreadedViewClick,
             )
 
             if (isOwner == true) {
@@ -156,6 +160,7 @@ private fun AdditionalMoreOptions(
     onTranslateClick: () -> Unit,
     onOpenBlogWithOtherAccountClick: (Blog) -> Unit,
     showOpenBlogWithOtherAccountBtn: Boolean,
+    onOpenThreadedViewClick: (() -> Unit)?,
 ) {
     val textHandler = LocalTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
@@ -183,6 +188,19 @@ private fun AdditionalMoreOptions(
             onClick = {
                 onDismissRequest()
                 onTranslateClick()
+            },
+        )
+    }
+    val showThreadedView = onOpenThreadedViewClick != null &&
+        blog.platform.protocol.isBluesky &&
+        (blog.reply.repliesCount ?: 0) > 0
+    if (showThreadedView) {
+        ModalDropdownMenuItem(
+            text = stringResource(LocalizedString.threaded_view_menu_open),
+            imageVector = Icons.Default.ChatBubbleOutline,
+            onClick = {
+                onDismissRequest()
+                onOpenThreadedViewClick?.invoke()
             },
         )
     }

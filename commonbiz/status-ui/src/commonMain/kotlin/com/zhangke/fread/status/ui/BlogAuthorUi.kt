@@ -61,7 +61,7 @@ fun BlogAuthorUi(
                 Text(
                     modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                     textAlign = TextAlign.Start,
-                    text = author.webFinger.toString(),
+                    text = author.displayHandle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.labelMedium,
@@ -144,7 +144,7 @@ private fun BaseBlogAuthor(
                         Text(
                             modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                             textAlign = TextAlign.Start,
-                            text = author.webFinger.toString(),
+                            text = author.displayHandle,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.labelMedium,

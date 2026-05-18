@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -113,7 +112,6 @@ class FreadActivity : ComponentActivity(), CallbackableActivity {
     }
 
     private fun handleIntent(intent: Intent) {
-        Log.d("Z_TEST", "intent: ${intent.dataString}")
         lifecycleScope.launch {
             if (intent.action == Intent.ACTION_SEND) {
                 if (intent.type?.startsWith("text/") == true) {

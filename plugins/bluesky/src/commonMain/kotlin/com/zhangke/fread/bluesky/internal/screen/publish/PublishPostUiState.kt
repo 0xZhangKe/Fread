@@ -30,6 +30,8 @@ data class PublishPostUiState(
     val list: List<StatusList>,
     val mentionState: LoadableState<List<ProfileView>>,
     val detectedLinkCard: DetectedLinkCard?,
+    /** BCP-47 language tag that the on-device detector is confident about, when it differs from [selectedLanguages]. */
+    val suggestedLanguage: String? = null,
 ) {
 
     val publishEnabled: Boolean

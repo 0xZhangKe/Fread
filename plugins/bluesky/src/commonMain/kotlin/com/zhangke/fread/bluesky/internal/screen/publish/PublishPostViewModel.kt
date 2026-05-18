@@ -19,6 +19,7 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PublishingPostUseCase
 import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.language.LanguageDetector
 import com.zhangke.fread.common.repo.LinkPreviewCardRepo
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
@@ -33,6 +34,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -49,6 +51,7 @@ class PublishPostViewModel(
     private val publishingPost: PublishingPostUseCase,
     private val locator: PlatformLocator,
     private val linkPreviewCardRepo: LinkPreviewCardRepo,
+    private val languageDetector: LanguageDetector,
     defaultText: String?,
     replyBlogJsonString: String?,
     quoteBlogJsonString: String?,
@@ -70,6 +73,11 @@ class PublishPostViewModel(
     private val mentionedUsers = mutableSetOf<ProfileView>()
 
     private var extractLinkPreviewCardJob: Job? = null
+
+    private var detectLanguageJob: Job? = null
+
+    /** Languages the user has already explicitly waved off for this composer session. */
+    private val dismissedLanguageSuggestions = mutableSetOf<String>()
 
     init {
         launchInViewModel(Dispatchers.IO) {
@@ -101,6 +109,45 @@ class PublishPostViewModel(
         _uiState.update { it.copy(content = text) }
         maybeNeedSearchAccount(text)
         extractLinkPreviewCard(text.text)
+        maybeDetectLanguage(text.text)
+    }
+
+    /**
+     * Mirrors bsky-social-app's `SuggestedLanguage` heuristic: only attempt
+     * detection once the user has typed enough text (≥40 chars). We debounce
+     * lightly so we don't hit the detector on every keystroke. The
+     * [LanguageDetector] applies the stricter "single confident match"
+     * thresholds.
+     */
+    private fun maybeDetectLanguage(text: String) {
+        detectLanguageJob?.cancel()
+        val trimmed = text.trim()
+        if (trimmed.length < MIN_DETECT_LENGTH) {
+            _uiState.update { it.copy(suggestedLanguage = null) }
+            return
+        }
+        detectLanguageJob = launchInViewModel {
+            delay(DETECT_DEBOUNCE_MS)
+            val detected = languageDetector.detect(trimmed)
+            _uiState.update { state ->
+                val suggestion = detected
+                    ?.takeIf { it !in state.selectedLanguages }
+                    ?.takeIf { it !in dismissedLanguageSuggestions }
+                state.copy(suggestedLanguage = suggestion)
+            }
+        }
+    }
+
+    fun onAcceptSuggestedLanguage() {
+        val suggestion = _uiState.value.suggestedLanguage ?: return
+        onLanguageSelected(listOf(suggestion))
+        _uiState.update { it.copy(suggestedLanguage = null) }
+    }
+
+    fun onDismissSuggestedLanguage() {
+        val suggestion = _uiState.value.suggestedLanguage ?: return
+        dismissedLanguageSuggestions += suggestion
+        _uiState.update { it.copy(suggestedLanguage = null) }
     }
 
     private fun maybeNeedSearchAccount(content: TextFieldValue) {
@@ -276,7 +323,16 @@ class PublishPostViewModel(
         launchInViewModel {
             configManager.updateBskyPublishLanguage(selectedLanguages)
         }
-        _uiState.update { it.copy(selectedLanguages = selectedLanguages) }
+        _uiState.update { state ->
+            val suggestion = state.suggestedLanguage
+                ?.takeIf { it !in selectedLanguages }
+            state.copy(selectedLanguages = selectedLanguages, suggestedLanguage = suggestion)
+        }
+    }
+
+    private companion object {
+        const val MIN_DETECT_LENGTH = 40
+        const val DETECT_DEBOUNCE_MS = 350L
     }
 
     fun onPublishClick() {

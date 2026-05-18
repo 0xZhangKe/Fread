@@ -1,13 +1,22 @@
 package com.zhangke.fread.status.ui.embed
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.seiko.imageloader.model.ImageRequest
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -46,14 +55,31 @@ private fun BlogEmbedUi(
 ) {
     when (embed) {
         is BlogEmbed.Link -> {
-            StatusEmbedLinkUi(
-                modifier = modifier
-                    .embedBorder()
-                    .fillMaxWidth(),
-                linkEmbed = embed,
-                style = style.cardStyle,
-                onCardClick = { onUrlClick(embed.url) },
-            )
+            if (embed.isGif) {
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .aspectRatio(embed.aspectRatio)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { onUrlClick(embed.url) },
+                ) {
+                    AutoSizeImage(
+                        request = remember(embed.url) { ImageRequest(embed.url) },
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit,
+                        contentDescription = embed.title.ifEmpty { "GIF" },
+                    )
+                }
+            } else {
+                StatusEmbedLinkUi(
+                    modifier = modifier
+                        .embedBorder()
+                        .fillMaxWidth(),
+                    linkEmbed = embed,
+                    style = style.cardStyle,
+                    onCardClick = { onUrlClick(embed.url) },
+                )
+            }
         }
 
         is BlogEmbed.Blog -> {

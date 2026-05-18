@@ -90,6 +90,7 @@ class BlueskyClient(
     val loggedAccountProvider: suspend () -> BlueskyLoggedAccount?,
     val newSessionUpdater: suspend (RefreshSessionResponse) -> Unit,
     val onLoginRequest: suspend () -> Unit,
+    private val labelersCache: BlueskyLabelersCache,
 ) : BlueskyApi by XrpcBlueskyApi(
     createBlueskyHttpClient(
         engine,
@@ -98,6 +99,7 @@ class BlueskyClient(
         loggedAccountProvider,
         newSessionUpdater,
         onLoginRequest,
+        labelersCache,
     )
 ) {
 
@@ -283,6 +285,7 @@ private fun createBlueskyHttpClient(
     accountProvider: suspend () -> BlueskyLoggedAccount?,
     newSessionUpdater: suspend (RefreshSessionResponse) -> Unit,
     onLoginRequest: suspend () -> Unit,
+    labelersCache: BlueskyLabelersCache,
 ): HttpClient {
     return HttpClient(engine) {
         install(Logging) {
@@ -301,6 +304,9 @@ private fun createBlueskyHttpClient(
             this.onLoginRequest = onLoginRequest
         }
         install(AtProtoProxyPlugin)
+        install(LabelersHeaderPlugin) {
+            this.cache = labelersCache
+        }
         expectSuccess = false
     }
 }

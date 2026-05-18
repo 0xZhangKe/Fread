@@ -22,6 +22,8 @@ data class BskyUserDetailUiState(
     val blockUri: String?,
     val muted: Boolean,
     val tabs: List<BlueskyFeeds>,
+    /** Active moderation labels applied to this account (already filtered for negation). */
+    val labels: List<String> = emptyList(),
 ) {
 
     val blocked: Boolean get() = !blockUri.isNullOrEmpty()

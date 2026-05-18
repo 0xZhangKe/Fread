@@ -1,6 +1,8 @@
 package com.zhangke.fread.bluesky.internal.screen.user.detail
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
@@ -65,6 +67,8 @@ import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.UserFollowLine
+import com.zhangke.fread.status.ui.user.UserAboutCard
+import com.zhangke.fread.status.ui.user.UserAboutField
 import com.zhangke.fread.status.ui.user.UserHandleLine
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
@@ -264,6 +268,20 @@ private fun UserDetailContent(
                 bot = false,
                 followedBy = uiState.relationship?.followedBy == true,
             )
+        },
+        bottomArea = if (uiState.labels.isNotEmpty()) {
+            {
+                UserAboutCard(
+                    fields = uiState.labels.map { label ->
+                        UserAboutField(
+                            key = stringResource(LocalizedString.bskyProfileLabelKey),
+                            value = humanizeLabel(label),
+                        )
+                    },
+                )
+            }
+        } else {
+            null
         },
         followInfoLine = {
             UserFollowLine(
@@ -526,3 +544,6 @@ private fun openFullImageScreen(backStack: NavBackStack<NavKey>, url: String?) {
         )
     )
 }
+
+private fun humanizeLabel(value: String): String =
+    value.removePrefix("!").replace('-', ' ').replaceFirstChar { it.uppercaseChar() }

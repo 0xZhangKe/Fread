@@ -43,6 +43,42 @@ internal class AtProtoProxyPlugin {
     }
 }
 
+/**
+ * Adds the `atproto-accept-labelers` header to every outgoing request based
+ * on the subscribed labelers cached in [BlueskyLabelersCache]. Required for
+ * custom labelers (e.g. skywatch.blue) to actually return labels —
+ * Bluesky's AppView only honours labels from labelers listed here.
+ */
+internal class LabelersHeaderPlugin private constructor(
+    private val cache: BlueskyLabelersCache,
+) {
+
+    class Config {
+        var cache: BlueskyLabelersCache? = null
+    }
+
+    companion object : HttpClientPlugin<Config, LabelersHeaderPlugin> {
+
+        private const val HEADER = "atproto-accept-labelers"
+
+        override val key = AttributeKey<LabelersHeaderPlugin>("LabelersHeaderPlugin")
+
+        override fun prepare(block: Config.() -> Unit): LabelersHeaderPlugin {
+            val config = Config().apply(block)
+            return LabelersHeaderPlugin(config.cache!!)
+        }
+
+        override fun install(plugin: LabelersHeaderPlugin, scope: HttpClient) {
+            scope.requestPipeline.intercept(HttpRequestPipeline.State) {
+                val labelers = plugin.cache.activeLabelers()
+                if (labelers.isNotEmpty() && !context.headers.contains(HEADER)) {
+                    context.headers[HEADER] = labelers.joinToString(", ")
+                }
+            }
+        }
+    }
+}
+
 internal class XrpcAuthPlugin(
     private val json: Json,
     private val accountProvider: suspend () -> BlueskyLoggedAccount?,

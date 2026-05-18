@@ -14,6 +14,7 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.updateStatus
+import com.zhangke.fread.status.search.SearchStatusSort
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 class SearchStatusViewModel(
@@ -22,6 +23,7 @@ class SearchStatusViewModel(
     statusUiStateAdapter: StatusUiStateAdapter,
     refactorToNewStatus: RefactorToNewStatusUseCase,
     val locator: PlatformLocator,
+    val sort: SearchStatusSort = SearchStatusSort.LATEST,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -70,13 +72,13 @@ class SearchStatusViewModel(
     fun onRefresh(query: String) {
         loadStatusController.onRefresh(locator) {
             statusProvider.searchEngine
-                .searchStatus(locator, query, null)
+                .searchStatus(locator, query, null, sort)
         }
     }
 
     fun onLoadMore(query: String) {
         loadStatusController.onLoadMore(locator) {
-            statusProvider.searchEngine.searchStatus(locator, query, it)
+            statusProvider.searchEngine.searchStatus(locator, query, it, sort)
         }
     }
 }

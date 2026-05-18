@@ -24,6 +24,8 @@ import com.zhangke.fread.explore.screens.search.status.SearchedStatusTab
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.isActivityPub
+import com.zhangke.fread.status.model.isBluesky
+import com.zhangke.fread.status.search.SearchStatusSort
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -70,12 +72,41 @@ private fun SearchScreenContent(
     ) { paddingValues ->
         val tabs = remember(locator, protocol, query) {
             buildList {
-                add(SearchedAuthorTab(locator, query))
-                add(SearchedStatusTab(locator, query))
-                if (protocol.isActivityPub) {
-                    add(SearchedPlatformTab(locator, query))
+                if (protocol.isBluesky) {
+                    // Bluesky order: Top, Latest, Accounts (matches bsky.app).
+                    add(
+                        SearchedStatusTab(
+                            locator = locator,
+                            query = query,
+                            sort = SearchStatusSort.TOP,
+                            useBlueskyLabels = true,
+                        )
+                    )
+                    add(
+                        SearchedStatusTab(
+                            locator = locator,
+                            query = query,
+                            sort = SearchStatusSort.LATEST,
+                            useBlueskyLabels = true,
+                        )
+                    )
+                    add(SearchedAuthorTab(locator, query))
+                    // Bluesky's hashtag search returns an empty list — tab omitted.
+                } else {
+                    add(SearchedAuthorTab(locator, query))
+                    add(
+                        SearchedStatusTab(
+                            locator = locator,
+                            query = query,
+                            sort = SearchStatusSort.LATEST,
+                            useBlueskyLabels = false,
+                        )
+                    )
+                    if (protocol.isActivityPub) {
+                        add(SearchedPlatformTab(locator, query))
+                    }
+                    add(SearchedHashtagTab(locator, query))
                 }
-                add(SearchedHashtagTab(locator, query))
             }
         }
         Column(

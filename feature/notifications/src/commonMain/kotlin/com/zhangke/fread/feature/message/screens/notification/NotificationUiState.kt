@@ -4,6 +4,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.notification.StatusNotification
 
@@ -55,6 +56,7 @@ data class StatusNotificationUiState(
     val notification: StatusNotification,
     val unreadState: Boolean = notification.unread,
     val fromLocal: Boolean,
+    val additionalActors: List<BlogAuthor> = emptyList(),
 ) {
 
     val id: String get() = notification.id

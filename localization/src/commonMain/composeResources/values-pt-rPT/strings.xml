@@ -255,4 +255,6 @@
     <string name="setting_item_solid_bar_background_subtitle">Torna as barras superior e inferior sólidas em vez de desfocadas.</string>
     <string name="setting_item_jump_to_profile_title">Ir para o perfil</string>
     <string name="setting_item_jump_to_profile_subtitle">Ir diretamente para o seu perfil se houver apenas uma conta adicionada</string>
+    <string name="bluesky_user_list_tab_boosts">Impulsionamentos</string>
+    <string name="bluesky_user_list_tab_quotes">Citações</string>
 </resources>

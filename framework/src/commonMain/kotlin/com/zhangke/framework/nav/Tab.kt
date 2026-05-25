@@ -23,6 +23,7 @@ import com.zhangke.framework.composable.plusTopPadding
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.framework.utils.roundToPx
 import com.zhangke.framework.utils.toPx
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -45,7 +46,8 @@ abstract class BaseTab : Tab {
 
 data class TabOptions(
     val title: String,
-    val icon: Painter? = null
+    val icon: Painter? = null,
+    val unreadCountFlow: StateFlow<Int>? = null,
 )
 
 @Composable

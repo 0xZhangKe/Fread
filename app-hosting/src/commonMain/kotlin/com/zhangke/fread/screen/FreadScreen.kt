@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -19,6 +21,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -220,10 +223,26 @@ private fun RowScope.TabNavigationItem(
         },
         alwaysShowLabel = false,
         icon = {
-            Icon(
-                painter = tab.options!!.icon!!,
-                contentDescription = tab.options!!.title,
-            )
+            val unreadCount = tab.options?.unreadCountFlow?.collectAsState()?.value ?: 0
+            BadgedBox(
+                badge = {
+                    if (unreadCount > 0) {
+                        Badge(
+                            containerColor = MaterialTheme.colorScheme.onPrimary,
+                            contentColor = MaterialTheme.colorScheme.primary,
+                        ) {
+                            Text(
+                                text = if (unreadCount > 99) "99+" else unreadCount.toString(),
+                            )
+                        }
+                    }
+                },
+            ) {
+                Icon(
+                    painter = tab.options!!.icon!!,
+                    contentDescription = tab.options!!.title,
+                )
+            }
         },
     )
 }

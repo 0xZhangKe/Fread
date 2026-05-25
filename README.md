@@ -60,12 +60,9 @@ Manually disable Firebase join compilation
 
 ### Sponsors
 Thanks to the following users for their support:
-<p align="center">
-  <a>
-    <img src="https://pic1.afdiancdn.com/user/user_upload_osl/8b2c4a6a82705a10fee99c38cf59a202_w132_h132_s3.jpeg" width="64px" style="border-radius:50%;" alt="user1"/>
-  </a>
-  &nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/user3">
-    <img src="https://ko-fi.com/img/anon2.png?v=1" width="64px" style="border-radius:50%;" alt="user3"/>
-  </a>
-</p>
+- Frank
+- Marius
+- Hella
+- Leszek
+- Konrad Iturbe
+

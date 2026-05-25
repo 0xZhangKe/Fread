@@ -18,6 +18,7 @@ import com.zhangke.fread.common.deeplink.SelectAccountForPublishViewModel
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.mixed.MixedStatusRepo
+import com.zhangke.fread.common.notification.NotificationUnreadCounter
 import com.zhangke.fread.common.onboarding.OnboardingComponent
 import com.zhangke.fread.common.publish.PublishPostManager
 import com.zhangke.fread.common.repo.LinkPreviewCardRepo
@@ -47,6 +48,7 @@ val commonModule = module {
     singleOf(::DayNightHelper)
     singleOf(::FreadConfigManager)
     singleOf(::FreadReviewManager)
+    singleOf(::NotificationUnreadCounter)
     singleOf(::LocalConfigManager)
     singleOf(::OnboardingComponent)
     singleOf(::PublishPostManager)

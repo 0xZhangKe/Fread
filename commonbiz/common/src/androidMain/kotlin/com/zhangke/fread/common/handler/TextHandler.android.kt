@@ -29,6 +29,23 @@ actual class TextHandler (
         ShareHelper.shareUrl(context, url, text)
     }
 
+    actual fun translateText(text: String) {
+        if (text.isBlank()) return
+        val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+            putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
+        }
+        val chooser = Intent.createChooser(intent, "Translate")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivityCompat(chooser)
+        } else {
+            // Fall back to the share sheet so the user can pick a translation app.
+            ShareHelper.shareUrl(context, "", text)
+        }
+    }
+
     actual fun openSendEmail() {
         SystemUtils.copyText(context, AppCommonConfig.AUTHOR_EMAIL)
         val intent = Intent(Intent.ACTION_SEND)

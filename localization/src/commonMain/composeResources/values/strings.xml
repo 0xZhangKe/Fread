@@ -273,4 +273,6 @@
     <string name="error_alt_text_server">The alt text provider returned an error.</string>
     <string name="error_alt_text_network">Network error while generating alt text.</string>
     <string name="error_alt_text_no_text">The alt text provider returned an empty response.</string>
+    <string name="bluesky_user_list_tab_boosts">Boosts</string>
+    <string name="bluesky_user_list_tab_quotes">Quotes</string>
 </resources>

@@ -682,4 +682,6 @@ object LocalizedString {
     val error_alt_text_server = localizedString.error_alt_text_server
     val error_alt_text_network = localizedString.error_alt_text_network
     val error_alt_text_no_text = localizedString.error_alt_text_no_text
+    val bluesky_user_list_tab_boosts = localizedString.bluesky_user_list_tab_boosts
+    val bluesky_user_list_tab_quotes = localizedString.bluesky_user_list_tab_quotes
 }

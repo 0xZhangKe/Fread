@@ -18,6 +18,8 @@ import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsNav
 import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsScreen
 import com.zhangke.fread.profile.screen.setting.behavior.BehaviorSettingsNavKey
 import com.zhangke.fread.profile.screen.setting.behavior.BehaviorSettingsScreen
+import com.zhangke.fread.profile.screen.setting.llm.LLmConfigNavKey
+import com.zhangke.fread.profile.screen.setting.llm.LLmConfigScreen
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.subclass
 import org.koin.compose.viewmodel.koinViewModel
@@ -48,6 +50,9 @@ class ProfileNavEntryProvider : NavEntryProvider {
         ) {
             DonateScreen()
         }
+        entry<LLmConfigNavKey> {
+            LLmConfigScreen(koinViewModel())
+        }
     }
 
     override fun PolymorphicModuleBuilder<NavKey>.polymorph() {
@@ -58,5 +63,6 @@ class ProfileNavEntryProvider : NavEntryProvider {
         subclass(AltTextSettingsNavKey::class)
         subclass(OpenSourceScreenNavKey::class)
         subclass(DonateScreenNavKey::class)
+        subclass(LLmConfigNavKey::class)
     }
 }

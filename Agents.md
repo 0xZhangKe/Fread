@@ -68,7 +68,7 @@ Important modules:
 - Existing test locations include `commonTest`, `androidUnitTest`, and `androidInstrumentedTest`. Place new tests in the same source set as the code path being validated.
 - Prefer assertions against complete objects or meaningful rendered/state outputs rather than many field-by-field checks when that improves failure clarity.
 - For Compose UI behavior, add focused state/unit coverage when possible and manually verify affected screens if automated UI coverage is not practical.
-- Before finishing, run the narrowest relevant test/build command. If that is too expensive or blocked by local setup, state exactly what was and was not run.
+- Do not run compile/build commands after every task by default. Only run the narrowest relevant test/build command when verification is necessary because the change is risky, broad, requested by the user, or likely to fail without compiler feedback. If verification is skipped or blocked, state that clearly.
 
 ## Sensitive Files And Boundaries
 

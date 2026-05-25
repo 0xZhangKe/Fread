@@ -55,7 +55,7 @@ import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.common.alttext.AltTextException
 import com.zhangke.fread.common.alttext.AltTextGenerator
-import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.ai.LLMModelConfigsRepo
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
 import kotlinx.coroutines.Job
@@ -202,16 +202,15 @@ private fun PublishPostImageAltDialog(
     onAltChanged: (String) -> Unit,
 ) {
     val sheetState = rememberTransientModalBottomSheetState(skipPartiallyExpanded = true)
-    val configManager: FreadConfigManager = koinInject()
+    val modelConfigRepo: LLMModelConfigsRepo = koinInject()
     val altTextGenerator: AltTextGenerator = koinInject()
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
     var altTextConfigured by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        val key = configManager.getAltTextApiKey()
-        val model = configManager.getAltTextModel()
-        altTextConfigured = key.isNotBlank() && model.isNotBlank()
+        val modelConfig = modelConfigRepo.getSelectedModelConfig()
+        altTextConfigured = modelConfig?.apiKey?.isNotBlank() == true
     }
 
     var inputtedValue by remember(alt) { mutableStateOf(alt) }

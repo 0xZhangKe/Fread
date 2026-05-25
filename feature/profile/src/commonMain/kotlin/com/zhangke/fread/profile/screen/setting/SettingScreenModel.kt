@@ -2,7 +2,8 @@ package com.zhangke.fread.profile.screen.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.ai.LLMModelConfigsRepo
 import com.zhangke.fread.common.handler.TextHandler
 import com.zhangke.fread.common.update.AppUpdateManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 class SettingScreenModel(
     private val textHandler: TextHandler,
     private val updateManager: AppUpdateManager,
-    private val freadConfigManager: FreadConfigManager,
+    private val modelConfigRepo: LLMModelConfigsRepo,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -33,16 +34,11 @@ class SettingScreenModel(
                     }
             }
         }
-        viewModelScope.launch { refreshAltTextStatus() }
-    }
-
-    fun refreshAltTextStatus() {
-        viewModelScope.launch {
-            val apiKey = freadConfigManager.getAltTextApiKey()
-            val model = freadConfigManager.getAltTextModel()
-            val configured = apiKey.isNotBlank() && model.isNotBlank()
-            _uiState.update {
-                it.copy(altTextConfiguredModel = if (configured) model else null)
+        launchInViewModel {
+            modelConfigRepo.getAllProviderFlow().collect { models ->
+                _uiState.update {
+                    it.copy(currentLLMModel = models.firstOrNull { model -> model.selected })
+                }
             }
         }
     }

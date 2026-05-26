@@ -9,6 +9,7 @@ import com.zhangke.fread.bluesky.internal.adapter.BlueskyNotificationAdapter
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyProfileAdapter
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.client.BlueskyLabelersCache
 import com.zhangke.fread.bluesky.internal.content.BlueskyContentManager
 import com.zhangke.fread.bluesky.internal.migrate.BlueskyContentMigrator
 import com.zhangke.fread.bluesky.internal.repo.BlueskyLoggedAccountRepo
@@ -39,6 +40,7 @@ import com.zhangke.fread.bluesky.internal.usecase.GetStatusContextUseCase
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PinFeedsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.PublishingPostUseCase
+import com.zhangke.fread.bluesky.internal.usecase.RefreshLabelersSubscriptionUseCase
 import com.zhangke.fread.bluesky.internal.usecase.RefreshSessionUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UnblockUserWithoutUriUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UnpinFeedsUseCase
@@ -50,6 +52,7 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateProfileRecordUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadImageByImageUrlUseCase
+import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.model.PlatformLocator
@@ -71,6 +74,7 @@ val blueskyModule = module {
     singleOf(::BlueskyScreenProvider)
     singleOf(::BlueskyLoggedAccountRepo)
     singleOf(::BlueskyClientManager)
+    singleOf(::BlueskyLabelersCache)
     singleOf(::BlueskyPlatformRepo)
 
     factoryOf(::BlueskyAccountManager)
@@ -79,7 +83,7 @@ val blueskyModule = module {
     factoryOf(::BlueskyNotificationResolver)
     factoryOf(::BlueskyStatusResolver)
     factoryOf(::BlueskyStatusSourceResolver)
-    factoryOf(::BskyStartup)
+    factoryOf(::BskyStartup) bind ModuleStartup::class
     factoryOf(::BlueskyContentMigrator)
     factoryOf(::BlueskyLoggedAccountManager)
 
@@ -112,6 +116,7 @@ val blueskyModule = module {
     factoryOf(::UpdateProfileRecordUseCase)
     factoryOf(::PinFeedsUseCase)
     factoryOf(::RefreshSessionUseCase)
+    factoryOf(::RefreshLabelersSubscriptionUseCase)
     factoryOf(::UploadImageByImageUrlUseCase)
 
     viewModel { params ->

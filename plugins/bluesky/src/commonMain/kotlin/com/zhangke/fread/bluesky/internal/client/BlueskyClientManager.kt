@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 class BlueskyClientManager(
     private val loggedAccountRepo: BlueskyLoggedAccountRepo,
     private val accountAdapter: BlueskyAccountAdapter,
+    private val labelersCache: BlueskyLabelersCache,
 ) {
 
     private val cachedClient = mutableMapOf<PlatformLocator, BlueskyClient>()
@@ -51,6 +52,7 @@ class BlueskyClientManager(
             loggedAccountProvider = { null },
             newSessionUpdater = { },
             onLoginRequest = {},
+            labelersCache = labelersCache,
         )
     }
 
@@ -67,6 +69,7 @@ class BlueskyClientManager(
             onLoginRequest = {
 //                GlobalScreenNavigation.navigate(AddBlueskyContentScreen(role.baseUrl!!, true))
             },
+            labelersCache = labelersCache,
         )
     }
 

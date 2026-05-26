@@ -143,6 +143,9 @@ fun StatusUi(
                     blogId = rawStatus.id,
                 )
             },
+            onOpenThreadedViewClick = {
+                composedStatusInteraction.onOpenThreadedViewClick(status.locator, status)
+            },
         )
     }
 }

@@ -15,6 +15,8 @@ import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreen
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.search.SearchStatusScreen
 import com.zhangke.fread.bluesky.internal.screen.search.SearchStatusScreenNavKey
+import com.zhangke.fread.bluesky.internal.screen.threaded.BlueskyThreadedViewScreen
+import com.zhangke.fread.bluesky.internal.screen.threaded.BlueskyThreadedViewScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileScreen
@@ -101,6 +103,11 @@ class BlueskyNavEntryProvider : NavEntryProvider {
                 inlineMode = false,
             )
         }
+        entry<BlueskyThreadedViewScreenNavKey> { key ->
+            BlueskyThreadedViewScreen(
+                koinViewModel { parametersOf(key.locator, key.postUri, key.opDid) }
+            )
+        }
     }
 
     override fun PolymorphicModuleBuilder<NavKey>.polymorph() {
@@ -113,5 +120,6 @@ class BlueskyNavEntryProvider : NavEntryProvider {
         subclass(BskyUserDetailScreenNavKey::class)
         subclass(EditProfileScreenNavKey::class)
         subclass(ExplorerFeedsScreenNavKey::class)
+        subclass(BlueskyThreadedViewScreenNavKey::class)
     }
 }

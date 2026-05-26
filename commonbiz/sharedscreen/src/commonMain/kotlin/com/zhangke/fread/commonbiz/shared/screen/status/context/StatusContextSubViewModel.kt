@@ -248,13 +248,14 @@ class StatusContextSubViewModel(
             contextStatus += StatusInContext(it, StatusInContextType.ANCHOR)
         }
         for (descendant in statusContext.descendants) {
-            contextStatus.addAll(descendant.expandToContextStatus(null))
+            contextStatus.addAll(descendant.expandToContextStatus(null, depth = 0))
         }
         return contextStatus
     }
 
     private fun DescendantStatus.expandToContextStatus(
         parentType: StatusInContextType?,
+        depth: Int,
     ): List<StatusInContext> {
         val type = if (this.descendantStatus != null) {
             if (parentType == null) {
@@ -270,10 +271,9 @@ class StatusContextSubViewModel(
             }
         }
         val list = mutableListOf<StatusInContext>()
-        val statusInContext = StatusInContext(status, type)
-        list.add(statusInContext)
+        list.add(StatusInContext(status, type, depth))
         if (this.descendantStatus != null) {
-            list.addAll(this.descendantStatus!!.expandToContextStatus(type))
+            list.addAll(this.descendantStatus!!.expandToContextStatus(type, depth + 1))
         }
         return list
     }

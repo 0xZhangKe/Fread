@@ -61,6 +61,7 @@ fun StatusInfoLine(
     editedAt: Instant? = null,
     onOpenBlogWithOtherAccountClick: (Blog) -> Unit = {},
     showOpenBlogWithOtherAccountBtn: Boolean = true,
+    onOpenThreadedViewClick: (() -> Unit)? = null,
 ) {
     val blogAuthor = blog.author
     Row(
@@ -176,6 +177,7 @@ fun StatusInfoLine(
                 onTranslateClick = onTranslateClick,
                 showOpenBlogWithOtherAccountBtn = showOpenBlogWithOtherAccountBtn,
                 onOpenBlogWithOtherAccountClick = onOpenBlogWithOtherAccountClick,
+                onOpenThreadedViewClick = onOpenThreadedViewClick,
             )
         }
     }

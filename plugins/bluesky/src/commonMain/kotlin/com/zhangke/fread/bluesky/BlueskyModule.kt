@@ -21,6 +21,7 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFe
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostViewModel
 import com.zhangke.fread.bluesky.internal.screen.search.SearchStatusViewModel
+import com.zhangke.fread.bluesky.internal.screen.threaded.BlueskyThreadedViewViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListViewModel
@@ -143,6 +144,14 @@ val blueskyModule = module {
     viewModelOf(::SearchStatusViewModel)
     viewModelOf(::BskyUserDetailViewModel)
     viewModelOf(::EditProfileViewModel)
+    viewModel { params ->
+        BlueskyThreadedViewViewModel(
+            clientManager = get(),
+            locator = params[0],
+            postUri = params[1],
+            opDid = params[2],
+        )
+    }
     viewModel { params ->
         UserListViewModel(
             clientManager = get(),

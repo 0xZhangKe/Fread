@@ -37,4 +37,5 @@ interface ComposedStatusInteraction {
     fun onFavouritedClick(locator: PlatformLocator, status: StatusUiState)
     fun onTranslateClick(locator: PlatformLocator, status: StatusUiState)
     fun onShowOriginalClick(status: StatusUiState)
+    fun onOpenThreadedViewClick(locator: PlatformLocator, status: StatusUiState)
 }

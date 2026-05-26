@@ -14,6 +14,7 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFe
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.content.BlueskyContentTab
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreenNavKey
+import com.zhangke.fread.bluesky.internal.screen.threaded.BlueskyThreadedViewScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreenNavKey
@@ -168,5 +169,15 @@ class BlueskyScreenProvider(
                 asProfileTab = true,
             )
         }
+    }
+
+    override fun getThreadedViewScreen(locator: PlatformLocator, blog: Blog): NavKey? {
+        if (blog.platform.protocol.notBluesky) return null
+        return BlueskyThreadedViewScreenNavKey(
+            locator = locator,
+            postUri = blog.url,
+            opDid = blog.author.uri.let { userUriTransformer.parse(it)?.did }
+                ?: return null,
+        )
     }
 }

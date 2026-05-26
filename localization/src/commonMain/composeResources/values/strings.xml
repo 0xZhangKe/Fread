@@ -255,6 +255,11 @@
     <string name="setting_item_solid_bar_background_subtitle">Make the top and bottom bars solid instead of blurred.</string>
     <string name="setting_item_jump_to_profile_title">Jump to profile</string>
     <string name="setting_item_jump_to_profile_subtitle">Jump directly to your profile if there is only one added</string>
+    <string name="threaded_view_menu_open">Open threaded view</string>
+    <string name="threaded_view_screen_title">Threaded view</string>
+    <string name="threaded_view_assembling">Assembling threaded view</string>
+    <string name="threaded_view_empty">No thread to display</string>
+    <string name="threaded_view_back">Back</string>
     <string name="alt_text_settings_title">Alt text generation</string>
     <string name="alt_text_settings_subtitle_configured">Model: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Not configured</string>

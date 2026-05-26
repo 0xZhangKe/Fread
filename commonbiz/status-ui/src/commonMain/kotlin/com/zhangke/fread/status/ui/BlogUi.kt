@@ -63,6 +63,7 @@ fun BlogUi(
     threadsType: ThreadsType = ThreadsType.NONE,
     onOpenBlogWithOtherAccountClick: (Blog) -> Unit = {},
     onUnavailableQuoteClick: (String) -> Unit = {},
+    onOpenThreadedViewClick: (() -> Unit)? = null,
 ) {
     val textHandler = LocalTextHandler.current
     var infoToTopSpacing: Float? by remember { mutableStateOf(null) }
@@ -120,6 +121,7 @@ fun BlogUi(
             onTranslateClick = onTranslateClick,
             onOpenBlogWithOtherAccountClick = onOpenBlogWithOtherAccountClick,
             showOpenBlogWithOtherAccountBtn = true,
+            onOpenThreadedViewClick = onOpenThreadedViewClick,
         )
         BlogContent(
             modifier = Modifier

@@ -20,6 +20,7 @@ data class StatusContextUiState(
 data class StatusInContext(
     val status: StatusUiState,
     val type: StatusInContextType,
+    val depth: Int = 0,
 )
 
 enum class StatusInContextType {

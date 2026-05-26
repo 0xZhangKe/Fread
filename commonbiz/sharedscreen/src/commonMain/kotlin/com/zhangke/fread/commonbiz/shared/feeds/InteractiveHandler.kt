@@ -136,6 +136,11 @@ class InteractiveHandler(
         override fun onShowOriginalClick(status: StatusUiState) {
             this@InteractiveHandler.onShowOriginalClick(status)
         }
+
+        override fun onOpenThreadedViewClick(locator: PlatformLocator, status: StatusUiState) {
+            screenProvider.getThreadedViewScreen(locator, status.status.intrinsicBlog)
+                ?.let(::openScreen)
+        }
     }
 
     override fun initInteractiveHandler(

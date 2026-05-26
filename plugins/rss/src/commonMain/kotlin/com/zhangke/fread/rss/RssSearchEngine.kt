@@ -44,6 +44,7 @@ class RssSearchEngine(
         locator: PlatformLocator,
         query: String,
         maxId: String?,
+        sort: com.zhangke.fread.status.search.SearchStatusSort,
     ): Result<List<StatusUiState>> {
         return Result.success(emptyList())
     }

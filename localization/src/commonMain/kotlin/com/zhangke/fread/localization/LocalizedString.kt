@@ -248,6 +248,8 @@ object LocalizedString {
         localizedString.explorer_search_bar_hint_specialize_platform
     val explorerSearchTabTitleAuthor = localizedString.explorer_search_tab_title_author
     val explorerSearchTabTitleStatus = localizedString.explorer_search_tab_title_status
+    val explorerSearchTabTitleLatest = localizedString.explorer_search_tab_title_latest
+    val explorerSearchTabTitleTop = localizedString.explorer_search_tab_title_top
     val explorerSearchTabTitleHashtag = localizedString.explorer_search_tab_title_hashtag
     val explorerSearchTabTitleServer = localizedString.explorer_search_tab_title_server
     val explorerTabTitle = localizedString.explorer_tab_title

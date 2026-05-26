@@ -30,15 +30,8 @@ class FreadConfigManager(
         private const val LOCAL_KEY_OPEN_URL_IN_APP_BROWSER = "open_url_in_app_browser"
         private const val LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE = "enable_blur_app_bar_style"
         private const val LOCAL_KEY_JUMP_TO_PROFILE = "jump_to_profile"
-        private const val LOCAL_KEY_ALT_TEXT_API_KEY = "alt_text_api_key"
-        private const val LOCAL_KEY_ALT_TEXT_BASE_URL = "alt_text_base_url"
-        private const val LOCAL_KEY_ALT_TEXT_MODEL = "alt_text_model"
         private const val LOCAL_KEY_ALT_TEXT_PROMPT = "alt_text_prompt"
-        private const val LOCAL_KEY_ALT_TEXT_MAX_TOKENS = "alt_text_max_tokens"
 
-        const val DEFAULT_ALT_TEXT_BASE_URL = "https://openrouter.ai/api/v1"
-        const val DEFAULT_ALT_TEXT_MODEL = "qwen/qwen3.5-122b-a10b"
-        const val DEFAULT_ALT_TEXT_MAX_TOKENS = 1024
         const val DEFAULT_ALT_TEXT_PROMPT =
             "Write alt text for this image. Be concise — 1-2 sentences for simple images. " +
                 "If the image contains readable text, transcribe it rather than describing it. " +
@@ -222,37 +215,6 @@ class FreadConfigManager(
         localConfigManager.putString(LOCAL_KEY_THEME_TYPE, type.name)
     }
 
-    suspend fun getAltTextApiKey(): String =
-        localConfigManager.getString(LOCAL_KEY_ALT_TEXT_API_KEY).orEmpty()
-
-    suspend fun updateAltTextApiKey(value: String) {
-        withContext(Dispatchers.IO) {
-            localConfigManager.putString(LOCAL_KEY_ALT_TEXT_API_KEY, value)
-        }
-    }
-
-    suspend fun getAltTextBaseUrl(): String =
-        localConfigManager.getString(LOCAL_KEY_ALT_TEXT_BASE_URL)
-            ?.takeIf { it.isNotBlank() }
-            ?: DEFAULT_ALT_TEXT_BASE_URL
-
-    suspend fun updateAltTextBaseUrl(value: String) {
-        withContext(Dispatchers.IO) {
-            localConfigManager.putString(LOCAL_KEY_ALT_TEXT_BASE_URL, value)
-        }
-    }
-
-    suspend fun getAltTextModel(): String =
-        localConfigManager.getString(LOCAL_KEY_ALT_TEXT_MODEL)
-            ?.takeIf { it.isNotBlank() }
-            ?: DEFAULT_ALT_TEXT_MODEL
-
-    suspend fun updateAltTextModel(value: String) {
-        withContext(Dispatchers.IO) {
-            localConfigManager.putString(LOCAL_KEY_ALT_TEXT_MODEL, value)
-        }
-    }
-
     suspend fun getAltTextPrompt(): String =
         localConfigManager.getString(LOCAL_KEY_ALT_TEXT_PROMPT)
             ?.takeIf { it.isNotBlank() }
@@ -261,18 +223,6 @@ class FreadConfigManager(
     suspend fun updateAltTextPrompt(value: String) {
         withContext(Dispatchers.IO) {
             localConfigManager.putString(LOCAL_KEY_ALT_TEXT_PROMPT, value)
-        }
-    }
-
-    suspend fun getAltTextMaxTokens(): Int =
-        localConfigManager.getString(LOCAL_KEY_ALT_TEXT_MAX_TOKENS)
-            ?.toIntOrNull()
-            ?.takeIf { it > 0 }
-            ?: DEFAULT_ALT_TEXT_MAX_TOKENS
-
-    suspend fun updateAltTextMaxTokens(value: Int) {
-        withContext(Dispatchers.IO) {
-            localConfigManager.putString(LOCAL_KEY_ALT_TEXT_MAX_TOKENS, value.toString())
         }
     }
 }

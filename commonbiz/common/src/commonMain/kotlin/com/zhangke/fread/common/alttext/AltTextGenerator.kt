@@ -2,13 +2,19 @@ package com.zhangke.fread.common.alttext
 
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.ai.LLMClient
+import com.zhangke.fread.common.ai.LLMModelConfigsRepo
 import com.zhangke.fread.common.config.FreadConfigManager
 import kotlinx.coroutines.CancellationException
 
 class AltTextGenerator(
     private val llmClient: LLMClient,
+    private val modelConfigRepo: LLMModelConfigsRepo,
     private val freadConfigManager: FreadConfigManager,
 ) {
+
+    suspend fun available(): Boolean {
+        return !modelConfigRepo.getSelectedModelConfig()?.apiKey.isNullOrEmpty()
+    }
 
     suspend fun generate(imageUri: PlatformUri): Result<AltTextResult> {
         return runCatching {

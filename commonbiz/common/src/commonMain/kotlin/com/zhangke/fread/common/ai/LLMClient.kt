@@ -1,11 +1,14 @@
 package com.zhangke.fread.common.ai
 
-import com.zhangke.framework.architect.http.sharedHttpClient
+import com.zhangke.framework.architect.http.createHttpClient
+import com.zhangke.framework.architect.http.createHttpClientEngine
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.ai.model.LLMModelConfig
 import com.zhangke.fread.common.alttext.resizeAndJpegBase64
 import com.zhangke.fread.common.utils.PlatformUriHelper
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -15,7 +18,6 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -30,13 +32,25 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
+import kotlin.time.Duration.Companion.minutes
 
 class LLMClient(
     private val modelConfigRepo: LLMModelConfigsRepo,
     private val platformUriHelper: PlatformUriHelper,
 ) {
 
-    private val httpClient get() = sharedHttpClient
+    private val httpClient: HttpClient by lazy {
+        createHttpClient(
+            json = globalJson,
+            engine = createHttpClientEngine(),
+        ) {
+            install(HttpTimeout) {
+                requestTimeoutMillis = requestTimeout.inWholeMilliseconds
+                socketTimeoutMillis = requestTimeout.inWholeMilliseconds
+                connectTimeoutMillis = requestTimeout.inWholeMilliseconds
+            }
+        }
+    }
 
     suspend fun execute(
         prompt: String,
@@ -46,7 +60,7 @@ class LLMClient(
             val config = modelConfigRepo.getSelectedModelConfig() ?: error("LLM is not configured.")
             val apiKey = config.apiKey.trim().takeIf { it.isNotBlank() }
                 ?: error("LLM API key is not configured.")
-            val response = withTimeout(REQUEST_TIMEOUT_MS) {
+            val response =
                 httpClient.post(config.provider.baseUrl.trimEnd('/') + "/chat/completions") {
                     headers {
                         append(HttpHeaders.Authorization, "Bearer $apiKey")
@@ -54,7 +68,6 @@ class LLMClient(
                     }
                     setBody(buildRequestBody(config, prompt, imageUri))
                 }
-            }
             val rawBody = response.bodyAsText()
             if (!response.status.isSuccess()) {
                 val message = runCatching {
@@ -160,7 +173,7 @@ class LLMClient(
     }
 
     private companion object {
-        private const val REQUEST_TIMEOUT_MS = 120_000L
+        private val requestTimeout = 2.minutes
     }
 }
 

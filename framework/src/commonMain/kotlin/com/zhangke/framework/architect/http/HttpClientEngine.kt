@@ -2,6 +2,7 @@ package com.zhangke.framework.architect.http
 
 import com.zhangke.framework.architect.json.globalJson
 import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -17,9 +18,10 @@ val sharedHttpClient: HttpClient by lazy {
 
 expect fun createHttpClientEngine(): HttpClientEngine
 
-private fun createHttpClient(
+fun createHttpClient(
     json: Json,
     engine: HttpClientEngine,
+    builder: HttpClientConfig<*>.() -> Unit = {},
 ): HttpClient {
     return HttpClient(engine) {
         install(ContentNegotiation) {
@@ -28,5 +30,6 @@ private fun createHttpClient(
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
         }
+        builder()
     }
 }

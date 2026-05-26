@@ -25,6 +25,7 @@ data class LLMProvider(
             LLMProvider("oci", "OCI", "https://inference.generativeai.us-chicago-1.oci.oraclecloud.com"),
             LLMProvider("minimax", "MiniMax", "https://api.minimax.chat/v1"),
             LLMProvider("zhipuai", "Zhipu AI", "https://open.bigmodel.cn/api/paas/v4"),
+            LLMProvider("kimi", "Kimi", "https://api.moonshot.ai/v1"),
             LLMProvider("huggingface", "Hugging Face", "https://router.huggingface.co/v1"),
             LLMProvider("azure", "Azure", "https://{resource-name}.openai.azure.com/openai/deployments/{deployment-name}"),
             LLMProvider("vertex", "Vertex", "https://{region}-aiplatform.googleapis.com/v1"),
@@ -47,6 +48,7 @@ val LLMProvider.versions: List<String>
         "oci" -> ociVersions
         "minimax" -> miniMaxVersions
         "zhipuai" -> zhipuAIVersions
+        "kimi" -> kimiVersions
         "huggingface" -> huggingFaceVersions
         "azure" -> azureVersions
         "vertex" -> vertexVersions
@@ -201,6 +203,16 @@ private val zhipuAIVersions = listOf(
     "glm-4.5-air",
     "glm-4.1v-thinking-flash",
     "glm-4v-plus-0111",
+)
+
+private val kimiVersions = listOf(
+    "kimi-k2.5",
+    "moonshot-v1-8k",
+    "moonshot-v1-32k",
+    "moonshot-v1-128k",
+    "moonshot-v1-8k-vision-preview",
+    "moonshot-v1-32k-vision-preview",
+    "moonshot-v1-128k-vision-preview",
 )
 
 private val huggingFaceVersions = listOf(

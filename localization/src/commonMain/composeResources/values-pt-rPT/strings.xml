@@ -255,6 +255,11 @@
     <string name="setting_item_solid_bar_background_subtitle">Torna as barras superior e inferior sólidas em vez de desfocadas.</string>
     <string name="setting_item_jump_to_profile_title">Ir para o perfil</string>
     <string name="setting_item_jump_to_profile_subtitle">Ir diretamente para o seu perfil se houver apenas uma conta adicionada</string>
+    <string name="threaded_view_menu_open">Abrir vista da conversa</string>
+    <string name="threaded_view_screen_title">Vista da conversa</string>
+    <string name="threaded_view_assembling">A construir vista da conversa</string>
+    <string name="threaded_view_empty">Nenhuma conversa para mostrar</string>
+    <string name="threaded_view_back">Voltar</string>
     <string name="alt_text_settings_title">Geração de texto alternativo</string>
     <string name="alt_text_settings_subtitle_configured">Modelo: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Não configurado</string>

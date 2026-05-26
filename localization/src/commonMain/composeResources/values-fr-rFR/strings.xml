@@ -255,6 +255,11 @@
     <string name="setting_item_solid_bar_background_subtitle">Rend les barres supérieure et inférieure en fond uni au lieu d’un effet flou.</string>
     <string name="setting_item_jump_to_profile_title">Aller au profil</string>
     <string name="setting_item_jump_to_profile_subtitle">Aller directement à votre profil si un seul compte a été ajouté</string>
+    <string name="threaded_view_menu_open">Ouvrir la vue du fil</string>
+    <string name="threaded_view_screen_title">Vue du fil</string>
+    <string name="threaded_view_assembling">Assemblage de la vue du fil</string>
+    <string name="threaded_view_empty">Aucun fil à afficher</string>
+    <string name="threaded_view_back">Retour</string>
     <string name="alt_text_settings_title">Génération de texte alternatif</string>
     <string name="alt_text_settings_subtitle_configured">Modèle : %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Non configuré</string>

@@ -255,6 +255,11 @@
     <string name="setting_item_solid_bar_background_subtitle">Делает верхнюю и нижнюю панели сплошными вместо размытого фона.</string>
     <string name="setting_item_jump_to_profile_title">Перейти к профилю</string>
     <string name="setting_item_jump_to_profile_subtitle">Переходить прямо к вашему профилю, если добавлен только один аккаунт</string>
+    <string name="threaded_view_menu_open">Открыть ветку обсуждения</string>
+    <string name="threaded_view_screen_title">Ветка обсуждения</string>
+    <string name="threaded_view_assembling">Сборка ветки обсуждения</string>
+    <string name="threaded_view_empty">Нет ветки для отображения</string>
+    <string name="threaded_view_back">Назад</string>
     <string name="alt_text_settings_title">Создание альтернативного текста</string>
     <string name="alt_text_settings_subtitle_configured">Модель: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Не настроено</string>

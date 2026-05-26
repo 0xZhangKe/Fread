@@ -255,6 +255,11 @@
     <string name="setting_item_solid_bar_background_subtitle">上部バーと下部バーをぼかしではなく単色にします。</string>
     <string name="setting_item_jump_to_profile_title">プロフィールへ移動</string>
     <string name="setting_item_jump_to_profile_subtitle">追加済みアカウントが1つだけの場合、直接プロフィールへ移動します</string>
+    <string name="threaded_view_menu_open">スレッド表示を開く</string>
+    <string name="threaded_view_screen_title">スレッド表示</string>
+    <string name="threaded_view_assembling">スレッド表示を構築中</string>
+    <string name="threaded_view_empty">表示できるスレッドはありません</string>
+    <string name="threaded_view_back">戻る</string>
     <string name="alt_text_settings_title">代替テキスト生成</string>
     <string name="alt_text_settings_subtitle_configured">モデル: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">未設定</string>

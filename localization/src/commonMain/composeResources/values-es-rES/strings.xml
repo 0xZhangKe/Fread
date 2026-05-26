@@ -255,6 +255,11 @@
     <string name="setting_item_solid_bar_background_subtitle">Hace que las barras superior e inferior sean sólidas en lugar de desenfocadas.</string>
     <string name="setting_item_jump_to_profile_title">Ir al perfil</string>
     <string name="setting_item_jump_to_profile_subtitle">Ir directamente a tu perfil si solo hay una cuenta añadida</string>
+    <string name="threaded_view_menu_open">Abrir vista de hilo</string>
+    <string name="threaded_view_screen_title">Vista de hilo</string>
+    <string name="threaded_view_assembling">Construyendo vista de hilo</string>
+    <string name="threaded_view_empty">No hay ningún hilo para mostrar</string>
+    <string name="threaded_view_back">Atrás</string>
     <string name="alt_text_settings_title">Generación de texto alternativo</string>
     <string name="alt_text_settings_subtitle_configured">Modelo: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Sin configurar</string>

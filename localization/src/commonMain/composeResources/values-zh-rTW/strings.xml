@@ -255,6 +255,11 @@
     <string name="setting_item_solid_bar_background_subtitle">將頂部和底部列改為純色，而不是高斯模糊。</string>
     <string name="setting_item_jump_to_profile_title">跳轉到帳號</string>
     <string name="setting_item_jump_to_profile_subtitle">如果只新增了一個帳號，則直接跳轉到該帳號</string>
+    <string name="threaded_view_menu_open">開啟串連檢視</string>
+    <string name="threaded_view_screen_title">串連檢視</string>
+    <string name="threaded_view_assembling">正在整理串連檢視</string>
+    <string name="threaded_view_empty">沒有可顯示的串連內容</string>
+    <string name="threaded_view_back">返回</string>
     <string name="alt_text_settings_title">替代文字生成</string>
     <string name="alt_text_settings_subtitle_configured">模型：%1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">未設定</string>

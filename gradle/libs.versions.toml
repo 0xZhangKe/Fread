@@ -33,7 +33,6 @@ compose-runtime-tracing = "1.10.1"
 jetbrains-lifecycle = "2.10.0"
 
 koin = "4.2.0"
-
 accompanist = "0.37.3"
 
 okhttp3 = "4.12.0"

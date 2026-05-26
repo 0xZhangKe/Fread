@@ -35,9 +35,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mastodon.social"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -47,9 +47,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mastodon.social"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -59,9 +59,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mastodon.online"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -71,9 +71,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mastodon.online"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -83,9 +83,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="androiddev.social"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -95,9 +95,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="androiddev.social"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -107,9 +107,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="m.cmx.im"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -119,9 +119,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="m.cmx.im"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -131,9 +131,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="alive.bar"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -143,9 +143,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="alive.bar"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -155,9 +155,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="wxw.moe"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -167,9 +167,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="wxw.moe"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -179,9 +179,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="o3o.ca"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -191,9 +191,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="o3o.ca"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -203,9 +203,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="pawoo.net"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -215,9 +215,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="pawoo.net"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -227,9 +227,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mstdn.jp"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -239,9 +239,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mstdn.jp"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -251,9 +251,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="infosec.exchange"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -263,9 +263,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="infosec.exchange"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -275,9 +275,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mstdn.social"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -287,9 +287,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mstdn.social"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -299,9 +299,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="planet.moe"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -311,9 +311,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="planet.moe"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -323,9 +323,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mas.to"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -335,9 +335,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mas.to"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -347,9 +347,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="fosstodon.org"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -359,9 +359,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="fosstodon.org"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -371,9 +371,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="hachyderm.io"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -383,9 +383,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="hachyderm.io"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -395,9 +395,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="piaille.fr"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -407,9 +407,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="piaille.fr"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -419,9 +419,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mastodon.world"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -431,9 +431,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="mastodon.world"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -443,9 +443,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="social.vivaldi.net"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -455,9 +455,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="social.vivaldi.net"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -467,9 +467,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="aethy.com"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -479,9 +479,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="aethy.com"
-                    android:pathPrefix="/@" />
+                    android:pathPrefix="/@"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -491,9 +491,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="bsky.app"
-                    android:path="/" />
+                    android:path="/"
+                    android:scheme="https" />
             </intent-filter>
 
             <intent-filter>
@@ -503,9 +503,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="bsky.app"
-                    android:pathPrefix="/profile" />
+                    android:pathPrefix="/profile"
+                    android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <action android:name="dev.zwander.mastodonredirect.intent.action.OPEN_FEDI_LINK" />

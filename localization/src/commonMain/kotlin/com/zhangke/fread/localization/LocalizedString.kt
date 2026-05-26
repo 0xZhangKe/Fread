@@ -667,4 +667,42 @@ object LocalizedString {
     val threaded_view_assembling = localizedString.threaded_view_assembling
     val threaded_view_empty = localizedString.threaded_view_empty
     val threaded_view_back = localizedString.threaded_view_back
+    val alt_text_settings_title = localizedString.alt_text_settings_title
+    val alt_text_settings_subtitle_configured =
+        localizedString.alt_text_settings_subtitle_configured
+    val alt_text_settings_subtitle_not_configured =
+        localizedString.alt_text_settings_subtitle_not_configured
+    val alt_text_settings_api_key_label = localizedString.alt_text_settings_api_key_label
+    val alt_text_settings_base_url_label = localizedString.alt_text_settings_base_url_label
+    val alt_text_settings_model_label = localizedString.alt_text_settings_model_label
+    val alt_text_settings_prompt_label = localizedString.alt_text_settings_prompt_label
+    val alt_text_settings_max_tokens_label = localizedString.alt_text_settings_max_tokens_label
+    val alt_text_settings_save = localizedString.alt_text_settings_save
+    val alt_text_settings_api_key_show = localizedString.alt_text_settings_api_key_show
+    val alt_text_settings_api_key_hide = localizedString.alt_text_settings_api_key_hide
+    val llm_config_settings_title = localizedString.llm_config_settings_title
+    val llm_config_settings_subtitle_configured =
+        localizedString.llm_config_settings_subtitle_configured
+    val llm_config_settings_subtitle_not_configured =
+        localizedString.llm_config_settings_subtitle_not_configured
+    val llm_config_add_model = localizedString.llm_config_add_model
+    val llm_config_select_model_title = localizedString.llm_config_select_model_title
+    val llm_config_add_custom_model = localizedString.llm_config_add_custom_model
+    val llm_config_delete_model = localizedString.llm_config_delete_model
+    val llm_config_delete_model_confirm = localizedString.llm_config_delete_model_confirm
+    val llm_config_model_id_label = localizedString.llm_config_model_id_label
+    val llm_config_base_url_label = localizedString.llm_config_base_url_label
+    val llm_config_version_name_label = localizedString.llm_config_version_name_label
+    val llm_config_api_key_label = localizedString.llm_config_api_key_label
+    val alt_text_generate_button = localizedString.alt_text_generate_button
+    val alt_text_cancel_button = localizedString.alt_text_cancel_button
+    val alt_text_provider_format = localizedString.alt_text_provider_format
+    val alt_text_cost_format = localizedString.alt_text_cost_format
+    val error_alt_text_not_configured = localizedString.error_alt_text_not_configured
+    val error_alt_text_load_image = localizedString.error_alt_text_load_image
+    val error_alt_text_server = localizedString.error_alt_text_server
+    val error_alt_text_network = localizedString.error_alt_text_network
+    val error_alt_text_no_text = localizedString.error_alt_text_no_text
+    val bluesky_user_list_tab_boosts = localizedString.bluesky_user_list_tab_boosts
+    val bluesky_user_list_tab_quotes = localizedString.bluesky_user_list_tab_quotes
 }

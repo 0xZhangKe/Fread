@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.bsky.actor.ProfileView
 import app.bsky.feed.GetLikesQueryParams
+import app.bsky.feed.GetQuotesQueryParams
 import app.bsky.feed.GetRepostedByQueryParams
 import app.bsky.graph.GetBlocksQueryParams
 import app.bsky.graph.GetFollowersQueryParams
@@ -16,13 +17,18 @@ import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
+import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
@@ -32,11 +38,15 @@ class UserListViewModel(
     private val accountAdapter: BlueskyAccountAdapter,
     private val updateRelationship: UpdateRelationshipUseCase,
     private val updateBlock: UpdateBlockUseCase,
+    private val statusAdapter: BlueskyStatusAdapter,
+    private val platformRepo: BlueskyPlatformRepo,
     private val locator: PlatformLocator,
     private val type: UserListType,
     private val postUri: String?,
     userDid: String?,
 ) : ViewModel() {
+
+    enum class Mode { BOOSTS, QUOTES }
 
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage
@@ -48,7 +58,19 @@ class UserListViewModel(
 
     val uiState: StateFlow<CommonLoadableUiState<UserListItemUiState>> get() = loadController.uiState
 
+    private val quotesController = CommonLoadableController<Blog>(
+        viewModelScope,
+        onPostSnackMessage = { _snackBarMessage.emitInViewModel(it) },
+    )
+
+    val quotesUiState: StateFlow<CommonLoadableUiState<Blog>> get() = quotesController.uiState
+
+    private val _mode = MutableStateFlow(Mode.BOOSTS)
+    val mode: StateFlow<Mode> get() = _mode.asStateFlow()
+
     private var cursor: String? = null
+    private var quotesCursor: String? = null
+    private var quotesLoaded = false
 
     private val userDid: Did? = userDid?.let { Did(it) }
 
@@ -59,12 +81,53 @@ class UserListViewModel(
         )
     }
 
+    fun onModeChange(newMode: Mode) {
+        if (_mode.value == newMode) return
+        _mode.value = newMode
+        if (newMode == Mode.QUOTES && !quotesLoaded) {
+            quotesLoaded = true
+            quotesController.initData(
+                getDataFromLocal = { emptyList() },
+                getDataFromServer = { getQuotesFromServer(null) },
+            )
+        }
+    }
+
     fun onRefresh() {
-        loadController.onRefresh { getDataFromServer(null) }
+        if (_mode.value == Mode.QUOTES) {
+            quotesController.onRefresh { getQuotesFromServer(null) }
+        } else {
+            loadController.onRefresh { getDataFromServer(null) }
+        }
     }
 
     fun onLoadMore() {
-        loadController.onLoadMore { getDataFromServer() }
+        if (_mode.value == Mode.QUOTES) {
+            quotesController.onLoadMore { getQuotesFromServer() }
+        } else {
+            loadController.onLoadMore { getDataFromServer() }
+        }
+    }
+
+    private suspend fun getQuotesFromServer(
+        cursor: String? = this.quotesCursor,
+    ): Result<List<Blog>> {
+        if (postUri == null) return Result.failure(IllegalStateException("PostUri is null"))
+        val client = clientManager.getClient(locator)
+        val platform = platformRepo.getPlatform(client.baseUrl)
+        return client.getQuotesCatching(
+            GetQuotesQueryParams(uri = AtUri(postUri), cursor = cursor)
+        ).map { data ->
+            this.quotesCursor = data.cursor
+            data.list.map { postView ->
+                statusAdapter.convertToUiState(
+                    locator = locator,
+                    postView = postView,
+                    platform = platform,
+                    loggedAccount = client.loggedAccountProvider(),
+                ).status.intrinsicBlog
+            }
+        }
     }
 
     fun onFollowClick(user: UserListItemUiState) {

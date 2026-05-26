@@ -9,6 +9,7 @@ import com.zhangke.fread.common.browser.IosSystemBrowserLauncher
 import com.zhangke.fread.common.browser.SystemBrowserLauncher
 import com.zhangke.fread.common.db.ContentConfigDatabases
 import com.zhangke.fread.common.db.FreadContentDatabase
+import com.zhangke.fread.common.db.LLMModelConfigsDatabase
 import com.zhangke.fread.common.db.MixedStatusDatabases
 import com.zhangke.fread.common.db.old.OldFreadContentDatabase
 import com.zhangke.fread.common.handler.TextHandler
@@ -56,6 +57,14 @@ actual fun Module.createPlatformModule() {
     single<MixedStatusDatabases> {
         val dbFilePath = getDBFilePath(MixedStatusDatabases.DB_NAME)
         Room.databaseBuilder<MixedStatusDatabases>(
+            name = dbFilePath,
+        ).setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
+            .build()
+    }
+    single<LLMModelConfigsDatabase> {
+        val dbFilePath = getDBFilePath(LLMModelConfigsDatabase.DB_NAME)
+        Room.databaseBuilder<LLMModelConfigsDatabase>(
             name = dbFilePath,
         ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)

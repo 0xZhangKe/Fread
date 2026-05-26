@@ -5,6 +5,9 @@ import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.nav.NavEntryProvider
 import com.zhangke.fread.common.account.ActiveAccountsSynchronizer
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.ai.LLMClient
+import com.zhangke.fread.common.ai.LLMModelConfigsRepo
+import com.zhangke.fread.common.alttext.AltTextGenerator
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.browser.UrlRedirectViewModel
 import com.zhangke.fread.common.bubble.BubbleManager
@@ -17,6 +20,7 @@ import com.zhangke.fread.common.deeplink.SelectAccountForPublishViewModel
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.mixed.MixedStatusRepo
+import com.zhangke.fread.common.notification.NotificationUnreadCounter
 import com.zhangke.fread.common.onboarding.OnboardingComponent
 import com.zhangke.fread.common.publish.PublishPostManager
 import com.zhangke.fread.common.repo.LinkPreviewCardRepo
@@ -46,6 +50,7 @@ val commonModule = module {
     singleOf(::DayNightHelper)
     singleOf(::FreadConfigManager)
     singleOf(::FreadReviewManager)
+    singleOf(::NotificationUnreadCounter)
     singleOf(::LocalConfigManager)
     singleOf(::OnboardingComponent)
     singleOf(::PublishPostManager)
@@ -54,6 +59,9 @@ val commonModule = module {
     singleOf(::StatusUpdater)
 
     factoryOf(::LinkPreviewCardRepo)
+    singleOf(::LLMClient)
+    factoryOf(::LLMModelConfigsRepo)
+    singleOf(::AltTextGenerator)
     factoryOf(::AppUpdateManager)
     factoryOf(::BrowserLauncher)
     factoryOf(::ContentConfigAdapter)

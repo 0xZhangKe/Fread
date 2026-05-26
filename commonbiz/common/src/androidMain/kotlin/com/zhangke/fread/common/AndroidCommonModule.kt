@@ -14,6 +14,7 @@ import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.browser.SystemBrowserLauncher
 import com.zhangke.fread.common.db.ContentConfigDatabases
 import com.zhangke.fread.common.db.FreadContentDatabase
+import com.zhangke.fread.common.db.LLMModelConfigsDatabase
 import com.zhangke.fread.common.db.MixedStatusDatabases
 import com.zhangke.fread.common.db.old.OldFreadContentDatabase
 import com.zhangke.fread.common.handler.TextHandler
@@ -59,6 +60,13 @@ actual fun Module.createPlatformModule() {
             MixedStatusDatabases::class.java,
             MixedStatusDatabases.DB_NAME,
         ).addMigrations(MixedStatusDatabases.MIGRATION_1_2).build()
+    }
+    single<LLMModelConfigsDatabase> {
+        Room.databaseBuilder(
+            androidContext(),
+            LLMModelConfigsDatabase::class.java,
+            LLMModelConfigsDatabase.DB_NAME,
+        ).build()
     }
 
     singleOf(::MediaFileHelper)

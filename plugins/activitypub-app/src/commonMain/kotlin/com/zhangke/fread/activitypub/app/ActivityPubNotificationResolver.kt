@@ -355,4 +355,13 @@ class ActivityPubNotificationResolver (
             .saveMarkers(notificationLastReadId = notificationLastReadId)
             .map { }
     }
+
+    override suspend fun getUnreadNotificationsCount(account: LoggedAccount): Result<Int>? {
+        if (account.platform.protocol.notActivityPub) return null
+        val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        return clientManager.getClient(role)
+            .notificationsRepo
+            .getUnreadNotificationCount(limit = 1000)
+            .map { it.count }
+    }
 }

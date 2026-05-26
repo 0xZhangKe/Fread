@@ -49,6 +49,13 @@ data class BlogAuthor(
 
     val prettyHandle: String = handle.prettyHandle()
 
+    val displayHandle: String =
+        if (webFinger.did != null && handle.isNotBlank() && handle != "handle.invalid") {
+            handle.prettyHandle()
+        } else {
+            webFinger.toString()
+        }
+
     private fun getFixedName(): String {
         if (name.isNotEmpty()) return name
         val nameFromHandle = handle.removePrefix("@")

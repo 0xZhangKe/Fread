@@ -30,6 +30,12 @@ class FreadConfigManager(
         private const val LOCAL_KEY_OPEN_URL_IN_APP_BROWSER = "open_url_in_app_browser"
         private const val LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE = "enable_blur_app_bar_style"
         private const val LOCAL_KEY_JUMP_TO_PROFILE = "jump_to_profile"
+        private const val LOCAL_KEY_ALT_TEXT_PROMPT = "alt_text_prompt"
+
+        const val DEFAULT_ALT_TEXT_PROMPT =
+            "Write alt text for this image. Be concise — 1-2 sentences for simple images. " +
+                "If the image contains readable text, transcribe it rather than describing it. " +
+                "Only describe what you can clearly see; do not guess at names or details."
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
@@ -207,6 +213,17 @@ class FreadConfigManager(
     suspend fun updateThemeType(type: ThemeType) {
         _themeTypeeFlow.value = type
         localConfigManager.putString(LOCAL_KEY_THEME_TYPE, type.name)
+    }
+
+    suspend fun getAltTextPrompt(): String =
+        localConfigManager.getString(LOCAL_KEY_ALT_TEXT_PROMPT)
+            ?.takeIf { it.isNotBlank() }
+            ?: DEFAULT_ALT_TEXT_PROMPT
+
+    suspend fun updateAltTextPrompt(value: String) {
+        withContext(Dispatchers.IO) {
+            localConfigManager.putString(LOCAL_KEY_ALT_TEXT_PROMPT, value)
+        }
     }
 }
 

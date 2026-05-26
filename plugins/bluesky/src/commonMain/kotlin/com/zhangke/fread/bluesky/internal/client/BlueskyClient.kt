@@ -26,6 +26,8 @@ import app.bsky.feed.GetPostThreadQueryParams
 import app.bsky.feed.GetPostThreadResponse
 import app.bsky.feed.GetPostsQueryParams
 import app.bsky.feed.GetPostsResponse
+import app.bsky.feed.GetQuotesQueryParams
+import app.bsky.feed.PostView
 import app.bsky.feed.GetRepostedByQueryParams
 import app.bsky.feed.GetSuggestedFeedsQueryParams
 import app.bsky.feed.GetSuggestedFeedsResponse
@@ -247,6 +249,11 @@ class BlueskyClient(
     suspend fun getRepostedCatching(params: GetRepostedByQueryParams): Result<PagedData<ProfileView>> {
         return runCatching { getRepostedBy(params) }.toResult()
             .map { data -> PagedData(list = data.repostedBy, cursor = data.cursor) }
+    }
+
+    suspend fun getQuotesCatching(params: GetQuotesQueryParams): Result<PagedData<PostView>> {
+        return runCatching { getQuotes(params) }.toResult()
+            .map { data -> PagedData(list = data.posts, cursor = data.cursor) }
     }
 
     suspend fun uploadBlobCatching(data: ByteArray): Result<UploadBlobResponse> {

@@ -133,7 +133,6 @@ fun StatusNotificationUi(
                         onCancelFollowRequestClick = {
                             onCancelFollowRequestClick(notification.locator, it)
                         },
-                        additionalActors = additionalActors,
                     )
                 }
 

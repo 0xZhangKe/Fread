@@ -373,7 +373,7 @@ class NotificationViewModel(
     }
 
     /**
-     * Groups consecutive likes/reposts on the same post (and follows) into a single
+     * Groups consecutive likes/reposts on the same post into a single
      * row, mirroring how the official Bluesky client renders them. The first item in
      * each group keeps its primary actor; subsequent actors are stashed in
      * [StatusNotificationUiState.additionalActors] for the avatar stack.
@@ -405,7 +405,6 @@ class NotificationViewModel(
     private fun StatusNotification.groupKey(): String? = when (this) {
         is StatusNotification.Like -> "like:${blog.id}"
         is StatusNotification.Repost -> "repost:${blog.id}"
-        is StatusNotification.Follow -> "follow"
         else -> null
     }
 

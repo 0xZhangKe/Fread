@@ -15,6 +15,7 @@ import com.zhangke.framework.composable.emitInViewModel
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.framework.controller.Page
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
@@ -75,7 +76,7 @@ class UserListViewModel(
     private val userDid: Did? = userDid?.let { Did(it) }
 
     init {
-        loadController.initData(
+        loadController.initDataPaged(
             getDataFromLocal = { emptyList() },
             getDataFromServer = { getDataFromServer(null) },
         )
@@ -97,7 +98,7 @@ class UserListViewModel(
         if (_mode.value == Mode.QUOTES) {
             quotesController.onRefresh { getQuotesFromServer(null) }
         } else {
-            loadController.onRefresh { getDataFromServer(null) }
+            loadController.onRefreshPaged { getDataFromServer(null) }
         }
     }
 
@@ -105,7 +106,7 @@ class UserListViewModel(
         if (_mode.value == Mode.QUOTES) {
             quotesController.onLoadMore { getQuotesFromServer() }
         } else {
-            loadController.onLoadMore { getDataFromServer() }
+            loadController.onLoadMorePaged { getDataFromServer() }
         }
     }
 
@@ -240,7 +241,7 @@ class UserListViewModel(
         }
     }
 
-    private suspend fun getDataFromServer(cursor: String? = this.cursor): Result<List<UserListItemUiState>> {
+    private suspend fun getDataFromServer(cursor: String? = this.cursor): Result<Page<UserListItemUiState>> {
         val client = clientManager.getClient(locator)
         val pagedDataResult = when (type) {
             UserListType.LIKE -> {
@@ -262,7 +263,7 @@ class UserListViewModel(
 
             UserListType.FOLLOWERS -> {
                 val did = userDid ?: client.loggedAccountProvider()?.did?.let { Did(it) }
-                if (did == null) return Result.success(emptyList())
+                if (did == null) return Result.success(Page(emptyList(), hasMore = false))
                 client.getFollowersCatching(
                     GetFollowersQueryParams(
                         actor = did,
@@ -273,7 +274,7 @@ class UserListViewModel(
 
             UserListType.FOLLOWING -> {
                 val did = userDid ?: client.loggedAccountProvider()?.did?.let { Did(it) }
-                if (did == null) return Result.success(emptyList())
+                if (did == null) return Result.success(Page(emptyList(), hasMore = false))
                 client.getFollowsCatching(GetFollowsQueryParams(actor = did, cursor = cursor))
             }
 
@@ -287,7 +288,10 @@ class UserListViewModel(
         }
         return pagedDataResult.map { data ->
             this.cursor = data.cursor
-            data.list.map { convertToUiState(it) }
+            Page(
+                items = data.list.map { convertToUiState(it) },
+                hasMore = !data.cursor.isNullOrBlank(),
+            )
         }
     }
 

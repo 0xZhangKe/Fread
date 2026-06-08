@@ -24,6 +24,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.model.BlogUIType
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
 import com.zhangke.fread.status.ui.threads.threads
@@ -38,6 +39,7 @@ fun BlogUi(
     indexInList: Int,
     sharedElementId: String? = null,
     style: StatusStyle,
+    type: BlogUIType,
     topLabels: List<@Composable () -> Unit>,
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusActionType, Blog) -> Unit,
@@ -56,7 +58,6 @@ fun BlogUi(
     onBoostedClick: ((String) -> Unit)? = null,
     onFavouritedClick: ((String) -> Unit)? = null,
     onFollowClick: ((BlogAuthor) -> Unit)? = null,
-    detailModel: Boolean = false,
     showDivider: Boolean = true,
     showBottomPanel: Boolean = true,
     showMoreOperationIcon: Boolean = true,
@@ -65,6 +66,7 @@ fun BlogUi(
     onUnavailableQuoteClick: (String) -> Unit = {},
     onOpenThreadedViewClick: (() -> Unit)? = null,
 ) {
+    val detailModel = type == BlogUIType.DETAIL
     val textHandler = LocalTextHandler.current
     var infoToTopSpacing: Float? by remember { mutableStateOf(null) }
     Column(
@@ -134,7 +136,7 @@ fun BlogUi(
             blog = blog,
             isOwner = isOwner,
             blogTranslationState = blogTranslationState,
-            detailModel = detailModel,
+            type = type,
             indexOfFeeds = indexInList,
             sharedElementId = sharedElementId,
             style = style,

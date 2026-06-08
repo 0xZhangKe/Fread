@@ -18,6 +18,7 @@ import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.BlogUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.getStatusTopLabel
+import com.zhangke.fread.status.ui.model.BlogUIType
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ fun BlogUi(
     blog: Blog,
     locator: PlatformLocator,
     indexInList: Int,
+    type: BlogUIType,
     sharedElementId: String? = null,
     style: StatusStyle,
     showBottomPanel: Boolean,
@@ -51,6 +53,7 @@ fun BlogUi(
             isOwner = null,
             blogTranslationState = BlogTranslationUiState.DEFAULT,
             indexInList = indexInList,
+            type = type,
             sharedElementId = sharedElementId,
             showMoreOperationIcon = showMoreOperationIcon,
             style = style,

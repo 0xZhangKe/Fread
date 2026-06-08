@@ -4,20 +4,9 @@ import androidx.compose.runtime.Composable
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.common.daynight.DayNightMode
-import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.theme.ThemeType
 import com.zhangke.fread.localization.LocalizedString
 import org.jetbrains.compose.resources.stringResource
-
-val LanguageSettingType.typeName: String
-    @Composable
-    get() {
-        return when (this) {
-            LanguageSettingType.CN -> stringResource(LocalizedString.profileSettingLanguageZh)
-            LanguageSettingType.EN -> stringResource(LocalizedString.profileSettingLanguageEn)
-            LanguageSettingType.SYSTEM -> stringResource(LocalizedString.profileSettingLanguageSystem)
-        }
-    }
 
 val DayNightMode.modeName: String
     @Composable

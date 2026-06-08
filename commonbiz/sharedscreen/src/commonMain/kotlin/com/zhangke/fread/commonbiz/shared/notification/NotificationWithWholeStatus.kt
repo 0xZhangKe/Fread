@@ -23,6 +23,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FormattingTime
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.status.ui.model.BlogUIType
 
 @Composable
 fun NotificationWithWholeStatus(
@@ -80,6 +81,7 @@ fun NotificationWithWholeStatus(
                 .padding(style.internalBlogPadding),
             blog = blog,
             locator = locator,
+            type = BlogUIType.FEEDS,
             indexInList = indexInList,
             sharedElementId = sharedElementId,
             style = style.statusStyle.copy(

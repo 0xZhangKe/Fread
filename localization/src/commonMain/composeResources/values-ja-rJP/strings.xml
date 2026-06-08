@@ -8,6 +8,8 @@
     <string name="duration_week">週</string>
     <string name="cancel">キャンセル</string>
     <string name="ok">OK</string>
+    <string name="show_full_text">全文を表示</string>
+    <string name="collapse">折りたたむ</string>
     <string name="empty">ここには何もありません～</string>
     <string name="duration_selector_title">期間を設定</string>
     <string name="retry">再試行</string>

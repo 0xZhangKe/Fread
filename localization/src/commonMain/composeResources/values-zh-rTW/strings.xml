@@ -8,6 +8,8 @@
     <string name="duration_week">週</string>
     <string name="cancel">取消</string>
     <string name="ok">確定</string>
+    <string name="show_full_text">顯示全文</string>
+    <string name="collapse">收起</string>
     <string name="empty">這裡是空的～</string>
     <string name="duration_selector_title">設定時長</string>
     <string name="retry">重試</string>

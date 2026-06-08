@@ -15,8 +15,9 @@ import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
-import com.zhangke.fread.status.ui.BlogTextContentSection
+import com.zhangke.fread.status.ui.common.BlogTextContentSection
 import com.zhangke.fread.status.ui.media.BlogMedias
+import com.zhangke.fread.status.ui.model.BlogUIType
 import com.zhangke.fread.status.ui.publish.NameAndAccountInfo
 import com.zhangke.fread.status.ui.style.StatusStyle
 
@@ -60,6 +61,7 @@ fun BlogInEmbedding(
             if (blog.content.isNotEmpty()) {
                 BlogTextContentSection(
                     blog = blog,
+                    type = BlogUIType.EMBEDDED,
                     style = style.contentStyle.copy(maxLine = 10),
                 )
             }

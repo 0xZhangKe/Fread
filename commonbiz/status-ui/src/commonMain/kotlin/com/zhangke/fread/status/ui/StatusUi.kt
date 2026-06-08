@@ -22,6 +22,7 @@ import com.zhangke.fread.status.ui.label.ContinueThread
 import com.zhangke.fread.status.ui.label.ReblogTopLabel
 import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.label.StatusPinnedLabel
+import com.zhangke.fread.status.ui.model.BlogUIType
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
@@ -31,11 +32,11 @@ fun StatusUi(
     modifier: Modifier = Modifier,
     status: StatusUiState,
     indexInList: Int,
+    type: BlogUIType,
     sharedElementId: String? = null,
     style: StatusStyle = LocalStatusUiConfig.current.contentStyle,
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
-    detailModel: Boolean = false,
     showDivider: Boolean = true,
     threadsType: ThreadsType = ThreadsType.UNSPECIFIED,
     onOpenBlogWithOtherAccountClick: (StatusUiState) -> Unit = {},
@@ -61,6 +62,7 @@ fun StatusUi(
             blog = rawStatus.intrinsicBlog,
             isOwner = status.isOwner,
             logged = status.logged,
+            type = type,
             blogTranslationState = status.blogTranslationState,
             continueThreadLabelHeight = continueThreadHeight,
             topLabels = getStatusTopLabel(
@@ -79,8 +81,7 @@ fun StatusUi(
             indexInList = indexInList,
             sharedElementId = resolvedSharedElementId,
             threadsType = fixedThreadType,
-            detailModel = detailModel,
-            style = if (detailModel) style else style.contentIndentStyle(),
+            style = if (type == BlogUIType.DETAIL) style else style.contentIndentStyle(),
             onInteractive = { type, _ ->
                 composedStatusInteraction.onStatusInteractive(status, type)
             },

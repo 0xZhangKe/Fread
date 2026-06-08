@@ -14,7 +14,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.status.ui.drawSpoilerBackground
+import com.zhangke.fread.status.ui.common.drawSpoilerBackground
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

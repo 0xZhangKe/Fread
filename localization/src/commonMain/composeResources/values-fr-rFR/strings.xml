@@ -8,6 +8,8 @@
     <string name="duration_week">semaine</string>
     <string name="cancel">Annuler</string>
     <string name="ok">Oui</string>
+    <string name="show_full_text">Afficher le texte complet</string>
+    <string name="collapse">Réduire</string>
     <string name="empty">Cet espace est vide～</string>
     <string name="duration_selector_title">Définir la durée</string>
     <string name="retry">Réessayer</string>

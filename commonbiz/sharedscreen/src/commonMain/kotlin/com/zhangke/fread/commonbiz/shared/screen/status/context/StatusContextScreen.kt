@@ -57,6 +57,7 @@ import com.zhangke.fread.status.ui.StatusListPlaceholder
 import com.zhangke.fread.status.ui.StatusUi
 import com.zhangke.fread.status.ui.common.LocalStatusSharedElementConfig
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.model.BlogUIType
 import com.zhangke.fread.status.ui.threads.ThreadsType
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
@@ -289,6 +290,7 @@ private fun StatusInContextUi(
                 } else {
                     ThreadsType.ANCESTOR
                 },
+                type = BlogUIType.FEEDS,
                 status = statusInContext.status,
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
@@ -302,9 +304,9 @@ private fun StatusInContextUi(
                 modifier = modifier,
                 status = statusInContext.status,
                 indexInList = indexInList,
+                type = BlogUIType.DETAIL,
                 threadsType = if (indexInList == 0) ThreadsType.ANCHOR_FIRST else ThreadsType.ANCHOR,
                 onMediaClick = onMediaClick,
-                detailModel = true,
                 composedStatusInteraction = composedStatusInteraction,
                 onOpenBlogWithOtherAccountClick = {
                     selectAccountOpenStatusBottomSheetState.show(it)
@@ -318,6 +320,7 @@ private fun StatusInContextUi(
                 status = statusInContext.status,
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
+                type = BlogUIType.FEEDS,
                 threadsType = ThreadsType.NONE,
                 composedStatusInteraction = composedStatusInteraction,
                 onOpenBlogWithOtherAccountClick = {
@@ -332,6 +335,7 @@ private fun StatusInContextUi(
                 threadsType = ThreadsType.FIRST_ANCESTOR,
                 status = statusInContext.status,
                 indexInList = indexInList,
+                type = BlogUIType.FEEDS,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
                 onOpenBlogWithOtherAccountClick = {
@@ -346,6 +350,7 @@ private fun StatusInContextUi(
                 threadsType = ThreadsType.ANCESTOR,
                 status = statusInContext.status,
                 indexInList = indexInList,
+                type = BlogUIType.FEEDS,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
                 onOpenBlogWithOtherAccountClick = {
@@ -360,6 +365,7 @@ private fun StatusInContextUi(
                 threadsType = ThreadsType.ANCHOR,
                 status = statusInContext.status,
                 indexInList = indexInList,
+                type = BlogUIType.FEEDS,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
                 onOpenBlogWithOtherAccountClick = {

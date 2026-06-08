@@ -15,6 +15,8 @@ object LocalizedString {
     val durationWeek = localizedString.duration_week
     val cancel = localizedString.cancel
     val ok = localizedString.ok
+    val showFullText = localizedString.show_full_text
+    val collapse = localizedString.collapse
     val empty = localizedString.empty
     val durationSelectorTitle = localizedString.duration_selector_title
     val retry = localizedString.retry

@@ -8,6 +8,8 @@
     <string name="duration_week">Woche</string>
     <string name="cancel">Abbrechen</string>
     <string name="ok">Ja</string>
+    <string name="show_full_text">Vollständigen Text anzeigen</string>
+    <string name="collapse">Einklappen</string>
     <string name="empty">Dieser Bereich ist leer～</string>
     <string name="duration_selector_title">Dauer festlegen</string>
     <string name="retry">Erneut versuchen</string>

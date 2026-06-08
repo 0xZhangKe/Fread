@@ -10,6 +10,7 @@ import com.zhangke.fread.commonbiz.shared.screen.status.account.rememberSelectAc
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
+import com.zhangke.fread.status.ui.model.BlogUIType
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 
@@ -31,6 +32,7 @@ fun FeedsStatusNode(
         },
         status = status,
         indexInList = indexInList,
+        type = BlogUIType.FEEDS,
         sharedElementId = sharedElementId,
         style = style,
         showDivider = showDivider,

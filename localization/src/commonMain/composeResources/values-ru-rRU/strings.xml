@@ -8,6 +8,8 @@
     <string name="duration_week">неделя</string>
     <string name="cancel">Отмена</string>
     <string name="ok">Да</string>
+    <string name="show_full_text">Показать полный текст</string>
+    <string name="collapse">Свернуть</string>
     <string name="empty">Здесь пусто～</string>
     <string name="duration_selector_title">Установить длительность</string>
     <string name="retry">Повторить</string>

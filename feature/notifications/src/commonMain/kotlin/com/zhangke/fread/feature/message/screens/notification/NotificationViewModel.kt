@@ -281,6 +281,7 @@ class NotificationViewModel(
             this.reachEnd = it.reachEnd
             it.notifications
                 .map { n -> StatusNotificationUiState(n, fromLocal = false) }
+                .groupSimilar()
                 .let { list -> fillUserDetails(list, userDetailSnapshot) }
         }.onSuccess {
             if (loadMore || uiState.value.inOnlyMentionTab) {
@@ -368,7 +369,57 @@ class NotificationViewModel(
                 }
             }.sortedByDescending { it.createAt.epochMillis }
             .map { StatusNotificationUiState(it, fromLocal = true) }
+            .groupSimilar()
     }
+
+    /**
+     * Groups consecutive likes/reposts on the same post into a single
+     * row, mirroring how the official Bluesky client renders them. The first item in
+     * each group keeps its primary actor; subsequent actors are stashed in
+     * [StatusNotificationUiState.additionalActors] for the avatar stack.
+     */
+    private fun List<StatusNotificationUiState>.groupSimilar(): List<StatusNotificationUiState> {
+        if (isEmpty()) return this
+        val result = mutableListOf<StatusNotificationUiState>()
+        for (item in this) {
+            val key = item.notification.groupKey()
+            val lastIndex = result.lastIndex
+            if (key == null || lastIndex < 0 || result[lastIndex].notification.groupKey() != key) {
+                result += item
+                continue
+            }
+            val existing = result[lastIndex]
+            val newAuthor = item.notification.author ?: continue
+            val primaryAuthor = existing.notification.author
+            val alreadyPresent = primaryAuthor?.uri == newAuthor.uri ||
+                existing.additionalActors.any { it.uri == newAuthor.uri }
+            if (alreadyPresent) continue
+            result[lastIndex] = existing.copy(
+                additionalActors = existing.additionalActors + newAuthor,
+                unreadState = existing.unreadState || item.unreadState,
+            )
+        }
+        return result
+    }
+
+    private fun StatusNotification.groupKey(): String? = when (this) {
+        is StatusNotification.Like -> "like:${blog.id}"
+        is StatusNotification.Repost -> "repost:${blog.id}"
+        else -> null
+    }
+
+    private val StatusNotification.author: BlogAuthor?
+        get() = when (this) {
+            is StatusNotification.Like -> author
+            is StatusNotification.Follow -> author
+            is StatusNotification.Repost -> author
+            is StatusNotification.Mention -> author
+            is StatusNotification.Reply -> author
+            is StatusNotification.Quote -> author
+            is StatusNotification.QuoteUpdate -> author
+            is StatusNotification.FollowRequest -> author
+            else -> null
+        }
 
     private suspend fun updateStatus(newStatus: StatusUiState) {
         var updatedNotification: StatusNotification? = null

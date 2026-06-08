@@ -60,7 +60,7 @@ class GetCompletedNotificationUseCase(
         loggedAccount: BlueskyLoggedAccount?,
     ): CompletedBskyNotification? {
         val isOwner = loggedAccount?.did == author.did.did
-        val record: CompletedBskyNotification.Record = when (reason) {
+        val record: CompletedBskyNotification.Record = when (reason.normalized()) {
             ListNotificationsReason.Like -> {
                 val like: Like = (serializedCache[this] as? Like) ?: record.bskyJson()
                 CompletedBskyNotification.Record.Like(
@@ -160,7 +160,7 @@ class GetCompletedNotificationUseCase(
         notificationSerializedCache: MutableMap<ListNotificationsNotification, Any>,
     ): List<AtUri> {
         return mapNotNull {
-            when (it.reason) {
+            when (it.reason.normalized()) {
                 is ListNotificationsReason.Repost -> {
                     val repost: Repost = it.record.bskyJson()
                     notificationSerializedCache[it] = repost
@@ -179,6 +179,21 @@ class GetCompletedNotificationUseCase(
 
                 else -> null
             }
+        }
+    }
+
+    /**
+     * Bluesky added `like-via-repost` / `repost-via-repost` (likes/reposts of
+     * your reposts) after the Ozone 0.3.3 enum was sealed, so they arrive as
+     * [ListNotificationsReason.Unknown]. The payload shape matches the plain
+     * Like/Repost variants, so we fold them in.
+     */
+    private fun ListNotificationsReason.normalized(): ListNotificationsReason {
+        if (this !is ListNotificationsReason.Unknown) return this
+        return when (rawValue) {
+            "like-via-repost" -> ListNotificationsReason.Like
+            "repost-via-repost" -> ListNotificationsReason.Repost
+            else -> this
         }
     }
 }

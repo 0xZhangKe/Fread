@@ -23,6 +23,7 @@ import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.initLocale
+import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.activitypub.app.internal.adapter.toQuoteApprovalPolicy
 import com.zhangke.fread.activitypub.app.internal.adapter.toStatusVisibility
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
@@ -31,6 +32,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.Gen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
+import com.zhangke.fread.common.language.DetectPostLanguageUseCase
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
@@ -61,6 +63,7 @@ class PostStatusViewModel (
     private val publishPost: PublishPostUseCase,
     private val screenParams: PostStatusScreenParams,
     private val platformUriHelper: PlatformUriHelper,
+    private val detectPostLanguage: DetectPostLanguageUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
@@ -73,6 +76,10 @@ class PostStatusViewModel (
     val publishSuccessFlow: SharedFlow<Unit> get() = _publishSuccessFlow
 
     private var searchMentionUserJob: Job? = null
+
+    private var detectLanguageJob: Job? = null
+
+    private val dismissedLanguageSuggestions = mutableSetOf<String>()
 
     init {
         launchInViewModel {
@@ -147,6 +154,34 @@ class PostStatusViewModel (
             it.copy(content = inputtedText)
         }
         maybeSearchAccountForMention(inputtedText)
+        maybeDetectLanguage(inputtedText.text)
+    }
+
+    private fun maybeDetectLanguage(text: String) {
+        detectLanguageJob?.cancel()
+        detectLanguageJob = launchInViewModel {
+            val state = _uiState.value.successDataOrNull() ?: return@launchInViewModel
+            val suggestion = detectPostLanguage(
+                text = text,
+                selectedLanguages = listOf(state.language.languageCode),
+                dismissedLanguages = dismissedLanguageSuggestions,
+            )
+            _uiState.updateOnSuccess { state ->
+                state.copy(suggestedLanguage = suggestion)
+            }
+        }
+    }
+
+    fun onAcceptSuggestedLanguage() {
+        val suggestion = _uiState.value.successDataOrNull()?.suggestedLanguage ?: return
+        onLanguageSelected(initLocale(suggestion))
+        _uiState.updateOnSuccess { it.copy(suggestedLanguage = null) }
+    }
+
+    fun onDismissSuggestedLanguage() {
+        val suggestion = _uiState.value.successDataOrNull()?.suggestedLanguage ?: return
+        dismissedLanguageSuggestions += suggestion
+        _uiState.updateOnSuccess { it.copy(suggestedLanguage = null) }
     }
 
     private fun maybeSearchAccountForMention(content: TextFieldValue) {
@@ -284,7 +319,9 @@ class PostStatusViewModel (
 
     fun onLanguageSelected(locale: Locale) {
         _uiState.updateOnSuccess { state ->
-            state.copy(language = locale)
+            val suggestion = state.suggestedLanguage
+                ?.takeIf { it != locale.languageCode }
+            state.copy(language = locale, suggestedLanguage = suggestion)
         }
     }
 

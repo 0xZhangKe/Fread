@@ -35,6 +35,7 @@ data class PostStatusUiState(
     val publishing: Boolean,
     val mentionState: LoadableState<List<ActivityPubAccountEntity>>,
     val quoteApprovalPolicy: QuoteApprovalPolicy,
+    val suggestedLanguage: String?,
 ) {
 
     val showAddAccountIcon: Boolean get() = accountChangeable && replyToBlog == null
@@ -93,6 +94,7 @@ data class PostStatusUiState(
                 quoteApprovalPolicy = QuoteApprovalPolicy.PUBLIC,
                 quoteApprovalPolicyChangeable = quoteApprovalPolicyChangeable,
                 unavailableQuote = unavailableQuote,
+                suggestedLanguage = null,
             )
         }
     }

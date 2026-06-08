@@ -28,6 +28,7 @@ import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
 import com.zhangke.fread.common.startup.StartupManager
+import com.zhangke.fread.common.language.DetectPostLanguageUseCase
 import com.zhangke.fread.common.language.LanguageDetector
 import com.zhangke.fread.common.status.StatusIdGenerator
 import com.zhangke.fread.common.status.StatusUpdater
@@ -67,6 +68,7 @@ val commonModule = module {
     factoryOf(::AppUpdateManager)
     factoryOf(::BrowserLauncher)
     factoryOf(::ContentConfigAdapter)
+    factoryOf(::DetectPostLanguageUseCase)
     factoryOf(::FreadContentDbMigrateManager)
     factoryOf(::FreadContentRepo)
     factoryOf(::FormatStatusDisplayTimeUseCase)

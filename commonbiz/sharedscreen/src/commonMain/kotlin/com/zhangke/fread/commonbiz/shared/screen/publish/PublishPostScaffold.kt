@@ -55,6 +55,7 @@ import com.zhangke.fread.status.ui.threads.blogBeReplyThreads
 import com.zhangke.fread.status.ui.threads.blogInReplyingThreads
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun PublishPostScaffold(
@@ -65,6 +66,9 @@ fun PublishPostScaffold(
     showAddAccountIcon: Boolean,
     publishEnabled: Boolean,
     publishing: Boolean,
+    suggestedLanguage: String?,
+    onSuggestedLanguageAcceptClick: () -> Unit,
+    onSuggestedLanguageDismiss: () -> Unit,
     replyingBlog: Blog? = null,
     onContentChanged: (TextFieldValue) -> Unit,
     onPublishClick: () -> Unit,
@@ -103,7 +107,7 @@ fun PublishPostScaffold(
         val scrollState = rememberScrollState()
         if (replyingBlog != null && replyingHeight != null) {
             LaunchedEffect(replyingHeight) {
-                delay(300)
+                delay(300.milliseconds)
                 scrollState.animateScrollBy(replyingHeight!!)
             }
         }
@@ -222,6 +226,15 @@ fun PublishPostScaffold(
             Spacer(modifier = Modifier.height(8.dp))
 
             attachment(style)
+
+            if (!suggestedLanguage.isNullOrEmpty()) {
+                SuggestedLanguageBanner(
+                    modifier = Modifier.fillMaxWidth(),
+                    languageTag = suggestedLanguage,
+                    onAccept = onSuggestedLanguageAcceptClick,
+                    onDismiss = onSuggestedLanguageDismiss,
+                )
+            }
         }
     }
 }

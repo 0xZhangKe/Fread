@@ -95,6 +95,7 @@
     <string name="shared_publish_blog_title">Publicar</string>
     <string name="shared_publish_blog_text_hint">Escribe o pega lo que piensas</string>
     <string name="shared_publish_reply_input_hint">Respondiendo a [[%1$s]]</string>
+    <string name="shared_publish_suggested_language">¿Estás escribiendo en %1$s?</string>
     <string name="shared_publish_interaction_no_limit">Cualquiera puede interactuar</string>
     <string name="shared_publish_interaction_limited">Interacción limitada</string>
     <string name="shared_publish_interaction_dialog_title">Ajustes de interacción de la publicación</string>

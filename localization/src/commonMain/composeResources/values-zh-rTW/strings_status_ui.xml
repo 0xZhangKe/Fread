@@ -95,6 +95,7 @@
     <string name="shared_publish_blog_title">發文</string>
     <string name="shared_publish_blog_text_hint">寫下你的想法</string>
     <string name="shared_publish_reply_input_hint">回覆給 [[%1$s]]</string>
+    <string name="shared_publish_suggested_language">你正在用%1$s撰寫嗎？</string>
     <string name="shared_publish_interaction_no_limit">任何人都可以互動</string>
     <string name="shared_publish_interaction_limited">已限制互動</string>
     <string name="shared_publish_interaction_dialog_title">貼文互動選項</string>

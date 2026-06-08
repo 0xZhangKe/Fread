@@ -95,6 +95,7 @@
     <string name="shared_publish_blog_title">Posten</string>
     <string name="shared_publish_blog_text_hint">Schreibe, was dir durch den Kopf geht</string>
     <string name="shared_publish_reply_input_hint">Antwort an [[%1$s]]</string>
+    <string name="shared_publish_suggested_language">Schreibst du auf %1$s?</string>
     <string name="shared_publish_interaction_no_limit">Jeder kann interagieren</string>
     <string name="shared_publish_interaction_limited">Interaktion eingeschränkt</string>
     <string name="shared_publish_interaction_dialog_title">Interaktionseinstellungen</string>

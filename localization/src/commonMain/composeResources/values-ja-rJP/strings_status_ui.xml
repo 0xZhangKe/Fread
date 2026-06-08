@@ -95,6 +95,7 @@
     <string name="shared_publish_blog_title">投稿</string>
     <string name="shared_publish_blog_text_hint">考えていることを書いてください</string>
     <string name="shared_publish_reply_input_hint">[[%1$s]] に返信</string>
+    <string name="shared_publish_suggested_language">%1$sで書いていますか？</string>
     <string name="shared_publish_interaction_no_limit">誰でも参加可能</string>
     <string name="shared_publish_interaction_limited">制限付き</string>
     <string name="shared_publish_interaction_dialog_title">投稿の交流設定</string>

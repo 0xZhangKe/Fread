@@ -103,6 +103,7 @@ object LocalizedString {
     val sharedPublishBlogTitle = localizedString.shared_publish_blog_title
     val sharedPublishBlogTextHint = localizedString.shared_publish_blog_text_hint
     val sharedPublishReplyInputHint = localizedString.shared_publish_reply_input_hint
+    val sharedPublishSuggestedLanguage = localizedString.shared_publish_suggested_language
     val sharedPublishInteractionNoLimit = localizedString.shared_publish_interaction_no_limit
     val sharedPublishInteractionLimited = localizedString.shared_publish_interaction_limited
     val sharedPublishInteractionDialogTitle =

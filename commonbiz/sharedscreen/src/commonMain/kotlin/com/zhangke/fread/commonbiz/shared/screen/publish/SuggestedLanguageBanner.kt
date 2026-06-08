@@ -55,7 +55,7 @@ fun SuggestedLanguageBanner(
             )
             Text(
                 modifier = Modifier.weight(1F),
-                text = "Are you writing in $displayName?",
+                text = stringResource(LocalizedString.sharedPublishSuggestedLanguage, displayName),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

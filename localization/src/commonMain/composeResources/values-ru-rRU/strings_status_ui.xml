@@ -95,6 +95,7 @@
     <string name="shared_publish_blog_title">Пост</string>
     <string name="shared_publish_blog_text_hint">Напишите или вставьте, что у вас на уме</string>
     <string name="shared_publish_reply_input_hint">Ответ для [[%1$s]]</string>
+    <string name="shared_publish_suggested_language">Вы пишете на %1$s?</string>
     <string name="shared_publish_interaction_no_limit">Все могут взаимодействовать</string>
     <string name="shared_publish_interaction_limited">Взаимодействие ограничено</string>
     <string name="shared_publish_interaction_dialog_title">Настройки взаимодействия с постом</string>

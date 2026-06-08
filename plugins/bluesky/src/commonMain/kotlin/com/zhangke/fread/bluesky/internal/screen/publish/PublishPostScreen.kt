@@ -1,9 +1,24 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -70,6 +85,8 @@ fun PublishPostScreen(viewModel: PublishPostViewModel) {
         },
         onMentionCandidateClick = viewModel::onMentionCandidateClick,
         onLinkPreviewCardRemoveClicked = viewModel::onLinkPreviewCardRemoveClicked,
+        onAcceptSuggestedLanguage = viewModel::onAcceptSuggestedLanguage,
+        onDismissSuggestedLanguage = viewModel::onDismissSuggestedLanguage,
     )
     ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
     ConsumeFlow(viewModel.finishPageFlow) {
@@ -94,6 +111,8 @@ private fun PublishPostContent(
     onAddAccountClick: () -> Unit,
     onMentionCandidateClick: (ProfileView) -> Unit,
     onLinkPreviewCardRemoveClicked: () -> Unit,
+    onAcceptSuggestedLanguage: () -> Unit,
+    onDismissSuggestedLanguage: () -> Unit,
 ) {
     PublishPostScaffold(
         account = uiState.account,
@@ -162,7 +181,91 @@ private fun PublishPostContent(
                     onRemoveClick = onLinkPreviewCardRemoveClicked,
                 )
             }
+            uiState.suggestedLanguage?.let { suggestion ->
+                SuggestedLanguageBanner(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    languageTag = suggestion,
+                    onAccept = onAcceptSuggestedLanguage,
+                    onDismiss = onDismissSuggestedLanguage,
+                )
+            }
         },
         allowHashtagInHashtag = true,
     )
+}
+
+@Composable
+private fun SuggestedLanguageBanner(
+    modifier: Modifier,
+    languageTag: String,
+    onAccept: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val displayName = remember(languageTag) { displayNameOf(languageTag) }
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 12.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Language,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                modifier = Modifier.weight(1F),
+                text = "Are you writing in $displayName?",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            TextButton(onClick = onAccept) {
+                Text("Yes")
+            }
+            IconButton(onClick = onDismiss) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Dismiss",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+/** Best-effort mapping of a BCP-47 tag to a human-readable name. */
+private fun displayNameOf(tag: String): String = when (tag.lowercase().substringBefore('-')) {
+    "en" -> "English"
+    "es" -> "Spanish"
+    "pt" -> "Portuguese"
+    "fr" -> "French"
+    "de" -> "German"
+    "it" -> "Italian"
+    "ja" -> "Japanese"
+    "ko" -> "Korean"
+    "zh" -> "Chinese"
+    "ru" -> "Russian"
+    "ar" -> "Arabic"
+    "nl" -> "Dutch"
+    "pl" -> "Polish"
+    "tr" -> "Turkish"
+    "sv" -> "Swedish"
+    "no" -> "Norwegian"
+    "da" -> "Danish"
+    "fi" -> "Finnish"
+    "cs" -> "Czech"
+    "el" -> "Greek"
+    "he" -> "Hebrew"
+    "hi" -> "Hindi"
+    "id" -> "Indonesian"
+    "th" -> "Thai"
+    "uk" -> "Ukrainian"
+    "vi" -> "Vietnamese"
+    else -> tag
 }

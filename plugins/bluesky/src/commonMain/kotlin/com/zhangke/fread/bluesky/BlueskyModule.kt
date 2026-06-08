@@ -179,6 +179,7 @@ val blueskyModule = module {
             configManager = get(),
             publishingPost = get(),
             linkPreviewCardRepo = get(),
+            languageDetector = get(),
             locator = params[0],
             defaultText = params.values.getOrNull(1) as String?,
             replyBlogJsonString = params.values.getOrNull(2) as String?,

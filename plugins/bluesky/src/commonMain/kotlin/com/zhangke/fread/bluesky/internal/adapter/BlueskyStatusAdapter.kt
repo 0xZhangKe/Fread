@@ -4,6 +4,7 @@ import app.bsky.embed.AspectRatio
 import app.bsky.embed.ExternalViewExternal
 import app.bsky.embed.ImagesViewImage
 import app.bsky.embed.RecordViewRecord
+import app.bsky.embed.RecordViewRecordEmbedUnion
 import app.bsky.embed.RecordViewRecordUnion
 import app.bsky.embed.RecordWithMediaViewMediaUnion
 import app.bsky.embed.VideoView
@@ -162,8 +163,31 @@ class BlueskyStatusAdapter(
             repostCount = recordView.repostCount,
             likeCount = recordView.likeCount,
             replyCount = recordView.replyCount,
+            mediaList = recordView.embeds.flatMap(::convertToMedia),
             platform = platform,
         )
+    }
+
+    private fun convertToMedia(embed: RecordViewRecordEmbedUnion): List<BlogMedia> {
+        return when (embed) {
+            is RecordViewRecordEmbedUnion.ImagesView ->
+                embed.value.images.map { it.toMedia() }
+
+            is RecordViewRecordEmbedUnion.VideoView ->
+                listOf(embed.value.toMedia())
+
+            is RecordViewRecordEmbedUnion.RecordWithMediaView ->
+                when (val media = embed.value.media) {
+                    is RecordWithMediaViewMediaUnion.ImagesView ->
+                        media.value.images.map { it.toMedia() }
+                    is RecordWithMediaViewMediaUnion.VideoView ->
+                        listOf(media.value.toMedia())
+                    is RecordWithMediaViewMediaUnion.ExternalView -> emptyList()
+                    is RecordWithMediaViewMediaUnion.Unknown -> emptyList()
+                }
+
+            else -> emptyList()
+        }
     }
 
     fun convertToBlog(

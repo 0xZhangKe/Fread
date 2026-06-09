@@ -219,7 +219,7 @@ private fun BlogRichTextContent(
                 }
             },
         )
-        if (isOverflow) {
+        if (isOverflow && type == BlogUIType.FEEDS) {
             ShowMoreOrHideLabel(
                 modifier = Modifier.fillMaxWidth(),
                 expanded = expanded,

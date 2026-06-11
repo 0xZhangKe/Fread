@@ -88,6 +88,7 @@ fun BlogInEmbedding(
                     style = style.cardStyle,
                     linkEmbed = linkEmbed,
                     onCardClick = {},
+                    showDomain = !linkEmbed.appearsInText(blog.content, blog.facets),
                 )
             }
         }

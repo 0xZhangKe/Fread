@@ -121,13 +121,18 @@ class GetFeedsStatusUseCase(
     ): Result<BskyPagingFeeds> {
         if (this.isFailure) return Result.failure(this.exceptionOrThrow())
         val (cursor, feeds) = this.getOrThrow()
-        val status = feeds.map {
-            statusAdapter.convertToUiState(
-                locator = locator,
-                feedViewPost = it,
-                platform = platform,
-                loggedAccount = loggedAccount,
-            )
+        // Convert each post independently: a single post that fails to
+        // deserialize (e.g. an unknown embed $type the ozone lexicon doesn't
+        // know yet) must not take down the whole feed.
+        val status = feeds.mapNotNull {
+            runCatching {
+                statusAdapter.convertToUiState(
+                    locator = locator,
+                    feedViewPost = it,
+                    platform = platform,
+                    loggedAccount = loggedAccount,
+                )
+            }.getOrNull()
         }
         return Result.success(BskyPagingFeeds(cursor, status))
     }
@@ -139,13 +144,15 @@ class GetFeedsStatusUseCase(
     ): Result<BskyPagingFeeds> {
         if (this.isFailure) return Result.failure(this.exceptionOrThrow())
         val (cursor, feeds) = this.getOrThrow()
-        val status = feeds.map {
-            statusAdapter.convertToUiState(
-                locator = locator,
-                postView = it,
-                platform = platform,
-                loggedAccount = loggedAccount,
-            )
+        val status = feeds.mapNotNull {
+            runCatching {
+                statusAdapter.convertToUiState(
+                    locator = locator,
+                    postView = it,
+                    platform = platform,
+                    loggedAccount = loggedAccount,
+                )
+            }.getOrNull()
         }
         return Result.success(BskyPagingFeeds(cursor, status))
     }

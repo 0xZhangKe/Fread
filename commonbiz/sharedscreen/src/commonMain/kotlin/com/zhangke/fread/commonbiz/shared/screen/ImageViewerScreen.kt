@@ -60,6 +60,7 @@ import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration.Companion.milliseconds
 
 @Serializable
 data class ImageViewerScreenNavKey(
@@ -118,6 +119,7 @@ fun ImageViewerScreen(
                 val currentMedia = imageList[pageIndex]
                 ImagePageContent(
                     image = currentMedia,
+                    sharedElementEnabled = pageIndex == pagerState.currentPage,
                     onDismissRequest = backStack::popIfNotRoot,
                 )
             }
@@ -125,7 +127,7 @@ fun ImageViewerScreen(
             ImageTopBar(imageList[pagerState.currentPage])
 
             LaunchedEffect(Unit) {
-                delay(300)
+                delay(300.milliseconds)
                 showIndicator = true
             }
             if (showIndicator && pagerState.pageCount > 1) {
@@ -145,6 +147,7 @@ fun ImageViewerScreen(
 @Composable
 private fun ImagePageContent(
     image: ImageViewerImage,
+    sharedElementEnabled: Boolean,
     onDismissRequest: () -> Unit,
 ) {
     val imageLoader = LocalImageLoader.current
@@ -176,7 +179,7 @@ private fun ImagePageContent(
                     .fillMaxSize()
                     .blurhash(image.blurhash)
                     .let {
-                        if (image.sharedElementKey.isNullOrEmpty()) {
+                        if (!sharedElementEnabled || image.sharedElementKey.isNullOrEmpty()) {
                             it
                         } else {
                             it.sharedElement(image.sharedElementKey)

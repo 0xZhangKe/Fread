@@ -226,6 +226,8 @@ fun rememberVideoPlayerController(
         startTimeInSeconds?.let(controller::seekToSeconds)
     }
 
+    VideoPlaybackSideEffects(controller)
+
     return controller
 }
 

@@ -7,6 +7,7 @@ import com.zhangke.fread.profile.ProfileScreenVisitor
 import com.zhangke.fread.profile.screen.home.ProfileHomeViewModel
 import com.zhangke.fread.profile.screen.setting.SettingScreenModel
 import com.zhangke.fread.profile.screen.setting.about.AboutViewModel
+import com.zhangke.fread.profile.screen.setting.ai.AISettingsViewModel
 import com.zhangke.fread.profile.screen.setting.alttext.AltTextSettingsViewModel
 import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsViewModel
 import com.zhangke.fread.profile.screen.setting.behavior.BehaviorSettingsViewModel
@@ -26,6 +27,7 @@ val profileModule = module {
     viewModelOf(::AboutViewModel)
     viewModelOf(::AppearanceSettingsViewModel)
     viewModelOf(::BehaviorSettingsViewModel)
+    viewModelOf(::AISettingsViewModel)
     viewModelOf(::AltTextSettingsViewModel)
     viewModelOf(::LLmConfigViewModel)
 

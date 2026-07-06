@@ -247,6 +247,8 @@
     <string name="setting_group_appearance_subtitle">Paramètres du thème, de l’affichage et du style de l’accueil</string>
     <string name="setting_group_behavior">Comportement</string>
     <string name="setting_group_behavior_subtitle">Paramètres d’affichage du contenu et de comportement d’interaction</string>
+    <string name="setting_group_ai">Paramètres des fonctionnalités IA</string>
+    <string name="setting_group_ai_subtitle">Actuellement utilisé pour générer le texte alternatif des images lors de la publication</string>
     <string name="setting_item_home_tab_next_title">Afficher le bouton de changement de contenu en haut de l’accueil</string>
     <string name="setting_item_home_tab_next_subtitle">Afficher en haut à droite de l’accueil le bouton pour passer au contenu suivant</string>
     <string name="setting_item_home_tab_refresh_title">Afficher le bouton d’actualisation en haut de l’accueil</string>

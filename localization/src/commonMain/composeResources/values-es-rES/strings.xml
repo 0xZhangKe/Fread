@@ -247,6 +247,8 @@
     <string name="setting_group_appearance_subtitle">Ajustes de tema, visualización y estilo de Inicio</string>
     <string name="setting_group_behavior">Comportamiento</string>
     <string name="setting_group_behavior_subtitle">Ajustes de visualización de contenido y comportamiento de interacción</string>
+    <string name="setting_group_ai">Ajustes de funciones de IA</string>
+    <string name="setting_group_ai_subtitle">Actualmente se usa para generar texto alternativo de imágenes al publicar</string>
     <string name="setting_item_home_tab_next_title">Mostrar el botón para cambiar de contenido en la parte superior de Inicio</string>
     <string name="setting_item_home_tab_next_subtitle">Mostrar en la esquina superior derecha de Inicio el botón para cambiar al siguiente contenido</string>
     <string name="setting_item_home_tab_refresh_title">Mostrar el botón de actualizar en la parte superior de Inicio</string>

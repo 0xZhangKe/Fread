@@ -250,6 +250,8 @@
     <string name="setting_group_appearance_subtitle">Theme, display and Home style settings</string>
     <string name="setting_group_behavior">Behavior</string>
     <string name="setting_group_behavior_subtitle">Content display and interaction behavior settings</string>
+    <string name="setting_group_ai">AI feature settings</string>
+    <string name="setting_group_ai_subtitle">Currently used to generate image alt text when posting</string>
     <string name="setting_item_home_tab_next_title">Show top switch-content button on Home</string>
     <string name="setting_item_home_tab_next_subtitle">Show the button in the top-right of Home to switch to the next content</string>
     <string name="setting_item_home_tab_refresh_title">Show top refresh button on Home</string>

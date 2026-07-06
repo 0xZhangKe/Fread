@@ -247,6 +247,8 @@
     <string name="setting_group_appearance_subtitle">テーマ、表示、ホーム画面スタイルの設定</string>
     <string name="setting_group_behavior">動作</string>
     <string name="setting_group_behavior_subtitle">コンテンツ表示と操作動作の設定</string>
+    <string name="setting_group_ai">AI 機能設定</string>
+    <string name="setting_group_ai_subtitle">現在、投稿時に画像の代替テキストを生成するために使用します</string>
     <string name="setting_item_home_tab_next_title">ホーム上部のコンテンツ切り替えボタンを表示</string>
     <string name="setting_item_home_tab_next_subtitle">ホーム右上に次のコンテンツへ切り替えるボタンを表示する</string>
     <string name="setting_item_home_tab_refresh_title">ホーム上部の更新ボタンを表示</string>

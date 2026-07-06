@@ -20,7 +20,7 @@ class LLmConfigViewModel(
         viewModelScope.launch {
             modelConfigRepo.getAllProviderFlow().collect { configs ->
                 _uiState.update { current ->
-                    current.copy(configs = configs.map { it.toUiState() })
+                    current.copy(configs = configs.sortedByDescending { it.selected }.map { it.toUiState() })
                 }
             }
         }

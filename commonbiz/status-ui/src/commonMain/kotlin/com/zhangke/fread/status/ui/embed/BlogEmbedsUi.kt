@@ -19,12 +19,15 @@ import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogEmbed
+import com.zhangke.fread.status.model.Facet
+import com.zhangke.fread.status.model.FacetFeatureUnion
 import com.zhangke.fread.status.ui.style.StatusStyle
 
 @Composable
 internal fun BlogEmbedsUi(
     modifier: Modifier,
     embeds: List<BlogEmbed>,
+    blog: Blog,
     style: StatusStyle,
     onContentClick: (Blog) -> Unit,
     onUrlClick: (url: String) -> Unit,
@@ -36,6 +39,7 @@ internal fun BlogEmbedsUi(
             modifier = modifier
                 .padding(top = style.contentStyle.contentVerticalSpacing),
             embed = embed,
+            blog = blog,
             style = style,
             onUrlClick = onUrlClick,
             onContentClick = onContentClick,
@@ -48,6 +52,7 @@ internal fun BlogEmbedsUi(
 private fun BlogEmbedUi(
     modifier: Modifier,
     embed: BlogEmbed,
+    blog: Blog,
     style: StatusStyle,
     onContentClick: (Blog) -> Unit,
     onUrlClick: (url: String) -> Unit,
@@ -78,6 +83,7 @@ private fun BlogEmbedUi(
                     linkEmbed = embed,
                     style = style.cardStyle,
                     onCardClick = { onUrlClick(embed.url) },
+                    showDomain = !embed.appearsInText(blog.content, blog.facets),
                 )
             }
         }
@@ -100,6 +106,20 @@ private fun BlogEmbedUi(
                 onContentClick = onUnavailableQuoteClick,
             )
         }
+    }
+}
+
+/**
+ * True when the user's post text references this card's URL — either as a
+ * literal substring (`https://example.com/foo` typed inline) or via a rich
+ * facet whose `uri` matches. False when Bluesky kept the link card but the
+ * URL was deleted from the text; that's the case the domain label exists to
+ * disambiguate.
+ */
+internal fun BlogEmbed.Link.appearsInText(content: String, facets: List<Facet>): Boolean {
+    if (content.contains(url)) return true
+    return facets.any { facet ->
+        facet.features.any { it is FacetFeatureUnion.Link && it.uri == url }
     }
 }
 

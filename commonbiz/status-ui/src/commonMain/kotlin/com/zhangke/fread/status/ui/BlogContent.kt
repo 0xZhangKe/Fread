@@ -121,6 +121,7 @@ fun BlogContent(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 embeds = blog.embeds,
+                blog = blog,
                 style = style,
                 onContentClick = onBlogClick,
                 onUrlClick = onUrlClick,

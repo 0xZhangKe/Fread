@@ -43,10 +43,12 @@ fun StatusEmbedLinkUi(
     linkEmbed: BlogEmbed.Link,
     style: StatusStyle.CardStyle,
     onCardClick: (BlogEmbed.Link) -> Unit,
+    showDomain: Boolean = false,
 ) {
     val containerModifier = modifier
         .clickable { onCardClick(linkEmbed) }
         .padding(bottom = style.contentVerticalPadding)
+    val domain = if (showDomain) displayHost(linkEmbed.url) else null
     if (linkEmbed.image.isNullOrEmpty().not()) {
         Column(modifier = containerModifier) {
             if (linkEmbed.image.isNullOrEmpty().not()) {
@@ -89,6 +91,10 @@ fun StatusEmbedLinkUi(
             }
             Spacer(modifier = Modifier.height(style.imageBottomPadding))
             PreviewCardTexts(linkEmbed, style, 2)
+            if (domain != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                DomainLabel(domain = domain, style = style)
+            }
         }
     } else {
         Row(
@@ -102,6 +108,10 @@ fun StatusEmbedLinkUi(
                     .padding(end = 8.dp)
             ) {
                 PreviewCardTexts(linkEmbed, style, 1)
+                if (domain != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    DomainLabel(domain = domain, style = style)
+                }
             }
             Box(
                 modifier = Modifier
@@ -124,6 +134,35 @@ fun StatusEmbedLinkUi(
             }
         }
     }
+}
+
+@Composable
+private fun DomainLabel(
+    domain: String,
+    style: StatusStyle.CardStyle,
+) {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        text = domain,
+        style = style.descStyle,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
+}
+
+/**
+ * Best-effort host extraction for display next to a link card. Strips scheme,
+ * path, query, fragment, and a leading "www." — e.g. `https://www.example.com/foo`
+ * → `example.com`. Falls back to the raw URL if it doesn't look like one.
+ */
+internal fun displayHost(url: String): String {
+    val noScheme = url.removePrefix("https://").removePrefix("http://")
+    val host = noScheme.substringBefore('/').substringBefore('?').substringBefore('#')
+    if (host.isBlank()) return url
+    return host.removePrefix("www.")
 }
 
 @Composable

@@ -93,7 +93,7 @@
     <string name="shared_user_list_action_mute_dialog_message">Are you sure you want to mute this user?</string>
     <string name="shared_user_list_action_block_dialog_message">Are you sure you want to block this user?</string>
     <string name="shared_publish_blog_title">Post</string>
-    <string name="shared_publish_blog_text_hint">Type or paste what`s on your mind</string>
+    <string name="shared_publish_blog_text_hint">Type or paste what's on your mind</string>
     <string name="shared_publish_reply_input_hint">Replying to [[%1$s]]</string>
     <string name="shared_publish_suggested_language">Are you writing in %1$s?</string>
     <string name="shared_publish_interaction_no_limit">Anybody can interact</string>

@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,8 +72,9 @@ fun FullScreenVideoPlayer(
             mediaUrl = uri.toString(),
             initialContentScale = ContentScale.Fit,
         )
+
         VideoPlayer(
-            modifier = Modifier,
+            modifier = Modifier.run{ if(videoController.isPlaying) keepScreenOn()  else this},
             controller = videoController,
         )
         AnimatedVisibility(

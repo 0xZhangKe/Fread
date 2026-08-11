@@ -268,6 +268,7 @@ class NotificationViewModel(
         cursor: String? = this.cursor,
         loadMore: Boolean = false,
     ): Result<List<StatusNotificationUiState>> {
+        var notificationsFromServer = emptyList<StatusNotification>()
         return statusProvider.notificationResolver.getNotifications(
             account = account,
             type = if (uiState.value.inOnlyMentionTab) {
@@ -279,7 +280,8 @@ class NotificationViewModel(
         ).map {
             this.cursor = it.cursor
             this.reachEnd = it.reachEnd
-            it.notifications
+            notificationsFromServer = it.notifications
+            notificationsFromServer
                 .map { n -> StatusNotificationUiState(n, fromLocal = false) }
                 .groupSimilar()
                 .let { list -> fillUserDetails(list, userDetailSnapshot) }
@@ -287,11 +289,13 @@ class NotificationViewModel(
             if (loadMore || uiState.value.inOnlyMentionTab) {
                 notificationsRepo.insertNotification(
                     account.uri,
-                    it.map { n -> n.notification })
+                    notificationsFromServer,
+                )
             } else {
                 notificationsRepo.replaceNotifications(
                     account.uri,
-                    it.map { n -> n.notification })
+                    notificationsFromServer,
+                )
             }
             launch { loadAdditionalData(account, it) }
         }

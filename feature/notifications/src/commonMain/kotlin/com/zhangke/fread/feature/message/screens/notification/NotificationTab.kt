@@ -60,6 +60,7 @@ import com.zhangke.fread.status.ui.StatusListPlaceholder
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Duration.Companion.milliseconds
 
 internal val LocalNotificationTabConsumeStatusBarInsets = compositionLocalOf { false }
 
@@ -98,7 +99,7 @@ class NotificationTab(
             val first = uiState.dataList.first()
             LaunchedEffect(first.id, first.fromLocal) {
                 // 停留1秒表示已读
-                delay(1000)
+                delay(1000.milliseconds)
                 viewModel.onPageResume()
             }
         }
@@ -169,7 +170,7 @@ class NotificationTab(
                             )
                             if (notification.unreadState) {
                                 LaunchedEffect(notification) {
-                                    delay(1000)
+                                    delay(1000.milliseconds)
                                     onNotificationShown(notification)
                                 }
                             }

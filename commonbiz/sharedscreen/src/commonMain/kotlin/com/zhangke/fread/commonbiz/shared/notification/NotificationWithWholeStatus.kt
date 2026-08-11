@@ -50,7 +50,11 @@ fun NotificationWithWholeStatus(
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable(enabled = author != null) {
-                composedStatusInteraction.onUserInfoClick(locator, author!!)
+                if (expandable) {
+                    expanded = !expanded
+                } else {
+                    composedStatusInteraction.onUserInfoClick(locator, author!!)
+                }
             },
             icon = icon,
             avatar = author?.avatar,
@@ -63,7 +67,6 @@ fun NotificationWithWholeStatus(
             othersCount = additionalActors.size,
             expandable = expandable,
             expanded = expanded,
-            onToggleExpand = { expanded = !expanded },
         )
 
         if (expandable && expanded) {

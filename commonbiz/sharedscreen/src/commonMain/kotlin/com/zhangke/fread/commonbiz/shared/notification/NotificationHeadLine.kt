@@ -1,6 +1,5 @@
 package com.zhangke.fread.commonbiz.shared.notification
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,7 +44,6 @@ fun NotificationHeadLine(
     avatarSize: Dp = style.triggerAccountAvatarSize,
     expandable: Boolean = false,
     expanded: Boolean = false,
-    onToggleExpand: () -> Unit = {},
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -110,8 +108,7 @@ fun NotificationHeadLine(
             Icon(
                 modifier = Modifier
                     .padding(start = 4.dp)
-                    .size(18.dp)
-                    .clickable { onToggleExpand() },
+                    .size(18.dp),
                 imageVector = if (expanded) {
                     Icons.Default.KeyboardArrowUp
                 } else {

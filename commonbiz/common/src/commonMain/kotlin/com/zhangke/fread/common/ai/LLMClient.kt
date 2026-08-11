@@ -118,6 +118,12 @@ class LLMClient(
         }
         return buildJsonObject {
             put("model", modelConfig.versionName)
+            if (modelConfig.provider.id == "openrouter") {
+                putJsonObject("reasoning") {
+                    put("effort", "none")
+                    put("exclude", true)
+                }
+            }
             putJsonArray("messages") {
                 addJsonObject {
                     put("role", "user")

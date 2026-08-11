@@ -117,6 +117,11 @@ private val metaVersions = listOf(
 )
 
 private val alibabaVersions = listOf(
+    "qwen3.7-plus",
+    "qwen3.6-plus",
+    "qwen3.6-flash",
+    "qwen3.6-35b-a3b",
+    "qwen3.6-27b",
     "qwen3-max",
     "qwen3-plus",
     "qwen3-turbo",
@@ -127,6 +132,27 @@ private val alibabaVersions = listOf(
 )
 
 private val openRouterVersions = listOf(
+    "qwen/qwen3.8-max",
+    "qwen/qwen3.7-plus",
+    "qwen/qwen3.7-flash",
+    "qwen/qwen3.6-plus",
+    "qwen/qwen3.6-flash",
+    "qwen/qwen3.6-35b-a3b",
+    "qwen/qwen3.6-27b",
+    "qwen/qwen3-vl-235b-a22b-instruct",
+    "qwen/qwen3-vl-32b-instruct",
+    "qwen/qwen3-vl-30b-a3b-thinking",
+    "qwen/qwen3-vl-30b-a3b-instruct",
+    "qwen/qwen3-vl-8b-thinking",
+    "qwen/qwen3-vl-8b-instruct",
+    "moonshotai/kimi-k3",
+    "moonshotai/kimi-k2.7-code",
+    "moonshotai/kimi-k2.6",
+    "z-ai/glm-5v-turbo",
+    "z-ai/glm-4.6v",
+    "z-ai/glm-4.5v",
+    "minimax/minimax-m3",
+    "minimax/minimax-01",
     "openai/gpt-5.1",
     "openai/gpt-5-mini",
     "openai/gpt-4.1",

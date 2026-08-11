@@ -21,9 +21,11 @@ class AltTextGenerator(
             val prompt = freadConfigManager.getAltTextPrompt()
             val response = llmClient.execute(prompt, imageUri)
                 .getOrElse { throw it.toAltTextException() }
-            val text = response.text.stripWrappingQuotes()
+            val text = response.text
+                .stripThinkingText()
+                .stripWrappingQuotes()
 
-            if (text.isBlank()) throw AltTextException.EmptyResponse
+            if (text.isBlank()) throw AltTextException.EmptyResponse()
 
             AltTextResult(
                 text = text,
@@ -45,19 +47,27 @@ class AltTextGenerator(
         if (this is CancellationException) return this
         val message = message.orEmpty()
         return when {
-            message.contains("not configured", ignoreCase = true) -> AltTextException.NotConfigured
-            message.contains("load image", ignoreCase = true) -> AltTextException.LoadImage
-            message.contains("empty response", ignoreCase = true) -> AltTextException.EmptyResponse
-            message.isBlank() -> AltTextException.Network
+            message.contains("not configured", ignoreCase = true) -> AltTextException.NotConfigured()
+            message.contains("load image", ignoreCase = true) -> AltTextException.LoadImage()
+            message.contains("empty response", ignoreCase = true) -> AltTextException.EmptyResponse()
+            message.isBlank() -> AltTextException.Network()
             else -> AltTextException.Server(message)
         }
     }
 }
 
+internal fun String.stripThinkingText(): String {
+    val textAfterThinking = substringAfterLast(THINK_END_TAG, missingDelimiterValue = "")
+        .trim()
+    return textAfterThinking.ifBlank { this }
+}
+
+private const val THINK_END_TAG = "</think>"
+
 sealed class AltTextException : Exception() {
-    object NotConfigured : AltTextException()
-    object LoadImage : AltTextException()
+    class NotConfigured : AltTextException()
+    class LoadImage : AltTextException()
     class Server(val serverMessage: String?) : AltTextException()
-    object Network : AltTextException()
-    object EmptyResponse : AltTextException()
+    class Network : AltTextException()
+    class EmptyResponse : AltTextException()
 }

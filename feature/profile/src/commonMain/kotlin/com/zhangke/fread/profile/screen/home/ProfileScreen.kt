@@ -1,6 +1,8 @@
 package com.zhangke.fread.profile.screen.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +41,7 @@ import com.zhangke.fread.common.composable.EmptyContentType
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.commonbiz.shared.composable.UserInfoCard
+import com.zhangke.fread.commonbiz.shared.composable.UserInfoCardPlaceholder
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingScreenNavKey
 import com.zhangke.fread.status.StatusProvider
@@ -130,11 +133,15 @@ private fun ProfileHomePageContent(
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
             if (uiState.accountDataList.isEmpty()) {
-                EmptyContent(
-                    modifier = Modifier.fillMaxSize(),
-                    type = EmptyContentType.Account,
-                    onClick = onAddAccountClick,
-                )
+                if (uiState.pageLoading) {
+                    ProfilePagePlaceholder(modifier = Modifier.padding(innerPadding))
+                } else {
+                    EmptyContent(
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
+                        type = EmptyContentType.Account,
+                        onClick = onAddAccountClick,
+                    )
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().applyBlurSource(),
@@ -183,4 +190,15 @@ private fun AccountDetail(
         },
         onUserClick = { onAccountClick(accountDetail.account.account) },
     )
+}
+
+@Composable
+private fun ProfilePagePlaceholder(modifier: Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        UserInfoCardPlaceholder(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
+        UserInfoCardPlaceholder(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
+    }
 }

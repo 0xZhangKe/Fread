@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.VerticalIndentLayout
+import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.localization.LocalizedString
@@ -112,6 +115,58 @@ fun UserInfoCard(
         onProfileClick = { onUserClick(user) },
         bottomPanel = bottomPanel,
     )
+}
+
+@Composable
+fun UserInfoCardPlaceholder(modifier: Modifier) {
+    Box(modifier = modifier) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Spacer(modifier = Modifier.height(40.dp))
+                Row(
+                    modifier = Modifier.padding(start = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(68.dp)
+                            .clip(CircleShape)
+                            .freadPlaceholder(
+                                visible = true,
+                                color = MaterialTheme.colorScheme.surfaceContainer
+                            )
+                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .width(120.dp)
+                            .height(18.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .freadPlaceholder(
+                                visible = true,
+                                color = MaterialTheme.colorScheme.surfaceContainer
+                            )
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                        .fillMaxWidth()
+                        .height(18.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .freadPlaceholder(
+                            visible = true,
+                            color = MaterialTheme.colorScheme.surfaceContainer
+                        )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
 }
 
 @Composable

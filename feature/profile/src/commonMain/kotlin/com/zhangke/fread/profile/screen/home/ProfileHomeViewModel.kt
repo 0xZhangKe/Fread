@@ -27,7 +27,7 @@ class ProfileHomeViewModel(
     private val activeAccountsSynchronizer: ActiveAccountsSynchronizer,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProfileHomeUiState(emptyList()))
+    private val _uiState = MutableStateFlow(ProfileHomeUiState())
     val uiState: StateFlow<ProfileHomeUiState> get() = _uiState.asStateFlow()
 
     private val _openPageFlow = MutableSharedFlow<NavKey>()
@@ -73,7 +73,7 @@ class ProfileHomeViewModel(
                     }
                 }
                 .collect { list ->
-                    _uiState.update { it.copy(accountDataList = list) }
+                    _uiState.update { it.copy(accountDataList = list, pageLoading = false) }
                 }
         }
     }

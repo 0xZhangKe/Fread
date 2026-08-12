@@ -2,6 +2,7 @@
 <resources>
     <string name="skip">跳过</string>
     <string name="alert">提示</string>
+    <string name="notice">提示</string>
     <string name="duration_minute">分钟</string>
     <string name="duration_hour">小时</string>
     <string name="duration_day">天</string>
@@ -248,6 +249,7 @@
     <string name="setting_group_behavior">行为</string>
     <string name="setting_group_behavior_subtitle">内容展示与交互行为设置</string>
     <string name="setting_group_ai">AI 功能设置</string>
+    <string name="ai_generated_label">AI 生成：</string>
     <string name="setting_group_ai_subtitle">目前用于在发帖时生成图片的替代文本</string>
     <string name="setting_item_home_tab_next_title">首页顶部的切换内容按钮显示</string>
     <string name="setting_item_home_tab_next_subtitle">首页的右上角是否显示用于切换到下一个内容的按钮</string>

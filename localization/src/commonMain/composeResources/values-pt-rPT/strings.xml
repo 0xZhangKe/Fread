@@ -2,6 +2,7 @@
 <resources>
     <string name="skip">Pular</string>
     <string name="alert">Alerta</string>
+    <string name="notice">Aviso</string>
     <string name="duration_minute">minuto</string>
     <string name="duration_hour">hora</string>
     <string name="duration_day">dia</string>
@@ -248,6 +249,7 @@
     <string name="setting_group_behavior">Comportamento</string>
     <string name="setting_group_behavior_subtitle">Configurações de exibição de conteúdo e comportamento de interação</string>
     <string name="setting_group_ai">Definições de funcionalidades de IA</string>
+    <string name="ai_generated_label">Gerado por IA:</string>
     <string name="setting_group_ai_subtitle">Atualmente usado para gerar texto alternativo de imagens ao publicar</string>
     <string name="setting_item_home_tab_next_title">Mostrar o botão para mudar de conteúdo no topo da Página inicial</string>
     <string name="setting_item_home_tab_next_subtitle">Mostrar no canto superior direito da Página inicial o botão para mudar para o conteúdo seguinte</string>

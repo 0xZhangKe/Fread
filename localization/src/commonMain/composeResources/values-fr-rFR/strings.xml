@@ -2,6 +2,7 @@
 <resources>
     <string name="skip">Passer</string>
     <string name="alert">Alerte</string>
+    <string name="notice">Information</string>
     <string name="duration_minute">minute</string>
     <string name="duration_hour">heure</string>
     <string name="duration_day">jour</string>
@@ -248,6 +249,7 @@
     <string name="setting_group_behavior">Comportement</string>
     <string name="setting_group_behavior_subtitle">Paramètres d’affichage du contenu et de comportement d’interaction</string>
     <string name="setting_group_ai">Paramètres des fonctionnalités IA</string>
+    <string name="ai_generated_label">Généré par l’IA :</string>
     <string name="setting_group_ai_subtitle">Actuellement utilisé pour générer le texte alternatif des images lors de la publication</string>
     <string name="setting_item_home_tab_next_title">Afficher le bouton de changement de contenu en haut de l’accueil</string>
     <string name="setting_item_home_tab_next_subtitle">Afficher en haut à droite de l’accueil le bouton pour passer au contenu suivant</string>

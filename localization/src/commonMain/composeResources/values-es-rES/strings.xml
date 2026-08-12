@@ -2,6 +2,7 @@
 <resources>
     <string name="skip">Saltar</string>
     <string name="alert">Alerta</string>
+    <string name="notice">Aviso</string>
     <string name="duration_minute">minuto</string>
     <string name="duration_hour">hora</string>
     <string name="duration_day">día</string>
@@ -248,6 +249,7 @@
     <string name="setting_group_behavior">Comportamiento</string>
     <string name="setting_group_behavior_subtitle">Ajustes de visualización de contenido y comportamiento de interacción</string>
     <string name="setting_group_ai">Ajustes de funciones de IA</string>
+    <string name="ai_generated_label">Generado por IA:</string>
     <string name="setting_group_ai_subtitle">Actualmente se usa para generar texto alternativo de imágenes al publicar</string>
     <string name="setting_item_home_tab_next_title">Mostrar el botón para cambiar de contenido en la parte superior de Inicio</string>
     <string name="setting_item_home_tab_next_subtitle">Mostrar en la esquina superior derecha de Inicio el botón para cambiar al siguiente contenido</string>

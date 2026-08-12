@@ -139,7 +139,7 @@ private fun PublishPostMediaAttachmentImage(
             Text(
                 text = stringResource(LocalizedString.sharedAltLabel),
                 color = fontColor,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         Box(
@@ -210,11 +210,12 @@ private fun PublishPostImageAltDialog(
 
     var inputtedValue by remember(alt) { mutableStateOf(alt) }
 
+    val aiGeneratedLabel = stringResource(LocalizedString.ai_generated_label)
     LaunchedEffect(generateState) {
         when (val state = generateState) {
 
             is GenerateState.Success -> {
-                inputtedValue = state.alt
+                inputtedValue = aiGeneratedLabel + state.alt
             }
 
             is GenerateState.Failure -> {
@@ -268,14 +269,14 @@ private fun PublishPostImageAltDialog(
 
                 if (altTextAvailable && !isVideo) {
                     AltGeneratorButton(
-                        modifier = Modifier.padding(start = 8.dp),
+                        modifier = Modifier.padding(top = 8.dp),
                         state = generatorButtonState,
                         imageUri = imageUri,
                     )
                 }
 
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = 16.dp, top = 8.dp),
                     text = stringResource(LocalizedString.sharedPublishMediaAltDialogInputTip),
                     style = MaterialTheme.typography.labelMedium,
                 )
@@ -291,6 +292,7 @@ private fun PublishPostImageAltDialog(
                     value = inputtedValue,
                     onValueChange = { inputtedValue = it },
                     minLines = 1,
+                    maxLines = 8,
                     placeholder = { Text(text = stringResource(LocalizedString.sharedPublishMediaAltDialogInputHint)) },
                     colors = TextFieldDefaults.transparentIndicatorColors.copy(
                         focusedContainerColor = Color.Transparent,

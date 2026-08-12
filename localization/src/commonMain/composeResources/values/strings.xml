@@ -2,6 +2,7 @@
 <resources>
     <string name="skip">Skip</string>
     <string name="alert">Alert</string>
+    <string name="notice">Notice</string>
     <string name="duration_minute">minute</string>
     <string name="duration_hour">hour</string>
     <string name="duration_day">day</string>
@@ -251,6 +252,7 @@
     <string name="setting_group_behavior">Behavior</string>
     <string name="setting_group_behavior_subtitle">Content display and interaction behavior settings</string>
     <string name="setting_group_ai">AI feature settings</string>
+    <string name="ai_generated_label">AI-generated:</string>
     <string name="setting_group_ai_subtitle">Currently used to generate image alt text when posting</string>
     <string name="setting_item_home_tab_next_title">Show top switch-content button on Home</string>
     <string name="setting_item_home_tab_next_subtitle">Show the button in the top-right of Home to switch to the next content</string>

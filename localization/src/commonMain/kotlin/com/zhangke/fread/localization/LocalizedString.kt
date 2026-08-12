@@ -9,6 +9,7 @@ object LocalizedString {
 
     val skip = localizedString.skip
     val alert = localizedString.alert
+    val notice = localizedString.notice
     val durationMinute = localizedString.duration_minute
     val durationHour = localizedString.duration_hour
     val durationDay = localizedString.duration_day
@@ -705,6 +706,7 @@ object LocalizedString {
     val llm_config_api_key_label = localizedString.llm_config_api_key_label
     val alt_text_generate_button = localizedString.alt_text_generate_button
     val alt_text_cancel_button = localizedString.alt_text_cancel_button
+    val ai_generated_label = localizedString.ai_generated_label
     val alt_text_provider_format = localizedString.alt_text_provider_format
     val alt_text_cost_format = localizedString.alt_text_cost_format
     val error_alt_text_not_configured = localizedString.error_alt_text_not_configured

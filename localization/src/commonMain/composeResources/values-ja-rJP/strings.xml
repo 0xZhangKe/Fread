@@ -2,6 +2,7 @@
 <resources>
     <string name="skip">スキップ</string>
     <string name="alert">アラート</string>
+    <string name="notice">お知らせ</string>
     <string name="duration_minute">分</string>
     <string name="duration_hour">時間</string>
     <string name="duration_day">日</string>
@@ -248,6 +249,7 @@
     <string name="setting_group_behavior">動作</string>
     <string name="setting_group_behavior_subtitle">コンテンツ表示と操作動作の設定</string>
     <string name="setting_group_ai">AI 機能設定</string>
+    <string name="ai_generated_label">AI 生成：</string>
     <string name="setting_group_ai_subtitle">現在、投稿時に画像の代替テキストを生成するために使用します</string>
     <string name="setting_item_home_tab_next_title">ホーム上部のコンテンツ切り替えボタンを表示</string>
     <string name="setting_item_home_tab_next_subtitle">ホーム右上に次のコンテンツへ切り替えるボタンを表示する</string>

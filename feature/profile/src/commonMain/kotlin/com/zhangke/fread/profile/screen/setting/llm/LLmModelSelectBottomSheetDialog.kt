@@ -179,6 +179,9 @@ private fun ApiKeyInputDialog(
     var apiKey by rememberSaveable { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismissRequest,
+        title = {
+            Text(text = stringResource(LocalizedString.notice))
+        },
         text = {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),

@@ -186,17 +186,13 @@ private fun AdditionalMoreOptions(
         imageVector = Icons.Default.Language,
         onClick = {
             onDismissRequest()
-            if (blogTranslationState.support) {
-                onTranslateClick()
-            } else {
-                textHandler.translateText(blog.content)
-            }
+            textHandler.translateText(blog.content)
         },
     )
-    
+
     val showThreadedView = onOpenThreadedViewClick != null &&
-        blog.platform.protocol.isBluesky &&
-        (blog.reply.repliesCount ?: 0) > 0
+            blog.platform.protocol.isBluesky &&
+            (blog.reply.repliesCount ?: 0) > 0
     if (showThreadedView) {
         ModalDropdownMenuItem(
             text = stringResource(LocalizedString.threaded_view_menu_open),

@@ -18,7 +18,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingItem
-import com.zhangke.fread.profile.screen.setting.alttext.AltTextSettingsNavKey
+import com.zhangke.fread.profile.screen.setting.ai.alttext.AltTextSettingsNavKey
 import com.zhangke.fread.profile.screen.setting.llm.LLmConfigNavKey
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
@@ -64,12 +64,6 @@ private fun AISettingsContent(
                 .verticalScroll(rememberScrollState()),
         ) {
             SettingItem(
-                icon = Icons.Default.Description,
-                title = stringResource(LocalizedString.alt_text_settings_title),
-                subtitle = stringResource(LocalizedString.alt_text_settings_prompt_label),
-                onClick = onAltTextClick,
-            )
-            SettingItem(
                 icon = Icons.AutoMirrored.Outlined.Chat,
                 title = stringResource(LocalizedString.llm_config_settings_title),
                 subtitle = uiState.currentLLMModel
@@ -79,6 +73,12 @@ private fun AISettingsContent(
                     }
                     ?: stringResource(LocalizedString.llm_config_settings_subtitle_not_configured),
                 onClick = onLlmConfigClick,
+            )
+            SettingItem(
+                icon = Icons.Default.Description,
+                title = stringResource(LocalizedString.alt_text_settings_title),
+                subtitle = stringResource(LocalizedString.alt_text_settings_prompt_label),
+                onClick = onAltTextClick,
             )
         }
     }

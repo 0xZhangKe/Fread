@@ -5,10 +5,23 @@ title: "[BUG] "
 labels: bug
 assignees: ''
 
+body:
+- type: dropdown
+  id: plugin
+  attributes:
+    label: Which plugin did the issue occur in?
+    options:
+      - Bluesky
+      - RSS
+      - Mastadon
+  validations:
+    required: true
+
 ---
 
 **Describe the bug**
 A clear and concise description of what the bug is.
+
 
 **To Reproduce**
 Steps to reproduce the behavior:

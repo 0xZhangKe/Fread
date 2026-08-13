@@ -3,6 +3,7 @@
     <string name="skip">Pular</string>
     <string name="alert">Alerta</string>
     <string name="notice">Aviso</string>
+    <string name="not_set_yet">Ainda não definido</string>
     <string name="duration_minute">minuto</string>
     <string name="duration_hour">hora</string>
     <string name="duration_day">dia</string>
@@ -266,6 +267,7 @@
     <string name="threaded_view_assembling">A construir vista da conversa</string>
     <string name="threaded_view_empty">Nenhuma conversa para mostrar</string>
     <string name="threaded_view_back">Voltar</string>
+    <string name="translation_settings_title">Definições de tradução</string>
     <string name="alt_text_settings_title">Geração de texto alternativo</string>
     <string name="alt_text_settings_subtitle_configured">Modelo: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Não configurado</string>

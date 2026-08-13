@@ -3,6 +3,7 @@
     <string name="skip">Überspringen</string>
     <string name="alert">Hinweis</string>
     <string name="notice">Hinweis</string>
+    <string name="not_set_yet">Noch nicht festgelegt</string>
     <string name="duration_minute">Minute</string>
     <string name="duration_hour">Stunde</string>
     <string name="duration_day">Tag</string>
@@ -266,6 +267,7 @@
     <string name="threaded_view_assembling">Thread-Ansicht wird erstellt</string>
     <string name="threaded_view_empty">Kein Thread zum Anzeigen</string>
     <string name="threaded_view_back">Zurück</string>
+    <string name="translation_settings_title">Übersetzungseinstellungen</string>
     <string name="alt_text_settings_title">Alt-Text-Erstellung</string>
     <string name="alt_text_settings_subtitle_configured">Modell: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Nicht konfiguriert</string>

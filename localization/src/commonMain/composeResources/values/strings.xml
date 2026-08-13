@@ -3,6 +3,7 @@
     <string name="skip">Skip</string>
     <string name="alert">Alert</string>
     <string name="notice">Notice</string>
+    <string name="not_set_yet">Not set yet</string>
     <string name="duration_minute">minute</string>
     <string name="duration_hour">hour</string>
     <string name="duration_day">day</string>
@@ -269,6 +270,7 @@
     <string name="threaded_view_assembling">Assembling threaded view</string>
     <string name="threaded_view_empty">No thread to display</string>
     <string name="threaded_view_back">Back</string>
+    <string name="translation_settings_title">Translation settings</string>
     <string name="alt_text_settings_title">Alt text generation</string>
     <string name="alt_text_settings_subtitle_configured">Model: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Not configured</string>

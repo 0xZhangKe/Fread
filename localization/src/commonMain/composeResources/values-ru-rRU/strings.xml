@@ -3,6 +3,7 @@
     <string name="skip">Пропустить</string>
     <string name="alert">Оповещение</string>
     <string name="notice">Уведомление</string>
+    <string name="not_set_yet">Пока не задано</string>
     <string name="duration_minute">минута</string>
     <string name="duration_hour">час</string>
     <string name="duration_day">день</string>
@@ -266,6 +267,7 @@
     <string name="threaded_view_assembling">Сборка ветки обсуждения</string>
     <string name="threaded_view_empty">Нет ветки для отображения</string>
     <string name="threaded_view_back">Назад</string>
+    <string name="translation_settings_title">Настройки перевода</string>
     <string name="alt_text_settings_title">Создание альтернативного текста</string>
     <string name="alt_text_settings_subtitle_configured">Модель: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Не настроено</string>

@@ -1,7 +1,7 @@
 package com.zhangke.fread.profile.screen.setting.ai.translate
 
 data class TranslateSettingUiState(
-    val targetLanguage: String,
-    val translatePrompt: String,
+    val targetLanguage: String? = null,
+    val prompt: String? = null,
 
-)
+    )

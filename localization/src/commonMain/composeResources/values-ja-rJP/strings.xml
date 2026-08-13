@@ -3,6 +3,7 @@
     <string name="skip">スキップ</string>
     <string name="alert">アラート</string>
     <string name="notice">お知らせ</string>
+    <string name="not_set_yet">未設定</string>
     <string name="duration_minute">分</string>
     <string name="duration_hour">時間</string>
     <string name="duration_day">日</string>
@@ -266,6 +267,7 @@
     <string name="threaded_view_assembling">スレッド表示を構築中</string>
     <string name="threaded_view_empty">表示できるスレッドはありません</string>
     <string name="threaded_view_back">戻る</string>
+    <string name="translation_settings_title">翻訳設定</string>
     <string name="alt_text_settings_title">代替テキスト生成</string>
     <string name="alt_text_settings_subtitle_configured">モデル: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">未設定</string>

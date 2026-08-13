@@ -3,6 +3,7 @@
     <string name="skip">Passer</string>
     <string name="alert">Alerte</string>
     <string name="notice">Information</string>
+    <string name="not_set_yet">Pas encore défini</string>
     <string name="duration_minute">minute</string>
     <string name="duration_hour">heure</string>
     <string name="duration_day">jour</string>
@@ -266,6 +267,7 @@
     <string name="threaded_view_assembling">Assemblage de la vue du fil</string>
     <string name="threaded_view_empty">Aucun fil à afficher</string>
     <string name="threaded_view_back">Retour</string>
+    <string name="translation_settings_title">Paramètres de traduction</string>
     <string name="alt_text_settings_title">Génération de texte alternatif</string>
     <string name="alt_text_settings_subtitle_configured">Modèle : %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Non configuré</string>

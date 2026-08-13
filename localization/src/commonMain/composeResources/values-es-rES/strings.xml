@@ -3,6 +3,7 @@
     <string name="skip">Saltar</string>
     <string name="alert">Alerta</string>
     <string name="notice">Aviso</string>
+    <string name="not_set_yet">Aún no configurado</string>
     <string name="duration_minute">minuto</string>
     <string name="duration_hour">hora</string>
     <string name="duration_day">día</string>
@@ -266,6 +267,7 @@
     <string name="threaded_view_assembling">Construyendo vista de hilo</string>
     <string name="threaded_view_empty">No hay ningún hilo para mostrar</string>
     <string name="threaded_view_back">Atrás</string>
+    <string name="translation_settings_title">Ajustes de traducción</string>
     <string name="alt_text_settings_title">Generación de texto alternativo</string>
     <string name="alt_text_settings_subtitle_configured">Modelo: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Sin configurar</string>

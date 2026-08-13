@@ -679,6 +679,7 @@ object LocalizedString {
     val threaded_view_empty = localizedString.threaded_view_empty
     val threaded_view_back = localizedString.threaded_view_back
     val translation_settings_title = localizedString.translation_settings_title
+    val translation_settings_use_ai_title = localizedString.translation_settings_use_ai_title
     val alt_text_settings_title = localizedString.alt_text_settings_title
     val alt_text_settings_subtitle_configured =
         localizedString.alt_text_settings_subtitle_configured
@@ -718,4 +719,6 @@ object LocalizedString {
     val error_alt_text_no_text = localizedString.error_alt_text_no_text
     val bluesky_user_list_tab_boosts = localizedString.bluesky_user_list_tab_boosts
     val bluesky_user_list_tab_quotes = localizedString.bluesky_user_list_tab_quotes
+    val translation_settings_post_language_title = localizedString.translation_settings_post_language_title
+    val translation_settings_post_language_subtitle = localizedString.translation_settings_post_language_subtitle
 }

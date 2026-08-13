@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,6 +20,7 @@ import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingItem
 import com.zhangke.fread.profile.screen.setting.ai.alttext.AltTextSettingsNavKey
+import com.zhangke.fread.profile.screen.setting.ai.translate.TranslateSettingNavKey
 import com.zhangke.fread.profile.screen.setting.llm.LLmConfigNavKey
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
@@ -40,6 +42,9 @@ fun AISettingsScreen(viewModel: AISettingsViewModel) {
         onLlmConfigClick = {
             backStack.add(LLmConfigNavKey)
         },
+        onTranslateConfigClick = {
+            backStack.add(TranslateSettingNavKey)
+        },
     )
 }
 
@@ -49,6 +54,7 @@ private fun AISettingsContent(
     onBackClick: () -> Unit,
     onAltTextClick: () -> Unit,
     onLlmConfigClick: () -> Unit,
+    onTranslateConfigClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -79,6 +85,12 @@ private fun AISettingsContent(
                 title = stringResource(LocalizedString.alt_text_settings_title),
                 subtitle = stringResource(LocalizedString.alt_text_settings_prompt_label),
                 onClick = onAltTextClick,
+            )
+            SettingItem(
+                icon = Icons.Default.Translate,
+                title = stringResource(LocalizedString.translation_settings_title),
+                subtitle = stringResource(LocalizedString.translation_settings_use_ai_title),
+                onClick = onTranslateConfigClick,
             )
         }
     }

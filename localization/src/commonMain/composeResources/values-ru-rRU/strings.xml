@@ -268,6 +268,9 @@
     <string name="threaded_view_empty">Нет ветки для отображения</string>
     <string name="threaded_view_back">Назад</string>
     <string name="translation_settings_title">Настройки перевода</string>
+    <string name="translation_settings_post_language_title">Язык перевода публикаций</string>
+    <string name="translation_settings_post_language_subtitle">Публикации будут переведены на выбранный язык</string>
+    <string name="translation_settings_use_ai_title">Переводить публикации с помощью ИИ</string>
     <string name="alt_text_settings_title">Создание альтернативного текста</string>
     <string name="alt_text_settings_subtitle_configured">Модель: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Не настроено</string>

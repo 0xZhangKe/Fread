@@ -271,6 +271,9 @@
     <string name="threaded_view_empty">No thread to display</string>
     <string name="threaded_view_back">Back</string>
     <string name="translation_settings_title">Translation settings</string>
+    <string name="translation_settings_post_language_title">Post translation language</string>
+    <string name="translation_settings_post_language_subtitle">Posts will be translated into the selected language</string>
+    <string name="translation_settings_use_ai_title">Use AI to translate posts</string>
     <string name="alt_text_settings_title">Alt text generation</string>
     <string name="alt_text_settings_subtitle_configured">Model: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Not configured</string>

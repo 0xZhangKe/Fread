@@ -18,10 +18,14 @@ class TranslateSettingViewModel(
         loadConfig()
     }
 
+    fun onPromptChanged(prompt: String) {
+        uiState.update { it.copy(prompt = prompt) }
+    }
+
     private fun loadConfig() {
         launchInViewModel {
             val targetLanguage = freadConfigManager.getTranslateTargetLanguage()
-            val prompt = freadConfigManager.getTranslatePrompt()
+            val prompt = freadConfigManager.getTranslatePrompt().orEmpty()
             uiState.update { it.copy(targetLanguage = targetLanguage, prompt = prompt) }
         }
     }

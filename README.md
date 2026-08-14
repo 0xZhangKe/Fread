@@ -47,7 +47,7 @@ Manually disable Firebase join compilation
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=0xZhangKe/Fread&type=Date)](https://www.star-history.com/#0xZhangKe/Fread&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=0xZhangKe/Fread&type=Date)](https://star-history.dera.page/#0xZhangKe/Fread&Date)
 
 ## Discussion Group
 - [Telegram](https://t.me/+-SlbKcNbJSphNWI1)

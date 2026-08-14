@@ -14,7 +14,7 @@ expect class TextHandler {
 
     fun shareUrl(url: String, text: String)
 
-    fun translateText(text: String)
+    fun openSystemTranslateTextPage(text: String)
 
     fun openSendEmail()
 

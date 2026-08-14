@@ -32,6 +32,7 @@ class FreadConfigManager(
         private const val LOCAL_KEY_JUMP_TO_PROFILE = "jump_to_profile"
         private const val LOCAL_KEY_ALT_TEXT_PROMPT = "alt_text_prompt"
 
+        private const val LOCAL_KEY_TRANSLATE_ENABLED = "translate_target_language_enabled"
         private const val LOCAL_KEY_TRANSLATE_TARGET_LANGUAGE = "translate_target_language"
 
         private const val LOCAL_KEY_TRANSLATE_PROMPT = "translate_prompt"
@@ -228,6 +229,16 @@ class FreadConfigManager(
     suspend fun updateAltTextPrompt(value: String) {
         withContext(Dispatchers.IO) {
             localConfigManager.putString(LOCAL_KEY_ALT_TEXT_PROMPT, value)
+        }
+    }
+
+    suspend fun getAiTranslateEnabled(): Boolean {
+        return localConfigManager.getBoolean(LOCAL_KEY_TRANSLATE_ENABLED) ?: false
+    }
+
+    suspend fun updateAiTranslateEnabled(enabled: Boolean) {
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_TRANSLATE_ENABLED, enabled)
         }
     }
 

@@ -186,7 +186,7 @@ private fun AdditionalMoreOptions(
         imageVector = Icons.Default.Language,
         onClick = {
             onDismissRequest()
-            textHandler.translateText(blog.content)
+            textHandler.openSystemTranslateTextPage(blog.content)
         },
     )
 

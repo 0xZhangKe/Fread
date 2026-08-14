@@ -19,14 +19,15 @@ import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.richtext.MastodonEmojiUtils
 import com.zhangke.fread.status.richtext.OnLinkTargetClick
 import com.zhangke.fread.status.richtext.RichTextType
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 
 object HtmlParser {
 
-    private const val QUOTE_INLINE_CLASS = "quote-inline"
-    private val simpleHtmlRegex = "<[^>]+>".toRegex()
+    internal const val QUOTE_INLINE_CLASS = "quote-inline"
+    internal val simpleHtmlRegex = "<[^>]+>".toRegex()
 
     fun parse(
         document: String,
@@ -127,21 +128,9 @@ object HtmlParser {
                         if (linkTarget != null) {
                             popQueue.addLast(
                                 spanBuilder.pushLink(
-                                    LinkAnnotation.Clickable(
-                                        tag = when (linkTarget) {
-                                            is RichLinkTarget.UrlTarget -> linkTarget.url
-                                            is RichLinkTarget.MentionTarget -> linkTarget.mention.id
-                                            is RichLinkTarget.MentionDidTarget -> linkTarget.did
-                                            is RichLinkTarget.HashtagTarget -> linkTarget.hashtag.name
-                                            is RichLinkTarget.MaybeHashtagTarget -> linkTarget.hashtag
-                                        },
-                                        styles = TextLinkStyles(
-                                            style = SpanStyle(color = primaryLight),
-                                            hoveredStyle = SpanStyle(textDecoration = TextDecoration.Underline),
-                                        ),
-                                        linkInteractionListener = {
-                                            onLinkTargetClick(linkTarget)
-                                        },
+                                    buildLinkAnnotation(
+                                        linkTarget = linkTarget,
+                                        onLinkClick = onLinkTargetClick,
                                     )
                                 )
                             )
@@ -256,8 +245,6 @@ object HtmlParser {
 
 }
 
-private val EMOJI_CODE_PATTERN = (":(\\w+):").toRegex()
-
 private fun AnnotatedString.Builder.appendParagraphBreak() {
     appendLine()
     appendLine()
@@ -268,13 +255,14 @@ private fun StringBuilder.appendParagraphBreak() {
     appendLine()
 }
 
-private fun Node.hasNextNonBlankSibling(): Boolean {
+internal fun Node.hasNextNonBlankSibling(): Boolean {
     var sibling = nextSibling()
     while (sibling != null) {
         when (sibling) {
             is TextNode -> {
                 if (sibling.text().isNotBlank()) return true
             }
+
             is Element -> return true
         }
         sibling = sibling.nextSibling()
@@ -286,35 +274,36 @@ internal fun AnnotatedString.Builder.appendWithEmoji(
     text: String,
     emojis: Map<String, Emoji>,
 ) {
-    if (text.isEmpty()) {
-        return
-    }
-    if (emojis.isEmpty()) {
-        append(text)
-        return
-    }
-    val results = EMOJI_CODE_PATTERN.findAll(text)
+    MastodonEmojiUtils.visiteEmojis(
+        text = text,
+        emojis = emojis,
+        onPlainTextFound = { append(it) },
+        onEmojiFound = { appendEmoji(it) }
+    )
+}
 
-    var index = 0
-    results.iterator().forEach {
-        if (it.range.first > index) {
-            append(text.substring(index, it.range.first))
-        }
+internal fun AnnotatedString.Builder.appendEmoji(emoji: Emoji){
+    appendInlineContent("emoji", ":${emoji.shortcode}:")
+}
 
-        val emojiCode = it.groups[1]?.value
-        if (emojiCode != null) {
-            val emoji = emojis[emojiCode]
-            if (emoji != null) {
-                appendInlineContent("emoji", ":${emoji.shortcode}:")
-            } else {
-                append(it.value)
-            }
-        } else {
-            append(it.value)
-        }
-        index = it.range.last + 1
-    }
-    if (index < text.length) {
-        append(text.substring(index))
-    }
+internal fun buildLinkAnnotation(
+    linkTarget: RichLinkTarget,
+    onLinkClick: OnLinkTargetClick,
+): LinkAnnotation.Clickable {
+    return LinkAnnotation.Clickable(
+        tag = when (linkTarget) {
+            is RichLinkTarget.UrlTarget -> linkTarget.url
+            is RichLinkTarget.MentionTarget -> linkTarget.mention.id
+            is RichLinkTarget.MentionDidTarget -> linkTarget.did
+            is RichLinkTarget.HashtagTarget -> linkTarget.hashtag.name
+            is RichLinkTarget.MaybeHashtagTarget -> linkTarget.hashtag
+        },
+        styles = TextLinkStyles(
+            style = SpanStyle(color = primaryLight),
+            hoveredStyle = SpanStyle(textDecoration = TextDecoration.Underline),
+        ),
+        linkInteractionListener = {
+            onLinkClick(linkTarget)
+        },
+    )
 }

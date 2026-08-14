@@ -34,7 +34,7 @@ actual class TextHandler () {
         )
     }
 
-    actual fun translateText(text: String) {
+    actual fun openSystemTranslateTextPage(text: String) {
         if (text.isEmpty()) return
         // iOS doesn't expose a system Translate intent like Android's ACTION_PROCESS_TEXT;
         // present the share sheet so the user can pick the Translate extension.

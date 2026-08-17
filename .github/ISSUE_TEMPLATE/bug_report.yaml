@@ -1,9 +1,7 @@
 name: Bug report
-about: Create a report to help us improve Fread.
+description: Create a report to help us improve Fread.
 title: "[BUG] "
 labels: bug
-assignees: ''
-type: bug
 
 body:
 - type: dropdown
@@ -33,7 +31,6 @@ body:
     label: version of fread
     description: "Which version of fread are you using?"
     placeholder: "v1.9.0"
-    tip: "you can check the version by going to settings (about)"
   validations:
     required: true
 

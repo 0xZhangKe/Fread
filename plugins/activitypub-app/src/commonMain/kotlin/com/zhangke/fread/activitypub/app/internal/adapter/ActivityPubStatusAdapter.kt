@@ -78,17 +78,6 @@ class ActivityPubStatusAdapter (
         return toStatusUiState(status, locator, loggedAccount)
     }
 
-    fun toStatusUiState(
-        entity: ActivityPubStatusEntity,
-        platform: BlogPlatform,
-        locator: PlatformLocator,
-        isOwner: Boolean,
-        logged: Boolean,
-    ): StatusUiState {
-        val status = toStatus(entity, platform)
-        return toStatusUiState(status, locator, logged = logged, isOwner = isOwner)
-    }
-
     fun toStatus(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,

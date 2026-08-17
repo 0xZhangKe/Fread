@@ -38,6 +38,8 @@ class PostTranslator(
         explicitNulls = false
     }
 
+//    private val cachedTranslations = mutableMapOf<String, >()
+
     suspend fun translateContent(blog: Blog): Result<String> {
         if (!isAiTranslateEnabled()) return Result.failure(IllegalStateException("AI translate is not enabled"))
         val contentBlockList = if (blog.content.isEmpty()) {

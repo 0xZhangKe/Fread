@@ -77,10 +77,11 @@ body:
 - type: upload
   id: screenshots
   attributes:
-    label: "Upload screenshots"
-    description: "If applicable add screenshots to help explain your problem"
+    label: "Upload screenshots or logs"
+    description: "If applicable add screenshots or logs to help explain your problem"
   validations:
     required: false
+    accept: ".png,.jpg,.gif,.log,.txt"
 - type: input
   id: context
   attributes:

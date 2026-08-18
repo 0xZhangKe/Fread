@@ -11,6 +11,7 @@ import com.zhangke.fread.status.model.isActivityPub
 import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.richtext.translate.RichTextTranslatorParser
+import com.zhangke.fread.status.richtext.translate.TranslatorBlock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -38,12 +39,71 @@ class PostTranslator(
         explicitNulls = false
     }
 
-//    private val cachedTranslations = mutableMapOf<String, >()
+    private val cachedTranslations = mutableMapOf<String, TranslatedPost>()
 
-    suspend fun translateContent(blog: Blog): Result<String> {
+    suspend fun translateContent(blog: Blog): Result<TranslatedPost> {
         if (!isAiTranslateEnabled()) return Result.failure(IllegalStateException("AI translate is not enabled"))
-        val contentBlockList = if (blog.content.isEmpty()) {
-            emptyList()
+        if (cachedTranslations.containsKey(blog.id)) {
+            return Result.success(cachedTranslations[blog.id]!!)
+        }
+        val lan = freadConfigManager.getTranslateTargetLanguage()
+        if (lan.isNullOrEmpty()) {
+            return Result.failure(IllegalStateException("Translate target language is not set"))
+        }
+        val contentBlockList = parsePostContentBlocks(blog)
+        val spoilerList = blog.spoilerText.takeIf { it.isNotEmpty() }
+            ?.let { richTextTranslatorParser.parseHtml(html = it, emojis = blog.emojis) }
+        val translationContent = PostTranslatingContent(
+            title = blog.title,
+            content = contentBlockList?.let(::buildTranslationRichTextBlocks),
+            spoiler = spoilerList?.let(::buildTranslationRichTextBlocks),
+            medias = blog.translatingMedias,
+            poll = blog.poll?.options?.map { it.title },
+        )
+        val prompt = buildTranslatePrompt(translationContent, lan)
+        val translationResult = requestTranslation(prompt)
+        if (translationResult.isFailure) {
+            return Result.failure(translationResult.exceptionOrThrow())
+        }
+        val translatedContent = translationResult.getOrThrow()
+        val translatedPost = buildTranslatedPost(
+            contentBlock = contentBlockList,
+            spoilerList = spoilerList,
+            translatedContent = translatedContent,
+        )
+        cachedTranslations[blog.id] = translatedPost
+        return Result.success(translatedPost)
+    }
+
+    private fun buildTranslatedPost(
+        contentBlock: List<TranslatorBlock>?,
+        spoilerList: List<TranslatorBlock>?,
+        translatedContent: PostTranslatingContent,
+    ): TranslatedPost {
+        val translatedContentBlocks = contentBlock?.let {
+            rebuildTranslatedBlocks(
+                blockList = it,
+                translatedList = translatedContent.content ?: emptyList(),
+            )
+        }
+        val translatedSpoilerBlocks = spoilerList?.takeIf { it.isNotEmpty() }?.let {
+            rebuildTranslatedBlocks(
+                blockList = it,
+                translatedList = translatedContent.spoiler ?: emptyList(),
+            )
+        }
+        return TranslatedPost(
+            content = translatedContentBlocks,
+            spoiler = translatedSpoilerBlocks,
+            title = translatedContent.title,
+            medias = translatedContent.medias,
+            poll = translatedContent.poll,
+        )
+    }
+
+    private fun parsePostContentBlocks(blog: Blog): List<TranslatorBlock>? {
+        return if (blog.content.isEmpty() || blog.content.isBlank()) {
+            null
         } else if (blog.platform.protocol.isActivityPub) {
             richTextTranslatorParser.parseHtml(
                 html = blog.content,
@@ -59,35 +119,13 @@ class PostTranslator(
         } else {
             richTextTranslatorParser.parseHtml(blog.content)
         }
-        val lan = freadConfigManager.getTranslateTargetLanguage()
-        if (lan.isNullOrEmpty()) {
-            return Result.failure(IllegalStateException("Translate target language is not set"))
-        }
-        val translationContent = PostTranslatingContent(
-            content = contentBlockList.takeIf { it.isNotEmpty() }
-                ?.let(::buildTranslationRichTextBlocks),
-            title = blog.title,
-            spoiler = blog.spoilerText.takeIf { it.isNotEmpty() }
-                ?.let { richTextTranslatorParser.parseHtml(html = it, emojis = blog.emojis) }
-                ?.let(::buildTranslationRichTextBlocks),
-            medias = blog.translatingMedias,
-            poll = blog.poll?.options?.map { it.title },
-        )
-        val prompt = buildTranslatePrompt(translationContent, lan)
-        val translationResult = llmClient.execute(prompt)
-        if (translationResult.isFailure) {
-            return Result.failure(translationResult.exceptionOrThrow())
-        }
-        val translatedContent = translationResult.getOrThrow().text
-            .let { translationJson.decodeFromString<PostTranslatingContent>(it) }
-        return Result.success("")
     }
 
-    private fun buildTranslationRichTextBlocks(blocks: List<RichTextTranslatorParser.TranslatorBlock>): List<String> {
+    private fun buildTranslationRichTextBlocks(blocks: List<TranslatorBlock>): List<String> {
         return blocks.map { block ->
             when (block) {
-                is RichTextTranslatorParser.TranslatorBlock.PlainTextBlock -> block.text
-                is RichTextTranslatorParser.TranslatorBlock.LinkBlock -> {
+                is TranslatorBlock.PlainTextBlock -> block.text
+                is TranslatorBlock.LinkBlock -> {
                     when (block.target) {
                         is RichLinkTarget.HashtagTarget, is RichLinkTarget.MaybeHashtagTarget -> TRANSLATION_LABEL_HASHTAG
                         is RichLinkTarget.MentionTarget, is RichLinkTarget.MentionDidTarget -> TRANSLATION_LABEL_MENTION
@@ -95,8 +133,8 @@ class PostTranslator(
                     }
                 }
 
-                is RichTextTranslatorParser.TranslatorBlock.NewLineBlock -> TRANSLATION_LABEL_NEWLINE
-                is RichTextTranslatorParser.TranslatorBlock.EmojiBlock -> TRANSLATION_LABEL_EMOJI
+                is TranslatorBlock.NewLineBlock -> TRANSLATION_LABEL_NEWLINE
+                is TranslatorBlock.EmojiBlock -> TRANSLATION_LABEL_EMOJI
             }
         }
     }
@@ -175,6 +213,44 @@ class PostTranslator(
             appendLine("Input JSON:")
             append(TRANSLATION_PLACEHOLDER_CONTENT_JSON)
         }
+    }
+
+    private suspend fun requestTranslation(prompt: String): Result<PostTranslatingContent> {
+        return llmClient.execute(prompt)
+            .mapCatching { translationJson.decodeFromString<PostTranslatingContent>(it.text) }
+    }
+
+    private fun rebuildTranslatedBlocks(
+        blockList: List<TranslatorBlock>,
+        translatedList: List<String>,
+    ): List<TranslatorBlock> {
+        return if (blockList.size != translatedList.size) {
+            translatedList.mapNotNull { content ->
+                if (content.isTranslatedMarker()) {
+                    null
+                } else {
+                    TranslatorBlock.PlainTextBlock(content)
+                }
+            }
+        } else {
+            blockList.mapIndexed { index, block ->
+                if (block is TranslatorBlock.PlainTextBlock) {
+                    TranslatorBlock.PlainTextBlock(translatedList[index])
+                } else {
+                    block
+                }
+            }
+        }
+    }
+
+    private fun String.isTranslatedMarker(): Boolean {
+        return this in listOf(
+            TRANSLATION_LABEL_MENTION,
+            TRANSLATION_LABEL_LINK,
+            TRANSLATION_LABEL_EMOJI,
+            TRANSLATION_LABEL_NEWLINE,
+            TRANSLATION_LABEL_HASHTAG,
+        )
     }
 }
 

@@ -16,6 +16,7 @@ data class StatusUiState(
     val locator: PlatformLocator,
 ) : PlatformSerializable
 
+@Deprecated("Deprecated, keep for compatibility with old versions, Instead of PostTranslateState")
 @Serializable
 data class BlogTranslationUiState(
     val support: Boolean,

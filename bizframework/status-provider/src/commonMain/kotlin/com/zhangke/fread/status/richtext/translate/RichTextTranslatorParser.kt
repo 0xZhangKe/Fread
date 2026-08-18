@@ -330,17 +330,18 @@ class RichTextTranslatorParser {
         )
     }
 
-    sealed interface TranslatorBlock {
+}
 
-        data class PlainTextBlock(val text: String) : TranslatorBlock
+sealed interface TranslatorBlock {
 
-        data class EmojiBlock(val emoji: Emoji) : TranslatorBlock
+    data class PlainTextBlock(val text: String) : TranslatorBlock
 
-        data object NewLineBlock : TranslatorBlock
+    data class EmojiBlock(val emoji: Emoji) : TranslatorBlock
 
-        data class LinkBlock(
-            val target: RichLinkTarget,
-            val content: String,
-        ) : TranslatorBlock
-    }
+    data object NewLineBlock : TranslatorBlock
+
+    data class LinkBlock(
+        val target: RichLinkTarget,
+        val content: String,
+    ) : TranslatorBlock
 }

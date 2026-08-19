@@ -1,15 +1,13 @@
-name: Bug report
-about: Create a report to help us improve Fread.
+name: "Bug report"
+description: "Create a report to help us improve Fread."
 title: "[BUG] "
 labels: bug
-assignees: ''
-type: bug
 
 body:
 - type: dropdown
   id: plugin
   attributes:
-    label: Which plugin did the issue occur in?
+    label: "Which plugin did the issue occur in?"
     options:
       - Bluesky
       - RSS
@@ -21,7 +19,7 @@ body:
 - type: textarea
   id: description-of-bug
   attributes:
-    label: bug description
+    label: "Bug description"
     description: "Describe the bug"
     placeholder: "A clear and concise description of the bug"
   validations:
@@ -30,17 +28,16 @@ body:
 - type: input
   id: version-of-fread
   attributes:
-    label: version of fread
+    label: "Fread Version"
     description: "Which version of fread are you using?"
     placeholder: "v1.9.0"
-    tip: "you can check the version by going to settings (about)"
   validations:
     required: true
 
 - type: textarea
   id: reproduction
   attributes:
-    label: steps to reproduce bug
+    label: "Bug reproduction"
     description: "Steps to reproduce the behaviour"
     placeholder: |
       1. Go to '...'
@@ -53,15 +50,15 @@ body:
 - type: input
   id: expected-behaviour
   attributes:
-    label: Expected Behaviour
+    label: "Expected Behaviour"
     description: "What is the expected behaviour"
     placeholder: "A clear and concise description of what you expected to happen."
 
 - type: dropdown
   id: platform
   attributes:
-    label: Which platform do you use
-    description: "Which operating system do you use?"
+    label: "Which platform did you use?"
+    description: "The operating system in which the bug occured in."
     options:
       - Android
       - IOS
@@ -71,7 +68,7 @@ body:
 - type: input
   id: platform-version
   attributes:
-    label: Platform version
+    label: "Platform version"
     description: "What's the version of your operating system"
     placeholder: "Android 15"
   validations:
@@ -80,14 +77,15 @@ body:
 - type: upload
   id: screenshots
   attributes:
-    label: upload screenshots
-    description: "If applicable add screenshots to help explain your problem"
+    label: "Upload screenshots or logs"
+    description: "If applicable add screenshots or logs to help explain your problem"
   validations:
     required: false
+    accept: ".png,.jpg,.gif,.log,.txt"
 - type: input
   id: context
   attributes:
-    label: Additional context
+    label: "Additional context"
     description: "Add any other context about the problem"
   validations:
     required: false

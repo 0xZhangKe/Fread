@@ -26,9 +26,9 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("com.android.application")
-                apply("org.jetbrains.kotlin.android")
                 apply("org.jetbrains.kotlin.plugin.serialization")
+                apply("org.jetbrains.kotlin.multiplatform")
+                apply("com.android.kotlin.multiplatform.library")
                 if (gradle.extra["enableFirebaseModule"] == true) {
                     println("Find the Firebase configuration file, add the Firebase plugin.")
                     apply("com.google.gms.google-services")

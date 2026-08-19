@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.zhangke.framework.architect.theme.primaryLight
 import com.zhangke.framework.utils.dpToPx
 import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
@@ -61,12 +62,16 @@ private fun warpBlogContentHtml(
     fontColor: Int,
 ): String {
     val colorString = String.format("#%06X", 0xFFFFFF and fontColor)
+    val linkString = String.format("#%06X", 0xFFFFFF and primaryLight.toArgb())
     return """
         <html>
         <head>
         <style>
         body {
             color: ${colorString};
+        }
+        a {
+            color: ${linkString};
         }
         </style>
         </head>

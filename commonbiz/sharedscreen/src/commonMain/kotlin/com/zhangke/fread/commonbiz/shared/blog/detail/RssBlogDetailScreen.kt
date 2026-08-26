@@ -106,7 +106,6 @@ fun RssBlogDetailScreen(
                         browserLauncher.launchWebTabInApp(it)
                     }
                 },
-                blogTranslationState = BlogTranslationUiState(support = false),
                 editedAt = blog.editedAt?.instant,
                 showOpenBlogWithOtherAccountBtn = false,
                 allowToShowFollowButton = false,

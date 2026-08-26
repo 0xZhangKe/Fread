@@ -25,10 +25,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.pxToDp
+import com.zhangke.fread.common.translate.PostTranslationState
+import com.zhangke.fread.common.translate.PostTranslationStatus
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.image.BlogImageMedias
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -48,7 +49,7 @@ fun BlogMedias(
     sensitive: Boolean,
     onMediaClick: OnBlogMediaClick,
     showAlt: Boolean = true,
-    blogTranslationState: BlogTranslationUiState? = null,
+    postTranslationState: PostTranslationState? = null,
 ) {
     val density = LocalDensity.current
     var containerWidth: Dp? by remember {
@@ -73,7 +74,7 @@ fun BlogMedias(
             BlogMediaContent(
                 mediaList = mediaList,
                 sharedElementId = sharedElementId,
-                blogTranslationState = blogTranslationState,
+                postTranslationState = postTranslationState,
                 hideContent = hideContent,
                 indexInList = indexInList,
                 containerWidth = containerWidth!!,
@@ -122,7 +123,7 @@ fun BlogMedias(
 private fun BlogMediaContent(
     mediaList: List<BlogMedia>,
     sharedElementId: String,
-    blogTranslationState: BlogTranslationUiState?,
+    postTranslationState: PostTranslationState?,
     hideContent: Boolean,
     indexInList: Int,
     containerWidth: Dp,
@@ -143,9 +144,10 @@ private fun BlogMediaContent(
             mediaList = imageMediaList,
             sharedElementId = sharedElementId,
             hideContent = hideContent,
+            postTranslationState = postTranslationState,
             containerWidth = containerWidth,
             onMediaClick = {
-                onMediaClick(it.transformTranslatedEvent(blogTranslationState))
+                onMediaClick(it.transformTranslatedEvent(postTranslationState))
             },
             showAlt = showAlt,
         )
@@ -153,18 +155,20 @@ private fun BlogMediaContent(
 }
 
 private fun BlogMediaClickEvent.transformTranslatedEvent(
-    blogTranslationState: BlogTranslationUiState?,
+    postTranslationState: PostTranslationState?,
 ): BlogMediaClickEvent {
     val imageEvent = (this as? BlogMediaClickEvent.BlogImageClickEvent) ?: return this
-    if (blogTranslationState == null) return this
-    if (!blogTranslationState.showingTranslation) return this
-    val attachment = blogTranslationState.blogTranslation?.attachments ?: return this
+    if (postTranslationState == null) return this
+    if (!postTranslationState.showTranslation) return this
+    val translatedMedia = postTranslationState.status
+        .let { it as? PostTranslationStatus.Translated }
+        ?.translatedContent
+        ?.medias
+        ?: return this
     val mediaList = imageEvent.mediaList
-    if (attachment.size != mediaList.size) return this
     val newMediaList = mediaList.map { media ->
-        val description =
-            attachment.firstOrNull { it.id == media.media.id }?.description
-                ?: media.media.description
+        val description = translatedMedia.firstOrNull { it.mediaId == media.media.id }?.alt
+            ?: media.media.description
         media.copy(
             media = media.media.copy(description = description),
         )

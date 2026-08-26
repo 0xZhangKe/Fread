@@ -9,14 +9,13 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
-import com.zhangke.fread.status.richtext.translate.RichTextTranslatorParser.TranslatorBlock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class RichTextTranslatorParserTest {
 
-    private val translator = RichTextTranslatorParser()
+    private val translator = RichTextTranslatorParser
 
     @Test
     fun parseFacetSplitsPlainTextAndLinksAfterMergingOverlaps() {

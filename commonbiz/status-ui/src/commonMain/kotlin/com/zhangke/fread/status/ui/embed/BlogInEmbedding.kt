@@ -63,6 +63,7 @@ fun BlogInEmbedding(
                     blog = blog,
                     type = BlogUIType.EMBEDDED,
                     style = style.contentStyle.copy(maxLine = 10),
+                    postTranslationState = null,
                 )
             }
             if (blog.mediaList.isNotEmpty()) {

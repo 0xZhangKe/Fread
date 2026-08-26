@@ -270,7 +270,9 @@
     <string name="translation_settings_title">Ajustes de traducción</string>
     <string name="translation_settings_post_language_title">Idioma de traducción de las publicaciones</string>
     <string name="translation_settings_post_language_subtitle">Las publicaciones se traducirán al idioma seleccionado</string>
-    <string name="translation_settings_use_ai_title">Usar IA para traducir publicaciones</string>
+    <string name="translation_settings_use_ai_title">Configurar cómo se traducen las publicaciones</string>
+    <string name="setting_item_ai_translation_title">Traducción con IA</string>
+    <string name="setting_item_ai_translation_subtitle">Al activarla, se usará IA para traducir el contenido de las publicaciones.</string>
     <string name="alt_text_settings_title">Generación de texto alternativo</string>
     <string name="alt_text_settings_subtitle_configured">Modelo: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Sin configurar</string>

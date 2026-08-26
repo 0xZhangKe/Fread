@@ -6,18 +6,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.status.model.BlogTranslationUiState
+import com.zhangke.fread.common.translate.PostTranslationState
+import com.zhangke.fread.common.translate.PostTranslationStatus
 import com.zhangke.fread.status.blog.BlogPoll
 
 @Composable
 internal fun SingleChoicePoll(
     poll: BlogPoll,
     isSelf: Boolean,
-    blogTranslationState: BlogTranslationUiState,
+    postTranslationState: PostTranslationState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
-    val translatedPoll = blogTranslationState.blogTranslation?.poll
+    val showTranslation =
+        postTranslationState.showTranslation && (postTranslationState.status is PostTranslationStatus.Translated)
+    val translatedPoll =
+        (postTranslationState.status as? PostTranslationStatus.Translated)?.translatedContent?.poll
     val pollIsInVotable = !poll.expired && poll.voted == false && !isSelf
     poll.options.forEachIndexed { index, option ->
         val votesCount = option.votesCount?.toFloat() ?: 0F
@@ -25,10 +29,8 @@ internal fun SingleChoicePoll(
         val selected = poll.ownVotes.contains(index)
         val showProgress = isSelf || poll.expired || selected
         var optionContent: String = option.title
-        if (blogTranslationState.showingTranslation) {
-            translatedPoll?.options?.getOrNull(index)?.title?.let {
-                optionContent = it
-            }
+        if (showTranslation) {
+            translatedPoll?.getOrNull(index)?.let { optionContent = it }
         }
         BlogPollOption(
             modifier = Modifier.fillMaxWidth(),

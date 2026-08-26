@@ -22,7 +22,6 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -37,7 +36,6 @@ fun StatusMoreInteractionIcon(
     modifier: Modifier,
     blog: Blog,
     isOwner: Boolean?,
-    blogTranslationState: BlogTranslationUiState,
     style: StatusStyle,
     onActionClick: (StatusActionType, Blog) -> Unit,
     onTranslateClick: () -> Unit,
@@ -66,7 +64,6 @@ fun StatusMoreInteractionIcon(
         ) {
             AdditionalMoreOptions(
                 blog = blog,
-                blogTranslationState = blogTranslationState,
                 onDismissRequest = { showMorePopup = false },
                 onTranslateClick = onTranslateClick,
                 onOpenBlogWithOtherAccountClick = onOpenBlogWithOtherAccountClick,
@@ -155,7 +152,6 @@ private fun InteractionItem(
 @Composable
 private fun AdditionalMoreOptions(
     blog: Blog,
-    blogTranslationState: BlogTranslationUiState,
     onDismissRequest: () -> Unit,
     onTranslateClick: () -> Unit,
     onOpenBlogWithOtherAccountClick: (Blog) -> Unit,
@@ -186,7 +182,7 @@ private fun AdditionalMoreOptions(
         imageVector = Icons.Default.Language,
         onClick = {
             onDismissRequest()
-            textHandler.openSystemTranslateTextPage(blog.content)
+            onTranslateClick()
         },
     )
 
@@ -199,7 +195,7 @@ private fun AdditionalMoreOptions(
             imageVector = Icons.Default.ChatBubbleOutline,
             onClick = {
                 onDismissRequest()
-                onOpenThreadedViewClick?.invoke()
+                onOpenThreadedViewClick()
             },
         )
     }

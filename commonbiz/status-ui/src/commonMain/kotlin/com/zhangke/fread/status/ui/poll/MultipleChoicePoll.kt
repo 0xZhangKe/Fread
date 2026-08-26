@@ -18,8 +18,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SlickRoundCornerShape
+import com.zhangke.fread.common.translate.PostTranslationState
+import com.zhangke.fread.common.translate.PostTranslationStatus
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogPoll
 import org.jetbrains.compose.resources.stringResource
 
@@ -27,7 +28,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun MultipleChoicePoll(
     poll: BlogPoll,
     isSelf: Boolean,
-    blogTranslationState: BlogTranslationUiState,
+    postTranslationState: PostTranslationState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val indexToSelected = remember(poll) {
@@ -37,17 +38,18 @@ internal fun MultipleChoicePoll(
         }
         mutableStateMapOf(*map.map { it.key to it.value }.toTypedArray())
     }
-    val translatedPoll = blogTranslationState.blogTranslation?.poll
+    val showTranslation =
+        postTranslationState.showTranslation && (postTranslationState.status is PostTranslationStatus.Translated)
+    val translatedPoll =
+        (postTranslationState.status as? PostTranslationStatus.Translated)?.translatedContent?.poll
     val pollIsInVotable = !poll.expired && poll.voted == false && !isSelf
     val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
     poll.options.forEachIndexed { index, option ->
         val votesCount = option.votesCount?.toFloat() ?: 0F
         val progress = if (votesCount > 0) votesCount / sum else 0F
         var optionContent: String = option.title
-        if (blogTranslationState.showingTranslation) {
-            translatedPoll?.options?.getOrNull(index)?.title?.let {
-                optionContent = it
-            }
+        if (showTranslation) {
+            translatedPoll?.getOrNull(index)?.let { optionContent = it }
         }
         val selected = indexToSelected[index] ?: false
         BlogPollOption(

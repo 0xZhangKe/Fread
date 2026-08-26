@@ -71,9 +71,6 @@ activity-pub-client = "1.0.0"
 haze = "1.7.2"
 compose-media-player = "0.8.7"
 
-koogAgent = "1.1.1"
-koogAgentAdditions = "1.1.1-beta"
-
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
 androidx-activity = ["androidx.activity", "androidx.activity.ktx", "androidx.activity.compose"]
@@ -221,9 +218,6 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 haze-materials = { group = "dev.chrisbanes.haze", name = "haze-materials", version.ref = "haze" }
 compose-media-player = { group = "io.github.kdroidfilter", name = "composemediaplayer", version.ref = "compose-media-player" }
-
-koog-agent = { group = "ai.koog", name = "koog-agents", version.ref = "koogAgent" }
-koog-agent-additions = { group = "ai.koog", name = "koog-agents-additions", version.ref = "koogAgentAdditions" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

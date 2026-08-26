@@ -19,9 +19,10 @@ import com.zhangke.fread.status.richtext.parser.HtmlParser.QUOTE_INLINE_CLASS
 import com.zhangke.fread.status.richtext.parser.appendEmoji
 import com.zhangke.fread.status.richtext.parser.buildLinkAnnotation
 import com.zhangke.fread.status.richtext.parser.hasNextNonBlankSibling
+import kotlinx.serialization.Serializable
 import kotlin.math.max
 
-class RichTextTranslatorParser {
+object RichTextTranslatorParser {
 
     fun parseHtml(
         html: String,
@@ -332,14 +333,19 @@ class RichTextTranslatorParser {
 
 }
 
+@Serializable
 sealed interface TranslatorBlock {
 
+    @Serializable
     data class PlainTextBlock(val text: String) : TranslatorBlock
 
+    @Serializable
     data class EmojiBlock(val emoji: Emoji) : TranslatorBlock
 
+    @Serializable
     data object NewLineBlock : TranslatorBlock
 
+    @Serializable
     data class LinkBlock(
         val target: RichLinkTarget,
         val content: String,

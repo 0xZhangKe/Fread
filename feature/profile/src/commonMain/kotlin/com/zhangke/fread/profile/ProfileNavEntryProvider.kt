@@ -16,8 +16,8 @@ import com.zhangke.fread.profile.screen.setting.ai.AISettingsNavKey
 import com.zhangke.fread.profile.screen.setting.ai.AISettingsScreen
 import com.zhangke.fread.profile.screen.setting.ai.alttext.AltTextSettingsNavKey
 import com.zhangke.fread.profile.screen.setting.ai.alttext.AltTextSettingsScreen
-import com.zhangke.fread.profile.screen.setting.ai.translate.TranslateSettingNavKey
-import com.zhangke.fread.profile.screen.setting.ai.translate.TranslateSettingScreen
+import com.zhangke.fread.profile.screen.setting.translate.TranslateSettingNavKey
+import com.zhangke.fread.profile.screen.setting.translate.TranslateSettingScreen
 import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsNavKey
 import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsScreen
 import com.zhangke.fread.profile.screen.setting.behavior.BehaviorSettingsNavKey

@@ -35,7 +35,5 @@ interface ComposedStatusInteraction {
     fun onUnfollowClick(locator: PlatformLocator, target: BlogAuthor)
     fun onBoostedClick(locator: PlatformLocator, status: StatusUiState)
     fun onFavouritedClick(locator: PlatformLocator, status: StatusUiState)
-    fun onTranslateClick(locator: PlatformLocator, status: StatusUiState)
-    fun onShowOriginalClick(status: StatusUiState)
     fun onOpenThreadedViewClick(locator: PlatformLocator, status: StatusUiState)
 }

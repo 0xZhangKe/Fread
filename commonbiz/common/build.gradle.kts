@@ -55,9 +55,6 @@ kotlin {
                 implementation(libs.ktor.client.serialization.kotlinx.json)
 
                 implementation(libs.compose.media.player)
-
-                implementation(libs.koog.agent)
-                implementation(libs.koog.agent.additions)
             }
         }
         commonTest {

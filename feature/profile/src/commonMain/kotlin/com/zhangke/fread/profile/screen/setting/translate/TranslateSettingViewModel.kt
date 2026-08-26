@@ -1,4 +1,4 @@
-package com.zhangke.fread.profile.screen.setting.ai.translate
+package com.zhangke.fread.profile.screen.setting.translate
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
@@ -18,15 +18,25 @@ class TranslateSettingViewModel(
         loadConfig()
     }
 
-    fun onPromptChanged(prompt: String) {
-        uiState.update { it.copy(prompt = prompt) }
-    }
-
     private fun loadConfig() {
         launchInViewModel {
             val targetLanguage = freadConfigManager.getTranslateTargetLanguage()
-            val prompt = freadConfigManager.getTranslatePrompt().orEmpty()
-            uiState.update { it.copy(targetLanguage = targetLanguage, prompt = prompt) }
+            val enabled = freadConfigManager.getAiTranslateEnabled()
+            uiState.update { it.copy(targetLanguage = targetLanguage, enabled = enabled) }
+        }
+    }
+
+    fun onLanguageSelected(language: String) {
+        launchInViewModel {
+            freadConfigManager.updateTranslateTargetLanguage(language)
+            uiState.update { it.copy(targetLanguage = language) }
+        }
+    }
+
+    fun onAiTranslateEnableChanged(enabled: Boolean) {
+        launchInViewModel {
+            freadConfigManager.updateAiTranslateEnabled(enabled)
+            uiState.update { it.copy(enabled = enabled) }
         }
     }
 }

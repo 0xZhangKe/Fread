@@ -42,6 +42,8 @@ import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.nav.sharedElement
+import com.zhangke.fread.common.translate.PostTranslationState
+import com.zhangke.fread.common.translate.PostTranslationStatus
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -81,6 +83,7 @@ fun BlogImageMedias(
     style: BlogImageMediaStyle = BlogImageMediaDefault.defaultStyle,
     onMediaClick: OnBlogMediaClick,
     showAlt: Boolean = true,
+    postTranslationState: PostTranslationState? = null,
 ) {
     val sharedElementConfig = LocalStatusSharedElementConfig.current
     val fixedMediaList = remember(mediaList, sharedElementId, sharedElementConfig) {
@@ -117,6 +120,7 @@ fun BlogImageMedias(
                 clickableMedia = media,
                 hideContent = hideContent,
                 showAlt = showAlt,
+                postTranslationState = postTranslationState,
             )
         }
     )
@@ -196,6 +200,7 @@ internal fun BlogImage(
     clickableMedia: ClickedBlogMedia,
     hideContent: Boolean,
     showAlt: Boolean,
+    postTranslationState: PostTranslationState? = null,
 ) {
     val media = clickableMedia.media
     val imageUrl = if (media.type == BlogMediaType.GIFV) media.previewUrl else media.url
@@ -234,9 +239,7 @@ internal fun BlogImage(
             Surface(
                 modifier = Modifier.align(Alignment.BottomStart)
                     .padding(start = 2.dp, bottom = 2.dp),
-                onClick = {
-                    showBottomSheet = true
-                },
+                onClick = { showBottomSheet = true },
                 shape = RoundedCornerShape(4.dp),
                 enabled = true,
                 color = Color.Black.copy(alpha = 0.6F),
@@ -263,7 +266,19 @@ internal fun BlogImage(
                             .wrapContentHeight()
                     ) {
                         SelectionContainer {
-                            Text(text = media.description.orEmpty())
+                            val description = if (postTranslationState == null) {
+                                media.description
+                            } else if (!postTranslationState.showTranslation) {
+                                media.description
+                            } else {
+                                (postTranslationState.status as? PostTranslationStatus.Translated)
+                                    ?.translatedContent
+                                    ?.medias
+                                    ?.firstOrNull { it.mediaId == media.id }
+                                    ?.alt
+                                    ?: media.description
+                            }
+                            Text(text = description.orEmpty())
                         }
                     }
                 }

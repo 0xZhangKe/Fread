@@ -35,8 +35,6 @@ class FreadConfigManager(
         private const val LOCAL_KEY_TRANSLATE_ENABLED = "translate_target_language_enabled"
         private const val LOCAL_KEY_TRANSLATE_TARGET_LANGUAGE = "translate_target_language"
 
-        private const val LOCAL_KEY_TRANSLATE_PROMPT = "translate_prompt"
-
         const val DEFAULT_ALT_TEXT_PROMPT =
             "Write alt text for this image. Be concise — 1-2 sentences for simple images. " +
                     "If the image contains readable text, transcribe it rather than describing it. " +
@@ -249,16 +247,6 @@ class FreadConfigManager(
     suspend fun updateTranslateTargetLanguage(language: String) {
         withContext(Dispatchers.IO) {
             localConfigManager.putString(LOCAL_KEY_TRANSLATE_TARGET_LANGUAGE, language)
-        }
-    }
-
-    suspend fun getTranslatePrompt(): String? {
-        return localConfigManager.getString(LOCAL_KEY_TRANSLATE_PROMPT)
-    }
-
-    suspend fun updateTranslatePrompt(prompt: String) {
-        withContext(Dispatchers.IO) {
-            localConfigManager.putString(LOCAL_KEY_TRANSLATE_PROMPT, prompt)
         }
     }
 }

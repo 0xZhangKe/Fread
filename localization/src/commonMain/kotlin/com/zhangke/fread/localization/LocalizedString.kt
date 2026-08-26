@@ -680,6 +680,8 @@ object LocalizedString {
     val threaded_view_back = localizedString.threaded_view_back
     val translation_settings_title = localizedString.translation_settings_title
     val translation_settings_use_ai_title = localizedString.translation_settings_use_ai_title
+    val setting_item_ai_translation_title = localizedString.setting_item_ai_translation_title
+    val setting_item_ai_translation_subtitle = localizedString.setting_item_ai_translation_subtitle
     val alt_text_settings_title = localizedString.alt_text_settings_title
     val alt_text_settings_subtitle_configured =
         localizedString.alt_text_settings_subtitle_configured

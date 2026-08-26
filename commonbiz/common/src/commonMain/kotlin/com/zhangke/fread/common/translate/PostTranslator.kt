@@ -5,18 +5,24 @@ import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.common.ai.LLMClient
 import com.zhangke.fread.common.ai.LLMModelConfigsRepo
 import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.model.isActivityPub
 import com.zhangke.fread.status.model.isBluesky
+import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.richtext.translate.RichTextTranslatorParser
 import com.zhangke.fread.status.richtext.translate.TranslatorBlock
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 class PostTranslator(
-    private val richTextTranslatorParser: RichTextTranslatorParser,
+    private val applicationScope: ApplicationCoroutineScope,
     private val freadConfigManager: FreadConfigManager,
     private val modelConfigRepo: LLMModelConfigsRepo,
     private val llmClient: LLMClient,
@@ -39,12 +45,45 @@ class PostTranslator(
         explicitNulls = false
     }
 
-    private val cachedTranslations = mutableMapOf<String, TranslatedPost>()
+    private val translateJobs = mutableMapOf<String, PostTranslateJob>()
 
-    suspend fun translateContent(blog: Blog): Result<TranslatedPost> {
-        if (!isAiTranslateEnabled()) return Result.failure(IllegalStateException("AI translate is not enabled"))
-        if (cachedTranslations.containsKey(blog.id)) {
-            return Result.success(cachedTranslations[blog.id]!!)
+    fun getTranslateStatus(blogId: String): StateFlow<PostTranslationStatus>? {
+        return translateJobs[blogId]?.translateStatus
+    }
+
+    fun startTranslatePost(blog: Blog): StateFlow<PostTranslationStatus> {
+        val existingJob = translateJobs[blog.id]
+        if (existingJob != null) {
+            when (existingJob.translateStatus.value) {
+                is PostTranslationStatus.Translating, is PostTranslationStatus.Translated -> {
+                    return existingJob.translateStatus
+                }
+
+                is PostTranslationStatus.Idle -> {
+                    existingJob.startTranslate()
+                    return existingJob.translateStatus
+                }
+
+                is PostTranslationStatus.Failed -> {
+                    existingJob.cancel()
+                    translateJobs.remove(blog.id)
+                }
+            }
+        }
+        val job = PostTranslateJob(blog)
+        translateJobs[blog.id] = job
+        job.startTranslate()
+        return job.translateStatus
+    }
+
+    fun cancelTranslatePost(blogId: String) {
+        translateJobs[blogId]?.cancel()
+        translateJobs.remove(blogId)
+    }
+
+    private suspend fun translatePost(blog: Blog): Result<TranslatedPost> {
+        if (!isAiTranslateEnabled()) {
+            return Result.failure(IllegalStateException("AI translate is not enabled"))
         }
         val lan = freadConfigManager.getTranslateTargetLanguage()
         if (lan.isNullOrEmpty()) {
@@ -52,7 +91,7 @@ class PostTranslator(
         }
         val contentBlockList = parsePostContentBlocks(blog)
         val spoilerList = blog.spoilerText.takeIf { it.isNotEmpty() }
-            ?.let { richTextTranslatorParser.parseHtml(html = it, emojis = blog.emojis) }
+            ?.let { RichTextTranslatorParser.parseHtml(html = it, emojis = blog.emojis) }
         val translationContent = PostTranslatingContent(
             title = blog.title,
             content = contentBlockList?.let(::buildTranslationRichTextBlocks),
@@ -71,7 +110,6 @@ class PostTranslator(
             spoilerList = spoilerList,
             translatedContent = translatedContent,
         )
-        cachedTranslations[blog.id] = translatedPost
         return Result.success(translatedPost)
     }
 
@@ -105,20 +143,33 @@ class PostTranslator(
         return if (blog.content.isEmpty() || blog.content.isBlank()) {
             null
         } else if (blog.platform.protocol.isActivityPub) {
-            richTextTranslatorParser.parseHtml(
+            RichTextTranslatorParser.parseHtml(
                 html = blog.content,
                 emojis = blog.emojis,
                 hashTags = blog.tags,
                 mentions = blog.mentions,
             )
         } else if (blog.platform.protocol.isBluesky) {
-            richTextTranslatorParser.parseFacet(
+            RichTextTranslatorParser.parseFacet(
                 text = blog.content,
                 facets = blog.facets,
             )
         } else {
-            richTextTranslatorParser.parseHtml(blog.content)
+            RichTextTranslatorParser.parseHtml(blog.content)
         }
+    }
+
+    fun buildTranslatePlainContent(blog: Blog): String? {
+        return if (blog.platform.protocol.isRss) {
+            buildString {
+                blog.title?.takeIf { it.isNotEmpty() }?.let { appendLine(it) }
+                blog.content.takeIf { it.isNotEmpty() }
+                    ?.let { RichTextTranslatorParser.parseHtml(it) }
+                    ?.let { append(it) }
+            }
+        } else {
+            parsePostContentBlocks(blog)?.let { buildTranslatePlainText(it) }
+        }?.takeIf { it.isNotEmpty() }
     }
 
     private fun buildTranslationRichTextBlocks(blocks: List<TranslatorBlock>): List<String> {
@@ -137,6 +188,12 @@ class PostTranslator(
                 is TranslatorBlock.EmojiBlock -> TRANSLATION_LABEL_EMOJI
             }
         }
+    }
+
+    private fun buildTranslatePlainText(blocks: List<TranslatorBlock>): String? {
+        return blocks.filterIsInstance<TranslatorBlock.PlainTextBlock>()
+            .takeIf { it.isNotEmpty() }
+            ?.joinToString(separator = "  ") { it.text }
     }
 
     private fun buildTranslatePrompt(content: PostTranslatingContent, lan: String): String {
@@ -251,6 +308,35 @@ class PostTranslator(
             TRANSLATION_LABEL_NEWLINE,
             TRANSLATION_LABEL_HASHTAG,
         )
+    }
+
+    inner class PostTranslateJob(private val post: Blog) {
+
+        val translateStatus: StateFlow<PostTranslationStatus>
+            field = MutableStateFlow<PostTranslationStatus>(PostTranslationStatus.Idle)
+
+        private var translatingJob: Job? = null
+
+        fun startTranslate() {
+            translateStatus.value = PostTranslationStatus.Translating
+            translatingJob = applicationScope.launch {
+                translatePost(post)
+                    .onSuccess {
+                        translateStatus.value = PostTranslationStatus.Translated(it)
+                    }.onFailure { t ->
+                        translateStatus.value = PostTranslationStatus.Failed(t)
+                    }
+            }
+            translatingJob?.invokeOnCompletion {
+                if (translateStatus.value is PostTranslationStatus.Translating) {
+                    translateStatus.value = PostTranslationStatus.Idle
+                }
+            }
+        }
+
+        fun cancel() {
+            translatingJob?.cancel()
+        }
     }
 }
 

@@ -270,7 +270,9 @@
     <string name="translation_settings_title">翻譯設定</string>
     <string name="translation_settings_post_language_title">貼文翻譯語言</string>
     <string name="translation_settings_post_language_subtitle">貼文將翻譯為所選語言</string>
-    <string name="translation_settings_use_ai_title">使用 AI 翻譯貼文</string>
+    <string name="translation_settings_use_ai_title">設定如何翻譯貼文</string>
+    <string name="setting_item_ai_translation_title">AI 翻譯</string>
+    <string name="setting_item_ai_translation_subtitle">啟用後，將使用 AI 翻譯貼文內容。</string>
     <string name="alt_text_settings_title">替代文字生成</string>
     <string name="alt_text_settings_subtitle_configured">模型：%1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">未設定</string>

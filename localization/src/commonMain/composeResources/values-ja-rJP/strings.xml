@@ -270,7 +270,9 @@
     <string name="translation_settings_title">翻訳設定</string>
     <string name="translation_settings_post_language_title">投稿の翻訳言語</string>
     <string name="translation_settings_post_language_subtitle">投稿は選択した言語に翻訳されます</string>
-    <string name="translation_settings_use_ai_title">AIで投稿を翻訳</string>
+    <string name="translation_settings_use_ai_title">投稿の翻訳方法を設定</string>
+    <string name="setting_item_ai_translation_title">AI翻訳</string>
+    <string name="setting_item_ai_translation_subtitle">有効にすると、AIを使用して投稿内容を翻訳します。</string>
     <string name="alt_text_settings_title">代替テキスト生成</string>
     <string name="alt_text_settings_subtitle_configured">モデル: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">未設定</string>

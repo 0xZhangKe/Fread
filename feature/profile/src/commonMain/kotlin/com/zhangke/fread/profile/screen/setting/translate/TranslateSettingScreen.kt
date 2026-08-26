@@ -1,4 +1,4 @@
-package com.zhangke.fread.profile.screen.setting.ai.translate
+package com.zhangke.fread.profile.screen.setting.translate
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,29 +12,27 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.SmartToy
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
+import com.zhangke.fread.profile.screen.setting.SettingItemWithSwitch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -50,9 +48,14 @@ fun TranslateSettingScreen() {
     TranslateSettingContent(
         uiState = uiState,
         onBackClick = backStack::removeLastOrNull,
-        onSelectLanguageClick = {},
-        onPromptChange = viewModel::onPromptChanged,
+        onSelectLanguageClick = {
+            backStack.add(SelectLanguageScreenNavKey())
+        },
+        onAiTranslateEnableChanged = viewModel::onAiTranslateEnableChanged,
     )
+    ConsumeFlow(SelectLanguageScreenNavKey.selectedFlow.flow) { list ->
+        list.firstOrNull()?.let { viewModel.onLanguageSelected(it) }
+    }
 }
 
 @Composable
@@ -60,7 +63,7 @@ private fun TranslateSettingContent(
     uiState: TranslateSettingUiState,
     onBackClick: () -> Unit,
     onSelectLanguageClick: () -> Unit,
-    onPromptChange: (String) -> Unit,
+    onAiTranslateEnableChanged: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -75,6 +78,13 @@ private fun TranslateSettingContent(
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding),
         ) {
+            SettingItemWithSwitch(
+                icon = Icons.Default.SmartToy,
+                title = stringResource(LocalizedString.setting_item_ai_translation_title),
+                subtitle = stringResource(LocalizedString.setting_item_ai_translation_subtitle),
+                checked = uiState.enabled,
+                onCheckedChangeRequest = onAiTranslateEnableChanged,
+            )
             Row(
                 modifier = Modifier.fillMaxWidth()
                     .clickable(onClick = onSelectLanguageClick)
@@ -108,44 +118,10 @@ private fun TranslateSettingContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Icon(
-                    modifier = Modifier.padding(end = 16.dp).size(16.dp),
+                    modifier = Modifier.padding(start = 8.dp, end = 16.dp).size(16.dp),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                )
-            }
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    modifier = Modifier.padding(start = 16.dp).size(24.dp),
-                    contentDescription = null,
-                    imageVector = Icons.Default.SmartToy,
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = "Prompt",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
-            Card(
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
-            ) {
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = uiState.prompt,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    minLines = 3,
-                    onValueChange = onPromptChange,
-                    textStyle = TextStyle(
-                        fontSize = 14.sp,
-                    ),
                 )
             }
         }

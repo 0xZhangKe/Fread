@@ -5,8 +5,6 @@ import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
-import com.zhangke.framework.utils.getDefaultLocale
-import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreenNavKey
@@ -16,7 +14,6 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
-import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
@@ -127,14 +124,6 @@ class InteractiveHandler(
 
         override fun onFavouritedClick(locator: PlatformLocator, status: StatusUiState) {
             this@InteractiveHandler.onFavouritedClick(locator, status)
-        }
-
-        override fun onTranslateClick(locator: PlatformLocator, status: StatusUiState) {
-            this@InteractiveHandler.onTranslateClick(locator, status)
-        }
-
-        override fun onShowOriginalClick(status: StatusUiState) {
-            this@InteractiveHandler.onShowOriginalClick(status)
         }
 
         override fun onOpenThreadedViewClick(locator: PlatformLocator, status: StatusUiState) {
@@ -364,59 +353,6 @@ class InteractiveHandler(
             blog = status.status.intrinsicBlog,
             protocol = status.status.intrinsicBlog.platform.protocol,
         )?.let(::openScreen)
-    }
-
-    private fun onTranslateClick(locator: PlatformLocator, status: StatusUiState) {
-        coroutineScope.launch {
-            onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(status.translating()))
-            statusProvider.statusResolver
-                .translate(locator, status.status, getDefaultLocale().languageCode)
-                .onFailure {
-                    mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
-                    onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(status.translateFinish()))
-                }.onSuccess {
-                    onInteractiveHandleResult(
-                        InteractiveHandleResult.UpdateStatus(status.translated(it))
-                    )
-                }
-        }
-    }
-
-    private fun onShowOriginalClick(status: StatusUiState) {
-        coroutineScope.launch {
-            val showOriginalBlog = status.copy(
-                blogTranslationState = status.blogTranslationState.copy(
-                    showingTranslation = false,
-                )
-            )
-            onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(showOriginalBlog))
-        }
-    }
-
-    private fun StatusUiState.translating(): StatusUiState {
-        return this.copy(
-            blogTranslationState = this.blogTranslationState.copy(
-                translating = true,
-            )
-        )
-    }
-
-    private fun StatusUiState.translateFinish(): StatusUiState {
-        return this.copy(
-            blogTranslationState = this.blogTranslationState.copy(
-                translating = false,
-            )
-        )
-    }
-
-    private fun StatusUiState.translated(translation: BlogTranslation): StatusUiState {
-        return this.copy(
-            blogTranslationState = this.blogTranslationState.copy(
-                translating = false,
-                blogTranslation = translation,
-                showingTranslation = true,
-            )
-        )
     }
 
     private fun openScreen(screen: NavKey) {

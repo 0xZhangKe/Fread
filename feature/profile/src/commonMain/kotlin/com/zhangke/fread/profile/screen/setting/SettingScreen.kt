@@ -9,6 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.ViewTimeline
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Info
@@ -37,6 +39,7 @@ import com.zhangke.fread.profile.screen.donate.DonateScreenNavKey
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreenNavKey
 import com.zhangke.fread.profile.screen.setting.about.AboutScreenNavKey
 import com.zhangke.fread.profile.screen.setting.ai.AISettingsNavKey
+import com.zhangke.fread.profile.screen.setting.translate.TranslateSettingNavKey
 import com.zhangke.fread.profile.screen.setting.appearance.AppearanceSettingsNavKey
 import com.zhangke.fread.profile.screen.setting.behavior.BehaviorSettingsNavKey
 import kotlinx.serialization.Serializable
@@ -81,6 +84,9 @@ fun SettingScreen(viewModel: SettingScreenModel) {
         onDonateClick = {
             backStack.add(DonateScreenNavKey)
         },
+        onTranslateConfigClick = {
+            backStack.add(TranslateSettingNavKey)
+        },
     )
 }
 
@@ -96,6 +102,7 @@ private fun SettingContent(
     onAppearanceClick: () -> Unit,
     onBehaviorClick: () -> Unit,
     onAiSettingsClick: () -> Unit,
+    onTranslateConfigClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -123,7 +130,13 @@ private fun SettingContent(
                 onClick = onBehaviorClick,
             )
             SettingItem(
-                icon = Icons.AutoMirrored.Outlined.Chat,
+                icon = Icons.Default.Translate,
+                title = stringResource(LocalizedString.translation_settings_title),
+                subtitle = stringResource(LocalizedString.translation_settings_use_ai_title),
+                onClick = onTranslateConfigClick,
+            )
+            SettingItem(
+                icon = Icons.Default.SmartToy,
                 title = stringResource(LocalizedString.setting_group_ai),
                 subtitle = stringResource(LocalizedString.setting_group_ai_subtitle),
                 onClick = onAiSettingsClick,

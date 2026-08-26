@@ -270,7 +270,9 @@
     <string name="translation_settings_title">Übersetzungseinstellungen</string>
     <string name="translation_settings_post_language_title">Sprache für Beitragsübersetzungen</string>
     <string name="translation_settings_post_language_subtitle">Beiträge werden in die ausgewählte Sprache übersetzt</string>
-    <string name="translation_settings_use_ai_title">Beiträge mit KI übersetzen</string>
+    <string name="translation_settings_use_ai_title">Festlegen, wie Beiträge übersetzt werden</string>
+    <string name="setting_item_ai_translation_title">KI-Übersetzung</string>
+    <string name="setting_item_ai_translation_subtitle">Wenn aktiviert, werden Beitragsinhalte mithilfe von KI übersetzt.</string>
     <string name="alt_text_settings_title">Alt-Text-Erstellung</string>
     <string name="alt_text_settings_subtitle_configured">Modell: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Nicht konfiguriert</string>

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.zhangke.fread.common.translate.PostTranslationState
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -37,7 +38,7 @@ fun BlogContent(
     sharedElementId: String? = null,
     onBlogClick: (Blog) -> Unit,
     onMediaClick: OnBlogMediaClick = {},
-    blogTranslationState: BlogTranslationUiState = BlogTranslationUiState.DEFAULT,
+    postTranslationState: PostTranslationState,
     onVoted: (List<BlogPoll.Option>) -> Unit = {},
     onHashtagInStatusClick: (HashtagInStatus) -> Unit = {},
     onMaybeHashtagClick: (String) -> Unit,
@@ -56,7 +57,7 @@ fun BlogContent(
         BlogTranslateLabel(
             modifier = Modifier,
             style = style,
-            blogTranslationState = blogTranslationState,
+            postTranslationState = postTranslationState,
             onShowOriginalClick = onShowOriginalClick,
         )
         if (type == BlogUIType.DETAIL) {
@@ -65,7 +66,7 @@ fun BlogContent(
                     BlogTextContentSection(
                         blog = blog,
                         type = BlogUIType.DETAIL,
-                        blogTranslationState = blogTranslationState,
+                        postTranslationState = postTranslationState,
                         style = style.contentStyle,
                         onHashtagInStatusClick = onHashtagInStatusClick,
                         onMentionClick = onMentionClick,
@@ -79,7 +80,7 @@ fun BlogContent(
             BlogTextContentSection(
                 blog = blog,
                 type = type,
-                blogTranslationState = blogTranslationState,
+                postTranslationState = postTranslationState,
                 style = style.contentStyle,
                 onHashtagInStatusClick = onHashtagInStatusClick,
                 onMentionClick = onMentionClick,
@@ -96,7 +97,7 @@ fun BlogContent(
                     .fillMaxWidth(),
                 poll = blog.poll!!,
                 isSelf = isOwner,
-                blogTranslationState = blogTranslationState,
+                postTranslationState = postTranslationState,
                 onVoted = {
                     onVoted(it)
                 },
@@ -109,7 +110,7 @@ fun BlogContent(
                     .fillMaxWidth(),
                 mediaList = blog.mediaList,
                 sharedElementId = sharedElementId ?: blog.id,
-                blogTranslationState = blogTranslationState,
+                postTranslationState = postTranslationState,
                 indexInList = indexOfFeeds,
                 sensitive = sensitive,
                 onMediaClick = onMediaClick,

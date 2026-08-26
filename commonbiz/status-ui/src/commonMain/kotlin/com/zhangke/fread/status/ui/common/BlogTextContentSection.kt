@@ -25,9 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zhangke.fread.common.translate.PostTranslationState
+import com.zhangke.fread.common.translate.PostTranslationStatus
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
@@ -44,7 +45,7 @@ fun BlogTextContentSection(
     blog: Blog,
     style: ContentStyle,
     type: BlogUIType,
-    blogTranslationState: BlogTranslationUiState? = null,
+    postTranslationState: PostTranslationState?,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit = {},
     onMaybeHashtagClick: (String) -> Unit = {},
     onMentionClick: (Mention) -> Unit = {},
@@ -58,6 +59,8 @@ fun BlogTextContentSection(
     }
     val showWarning = blog.spoilerText.isNotEmpty() || blog.sensitiveByFilter
     val spoilerText = blog.spoilerText
+    val showTranslation =
+        postTranslationState?.showTranslation == true && postTranslationState.status is PostTranslationStatus.Translated
     if (showWarning) {
         val statusConfig = LocalStatusUiConfig.current
         var hideContent by rememberSaveable(
@@ -67,8 +70,10 @@ fun BlogTextContentSection(
         ) {
             mutableStateOf(!statusConfig.alwaysShowSensitiveContent)
         }
-        val humanizedSpoilerText = if (blogTranslationState?.showingTranslation == true) {
-            blogTranslationState.blogTranslation!!.getHumanizedSpoilerText(blog)
+        val humanizedSpoilerText = if (showTranslation) {
+            (postTranslationState.status as PostTranslationStatus.Translated)
+                .translatedContent
+                .humanizedSpoilerText ?: RichText.empty
         } else if (blog.spoilerText.isNotEmpty()) {
             blog.humanizedSpoilerText
         } else {
@@ -97,8 +102,10 @@ fun BlogTextContentSection(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
             ) {
-                val humanizedContent = if (blogTranslationState?.showingTranslation == true) {
-                    blogTranslationState.blogTranslation!!.getHumanizedContent(blog)
+                val humanizedContent = if (showTranslation) {
+                    (postTranslationState.status as PostTranslationStatus.Translated)
+                        .translatedContent
+                        .humanizedContent ?: RichText.empty
                 } else {
                     blog.humanizedContent
                 }
@@ -165,8 +172,10 @@ fun BlogTextContentSection(
             blog.description.isNullOrEmpty() &&
             blog.content.isNotEmpty()
         ) {
-            val humanizedContent = if (blogTranslationState?.showingTranslation == true) {
-                blogTranslationState.blogTranslation!!.getHumanizedContent(blog)
+            val humanizedContent = if (showTranslation) {
+                (postTranslationState.status as PostTranslationStatus.Translated)
+                    .translatedContent
+                    .humanizedContent ?: RichText.empty
             } else {
                 blog.humanizedContent
             }

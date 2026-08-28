@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.common.translate.PostTranslationState
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -17,15 +18,15 @@ fun BlogPoll(
     modifier: Modifier,
     poll: BlogPoll,
     isSelf: Boolean?,
-    blogTranslationState: BlogTranslationUiState,
+    postTranslationState: PostTranslationState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     // 显示投票占比，满足任意条件：发帖人、投票结束、已投票
     Column(modifier = modifier) {
         if (poll.multiple) {
-            MultipleChoicePoll(poll, isSelf == true, blogTranslationState, onVoted)
+            MultipleChoicePoll(poll, isSelf == true, postTranslationState, onVoted)
         } else {
-            SingleChoicePoll(poll, isSelf == true, blogTranslationState, onVoted)
+            SingleChoicePoll(poll, isSelf == true, postTranslationState, onVoted)
         }
         if (poll.expired) {
             val count = poll.votesCount

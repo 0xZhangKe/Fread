@@ -3,6 +3,7 @@
     <string name="skip">Passer</string>
     <string name="alert">Alerte</string>
     <string name="notice">Information</string>
+    <string name="not_set_yet">Pas encore défini</string>
     <string name="duration_minute">minute</string>
     <string name="duration_hour">heure</string>
     <string name="duration_day">jour</string>
@@ -266,6 +267,12 @@
     <string name="threaded_view_assembling">Assemblage de la vue du fil</string>
     <string name="threaded_view_empty">Aucun fil à afficher</string>
     <string name="threaded_view_back">Retour</string>
+    <string name="translation_settings_title">Paramètres de traduction</string>
+    <string name="translation_settings_post_language_title">Langue de traduction des publications</string>
+    <string name="translation_settings_post_language_subtitle">Les publications seront traduites dans la langue sélectionnée</string>
+    <string name="translation_settings_use_ai_title">Configurer la façon dont les publications sont traduites</string>
+    <string name="setting_item_ai_translation_title">Traduction par IA</string>
+    <string name="setting_item_ai_translation_subtitle">Une fois activée, l’IA sera utilisée pour traduire le contenu des publications.</string>
     <string name="alt_text_settings_title">Génération de texte alternatif</string>
     <string name="alt_text_settings_subtitle_configured">Modèle : %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Non configuré</string>

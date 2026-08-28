@@ -9,16 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.handler.LocalTextHandler
+import com.zhangke.fread.common.translate.rememberPostTranslationState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusActionType
@@ -28,12 +29,12 @@ import com.zhangke.fread.status.ui.model.BlogUIType
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
 import com.zhangke.fread.status.ui.threads.threads
+import kotlinx.coroutines.launch
 
 @Composable
 fun BlogUi(
     modifier: Modifier,
     blog: Blog,
-    blogTranslationState: BlogTranslationUiState,
     isOwner: Boolean?,
     logged: Boolean?,
     indexInList: Int,
@@ -51,9 +52,7 @@ fun BlogUi(
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onMentionDidClick: (String) -> Unit,
-    onShowOriginalClick: () -> Unit,
     onBlogClick: (Blog) -> Unit,
-    onTranslateClick: () -> Unit,
     continueThreadLabelHeight: Int? = null,
     onBoostedClick: ((String) -> Unit)? = null,
     onFavouritedClick: ((String) -> Unit)? = null,
@@ -69,6 +68,8 @@ fun BlogUi(
     val detailModel = type == BlogUIType.DETAIL
     val textHandler = LocalTextHandler.current
     var infoToTopSpacing: Float? by remember { mutableStateOf(null) }
+    val postTranslationState = rememberPostTranslationState(blog)
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -107,7 +108,6 @@ fun BlogUi(
                     }
                 },
             blog = blog,
-            blogTranslationState = blogTranslationState,
             displayTime = blog.formattingDisplayTime.formattedTime(),
             visibility = blog.visibility,
             isOwner = isOwner,
@@ -120,7 +120,9 @@ fun BlogUi(
             style = style,
             reblogAuthor = reblogAuthor,
             editedAt = blog.editedAt?.instant,
-            onTranslateClick = onTranslateClick,
+            onTranslateClick = {
+                coroutineScope.launch { postTranslationState.translatePost(blog) }
+            },
             onOpenBlogWithOtherAccountClick = onOpenBlogWithOtherAccountClick,
             showOpenBlogWithOtherAccountBtn = true,
             onOpenThreadedViewClick = onOpenThreadedViewClick,
@@ -135,7 +137,7 @@ fun BlogUi(
                 ),
             blog = blog,
             isOwner = isOwner,
-            blogTranslationState = blogTranslationState,
+            postTranslationState = postTranslationState,
             type = type,
             indexOfFeeds = indexInList,
             sharedElementId = sharedElementId,
@@ -149,7 +151,9 @@ fun BlogUi(
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
             onMentionDidClick = onMentionDidClick,
-            onShowOriginalClick = onShowOriginalClick,
+            onShowOriginalClick = {
+                coroutineScope.launch { postTranslationState.hideTranslation() }
+            },
             onBlogClick = onBlogClick,
             onMaybeHashtagClick = onMaybeHashtagClick,
             onUnavailableQuoteClick = onUnavailableQuoteClick,

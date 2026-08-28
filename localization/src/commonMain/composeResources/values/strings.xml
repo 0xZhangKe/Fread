@@ -3,6 +3,7 @@
     <string name="skip">Skip</string>
     <string name="alert">Alert</string>
     <string name="notice">Notice</string>
+    <string name="not_set_yet">Not set yet</string>
     <string name="duration_minute">minute</string>
     <string name="duration_hour">hour</string>
     <string name="duration_day">day</string>
@@ -269,6 +270,12 @@
     <string name="threaded_view_assembling">Assembling threaded view</string>
     <string name="threaded_view_empty">No thread to display</string>
     <string name="threaded_view_back">Back</string>
+    <string name="translation_settings_title">Translation settings</string>
+    <string name="translation_settings_post_language_title">Post translation language</string>
+    <string name="translation_settings_post_language_subtitle">Posts will be translated into the selected language</string>
+    <string name="translation_settings_use_ai_title">Configure how posts are translated</string>
+    <string name="setting_item_ai_translation_title">AI translation</string>
+    <string name="setting_item_ai_translation_subtitle">When enabled, AI will be used to translate post content.</string>
     <string name="alt_text_settings_title">Alt text generation</string>
     <string name="alt_text_settings_subtitle_configured">Model: %1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">Not configured</string>

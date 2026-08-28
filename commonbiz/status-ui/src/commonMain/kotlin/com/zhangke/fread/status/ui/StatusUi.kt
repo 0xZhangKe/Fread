@@ -63,7 +63,6 @@ fun StatusUi(
             isOwner = status.isOwner,
             logged = status.logged,
             type = type,
-            blogTranslationState = status.blogTranslationState,
             continueThreadLabelHeight = continueThreadHeight,
             topLabels = getStatusTopLabel(
                 isReblog = rawStatus is Status.Reblog,
@@ -117,12 +116,6 @@ fun StatusUi(
             },
             onFavouritedClick = {
                 composedStatusInteraction.onFavouritedClick(status.locator, status)
-            },
-            onShowOriginalClick = {
-                composedStatusInteraction.onShowOriginalClick(status)
-            },
-            onTranslateClick = {
-                composedStatusInteraction.onTranslateClick(status.locator, status)
             },
             onBlogClick = {
                 composedStatusInteraction.onBlockClick(status.locator, it)

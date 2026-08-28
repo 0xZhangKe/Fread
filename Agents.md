@@ -68,7 +68,7 @@ Important modules:
 - Existing test locations include `commonTest`, `androidUnitTest`, and `androidInstrumentedTest`. Place new tests in the same source set as the code path being validated.
 - Prefer assertions against complete objects or meaningful rendered/state outputs rather than many field-by-field checks when that improves failure clarity.
 - For Compose UI behavior, add focused state/unit coverage when possible and manually verify affected screens if automated UI coverage is not practical.
-- Do not run compile/build commands after every task by default. Only run the narrowest relevant test/build command when verification is necessary because the change is risky, broad, requested by the user, or likely to fail without compiler feedback. If verification is skipped or blocked, state that clearly.
+- Do not run any Gradle task to verify code changes unless the user explicitly requests it. If Gradle verification is not requested, review and validate the changes through static inspection only.
 
 ## Sensitive Files And Boundaries
 
@@ -91,13 +91,3 @@ Important modules:
 - Keep README-facing changes concise and user-oriented.
 - Architecture or developer docs should describe actual module responsibilities and commands, not aspirational structure.
 - If documenting commands, include exact Gradle invocations and any required flags such as `-PdisableFirebase=true`.
-
-## Context Compaction
-
-When compressing agent context, preserve in priority order:
-
-1. Architecture decisions. Never summarize these away.
-2. Modified files and their key changes.
-3. Current verification status, pass or fail.
-4. Open TODOs and rollback notes.
-5. Tool outputs. Keep only pass/fail unless specific output is needed.

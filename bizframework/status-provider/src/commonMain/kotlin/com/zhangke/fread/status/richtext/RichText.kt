@@ -8,6 +8,8 @@ import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.parser.HtmlParser
+import com.zhangke.fread.status.richtext.translate.RichTextTranslatorParser
+import com.zhangke.fread.status.richtext.translate.TranslatorBlock
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -20,6 +22,7 @@ class RichText(
     val emojis: List<Emoji> = emptyList(),
     val facets: List<Facet> = emptyList(),
     val type: RichTextType,
+    val translationBlockList: List<TranslatorBlock>? = null,
 ) : PlatformSerializable {
 
     @PlatformTransient
@@ -36,6 +39,12 @@ class RichText(
 
     fun parse(): AnnotatedString {
         richText?.let { return it }
+        if (!translationBlockList.isNullOrEmpty()) {
+            return RichTextTranslatorParser.rebuildAnnotationString(
+                blockList = translationBlockList,
+                onLinkTargetClick = clickableDelegate,
+            ).also { richText = it }
+        }
         return HtmlParser.parse(
             document = document,
             type = type,
@@ -50,7 +59,16 @@ class RichText(
     }
 
     companion object {
+
         val empty by lazy { buildRichText("") }
+
+        fun create(blocks: List<TranslatorBlock>): RichText {
+            return RichText(
+                document = "",
+                type = RichTextType.PLAINTEXT,
+                translationBlockList = blocks,
+            )
+        }
     }
 }
 

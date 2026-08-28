@@ -12,7 +12,6 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.BlogUi
@@ -51,7 +50,6 @@ fun BlogUi(
             blog = blog,
             logged = null,
             isOwner = null,
-            blogTranslationState = BlogTranslationUiState.DEFAULT,
             indexInList = indexInList,
             type = type,
             sharedElementId = sharedElementId,
@@ -103,8 +101,6 @@ fun BlogUi(
                     browserLauncher.launchWebTabInApp(it, locator)
                 }
             },
-            onShowOriginalClick = {},
-            onTranslateClick = {},
             onBlogClick = {
                 composedStatusInteraction.onBlockClick(locator, it)
             },

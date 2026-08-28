@@ -32,25 +32,29 @@ class FreadConfigManager(
         private const val LOCAL_KEY_JUMP_TO_PROFILE = "jump_to_profile"
         private const val LOCAL_KEY_ALT_TEXT_PROMPT = "alt_text_prompt"
 
+        private const val LOCAL_KEY_TRANSLATE_ENABLED = "translate_target_language_enabled"
+        private const val LOCAL_KEY_TRANSLATE_TARGET_LANGUAGE = "translate_target_language"
+
         const val DEFAULT_ALT_TEXT_PROMPT =
             "Write alt text for this image. Be concise — 1-2 sentences for simple images. " +
-                "If the image contains readable text, transcribe it rather than describing it. " +
-                "Only describe what you can clearly see; do not guess at names or details."
+                    "If the image contains readable text, transcribe it rather than describing it. " +
+                    "Only describe what you can clearly see; do not guess at names or details."
     }
 
-    private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
-    val statusConfigFlow get(): StateFlow<StatusConfig> = _statusConfigFlow
+    val statusConfigFlow: StateFlow<StatusConfig>
+        field = MutableStateFlow(StatusConfig.default())
 
     private val _themeTypeeFlow = MutableStateFlow(ThemeType.DEFAULT)
     val themeTypeFlow get() = _themeTypeeFlow
 
-    private val _homeTabNextButtonVisibleFlow = MutableStateFlow(false)
-    val homeTabNextButtonVisibleFlow: StateFlow<Boolean> get() = _homeTabNextButtonVisibleFlow
+    val homeTabNextButtonVisibleFlow: StateFlow<Boolean>
+        field = MutableStateFlow(false)
 
-    private val _homeTabRefreshButtonVisibleFlow = MutableStateFlow(false)
-    val homeTabRefreshButtonVisibleFlow: StateFlow<Boolean> get() = _homeTabRefreshButtonVisibleFlow
-    private val _enableBlurAppBarStyleFlow = MutableStateFlow(true)
-    val enableBlurAppBarStyleFlow: StateFlow<Boolean> get() = _enableBlurAppBarStyleFlow
+    val homeTabRefreshButtonVisibleFlow: StateFlow<Boolean>
+        field = MutableStateFlow(false)
+
+    val enableBlurAppBarStyleFlow: StateFlow<Boolean>
+        field = MutableStateFlow(true)
 
     var autoPlayInlineVideo: Boolean = false
         private set
@@ -60,7 +64,7 @@ class FreadConfigManager(
         private set
 
     suspend fun initConfig() {
-        _statusConfigFlow.value = readLocalStatusConfig()
+        statusConfigFlow.value = readLocalStatusConfig()
         _themeTypeeFlow.value = getThemeType()
         autoPlayInlineVideo =
             localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
@@ -68,11 +72,11 @@ class FreadConfigManager(
             localConfigManager.getBoolean(LOCAL_KEY_OPEN_URL_IN_APP_BROWSER) != false
         jumpToProfile =
             localConfigManager.getBoolean(LOCAL_KEY_JUMP_TO_PROFILE) ?: true
-        _enableBlurAppBarStyleFlow.value =
+        enableBlurAppBarStyleFlow.value =
             localConfigManager.getBoolean(LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE) != false
-        _homeTabNextButtonVisibleFlow.value =
+        homeTabNextButtonVisibleFlow.value =
             localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE) ?: false
-        _homeTabRefreshButtonVisibleFlow.value =
+        homeTabRefreshButtonVisibleFlow.value =
             localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE) ?: false
     }
 
@@ -116,14 +120,14 @@ class FreadConfigManager(
     }
 
     suspend fun updateEnableBlurAppBarStyle(value: Boolean) {
-        _enableBlurAppBarStyleFlow.value = value
+        enableBlurAppBarStyleFlow.value = value
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_ENABLE_BLUR_APP_BAR_STYLE, value)
         }
     }
 
     suspend fun updateStatusContentSize(contentSize: StatusContentSize) {
-        _statusConfigFlow.value = _statusConfigFlow.value.copy(contentSize = contentSize)
+        statusConfigFlow.value = statusConfigFlow.value.copy(contentSize = contentSize)
         withContext(Dispatchers.IO) {
             localConfigManager.putString(
                 LOCAL_KEY_STATUS_CONTENT_SIZE,
@@ -133,28 +137,28 @@ class FreadConfigManager(
     }
 
     suspend fun updateAlwaysShowSensitiveContent(always: Boolean) {
-        _statusConfigFlow.value = _statusConfigFlow.value.copy(alwaysShowSensitiveContent = always)
+        statusConfigFlow.value = statusConfigFlow.value.copy(alwaysShowSensitiveContent = always)
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE, always)
         }
     }
 
     suspend fun updateImmersiveNavBar(immersive: Boolean) {
-        _statusConfigFlow.value = _statusConfigFlow.value.copy(immersiveNavBar = immersive)
+        statusConfigFlow.value = statusConfigFlow.value.copy(immersiveNavBar = immersive)
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_IMMERSIVE_NAV_BAR, immersive)
         }
     }
 
     suspend fun updateHomeTabNextButtonVisible(visible: Boolean) {
-        _homeTabNextButtonVisibleFlow.value = visible
+        homeTabNextButtonVisibleFlow.value = visible
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE, visible)
         }
     }
 
     suspend fun updateHomeTabRefreshButtonVisible(visible: Boolean) {
-        _homeTabRefreshButtonVisibleFlow.value = visible
+        homeTabRefreshButtonVisibleFlow.value = visible
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE, visible)
         }
@@ -223,6 +227,26 @@ class FreadConfigManager(
     suspend fun updateAltTextPrompt(value: String) {
         withContext(Dispatchers.IO) {
             localConfigManager.putString(LOCAL_KEY_ALT_TEXT_PROMPT, value)
+        }
+    }
+
+    suspend fun getAiTranslateEnabled(): Boolean {
+        return localConfigManager.getBoolean(LOCAL_KEY_TRANSLATE_ENABLED) ?: false
+    }
+
+    suspend fun updateAiTranslateEnabled(enabled: Boolean) {
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_TRANSLATE_ENABLED, enabled)
+        }
+    }
+
+    suspend fun getTranslateTargetLanguage(): String? {
+        return localConfigManager.getString(LOCAL_KEY_TRANSLATE_TARGET_LANGUAGE)
+    }
+
+    suspend fun updateTranslateTargetLanguage(language: String) {
+        withContext(Dispatchers.IO) {
+            localConfigManager.putString(LOCAL_KEY_TRANSLATE_TARGET_LANGUAGE, language)
         }
     }
 }

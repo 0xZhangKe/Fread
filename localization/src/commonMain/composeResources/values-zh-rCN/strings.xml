@@ -3,6 +3,7 @@
     <string name="skip">跳过</string>
     <string name="alert">提示</string>
     <string name="notice">提示</string>
+    <string name="not_set_yet">暂未设置</string>
     <string name="duration_minute">分钟</string>
     <string name="duration_hour">小时</string>
     <string name="duration_day">天</string>
@@ -266,6 +267,12 @@
     <string name="threaded_view_assembling">正在整理串联视图</string>
     <string name="threaded_view_empty">没有可显示的串联内容</string>
     <string name="threaded_view_back">返回</string>
+    <string name="translation_settings_title">翻译设置</string>
+    <string name="translation_settings_post_language_title">帖子翻译语言</string>
+    <string name="translation_settings_post_language_subtitle">帖子将翻译为所选语言</string>
+    <string name="translation_settings_use_ai_title">设置如何翻译帖子</string>
+    <string name="setting_item_ai_translation_title">AI 翻译</string>
+    <string name="setting_item_ai_translation_subtitle">启用后，将使用 AI 翻译帖子内容。</string>
     <string name="alt_text_settings_title">替代文本生成</string>
     <string name="alt_text_settings_subtitle_configured">模型：%1$s</string>
     <string name="alt_text_settings_subtitle_not_configured">未配置</string>

@@ -10,8 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.common.translate.PostTranslationState
+import com.zhangke.fread.common.translate.PostTranslationStatus
 import com.zhangke.fread.localization.LocalizedString
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.style.StatusStyle
 import org.jetbrains.compose.resources.stringResource
 
@@ -19,25 +20,19 @@ import org.jetbrains.compose.resources.stringResource
 fun BlogTranslateLabel(
     modifier: Modifier,
     style: StatusStyle,
-    blogTranslationState: BlogTranslationUiState?,
+    postTranslationState: PostTranslationState,
     onShowOriginalClick: () -> Unit,
 ) {
-    if (blogTranslationState == null || !blogTranslationState.support) return
-    if (!blogTranslationState.translating && !blogTranslationState.showingTranslation) return
+    if (!postTranslationState.showTranslation) return
     Row(
-        modifier = modifier
-            .padding(vertical = style.contentStyle.contentVerticalSpacing),
+        modifier = modifier.padding(vertical = style.contentStyle.contentVerticalSpacing),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        HorizontalDivider(
-            modifier = Modifier.weight(1F)
-        )
-        if (blogTranslationState.showingTranslation) {
+        HorizontalDivider(modifier = Modifier.weight(1F))
+        if (postTranslationState.status is PostTranslationStatus.Translated) {
             Text(
                 modifier = Modifier
-                    .clickable {
-                        onShowOriginalClick()
-                    }
+                    .clickable { onShowOriginalClick() }
                     .padding(horizontal = 16.dp),
                 text = stringResource(LocalizedString.statusUiTranslateShowOriginal),
                 style = style.infoLineStyle.descStyle,

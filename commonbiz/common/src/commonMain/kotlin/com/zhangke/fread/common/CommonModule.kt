@@ -19,6 +19,8 @@ import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.deeplink.SelectAccountForPublishViewModel
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
+import com.zhangke.fread.common.language.DetectPostLanguageUseCase
+import com.zhangke.fread.common.language.LanguageDetector
 import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.notification.NotificationUnreadCounter
 import com.zhangke.fread.common.onboarding.OnboardingComponent
@@ -28,12 +30,11 @@ import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
 import com.zhangke.fread.common.startup.StartupManager
-import com.zhangke.fread.common.language.DetectPostLanguageUseCase
-import com.zhangke.fread.common.language.LanguageDetector
 import com.zhangke.fread.common.status.StatusIdGenerator
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.adapter.ContentConfigAdapter
 import com.zhangke.fread.common.status.usecase.FormatStatusDisplayTimeUseCase
+import com.zhangke.fread.common.translate.PostTranslator
 import com.zhangke.fread.common.update.AppUpdateManager
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -60,6 +61,7 @@ val commonModule = module {
     singleOf(::StartupManager)
     singleOf(::StatusUpdater)
     singleOf(::LanguageDetector)
+    singleOf(::PostTranslator)
 
     factoryOf(::LinkPreviewCardRepo)
     singleOf(::LLMClient)

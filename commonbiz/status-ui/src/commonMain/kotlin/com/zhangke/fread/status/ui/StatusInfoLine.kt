@@ -19,14 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.Relationships
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusVisibility
@@ -45,7 +43,6 @@ import kotlin.time.ExperimentalTime
 fun StatusInfoLine(
     modifier: Modifier,
     blog: Blog,
-    blogTranslationState: BlogTranslationUiState,
     isOwner: Boolean?,
     displayTime: String,
     style: StatusStyle,
@@ -171,7 +168,6 @@ fun StatusInfoLine(
                     .padding(end = style.containerEndPadding / 2),
                 blog = blog,
                 isOwner = isOwner,
-                blogTranslationState = blogTranslationState,
                 style = style,
                 onActionClick = onInteractive,
                 onTranslateClick = onTranslateClick,

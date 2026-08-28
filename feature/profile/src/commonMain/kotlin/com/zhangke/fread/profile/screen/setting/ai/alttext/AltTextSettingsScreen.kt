@@ -1,4 +1,4 @@
-package com.zhangke.fread.profile.screen.setting.alttext
+package com.zhangke.fread.profile.screen.setting.ai.alttext
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

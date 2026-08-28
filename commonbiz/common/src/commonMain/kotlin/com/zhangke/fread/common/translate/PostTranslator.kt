@@ -14,6 +14,7 @@ import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.richtext.translate.RichTextTranslatorParser
 import com.zhangke.fread.status.richtext.translate.TranslatorBlock
+import com.zhangke.fread.status.richtext.translate.plainTextLength
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +40,8 @@ class PostTranslator(
         private const val TRANSLATION_PLACEHOLDER_LANGUAGE = "{{TARGET_LANGUAGE}}"
 
         private const val TRANSLATION_PLACEHOLDER_CONTENT_JSON = "{{CONTENT_JSON}}"
+
+        private const val RSS_FEEDS_CONTENT_MAX_TRANSLATE_LENGTH = 1000
     }
 
     private val translationJson = Json(globalJson) {
@@ -89,13 +92,17 @@ class PostTranslator(
         if (lan.isNullOrEmpty()) {
             return Result.failure(IllegalStateException("Translate target language is not set"))
         }
-        val contentBlockList = parsePostContentBlocks(blog)
+        val contentBlockList = parsePostContentBlocks(blog, true)
         val spoilerList = blog.spoilerText.takeIf { it.isNotEmpty() }
             ?.let { RichTextTranslatorParser.parseHtml(html = it, emojis = blog.emojis) }
+        val description = blog.description?.takeIf { it.isNotEmpty() }
+            ?.let { RichTextTranslatorParser.parseHtml(it) }
+            ?.trimContent()
         val translationContent = PostTranslatingContent(
             title = blog.title,
             content = contentBlockList?.let(::buildTranslationRichTextBlocks),
             spoiler = spoilerList?.let(::buildTranslationRichTextBlocks),
+            description = description?.let(::buildTranslationRichTextBlocks),
             medias = blog.translatingMedias,
             poll = blog.poll?.options?.map { it.title },
         )
@@ -108,6 +115,7 @@ class PostTranslator(
         val translatedPost = buildTranslatedPost(
             contentBlock = contentBlockList,
             spoilerList = spoilerList,
+            descriptionBlocks = description,
             translatedContent = translatedContent,
         )
         return Result.success(translatedPost)
@@ -116,6 +124,7 @@ class PostTranslator(
     private fun buildTranslatedPost(
         contentBlock: List<TranslatorBlock>?,
         spoilerList: List<TranslatorBlock>?,
+        descriptionBlocks: List<TranslatorBlock>?,
         translatedContent: PostTranslatingContent,
     ): TranslatedPost {
         val translatedContentBlocks = contentBlock?.let {
@@ -130,16 +139,26 @@ class PostTranslator(
                 translatedList = translatedContent.spoiler ?: emptyList(),
             )
         }
+        val translatedDescriptionBlocks = descriptionBlocks?.takeIf { it.isNotEmpty() }?.let {
+            rebuildTranslatedBlocks(
+                blockList = it,
+                translatedList = translatedContent.description ?: emptyList(),
+            )
+        }
         return TranslatedPost(
             content = translatedContentBlocks,
             spoiler = translatedSpoilerBlocks,
+            description = translatedDescriptionBlocks,
             title = translatedContent.title,
             medias = translatedContent.medias,
             poll = translatedContent.poll,
         )
     }
 
-    private fun parsePostContentBlocks(blog: Blog): List<TranslatorBlock>? {
+    private fun parsePostContentBlocks(
+        blog: Blog,
+        trimRssContent: Boolean
+    ): List<TranslatorBlock>? {
         return if (blog.content.isEmpty() || blog.content.isBlank()) {
             null
         } else if (blog.platform.protocol.isActivityPub) {
@@ -155,7 +174,12 @@ class PostTranslator(
                 facets = blog.facets,
             )
         } else {
-            RichTextTranslatorParser.parseHtml(blog.content)
+            val blocks = RichTextTranslatorParser.parseHtml(blog.content)
+            if (trimRssContent) {
+                blocks.trimContent()
+            } else {
+                blocks
+            }
         }
     }
 
@@ -168,7 +192,7 @@ class PostTranslator(
                     ?.let { append(it) }
             }
         } else {
-            parsePostContentBlocks(blog)?.let { buildTranslatePlainText(it) }
+            parsePostContentBlocks(blog, false)?.let { buildTranslatePlainText(it) }
         }?.takeIf { it.isNotEmpty() }
     }
 
@@ -228,6 +252,7 @@ class PostTranslator(
         val richTextFields = buildList {
             if (content.spoiler.isNullOrEmpty().not()) add("spoiler")
             if (content.content.isNullOrEmpty().not()) add("content")
+            if (content.description.isNullOrEmpty().not()) add("description")
         }
         return buildString {
             appendLine(
@@ -310,6 +335,16 @@ class PostTranslator(
         )
     }
 
+    private fun List<TranslatorBlock>.trimContent(): List<TranslatorBlock> {
+        val trimmedBlocks = mutableListOf<TranslatorBlock>()
+        var index = 0
+        while (trimmedBlocks.plainTextLength() < RSS_FEEDS_CONTENT_MAX_TRANSLATE_LENGTH && index < this.size) {
+            trimmedBlocks.add(this[index])
+            index++
+        }
+        return trimmedBlocks
+    }
+
     inner class PostTranslateJob(private val post: Blog) {
 
         val translateStatus: StateFlow<PostTranslationStatus>
@@ -344,6 +379,7 @@ class PostTranslator(
 data class PostTranslatingContent(
     val spoiler: List<String>?,
     val content: List<String>?,
+    val description: List<String>?,
     val title: String?,
     val medias: List<MediaAltTranslatingContent>?,
     val poll: List<String>?,

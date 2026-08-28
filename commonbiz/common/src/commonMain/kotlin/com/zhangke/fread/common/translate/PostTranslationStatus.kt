@@ -84,6 +84,7 @@ sealed class PostTranslationStatus {
 class TranslatedPost(
     val spoiler: List<TranslatorBlock>?,
     val content: List<TranslatorBlock>?,
+    val description: List<TranslatorBlock>?,
     val title: String?,
     val medias: List<MediaAltTranslatingContent>?,
     val poll: List<String>?,
@@ -97,4 +98,7 @@ class TranslatedPost(
         content?.takeIf { it.isNotEmpty() }?.let { RichText.create(it) }
     }
 
+    val humanizedDescription: RichText? by lazy {
+        description?.takeIf { it.isNotEmpty() }?.let { RichText.create(it) }
+    }
 }

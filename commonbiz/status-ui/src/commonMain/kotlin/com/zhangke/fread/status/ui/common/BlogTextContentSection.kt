@@ -31,7 +31,6 @@ import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
-import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.ui.model.BlogUIType
@@ -52,15 +51,18 @@ fun BlogTextContentSection(
     onMentionDidClick: (String) -> Unit = {},
     onUrlClick: (url: String) -> Unit = {},
 ) {
-    val contentMaxLine: Int = if (blog.platform.protocol.isRss) {
-        style.maxLine
-    } else {
-        Int.MAX_VALUE
-    }
     val showWarning = blog.spoilerText.isNotEmpty() || blog.sensitiveByFilter
     val spoilerText = blog.spoilerText
     val showTranslation =
         postTranslationState?.showTranslation == true && postTranslationState.status is PostTranslationStatus.Translated
+
+    val humanizedContent = if (showTranslation) {
+        (postTranslationState.status as PostTranslationStatus.Translated)
+            .translatedContent
+            .humanizedContent ?: RichText.empty
+    } else {
+        blog.humanizedContent
+    }
     if (showWarning) {
         val statusConfig = LocalStatusUiConfig.current
         var hideContent by rememberSaveable(
@@ -102,13 +104,6 @@ fun BlogTextContentSection(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
             ) {
-                val humanizedContent = if (showTranslation) {
-                    (postTranslationState.status as PostTranslationStatus.Translated)
-                        .translatedContent
-                        .humanizedContent ?: RichText.empty
-                } else {
-                    blog.humanizedContent
-                }
                 BlogRichTextContent(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -127,9 +122,17 @@ fun BlogTextContentSection(
         }
     } else {
         if (!blog.title.isNullOrEmpty()) {
+            val title = if (showTranslation) {
+                (postTranslationState.status as? PostTranslationStatus.Translated)
+                    ?.translatedContent
+                    ?.title
+                    ?: blog.title
+            } else {
+                blog.title
+            }
             Text(
                 modifier = Modifier,
-                text = blog.title!!,
+                text = title.orEmpty(),
                 fontWeight = FontWeight.Bold,
                 fontSize = style.titleSize,
                 overflow = TextOverflow.Ellipsis,
@@ -143,22 +146,17 @@ fun BlogTextContentSection(
             } else {
                 style.contentVerticalSpacing / 2
             }
-            FreadRichText(
-                modifier = Modifier
-                    .padding(top = topPadding),
-                richText = blog.humanizedDescription,
-                maxLines = contentMaxLine,
-                onMentionClick = onMentionClick,
-                onMentionDidClick = onMentionDidClick,
-                onHashtagClick = onHashtagInStatusClick,
-                onMaybeHashtagClick = onMaybeHashtagClick,
-                onUrlClick = onUrlClick,
-                fontSize = style.contentSize,
-            )
+            val humanizedDescription = if (showTranslation) {
+                (postTranslationState.status as? PostTranslationStatus.Translated)
+                    ?.translatedContent
+                    ?.humanizedDescription
+                    ?: blog.humanizedDescription
+            } else {
+                blog.humanizedDescription
+            }
             BlogRichTextContent(
-                modifier = Modifier
-                    .padding(top = topPadding),
-                content = blog.humanizedDescription,
+                modifier = Modifier.padding(top = topPadding),
+                content = humanizedDescription,
                 style = style,
                 type = type,
                 onHashtagInStatusClick = onHashtagInStatusClick,
@@ -172,13 +170,6 @@ fun BlogTextContentSection(
             blog.description.isNullOrEmpty() &&
             blog.content.isNotEmpty()
         ) {
-            val humanizedContent = if (showTranslation) {
-                (postTranslationState.status as PostTranslationStatus.Translated)
-                    .translatedContent
-                    .humanizedContent ?: RichText.empty
-            } else {
-                blog.humanizedContent
-            }
             BlogRichTextContent(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -214,7 +205,7 @@ private fun BlogRichTextContent(
         FreadRichText(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             richText = content,
-            maxLines = if (expanded) Int.MAX_VALUE else 10,
+            maxLines = if (expanded) Int.MAX_VALUE else style.maxLine,
             onMentionClick = onMentionClick,
             onMentionDidClick = onMentionDidClick,
             onHashtagClick = onHashtagInStatusClick,

@@ -351,3 +351,7 @@ sealed interface TranslatorBlock {
         val content: String,
     ) : TranslatorBlock
 }
+
+fun List<TranslatorBlock>.plainTextLength(): Int {
+    return filterIsInstance<TranslatorBlock.PlainTextBlock>().sumOf { it.text.length }
+}

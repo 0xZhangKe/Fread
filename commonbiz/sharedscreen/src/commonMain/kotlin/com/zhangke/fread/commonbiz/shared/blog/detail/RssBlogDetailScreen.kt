@@ -3,6 +3,7 @@
 package com.zhangke.fread.commonbiz.shared.blog.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -31,10 +34,11 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.translate.PostTranslationStatus
+import com.zhangke.fread.common.translate.rememberPostTranslationState
 import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.StatusInfoLine
 import com.zhangke.fread.status.ui.style.StatusStyles
 import com.zhangke.fread.status.utils.DateTimeFormatter
@@ -56,6 +60,7 @@ fun RssBlogDetailScreen(
     val browserLauncher = LocalActivityBrowserLauncher.current
     val coroutineScope = rememberCoroutineScope()
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)
+    val translateState = rememberPostTranslationState(blog)
     Scaffold(
         topBar = {
             Toolbar(
@@ -74,49 +79,62 @@ fun RssBlogDetailScreen(
                             }
                         },
                         imageVector = Icons.Default.OpenInBrowser,
-                        contentDescription = "Open In Browser",
+                        contentDescription = stringResource(LocalizedString.statusUiInteractionOpenInBrowser),
                     )
-                }
-            )
-        }
-    ) { innerPaddings ->
-        Column(
-            modifier = Modifier
-                .padding(innerPaddings)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.surface),
-        ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            val displayTime by produceState("", blog.createAt) {
-                value =
-                    DateTimeFormatter.format(blog.createAt.instant.toEpochMilliseconds())
-            }
-            StatusInfoLine(
-                modifier = Modifier.fillMaxWidth(),
-                blog = blog,
-                isOwner = false,
-                visibility = blog.visibility,
-                displayTime = displayTime,
-                style = StatusStyles.medium(),
-                onInteractive = { _, _ -> },
-                onUserInfoClick = viewModel::onUserInfoClick,
-                onUrlClick = {
-                    coroutineScope.launch {
-                        browserLauncher.launchWebTabInApp(it)
-                    }
+                    SimpleIconButton(
+                        onClick = {
+                            coroutineScope.launch { translateState.translatePost(blog) }
+                        },
+                        imageVector = Icons.Default.Translate,
+                        contentDescription = stringResource(LocalizedString.statusUiInteractionTranslate),
+                    )
                 },
-                editedAt = blog.editedAt?.instant,
-                showOpenBlogWithOtherAccountBtn = false,
-                allowToShowFollowButton = false,
-                onTranslateClick = {},
             )
-            WebViewPreviewer(
+        },
+    ) { innerPaddings ->
+        Box(modifier = Modifier.fillMaxWidth()) {
+            if (translateState.status is PostTranslationStatus.Translating) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            Column(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxSize(),
-                html = blog.content,
-            )
+                    .padding(innerPaddings)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .background(MaterialTheme.colorScheme.surface),
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+                val displayTime by produceState("", blog.createAt) {
+                    value = DateTimeFormatter.format(blog.createAt.instant.toEpochMilliseconds())
+                }
+                StatusInfoLine(
+                    modifier = Modifier.fillMaxWidth(),
+                    blog = blog,
+                    isOwner = false,
+                    visibility = blog.visibility,
+                    displayTime = displayTime,
+                    style = StatusStyles.medium(),
+                    onInteractive = { _, _ -> },
+                    onUserInfoClick = viewModel::onUserInfoClick,
+                    onUrlClick = {
+                        coroutineScope.launch {
+                            browserLauncher.launchWebTabInApp(it)
+                        }
+                    },
+                    editedAt = blog.editedAt?.instant,
+                    showOpenBlogWithOtherAccountBtn = false,
+                    allowToShowFollowButton = false,
+                    onTranslateClick = {
+                        coroutineScope.launch { translateState.translatePost(blog) }
+                    },
+                )
+                WebViewPreviewer(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize(),
+                    html = blog.content,
+                )
+            }
         }
     }
 }

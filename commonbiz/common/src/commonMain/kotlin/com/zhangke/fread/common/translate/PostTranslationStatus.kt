@@ -44,10 +44,10 @@ class PostTranslationState(
             ?.collect { status = it }
     }
 
-    suspend fun translatePost(blog: Blog) {
+    suspend fun translatePost(blog: Blog, translateOriginalContent: Boolean = false) {
         if (postTranslator.isAiTranslateEnabled()) {
             showTranslation = true
-            postTranslator.startTranslatePost(blog)
+            postTranslator.startTranslatePost(blog, translateOriginalContent)
                 .onEach { status = it }
                 .first {
                     it is PostTranslationStatus.Translated || it is PostTranslationStatus.Failed
@@ -88,6 +88,7 @@ class TranslatedPost(
     val title: String?,
     val medias: List<MediaAltTranslatingContent>?,
     val poll: List<String>?,
+    val htmlContent: String? = null,
 ) {
 
     val humanizedSpoilerText: RichText? by lazy {

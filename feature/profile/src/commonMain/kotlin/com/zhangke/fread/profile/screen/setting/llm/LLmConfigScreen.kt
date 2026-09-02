@@ -117,9 +117,6 @@ private fun LlmConfigItem(
     onSelectedChange: (LLmConfigItemUiState) -> Unit,
     onDeleteClick: (LLmConfigItemUiState) -> Unit,
 ) {
-    var apiKeyVisible by rememberSaveable(config.providerId, config.versionName) {
-        mutableStateOf(false)
-    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -176,8 +173,6 @@ private fun LlmConfigItem(
             }
             ApiKeyRow(
                 apiKey = config.apiKey,
-                visible = apiKeyVisible,
-                onVisibleChange = { apiKeyVisible = !apiKeyVisible },
             )
         }
     }
@@ -186,8 +181,6 @@ private fun LlmConfigItem(
 @Composable
 private fun ApiKeyRow(
     apiKey: String,
-    visible: Boolean,
-    onVisibleChange: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -204,17 +197,8 @@ private fun ApiKeyRow(
                 style = MaterialTheme.typography.labelMedium,
             )
             Text(
-                text = if (visible) apiKey else maskApiKey(apiKey),
+                text = maskApiKey(apiKey),
                 style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        TextButton(onClick = onVisibleChange) {
-            Text(
-                if (visible) {
-                    stringResource(LocalizedString.alt_text_settings_api_key_hide)
-                } else {
-                    stringResource(LocalizedString.alt_text_settings_api_key_show)
-                },
             )
         }
     }

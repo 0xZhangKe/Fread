@@ -15,6 +15,13 @@ android {
     }
 }
 
+configurations.configureEach {
+    exclude(
+        group = "ai.koog",
+        module = "serialization-jackson",
+    )
+}
+
 kotlin {
     sourceSets {
         all {
@@ -55,6 +62,8 @@ kotlin {
                 implementation(libs.ktor.client.serialization.kotlinx.json)
 
                 implementation(libs.compose.media.player)
+
+                implementation(libs.koog.agents)
             }
         }
         commonTest {

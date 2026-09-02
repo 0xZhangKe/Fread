@@ -19,7 +19,6 @@ import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingItem
 import com.zhangke.fread.profile.screen.setting.ai.alttext.AltTextSettingsNavKey
-import com.zhangke.fread.profile.screen.setting.translate.TranslateSettingNavKey
 import com.zhangke.fread.profile.screen.setting.llm.LLmConfigNavKey
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
@@ -41,9 +40,6 @@ fun AISettingsScreen(viewModel: AISettingsViewModel) {
         onLlmConfigClick = {
             backStack.add(LLmConfigNavKey)
         },
-        onTranslateConfigClick = {
-            backStack.add(TranslateSettingNavKey)
-        },
     )
 }
 
@@ -53,7 +49,6 @@ private fun AISettingsContent(
     onBackClick: () -> Unit,
     onAltTextClick: () -> Unit,
     onLlmConfigClick: () -> Unit,
-    onTranslateConfigClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {

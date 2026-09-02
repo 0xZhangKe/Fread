@@ -20,7 +20,8 @@ class LLmConfigViewModel(
         viewModelScope.launch {
             modelConfigRepo.getAllProviderFlow().collect { configs ->
                 _uiState.update { current ->
-                    current.copy(configs = configs.sortedByDescending { it.selected }.map { it.toUiState() })
+                    current.copy(configs = configs.sortedByDescending { it.selected }
+                        .map { it.toUiState() })
                 }
             }
         }
@@ -38,7 +39,13 @@ class LLmConfigViewModel(
 
     fun onAddModelConfig(config: LLMModelConfig) {
         viewModelScope.launch {
-            modelConfigRepo.insertProvider(config)
+            val hasAnySelectedModel = modelConfigRepo.getAllProvider().any { it.selected }
+            val fixedConfig = if (!hasAnySelectedModel) {
+                config.copy(selected = true)
+            } else {
+                config
+            }
+            modelConfigRepo.insertProvider(fixedConfig)
         }
     }
 

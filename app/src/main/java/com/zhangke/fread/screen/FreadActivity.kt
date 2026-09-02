@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,7 +52,11 @@ class FreadActivity : ComponentActivity(), CallbackableActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         dayNightHelper.setDefaultMode()
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            navigationBarStyle = SystemBarStyle.dark(
+                scrim = android.graphics.Color.TRANSPARENT
+            )
+        )
         super.onCreate(savedInstanceState)
 
         initNotification()

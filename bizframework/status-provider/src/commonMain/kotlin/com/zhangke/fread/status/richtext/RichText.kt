@@ -66,6 +66,7 @@ class RichText(
             return RichText(
                 document = "",
                 type = RichTextType.PLAINTEXT,
+                emojis = blocks.filterIsInstance<TranslatorBlock.EmojiBlock>().map { it.emoji },
                 translationBlockList = blocks,
             )
         }

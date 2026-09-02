@@ -1,37 +1,30 @@
 package com.zhangke.fread.common.ai
 
-import com.zhangke.framework.architect.http.createHttpClient
+import ai.koog.http.client.ktor.KtorKoogHttpClient
+import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.clients.ConnectionTimeoutConfig
+import ai.koog.prompt.executor.clients.LLMClient as KoogLLMClient
+import ai.koog.prompt.executor.clients.anthropic.AnthropicClientSettings
+import ai.koog.prompt.executor.clients.anthropic.AnthropicLLMClient
+import ai.koog.prompt.executor.clients.openai.OpenAIClientSettings
+import ai.koog.prompt.executor.clients.openai.OpenAILLMClient
+import ai.koog.prompt.executor.ollama.client.OllamaClient
+import ai.koog.prompt.llm.LLMCapability
+import ai.koog.prompt.llm.LLModel
+import ai.koog.prompt.message.AttachmentContent
+import ai.koog.prompt.message.AttachmentSource
 import com.zhangke.framework.architect.http.createHttpClientEngine
-import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.ai.model.LLMModelConfig
+import com.zhangke.fread.common.ai.model.koogModels
 import com.zhangke.fread.common.alttext.resizeAndJpegBase64
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.request.headers
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpHeaders
-import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.addJsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.intOrNull
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonArray
-import kotlinx.serialization.json.putJsonObject
 import kotlin.time.Duration.Companion.minutes
 
 class LLMClient(
@@ -39,17 +32,14 @@ class LLMClient(
     private val platformUriHelper: PlatformUriHelper,
 ) {
 
-    private val httpClient: HttpClient by lazy {
-        createHttpClient(
-            json = globalJson,
-            engine = createHttpClientEngine(),
-        ) {
-            install(HttpTimeout) {
-                requestTimeoutMillis = requestTimeout.inWholeMilliseconds
-                socketTimeoutMillis = requestTimeout.inWholeMilliseconds
-                connectTimeoutMillis = requestTimeout.inWholeMilliseconds
-            }
-        }
+    private val clients = mutableMapOf<ClientKey, KoogLLMClient>()
+    private val clientsMutex = Mutex()
+
+    private val httpClientFactory: KtorKoogHttpClient.Factory by lazy {
+        KtorKoogHttpClient.Factory(
+            baseClient = HttpClient(createHttpClientEngine()),
+            withSse = false,
+        )
     }
 
     suspend fun execute(
@@ -57,130 +47,130 @@ class LLMClient(
         imageUri: PlatformUri? = null,
     ): Result<LLMResponse> {
         return runCatching {
-            val config = modelConfigRepo.getSelectedModelConfig() ?: error("LLM is not configured.")
-            val apiKey = config.apiKey.trim().takeIf { it.isNotBlank() }
-                ?: error("LLM API key is not configured.")
-            val response =
-                httpClient.post(config.provider.baseUrl.trimEnd('/') + "/chat/completions") {
-                    headers {
-                        append(HttpHeaders.Authorization, "Bearer $apiKey")
-                        set(HttpHeaders.ContentType, "application/json; charset=utf-8")
-                    }
-                    setBody(buildRequestBody(config, prompt, imageUri))
-                }
-            val rawBody = response.bodyAsText()
-            if (!response.status.isSuccess()) {
-                val message = runCatching {
-                    globalJson.parseToJsonElement(rawBody)
-                        .jsonObject["error"]
-                        ?.jsonObject
-                        ?.get("message")
-                        ?.jsonPrimitive
-                        ?.contentOrNull
-                }.getOrNull()
-                error(message ?: "LLM server returned ${response.status}.")
+            val config = modelConfigRepo.getSelectedModelConfig()
+                ?: error("LLM is not configured.")
+            val model = config.resolveKoogModel()
+            if (imageUri != null && !model.supports(LLMCapability.Vision.Image)) {
+                error("Model ${model.id} does not support image input.")
             }
-            parseResponse(rawBody)
+
+            val response = createKoogClient(config).execute(
+                prompt = buildKoogPrompt(prompt, imageUri),
+                model = model,
+                tools = emptyList(),
+            )
+            val text = response.textContent().trim().takeIf(String::isNotBlank)
+                ?: error("LLM returned an empty response.")
+            LLMResponse(
+                text = text,
+                tokens = response.metaInfo.totalTokensCount ?: 0,
+            )
         }
     }
 
-    private fun parseResponse(rawBody: String): LLMResponse {
-        val parsed = globalJson.parseToJsonElement(rawBody).jsonObject
-        val content = parsed["choices"]?.jsonArray
-            ?.firstOrNull()
-            ?.jsonObject
-            ?.get("message")
-            ?.jsonObject
-            ?.get("content")
-        val text = extractTextContent(content)
-            ?.trim()
-            ?.takeIf { it.isNotBlank() }
-            ?: error("LLM returned an empty response.")
-        val tokens = parsed["usage"]?.jsonObject?.let(::extractTotalTokens) ?: 0
-        return LLMResponse(
-            text = text,
-            tokens = tokens,
+    private suspend fun createKoogClient(config: LLMModelConfig): KoogLLMClient {
+        val baseUrl = config.provider.baseUrl
+            .trim()
+            .trimEnd('/')
+            .removeSuffix("/v1")
+        val key = ClientKey(
+            providerId = config.provider.id,
+            baseUrl = baseUrl,
+            apiKey = config.apiKey,
         )
+        return clientsMutex.withLock {
+            clients.getOrPut(key) { createKoogClient(config, baseUrl) }
+        }
     }
 
-    private suspend fun buildRequestBody(
-        modelConfig: LLMModelConfig,
-        prompt: String,
+    private fun createKoogClient(
+        config: LLMModelConfig,
+        baseUrl: String,
+    ): KoogLLMClient {
+        val timeoutConfig = ConnectionTimeoutConfig(
+            requestTimeoutMillis = requestTimeout.inWholeMilliseconds,
+            connectTimeoutMillis = requestTimeout.inWholeMilliseconds,
+            socketTimeoutMillis = requestTimeout.inWholeMilliseconds,
+        )
+        return when (config.provider.id) {
+            "openai", "openrouter" -> OpenAILLMClient(
+                apiKey = config.requireApiKey(),
+                settings = OpenAIClientSettings(
+                    baseUrl = baseUrl,
+                    timeoutConfig = timeoutConfig,
+                ),
+                httpClientFactory = httpClientFactory,
+            )
+
+            "anthropic" -> AnthropicLLMClient(
+                apiKey = config.requireApiKey(),
+                settings = AnthropicClientSettings(
+                    baseUrl = baseUrl,
+                    timeoutConfig = timeoutConfig,
+                ),
+                httpClientFactory = httpClientFactory,
+            )
+
+            "ollama" -> OllamaClient(
+                httpClientFactory = httpClientFactory,
+                baseUrl = baseUrl,
+                headers = config.apiKey.trim().takeIf(String::isNotBlank)
+                    ?.let { mapOf("Authorization" to "Bearer $it") }
+                    .orEmpty(),
+                timeoutConfig = timeoutConfig,
+            )
+
+            else -> error("Unsupported LLM provider: ${config.provider.id}.")
+        }
+    }
+
+    private suspend fun buildKoogPrompt(
+        promptText: String,
         imageUri: PlatformUri?,
-    ): JsonObject {
-        val base64 = imageUri?.let {
-            val imageBytes = withContext(Dispatchers.IO) {
-                platformUriHelper.readBytes(it)
-            } ?: error("Could not load image.")
-            withContext(Dispatchers.IO) {
-                resizeAndJpegBase64(imageBytes)
-            }
+    ) = imageUri?.let { uri ->
+        val imageBytes = withContext(Dispatchers.IO) {
+            platformUriHelper.readBytes(uri)
+        } ?: error("Could not load image.")
+        val imageBase64 = withContext(Dispatchers.IO) {
+            resizeAndJpegBase64(imageBytes)
         }
-        return buildJsonObject {
-            put("model", modelConfig.versionName)
-            if (modelConfig.provider.id == "openrouter") {
-                putJsonObject("reasoning") {
-                    put("effort", "none")
-                    put("exclude", true)
-                }
-            }
-            putJsonArray("messages") {
-                addJsonObject {
-                    put("role", "user")
-                    if (base64 == null) {
-                        put("content", prompt)
-                    } else {
-                        putJsonArray("content") {
-                            addJsonObject {
-                                put("type", "text")
-                                put("text", prompt)
-                            }
-                            addJsonObject {
-                                put("type", "image_url")
-                                putJsonObject("image_url") {
-                                    put("url", "data:image/jpeg;base64,$base64")
-                                }
-                            }
-                        }
-                    }
+        AttachmentSource.Image(
+            content = AttachmentContent.Binary.Base64(imageBase64),
+            format = "jpeg",
+            mimeType = "image/jpeg",
+        )
+    }.let { imageAttachment ->
+        prompt("fread-request") {
+            if (imageAttachment == null) {
+                user(promptText)
+            } else {
+                user {
+                    text(promptText)
+                    image(imageAttachment)
                 }
             }
         }
     }
 
-    private fun extractTextContent(content: JsonElement?): String? {
-        return when (content) {
-            null -> null
-            is JsonPrimitive -> content.contentOrNull
-            is JsonArray -> content.asSequence()
-                .mapNotNull { part ->
-                    val obj = part as? JsonObject ?: return@mapNotNull null
-                    val type = obj["type"]?.jsonPrimitive?.contentOrNull
-                    if (type == "text" || type == null) {
-                        obj["text"]?.jsonPrimitive?.contentOrNull
-                    } else {
-                        null
-                    }
-                }
-                .filter { it.isNotBlank() }
-                .joinToString("\n")
-                .takeIf { it.isNotBlank() }
-
-            else -> null
-        }
+    private fun LLMModelConfig.resolveKoogModel(): LLModel {
+        return provider.koogModels.firstOrNull { it.id == versionName }
+            ?: error("Unsupported ${provider.displayName} model: $versionName.")
     }
 
-    private fun extractTotalTokens(usage: JsonObject): Int {
-        return usage["total_tokens"]?.jsonPrimitive?.intOrNull
-            ?: usage["totalTokens"]?.jsonPrimitive?.intOrNull
-            ?: usage["completion_tokens"]?.jsonPrimitive?.intOrNull
-            ?: usage["completionTokens"]?.jsonPrimitive?.intOrNull
-            ?: 0
+    private fun LLMModelConfig.requireApiKey(): String {
+        return apiKey.trim().takeIf(String::isNotBlank)
+            ?: error("LLM API key is not configured.")
     }
 
     private companion object {
         private val requestTimeout = 2.minutes
     }
+
+    private data class ClientKey(
+        val providerId: String,
+        val baseUrl: String,
+        val apiKey: String,
+    )
 }
 
 data class LLMResponse(

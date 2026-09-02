@@ -1,8 +1,10 @@
 package com.zhangke.fread.common.alttext
 
+import ai.koog.prompt.llm.LLMCapability
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.ai.LLMClient
 import com.zhangke.fread.common.ai.LLMModelConfigsRepo
+import com.zhangke.fread.common.ai.model.koogModels
 import com.zhangke.fread.common.config.FreadConfigManager
 import kotlinx.coroutines.CancellationException
 
@@ -13,7 +15,12 @@ class AltTextGenerator(
 ) {
 
     suspend fun available(): Boolean {
-        return !modelConfigRepo.getSelectedModelConfig()?.apiKey.isNullOrEmpty()
+        val config = modelConfigRepo.getSelectedModelConfig() ?: return false
+        val apiKeyAvailable = config.provider.id == "ollama" || config.apiKey.isNotBlank()
+        val supportsImage = config.provider.koogModels
+            .firstOrNull { it.id == config.versionName }
+            ?.supports(LLMCapability.Vision.Image) == true
+        return apiKeyAvailable && supportsImage
     }
 
     suspend fun generate(imageUri: PlatformUri): Result<AltTextResult> {

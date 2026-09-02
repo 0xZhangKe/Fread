@@ -221,7 +221,10 @@ haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 haze-materials = { group = "dev.chrisbanes.haze", name = "haze-materials", version.ref = "haze" }
 compose-media-player = { group = "io.github.kdroidfilter", name = "composemediaplayer", version.ref = "compose-media-player" }
 
-koog-agents = { group = "ai.koog", name = "koog-agents", version.ref = "koogVersion" }
+koog-client-anthropic = { group = "ai.koog", name = "prompt-executor-anthropic-client", version.ref = "koogVersion" }
+koog-client-http-ktor = { group = "ai.koog", name = "http-client-ktor", version.ref = "koogVersion" }
+koog-client-ollama = { group = "ai.koog", name = "prompt-executor-ollama-client", version.ref = "koogVersion" }
+koog-client-openai = { group = "ai.koog", name = "prompt-executor-openai-client", version.ref = "koogVersion" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

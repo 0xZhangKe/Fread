@@ -57,7 +57,6 @@ fun LLmConfigScreen(viewModel: LLmConfigViewModel) {
         },
     ) { innerPadding ->
         var selectModelDialogVisible by remember { mutableStateOf(false) }
-        var customModelDialogVisible by remember { mutableStateOf(false) }
         var pendingDeleteConfig by remember { mutableStateOf<LLmConfigItemUiState?>(null) }
         Column(
             modifier = Modifier
@@ -83,20 +82,6 @@ fun LLmConfigScreen(viewModel: LLmConfigViewModel) {
                 onModelAddClick = {
                     viewModel.onAddModelConfig(it)
                     selectModelDialogVisible = false
-                },
-                onAddCustomModelClick = {
-                    selectModelDialogVisible = false
-                    customModelDialogVisible = true
-                },
-            )
-        }
-
-        if (customModelDialogVisible) {
-            LLmCustomModelInputBottomSheetDialog(
-                onDismissRequest = { customModelDialogVisible = false },
-                onModelAddClick = {
-                    viewModel.onAddModelConfig(it)
-                    customModelDialogVisible = false
                 },
             )
         }

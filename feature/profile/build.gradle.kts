@@ -7,13 +7,6 @@ android {
     namespace = "com.zhangke.fread.profile"
 }
 
-configurations.configureEach {
-    exclude(
-        group = "ai.koog",
-        module = "serialization-jackson",
-    )
-}
-
 kotlin {
     sourceSets {
         commonMain {
@@ -35,8 +28,6 @@ kotlin {
 
                 implementation(libs.auto.service.annotations)
                 implementation(libs.krouter.runtime)
-
-                implementation(libs.koog.agents)
             }
         }
         commonTest {

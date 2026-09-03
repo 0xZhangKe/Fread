@@ -262,6 +262,8 @@
     <string name="setting_item_solid_bar_background_subtitle">Делает верхнюю и нижнюю панели сплошными вместо размытого фона.</string>
     <string name="setting_item_jump_to_profile_title">Перейти к профилю</string>
     <string name="setting_item_jump_to_profile_subtitle">Переходить прямо к вашему профилю, если добавлен только один аккаунт</string>
+    <string name="setting_item_prefer_thumbnail_title">Отдавать предпочтение миниатюрам</string>
+    <string name="setting_item_prefer_thumbnail_subtitle">При просмотре публикаций загружать миниатюры, а исходные изображения — только при открытии</string>
     <string name="threaded_view_menu_open">Открыть ветку обсуждения</string>
     <string name="threaded_view_screen_title">Ветка обсуждения</string>
     <string name="threaded_view_assembling">Сборка ветки обсуждения</string>

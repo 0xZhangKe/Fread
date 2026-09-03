@@ -42,6 +42,7 @@ import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.nav.sharedElement
+import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.translate.PostTranslationState
 import com.zhangke.fread.common.translate.PostTranslationStatus
 import com.zhangke.fread.status.blog.BlogMedia
@@ -203,7 +204,28 @@ internal fun BlogImage(
     postTranslationState: PostTranslationState? = null,
 ) {
     val media = clickableMedia.media
-    val imageUrl = if (media.type == BlogMediaType.GIFV) media.previewUrl else media.url
+    val preferThumbnailEnable = LocalFreadConfigManager.current.feedsPreferThumbnailEnable
+    val imageUrl = if (media.type == BlogMediaType.GIFV) {
+        media.previewUrl
+    } else {
+        if (preferThumbnailEnable && !media.previewUrl.isNullOrEmpty()) {
+            media.previewUrl
+        } else {
+            media.url
+        }
+    }
+    val description = if (postTranslationState == null) {
+        media.description
+    } else if (!postTranslationState.showTranslation) {
+        media.description
+    } else {
+        (postTranslationState.status as? PostTranslationStatus.Translated)
+            ?.translatedContent
+            ?.medias
+            ?.firstOrNull { it.mediaId == media.id }
+            ?.alt
+            ?: media.description
+    }
     if (hideContent) {
         val imageLoader = LocalImageLoader.current
         LaunchedEffect(media) {
@@ -214,13 +236,12 @@ internal fun BlogImage(
             )
         }
     }
-
     Box(modifier = modifier.blurhash(media.blurhash)) {
         if (!hideContent) {
             BlogAutoSizeImage(
                 modifier = Modifier,
                 imageUrl = imageUrl,
-                description = media.description,
+                description = description,
                 sharedElementKey = clickableMedia.sharedElementKey,
             )
         }
@@ -266,18 +287,6 @@ internal fun BlogImage(
                             .wrapContentHeight()
                     ) {
                         SelectionContainer {
-                            val description = if (postTranslationState == null) {
-                                media.description
-                            } else if (!postTranslationState.showTranslation) {
-                                media.description
-                            } else {
-                                (postTranslationState.status as? PostTranslationStatus.Translated)
-                                    ?.translatedContent
-                                    ?.medias
-                                    ?.firstOrNull { it.mediaId == media.id }
-                                    ?.alt
-                                    ?: media.description
-                            }
                             Text(text = description.orEmpty())
                         }
                     }

@@ -20,6 +20,7 @@ class BehaviorSettingsViewModel(
             timelineDefaultPosition = TimelineDefaultPosition.NEWEST,
             openUrlInAppBrowser = freadConfigManager.openUrlInAppBrowser,
             jumpToProfile = freadConfigManager.jumpToProfile,
+            preferFeedsThumbnailEnable = freadConfigManager.feedsPreferThumbnailEnable,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -71,6 +72,13 @@ class BehaviorSettingsViewModel(
         viewModelScope.launch {
             freadConfigManager.updateJumpToProfile(on)
             _uiState.update { it.copy(jumpToProfile = on) }
+        }
+    }
+
+    fun onPreferFeedsThumbnailEnableChanged(on: Boolean) {
+        viewModelScope.launch {
+            freadConfigManager.updatePreferFeedsThumbnailEnable(on)
+            _uiState.update { it.copy(preferFeedsThumbnailEnable = on) }
         }
     }
 }

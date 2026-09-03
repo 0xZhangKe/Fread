@@ -57,6 +57,7 @@ import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.nav.sharedElement
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
+import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
@@ -151,6 +152,8 @@ private fun ImagePageContent(
     onDismissRequest: () -> Unit,
 ) {
     val imageLoader = LocalImageLoader.current
+    val preferThumbnailEnable = LocalFreadConfigManager.current.feedsPreferThumbnailEnable
+    val useThumbnail = preferThumbnailEnable && !image.previewUrl.isNullOrEmpty()
     var aspectRatio: Float? by remember { mutableStateOf(image.aspect) }
     if (aspectRatio == null) {
         LaunchedEffect(image) {
@@ -173,8 +176,21 @@ private fun ImagePageContent(
             val request = remember(image.url) {
                 ImageRequest(image.url)
             }
+            val painter = if (useThumbnail) {
+                val thumbnailRequest = remember(image.previewUrl) {
+                    ImageRequest(image.previewUrl)
+                }
+                val thumbnailPainter = rememberImagePainter(thumbnailRequest)
+                rememberImagePainter(
+                    request = request,
+                    placeholderPainter = { thumbnailPainter },
+                    errorPainter = { thumbnailPainter },
+                )
+            } else {
+                rememberImagePainter(request = request)
+            }
             Image(
-                painter = rememberImagePainter(request = request),
+                painter = painter,
                 modifier = Modifier
                     .fillMaxSize()
                     .blurhash(image.blurhash)

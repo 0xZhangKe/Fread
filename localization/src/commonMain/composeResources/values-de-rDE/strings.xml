@@ -262,6 +262,8 @@
     <string name="setting_item_solid_bar_background_subtitle">Macht die obere und untere Leiste einfarbig statt weichgezeichnet.</string>
     <string name="setting_item_jump_to_profile_title">Zum Profil springen</string>
     <string name="setting_item_jump_to_profile_subtitle">Direkt zu deinem Profil springen, wenn nur ein Konto hinzugefügt wurde</string>
+    <string name="setting_item_prefer_thumbnail_title">Vorschaubilder bevorzugen</string>
+    <string name="setting_item_prefer_thumbnail_subtitle">Beim Durchsuchen von Beiträgen Vorschaubilder laden und Originalbilder erst beim Öffnen laden</string>
     <string name="threaded_view_menu_open">Thread-Ansicht öffnen</string>
     <string name="threaded_view_screen_title">Thread-Ansicht</string>
     <string name="threaded_view_assembling">Thread-Ansicht wird erstellt</string>

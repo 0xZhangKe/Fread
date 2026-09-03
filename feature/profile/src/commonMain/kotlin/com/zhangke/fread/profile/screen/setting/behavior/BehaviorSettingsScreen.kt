@@ -6,9 +6,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.PlayCircleOutline
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.filled.ViewTimeline
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,6 +45,7 @@ fun BehaviorSettingsScreen(viewModel: BehaviorSettingsViewModel) {
         onTimelineDefaultPositionChanged = viewModel::onTimelineDefaultPositionChanged,
         onOpenUrlInAppBrowserChanged = viewModel::onOpenUrlInAppBrowserChanged,
         onJumpToProfileChanged = viewModel::onJumpToProfileChanged,
+        onPreferFeedsThumbnailEnableChanged = viewModel::onPreferFeedsThumbnailEnableChanged,
     )
 }
 
@@ -54,6 +58,7 @@ private fun BehaviorSettingsContent(
     onTimelineDefaultPositionChanged: (TimelineDefaultPosition) -> Unit,
     onOpenUrlInAppBrowserChanged: (Boolean) -> Unit,
     onJumpToProfileChanged: (Boolean) -> Unit,
+    onPreferFeedsThumbnailEnableChanged: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -87,6 +92,10 @@ private fun BehaviorSettingsContent(
             JumpToProfileItem(
                 jumpToProfile = uiState.jumpToProfile,
                 onJumpToProfileChanged = onJumpToProfileChanged,
+            )
+            PreferFeedsThumbnailEnableItem(
+                enabled = uiState.preferFeedsThumbnailEnable,
+                onChanged = onPreferFeedsThumbnailEnableChanged,
             )
         }
     }
@@ -126,7 +135,7 @@ private fun AlwaysShowSensitiveContentItem(
     onAlwaysChanged: (on: Boolean) -> Unit,
 ) {
     SettingItemWithSwitch(
-        icon = Icons.Default.PlayCircleOutline,
+        icon = Icons.Default.VisibilityOff,
         title = stringResource(LocalizedString.profileSettingAlwaysShowSensitiveContent),
         subtitle = stringResource(LocalizedString.profileSettingAlwaysShowSensitiveContentSubtitle),
         checked = alwaysShowing,
@@ -164,5 +173,19 @@ private fun OpenUrlBySystemBrowserItem(
         subtitle = stringResource(LocalizedString.setting_item_open_url_by_system_subtitle),
         checked = openUrlBySystem,
         onCheckedChangeRequest = onOpenUrlBySystemChanged,
+    )
+}
+
+@Composable
+private fun PreferFeedsThumbnailEnableItem(
+    enabled: Boolean,
+    onChanged: (on: Boolean) -> Unit,
+) {
+    SettingItemWithSwitch(
+        icon = Icons.Default.Image,
+        title = stringResource(LocalizedString.setting_item_prefer_thumbnail_title),
+        subtitle = stringResource(LocalizedString.setting_item_prefer_thumbnail_subtitle),
+        checked = enabled,
+        onCheckedChangeRequest = onChanged,
     )
 }

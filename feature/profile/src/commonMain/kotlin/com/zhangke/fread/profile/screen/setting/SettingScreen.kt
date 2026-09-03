@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.ViewTimeline
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Info
@@ -124,7 +125,7 @@ private fun SettingContent(
                 onClick = onAppearanceClick,
             )
             SettingItem(
-                icon = Icons.Default.ViewTimeline,
+                icon = Icons.Default.Tune,
                 title = stringResource(LocalizedString.setting_group_behavior),
                 subtitle = stringResource(LocalizedString.setting_group_behavior_subtitle),
                 onClick = onBehaviorClick,

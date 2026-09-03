@@ -262,6 +262,8 @@
     <string name="setting_item_solid_bar_background_subtitle">將頂部和底部列改為純色，而不是高斯模糊。</string>
     <string name="setting_item_jump_to_profile_title">跳轉到帳號</string>
     <string name="setting_item_jump_to_profile_subtitle">如果只新增了一個帳號，則直接跳轉到該帳號</string>
+    <string name="setting_item_prefer_thumbnail_title">優先載入縮圖</string>
+    <string name="setting_item_prefer_thumbnail_subtitle">瀏覽貼文時載入縮圖，查看大圖時再載入原圖</string>
     <string name="threaded_view_menu_open">開啟串連檢視</string>
     <string name="threaded_view_screen_title">串連檢視</string>
     <string name="threaded_view_assembling">正在整理串連檢視</string>

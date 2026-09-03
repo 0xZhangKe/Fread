@@ -723,4 +723,7 @@ object LocalizedString {
     val bluesky_user_list_tab_quotes = localizedString.bluesky_user_list_tab_quotes
     val translation_settings_post_language_title = localizedString.translation_settings_post_language_title
     val translation_settings_post_language_subtitle = localizedString.translation_settings_post_language_subtitle
+
+    val setting_item_prefer_thumbnail_title = localizedString.setting_item_prefer_thumbnail_title
+    val setting_item_prefer_thumbnail_subtitle = localizedString.setting_item_prefer_thumbnail_subtitle
 }

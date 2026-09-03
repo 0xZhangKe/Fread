@@ -262,6 +262,8 @@
     <string name="setting_item_solid_bar_background_subtitle">上部バーと下部バーをぼかしではなく単色にします。</string>
     <string name="setting_item_jump_to_profile_title">プロフィールへ移動</string>
     <string name="setting_item_jump_to_profile_subtitle">追加済みアカウントが1つだけの場合、直接プロフィールへ移動します</string>
+    <string name="setting_item_prefer_thumbnail_title">サムネイルを優先</string>
+    <string name="setting_item_prefer_thumbnail_subtitle">投稿の閲覧中はサムネイルを読み込み、画像を開いたときに元の画像を読み込みます</string>
     <string name="threaded_view_menu_open">スレッド表示を開く</string>
     <string name="threaded_view_screen_title">スレッド表示</string>
     <string name="threaded_view_assembling">スレッド表示を構築中</string>

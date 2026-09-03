@@ -39,6 +39,8 @@ class FreadConfigManager(
             "Write alt text for this image. Be concise — 1-2 sentences for simple images. " +
                     "If the image contains readable text, transcribe it rather than describing it. " +
                     "Only describe what you can clearly see; do not guess at names or details."
+
+        private const val LOCAL_KEY_PREFER_FEEDS_THUMBNAIL_ENABLE = "prefer_feeds_thumbnail_enable"
     }
 
     val statusConfigFlow: StateFlow<StatusConfig>
@@ -63,6 +65,9 @@ class FreadConfigManager(
     var jumpToProfile: Boolean = false
         private set
 
+    var feedsPreferThumbnailEnable: Boolean = true
+        private set
+
     suspend fun initConfig() {
         statusConfigFlow.value = readLocalStatusConfig()
         _themeTypeeFlow.value = getThemeType()
@@ -78,6 +83,7 @@ class FreadConfigManager(
             localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_NEXT_BUTTON_VISIBLE) ?: false
         homeTabRefreshButtonVisibleFlow.value =
             localConfigManager.getBoolean(LOCAL_KEY_HOME_TAB_REFRESH_BUTTON_VISIBLE) ?: false
+        feedsPreferThumbnailEnable = getPreferFeedsThumbnailEnable()
     }
 
     private suspend fun readLocalStatusConfig(): StatusConfig {
@@ -247,6 +253,19 @@ class FreadConfigManager(
     suspend fun updateTranslateTargetLanguage(language: String) {
         withContext(Dispatchers.IO) {
             localConfigManager.putString(LOCAL_KEY_TRANSLATE_TARGET_LANGUAGE, language)
+        }
+    }
+
+    suspend fun getPreferFeedsThumbnailEnable(): Boolean {
+        val enable = localConfigManager.getBoolean(LOCAL_KEY_PREFER_FEEDS_THUMBNAIL_ENABLE) ?: true
+        feedsPreferThumbnailEnable = enable
+        return enable
+    }
+
+    suspend fun updatePreferFeedsThumbnailEnable(enabled: Boolean) {
+        feedsPreferThumbnailEnable = enabled
+        withContext(Dispatchers.IO) {
+            localConfigManager.putBoolean(LOCAL_KEY_PREFER_FEEDS_THUMBNAIL_ENABLE, enabled)
         }
     }
 }

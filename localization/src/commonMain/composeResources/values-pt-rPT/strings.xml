@@ -262,6 +262,8 @@
     <string name="setting_item_solid_bar_background_subtitle">Torna as barras superior e inferior sólidas em vez de desfocadas.</string>
     <string name="setting_item_jump_to_profile_title">Ir para o perfil</string>
     <string name="setting_item_jump_to_profile_subtitle">Ir diretamente para o seu perfil se houver apenas uma conta adicionada</string>
+    <string name="setting_item_prefer_thumbnail_title">Dar prioridade às miniaturas</string>
+    <string name="setting_item_prefer_thumbnail_subtitle">Carregar miniaturas ao navegar pelas publicações e as imagens originais apenas ao abri-las</string>
     <string name="threaded_view_menu_open">Abrir vista da conversa</string>
     <string name="threaded_view_screen_title">Vista da conversa</string>
     <string name="threaded_view_assembling">A construir vista da conversa</string>

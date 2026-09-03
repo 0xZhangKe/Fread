@@ -8,4 +8,5 @@ data class BehaviorSettingsUiState(
     val timelineDefaultPosition: TimelineDefaultPosition,
     val openUrlInAppBrowser: Boolean,
     val jumpToProfile: Boolean,
+    val preferFeedsThumbnailEnable: Boolean,
 )

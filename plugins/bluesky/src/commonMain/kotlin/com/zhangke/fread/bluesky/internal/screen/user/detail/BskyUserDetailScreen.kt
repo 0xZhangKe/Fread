@@ -41,6 +41,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.ContentPaddingsHorizontalPagerWithTab
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPageNavKey
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreenNavKey
@@ -100,7 +101,7 @@ fun BskyUserDetailScreen(
         locator = locator,
         asProfileTab = asProfileTab,
         showBackButton = !asProfileTab,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onSearchClick = {
             backStack.add(SearchStatusScreenNavKey(locator = locator, did = did))
         },
@@ -188,7 +189,7 @@ fun BskyUserDetailScreen(
     ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
     LaunchedEffect(Unit) { viewModel.onPageResume() }
     if (asProfileTab) {
-        ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+        ConsumeFlow(viewModel.finishPageFlow) { backStack.popIfNotRoot() }
     }
 }
 

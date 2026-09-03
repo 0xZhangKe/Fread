@@ -38,6 +38,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
@@ -55,14 +56,14 @@ fun SelectPlatformScreen(viewModel: SelectPlatformViewModel) {
     SelectPlatformContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
-        onBackClick = { backStack.removeLastOrNull() },
+        onBackClick = { backStack.popIfNotRoot() },
         onQueryChanged = viewModel::onQueryChanged,
         onSearchClick = viewModel::onSearchClick,
         onPlatformClick = viewModel::onResultClick,
     )
     ConsumeOpenScreenFlow(viewModel.openNewPageFlow)
     ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
-    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+    ConsumeFlow(viewModel.finishPageFlow) { backStack.popIfNotRoot() }
     LoadingDialog(
         loading = uiState.loadingPlatformForAdd,
         onDismissRequest = viewModel::onLoadingPlatformForAddCancel,

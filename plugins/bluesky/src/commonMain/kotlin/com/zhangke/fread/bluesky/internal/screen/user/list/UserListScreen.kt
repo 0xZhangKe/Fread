@@ -44,6 +44,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreenNavKey
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
@@ -83,7 +84,7 @@ fun UserListScreen(
         mode = mode,
         showModeSelector = type == UserListType.REBLOG,
         snackbarHostState = snackbarHostState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onModeChange = viewModel::onModeChange,
         onRefresh = viewModel::onRefresh,
         onLoadMore = viewModel::onLoadMore,

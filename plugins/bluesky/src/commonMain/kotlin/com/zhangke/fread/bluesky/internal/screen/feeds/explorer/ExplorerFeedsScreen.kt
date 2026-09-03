@@ -28,6 +28,7 @@ import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.bluesky.internal.composable.BlueskyExploringFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailBottomSheet
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.rememberFeedsDetailBottomSheetState
@@ -66,7 +67,7 @@ fun ExplorerFeedsScreen(
         uiState = uiState,
         snackBarState = snackBarState,
         inlineMode = inlineMode,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onRefresh = viewModel::onRefresh,
         onLoadMore = viewModel::onLoadMore,
         onFeedsClick = { feeds ->

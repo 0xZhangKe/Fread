@@ -36,6 +36,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.nav.ScreenEventFlow
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.fread.feeds.composable.StatusSourceNode
@@ -60,13 +61,13 @@ fun SearchSourceForAddScreen(viewModel: SearchSourceForAddViewModel) {
     SearchSourceForAdd(
         uiState = uiState,
         snackBarHostState = snackBarHostState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onQueryChanged = viewModel::onQueryChanged,
         onSearchClick = viewModel::onSearchClick,
         onAddClick = {
             coroutineScope.launch {
                 SearchSourceForAddScreenNavKey.sourceSelectedFlow.emit(it.source)
-                backStack.removeLastOrNull()
+                backStack.popIfNotRoot()
             }
         },
     )

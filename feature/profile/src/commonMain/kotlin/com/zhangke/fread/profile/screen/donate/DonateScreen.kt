@@ -27,6 +27,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.common.config.AppCommonConfig
@@ -53,7 +54,7 @@ fun DonateScreen() {
                 url = it.url,
                 checkAppSupportPage = false,
             )
-            backStack.removeLastOrNull()
+            backStack.popIfNotRoot()
         },
     )
 }

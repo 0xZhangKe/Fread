@@ -46,6 +46,7 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.utils.LocalPlatformUriHelper
 import com.zhangke.fread.common.utils.LocalToastHelper
@@ -70,7 +71,7 @@ fun ImportFeedsScreen(viewModel: ImportFeedsViewModel) {
         if (uiState.selectedFileUri != null || uiState.sourceList.isNotEmpty()) {
             showBackDialog = true
         } else {
-            backStack.removeLastOrNull()
+            backStack.popIfNotRoot()
         }
     }
     if (showBackDialog) {
@@ -84,7 +85,7 @@ fun ImportFeedsScreen(viewModel: ImportFeedsViewModel) {
                 showBackDialog = false
             },
             onPositiveClick = {
-                backStack.removeLastOrNull()
+                backStack.popIfNotRoot()
             }
         )
     }
@@ -105,7 +106,7 @@ fun ImportFeedsScreen(viewModel: ImportFeedsViewModel) {
     )
     ConsumeFlow(viewModel.saveSuccessFlow) {
         toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 }
 

@@ -24,6 +24,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.emoji_celebrate
 import com.zhangke.fread.localization.LocalizedString
@@ -45,10 +46,10 @@ fun AddActivityPubContentScreen(
     val backStack = LocalNavBackStack.currentOrThrow
     AddActivityPubContentContent(
         platform = platform,
-        onBackClick = { backStack.removeLastOrNull() },
+        onBackClick = { backStack.popIfNotRoot() },
         onLoginClick = {
             viewModel.onLoginClick()
-            backStack.removeLastOrNull()
+            backStack.popIfNotRoot()
         },
     )
 }

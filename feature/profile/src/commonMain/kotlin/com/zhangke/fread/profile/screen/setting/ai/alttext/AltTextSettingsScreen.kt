@@ -18,6 +18,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.localization.LocalizedString
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
@@ -33,7 +34,7 @@ fun AltTextSettingsScreen(viewModel: AltTextSettingsViewModel) {
         topBar = {
             Toolbar(
                 title = stringResource(LocalizedString.alt_text_settings_title),
-                onBackClick = { backStack.removeLastOrNull() },
+                onBackClick = { backStack.popIfNotRoot() },
             )
         },
     ) { innerPadding ->

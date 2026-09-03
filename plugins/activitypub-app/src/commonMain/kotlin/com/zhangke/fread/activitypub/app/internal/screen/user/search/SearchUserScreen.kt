@@ -40,6 +40,7 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.nav.ScreenEventFlow
 import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.activitypub.app.internal.screen.list.AccountItem
@@ -72,12 +73,12 @@ fun SearchUserScreen(viewModel: SearchUserViewModel) {
         onAccountClicked = {
             coroutineScope.launch {
                 SearchUserScreenNavKey.accountSelectedFlow.emit(it)
-                backStack.removeLastOrNull()
+                backStack.popIfNotRoot()
             }
         },
         onQueryChange = viewModel::onQueryChange,
         onSearchClick = viewModel::onSearchClick,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
     )
     ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
 }

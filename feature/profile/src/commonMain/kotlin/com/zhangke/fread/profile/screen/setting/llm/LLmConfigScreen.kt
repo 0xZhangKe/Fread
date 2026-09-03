@@ -37,6 +37,7 @@ import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.localization.LocalizedString
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
@@ -52,7 +53,7 @@ fun LLmConfigScreen(viewModel: LLmConfigViewModel) {
         topBar = {
             Toolbar(
                 title = stringResource(LocalizedString.llm_config_settings_title),
-                onBackClick = { backStack.removeLastOrNull() },
+                onBackClick = { backStack.popIfNotRoot() },
             )
         },
     ) { innerPadding ->

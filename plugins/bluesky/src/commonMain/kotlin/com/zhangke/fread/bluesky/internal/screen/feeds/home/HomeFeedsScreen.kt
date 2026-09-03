@@ -16,6 +16,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -61,7 +62,7 @@ fun HomeFeedsScreen(
         topBar = {
             Toolbar(
                 title = stringResource(LocalizedString.feeds),
-                onBackClick = backStack::removeLastOrNull,
+                onBackClick = backStack::popIfNotRoot,
             )
         },
         snackbarHost = {

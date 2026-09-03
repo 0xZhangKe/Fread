@@ -45,6 +45,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
@@ -68,7 +69,7 @@ fun AboutScreen(viewModel: AboutViewModel) {
     AboutScreenContent(
         uiState = uiState,
         snackBarState = snackBarState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onUpdateClick = viewModel::onUpdateClick,
         onCheckUpdateClick = viewModel::onCheckForUpdateClick,
     )

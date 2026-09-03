@@ -36,6 +36,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
@@ -63,7 +64,7 @@ fun AddMixedFeedsScreen(viewModel: AddMixedFeedsViewModel) {
     FeedsManager(
         uiState = viewModel.uiState.collectAsState().value,
         snackbarHostState = snackbarHostState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onAddSourceClick = {
             backStack.add(SearchSourceForAddScreenNavKey)
         },
@@ -84,7 +85,7 @@ fun AddMixedFeedsScreen(viewModel: AddMixedFeedsViewModel) {
     ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     ConsumeFlow(viewModel.addContentSuccessFlow) {
         toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 }
 

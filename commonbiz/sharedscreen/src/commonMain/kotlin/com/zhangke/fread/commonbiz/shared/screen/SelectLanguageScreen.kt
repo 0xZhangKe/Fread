@@ -51,6 +51,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.nav.ScreenEventFlow
 import com.zhangke.framework.utils.LanguageUtils
 import com.zhangke.framework.utils.Locale
@@ -92,7 +93,7 @@ fun SelectLanguageScreen(
         if (!multipleSelection) {
             coroutineScope.launch {
                 SelectLanguageScreenNavKey.selectedFlow.emit(listOf(languageUiState.local.languageCode))
-                backStack.removeLastOrNull()
+                backStack.popIfNotRoot()
             }
             return
         }
@@ -116,7 +117,7 @@ fun SelectLanguageScreen(
             ) {
                 Toolbar(
                     title = stringResource(LocalizedString.sharedSelectLanguageTitle),
-                    onBackClick = backStack::removeLastOrNull,
+                    onBackClick = backStack::popIfNotRoot,
                     actions = {
                         IconButton(
                             onClick = { toolbarVisible = false },
@@ -133,7 +134,7 @@ fun SelectLanguageScreen(
                                         SelectLanguageScreenNavKey.selectedFlow
                                             .emit(languageList.filter { it.selected }
                                                 .map { it.local.languageCode })
-                                        backStack.removeLastOrNull()
+                                        backStack.popIfNotRoot()
                                     }
                                 },
                             ) {

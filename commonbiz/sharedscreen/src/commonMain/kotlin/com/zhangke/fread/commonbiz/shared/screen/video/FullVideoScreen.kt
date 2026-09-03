@@ -1,5 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.screen.video
 
+import com.zhangke.framework.nav.popIfNotRoot
 
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
@@ -17,6 +18,6 @@ fun FullVideoScreen(uri: String) {
     val backStack = LocalNavBackStack.currentOrThrow
     FullScreenVideoPlayer(
         uri = uri.toPlatformUri(),
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
     )
 }

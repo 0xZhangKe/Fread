@@ -9,6 +9,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.activitypub.app.internal.screen.list.ListDetailPageContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserScreenNavKey
 import com.zhangke.fread.status.model.PlatformLocator
@@ -38,7 +39,7 @@ fun AddListScreen(viewModel: AddListViewModel, locator: PlatformLocator) {
         onSaveClick = viewModel::onSaveClick,
         onExclusiveChangeRequest = viewModel::onExclusiveChanged,
         onPolicySelect = viewModel::onPolicySelect,
-        onBackClick = { backStack.removeLastOrNull() },
+        onBackClick = { backStack.popIfNotRoot() },
         onRemoveAccount = viewModel::onRemoveAccount,
         onRetryLoadAccountsClick = {},
         onNameChangedRequest = viewModel::onNameChangeRequest,
@@ -47,5 +48,5 @@ fun AddListScreen(viewModel: AddListViewModel, locator: PlatformLocator) {
         },
     )
     ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarFlow)
-    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+    ConsumeFlow(viewModel.finishPageFlow) { backStack.popIfNotRoot() }
 }

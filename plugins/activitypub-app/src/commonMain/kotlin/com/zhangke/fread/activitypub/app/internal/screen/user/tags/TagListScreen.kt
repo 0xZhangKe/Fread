@@ -18,6 +18,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreenKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.Hashtag
@@ -40,7 +41,7 @@ fun TagListScreen(viewModel: TagListViewModel) {
     TagListContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onRefresh = viewModel::onRefresh,
         onLoadMore = viewModel::onLoadMore,
         onTagClick = { hashtag ->

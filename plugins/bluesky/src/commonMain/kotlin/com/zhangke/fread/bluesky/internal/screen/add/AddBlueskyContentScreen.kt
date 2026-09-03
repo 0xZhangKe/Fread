@@ -47,6 +47,7 @@ import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.localization.LocalizedString
@@ -77,14 +78,14 @@ fun AddBlueskyContentScreen(viewModel: AddBlueskyContentViewModel) {
         onUserNameChange = viewModel::onUserNameChange,
         onPasswordChange = viewModel::onPasswordChange,
         onFactorTokenChange = viewModel::onFactorTokenChange,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onLoginClick = viewModel::onLoginClick,
     )
     LoadingDialog(loading = uiState.logging, onDismissRequest = viewModel::onCancelLogin)
     ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessage)
     ConsumeFlow(viewModel.loginSuccessFlow) {
         toastHelper.showToast(getString(LocalizedString.addContentSuccessSnackbar))
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 }
 

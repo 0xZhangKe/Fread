@@ -15,6 +15,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.serialization.Serializable
 
@@ -39,7 +40,7 @@ fun StatusListScreen(locator: PlatformLocator, type: StatusListType) {
         topBar = {
             Toolbar(
                 title = tab.options?.title.orEmpty(),
-                onBackClick = backStack::removeLastOrNull,
+                onBackClick = backStack::popIfNotRoot,
             )
         },
         snackbarHost = {

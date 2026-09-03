@@ -39,6 +39,7 @@ import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.composable.ErrorContent
 import com.zhangke.fread.common.composable.ErrorType
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
@@ -142,7 +143,7 @@ fun StatusContextScreen(
                 event = event,
             )
         },
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onAccountClick = viewModel::onAccountClick,
         onRetryClick = viewModel::onRetryClick,
         composedStatusInteraction = viewModel.composedStatusInteraction,

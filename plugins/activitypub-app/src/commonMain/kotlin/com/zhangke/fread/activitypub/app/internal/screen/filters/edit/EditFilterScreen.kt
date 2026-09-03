@@ -46,6 +46,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberFutureDatePickerState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import com.zhangke.fread.status.ui.utils.getScreenWidth
@@ -82,7 +83,7 @@ fun EditFilterScreen(viewModel: EditFilterViewModel, id: String?) {
         if (uiState.hasInputtedSomething) {
             showBackDialog = true
         } else {
-            backStack.removeLastOrNull()
+            backStack.popIfNotRoot()
         }
     }
 
@@ -105,7 +106,7 @@ fun EditFilterScreen(viewModel: EditFilterViewModel, id: String?) {
     )
     ConsumeSnackbarFlow(hostState = snackBarHostState, messageTextFlow = viewModel.snackBarFlow)
     ConsumeFlow(viewModel.finishPageFlow) {
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 
     if (showBackDialog) {
@@ -115,7 +116,7 @@ fun EditFilterScreen(viewModel: EditFilterViewModel, id: String?) {
             onNegativeClick = { showBackDialog = false },
             onPositiveClick = {
                 showBackDialog = false
-                backStack.removeLastOrNull()
+                backStack.popIfNotRoot()
             }
         )
     }

@@ -26,6 +26,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlinx.serialization.Serializable
@@ -42,7 +43,7 @@ data class BlueskyThreadedViewScreenNavKey(
 fun BlueskyThreadedViewScreen(viewModel: BlueskyThreadedViewViewModel) {
     val backStack = LocalNavBackStack.currentOrThrow
     val uiState by viewModel.uiState.collectAsState()
-    val onBack: () -> Unit = { backStack.removeLastOrNull() }
+    val onBack: () -> Unit = { backStack.popIfNotRoot() }
 
     Scaffold(
         topBar = {

@@ -15,6 +15,7 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.activitypub.app.internal.screen.list.ListDetailPageContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
@@ -42,7 +43,7 @@ fun EditListScreen(
         if (uiState.contentHasChanged) {
             showBackReminder = true
         } else {
-            backStack.removeLastOrNull()
+            backStack.popIfNotRoot()
         }
     }
     BackHandler(true) { onBack() }
@@ -53,7 +54,7 @@ fun EditListScreen(
             onNegativeClick = { showBackReminder = false },
             onPositiveClick = {
                 showBackReminder = false
-                backStack.removeLastOrNull()
+                backStack.popIfNotRoot()
             },
         )
     }
@@ -84,5 +85,5 @@ fun EditListScreen(
         onDeleteClick = viewModel::onDeleteClick,
     )
     ConsumeSnackbarFlow(snackBarState, viewModel.snackBarFlow)
-    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+    ConsumeFlow(viewModel.finishPageFlow) { backStack.popIfNotRoot() }
 }

@@ -51,6 +51,7 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -70,7 +71,7 @@ fun EditProfileScreen(viewModel: EditProfileViewModel) {
     EditProfileContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onAvatarSelected = viewModel::onAvatarSelected,
         onBannerSelected = viewModel::onBannerSelected,
         onUserNameChanged = viewModel::onUserNameChanged,
@@ -78,7 +79,7 @@ fun EditProfileScreen(viewModel: EditProfileViewModel) {
         onSaveClick = viewModel::onSaveClick,
     )
     ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessage)
-    ConsumeFlow(viewModel.finishScreenFlow) { backStack.removeLastOrNull() }
+    ConsumeFlow(viewModel.finishScreenFlow) { backStack.popIfNotRoot() }
 }
 
 @Composable

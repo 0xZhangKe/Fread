@@ -40,6 +40,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.icon.UnTranslate
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.translate.PostTranslationStatus
 import com.zhangke.fread.common.translate.rememberPostTranslationState
@@ -82,7 +83,7 @@ fun RssBlogDetailScreen(
         topBar = {
             Toolbar(
                 title = stringResource(LocalizedString.sharedStatusContextScreenTitle),
-                onBackClick = navigator::removeLastOrNull,
+                onBackClick = navigator::popIfNotRoot,
                 actions = {
                     SimpleIconButton(
                         onClick = {

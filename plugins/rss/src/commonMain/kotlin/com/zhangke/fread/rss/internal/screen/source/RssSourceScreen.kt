@@ -38,6 +38,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.localization.LocalizedString
@@ -57,7 +58,7 @@ fun RssSourceScreen(viewModel: RssSourceViewModel) {
     RssSourceContent(
         uiState = uiState,
         snackBarMessageFlow = viewModel.snackBarMessageFlow,
-        onBackClick = { backStack.removeLastOrNull() },
+        onBackClick = { backStack.popIfNotRoot() },
         onDisplayNameChanged = viewModel::onDisplayNameChanged,
     )
 }

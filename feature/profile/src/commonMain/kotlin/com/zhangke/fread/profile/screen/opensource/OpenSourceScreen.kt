@@ -21,6 +21,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.browser.launchWebTabInApp
 import com.zhangke.fread.localization.LocalizedString
@@ -39,7 +40,7 @@ fun OpenSourceScreen() {
         topBar = {
             Toolbar(
                 title = stringResource(LocalizedString.profileSettingOpenSourceTitle),
-                onBackClick = backStack::removeLastOrNull,
+                onBackClick = backStack::popIfNotRoot,
             )
         }
     ) { innerPadding ->

@@ -17,6 +17,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.HorizontalPagerWithTab
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.explore.screens.search.author.SearchedAuthorTab
 import com.zhangke.fread.explore.screens.search.hashtag.SearchedHashtagTab
 import com.zhangke.fread.explore.screens.search.platform.SearchedPlatformTab
@@ -46,7 +47,7 @@ fun SearchScreen(
         locator = locator,
         protocol = protocol,
         query = query,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
     )
 }
 

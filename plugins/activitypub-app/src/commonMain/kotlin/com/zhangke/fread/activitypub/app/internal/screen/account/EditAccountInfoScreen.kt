@@ -54,6 +54,7 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.flow.SharedFlow
@@ -73,7 +74,7 @@ fun EditAccountInfoScreen(viewModel: EditAccountInfoViewModel) {
     EditAccountInfoContent(
         uiState = uiState,
         snackBarMessageFlow = viewModel.snackBarMessageFlow,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onEditClick = viewModel::onEditClick,
         onUserNameChanged = viewModel::onUserNameInput,
         onBioChanged = viewModel::onUserDescriptionInput,
@@ -84,7 +85,7 @@ fun EditAccountInfoScreen(viewModel: EditAccountInfoViewModel) {
         onHeaderSelected = viewModel::onHeaderSelected,
     )
     ConsumeFlow(viewModel.finishPageFlow) {
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 }
 

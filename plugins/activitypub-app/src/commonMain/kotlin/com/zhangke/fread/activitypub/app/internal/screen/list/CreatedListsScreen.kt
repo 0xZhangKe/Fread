@@ -31,6 +31,7 @@ import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.activitypub.app.internal.screen.list.add.AddListScreenNavKey
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
@@ -52,7 +53,7 @@ fun CreatedListsScreen(
     CreatedListsContent(
         uiState = uiState,
         snackBarState = snackBarState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onRetryClick = viewModel::onRetryClick,
         onListClick = {
             backStack.add(

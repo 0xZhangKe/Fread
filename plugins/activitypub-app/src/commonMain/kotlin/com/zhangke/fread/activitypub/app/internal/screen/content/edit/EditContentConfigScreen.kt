@@ -43,6 +43,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.localization.LocalizedString
@@ -72,7 +73,7 @@ fun EditContentConfigScreen(
     EditContentConfigScreenContent(
         uiState = uiState,
         snackbarMessageFlow = viewModel.snackbarMessageFlow,
-        onBackClick = { backStack.removeLastOrNull() },
+        onBackClick = { backStack.popIfNotRoot() },
         onShowingTabMove = viewModel::onShowingTabMove,
         onShowingTabMoveDown = viewModel::onShowingTabMoveDown,
         onHiddenTabMoveUp = viewModel::onHiddenTabMoveUp,
@@ -80,7 +81,7 @@ fun EditContentConfigScreen(
         onEditNameClick = viewModel::onEditNameClick,
     )
     ConsumeFlow(viewModel.finishScreenFlow) {
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 }
 

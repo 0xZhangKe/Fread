@@ -21,6 +21,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.config.TimelineDefaultPosition
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingItemWithPopup
@@ -39,7 +40,7 @@ fun BehaviorSettingsScreen(viewModel: BehaviorSettingsViewModel) {
 
     BehaviorSettingsContent(
         uiState = uiState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onSwitchAutoPlayClick = viewModel::onChangeAutoPlayInlineVideo,
         onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
         onTimelineDefaultPositionChanged = viewModel::onTimelineDefaultPositionChanged,

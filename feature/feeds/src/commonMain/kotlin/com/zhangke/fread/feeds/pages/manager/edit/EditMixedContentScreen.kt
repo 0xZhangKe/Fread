@@ -39,6 +39,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreenNavKey
@@ -57,7 +58,7 @@ fun EditMixedContentScreen(viewModel: EditMixedContentViewModel) {
         uiState = uiState,
         onRemoveSourceClick = viewModel::onSourceDelete,
         onEditNameClick = viewModel::onEditName,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onAddSourceClick = {
             backStack.add(SearchSourceForAddScreenNavKey)
         },
@@ -67,7 +68,7 @@ fun EditMixedContentScreen(viewModel: EditMixedContentViewModel) {
         viewModel.onAddSource(it)
     }
     ConsumeFlow(viewModel.finishScreenFlow) {
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 }
 

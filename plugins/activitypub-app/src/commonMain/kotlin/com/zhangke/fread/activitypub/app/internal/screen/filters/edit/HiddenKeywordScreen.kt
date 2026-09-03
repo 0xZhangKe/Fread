@@ -38,6 +38,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.nav.ScreenEventFlow
 import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.launch
@@ -70,7 +71,7 @@ fun HiddenKeywordScreen(addedKeywords: List<EditFilterUiState.Keyword>) {
     BackHandler(true) {
         coroutineScope.launch {
             HiddenKeywordScreenNavKey.keywordsListFlow.emit(keywordsList)
-            backStack.removeLastOrNull()
+            backStack.popIfNotRoot()
         }
     }
     Scaffold(
@@ -80,7 +81,7 @@ fun HiddenKeywordScreen(addedKeywords: List<EditFilterUiState.Keyword>) {
                 onBackClick = {
                     coroutineScope.launch {
                         HiddenKeywordScreenNavKey.keywordsListFlow.emit(keywordsList)
-                        backStack.removeLastOrNull()
+                        backStack.popIfNotRoot()
                     }
                 },
             )

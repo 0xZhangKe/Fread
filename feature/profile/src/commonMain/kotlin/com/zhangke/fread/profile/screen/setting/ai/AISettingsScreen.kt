@@ -16,6 +16,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingItem
 import com.zhangke.fread.profile.screen.setting.ai.alttext.AltTextSettingsNavKey
@@ -33,7 +34,7 @@ fun AISettingsScreen(viewModel: AISettingsViewModel) {
 
     AISettingsContent(
         uiState = uiState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onAltTextClick = {
             backStack.add(AltTextSettingsNavKey)
         },

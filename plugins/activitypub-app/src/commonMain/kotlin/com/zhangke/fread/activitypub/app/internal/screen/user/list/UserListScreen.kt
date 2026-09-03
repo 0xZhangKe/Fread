@@ -29,6 +29,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreenKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.author.BlogAuthor
@@ -60,7 +61,7 @@ fun UserListScreen(viewModel: UserListViewModel) {
         onLoadMore = viewModel::onLoadMore,
         onUnblockClick = viewModel::onUnblockClick,
         onUnmuteClick = viewModel::onUnmuteClick,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onFollowClick = viewModel::onFollowClick,
     )
     ConsumeSnackbarFlow(snackBarHostState, viewModel.snackMessageFlow)

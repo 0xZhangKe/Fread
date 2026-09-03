@@ -48,6 +48,7 @@ import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailBottomSheet
@@ -86,7 +87,7 @@ fun BskyFollowingFeedsPage(viewModel: BskyFollowingFeedsViewModel) {
     BskyFeedsExplorerContent(
         uiState = uiState,
         snackBarState = snackBarState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onRefresh = viewModel::onRefresh,
         onFeedsClick = { feed ->
             uiState.locator?.let { locator ->
@@ -103,7 +104,7 @@ fun BskyFollowingFeedsPage(viewModel: BskyFollowingFeedsViewModel) {
     ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
 
     ConsumeFlow(viewModel.finishPageFlow) {
-        backStack.removeLastOrNull()
+        backStack.popIfNotRoot()
     }
 
     LaunchedEffect(Unit) {

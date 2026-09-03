@@ -36,6 +36,7 @@ import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.resources.blueskyDescription
 import com.zhangke.fread.common.resources.blueskyName
 import com.zhangke.fread.common.resources.mastodonDescription
@@ -66,7 +67,7 @@ fun SelectContentTypeScreen(viewModel: SelectContentTypeViewModel) {
         topBar = {
             Toolbar(
                 title = stringResource(LocalizedString.feedsSelectTypeScreenTitle),
-                onBackClick = backStack::removeLastOrNull,
+                onBackClick = backStack::popIfNotRoot,
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -129,7 +130,7 @@ fun SelectContentTypeScreen(viewModel: SelectContentTypeViewModel) {
         }
     }
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)
-    ConsumeFlow(viewModel.finishPageFlow) { backStack.removeLastOrNull() }
+    ConsumeFlow(viewModel.finishPageFlow) { backStack.popIfNotRoot() }
     LaunchedEffect(Unit) {
         viewModel.onPageResumed(this)
     }

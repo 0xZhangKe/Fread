@@ -30,6 +30,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreenNavKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.profile.screen.setting.SettingItemWithSwitch
@@ -47,7 +48,7 @@ fun TranslateSettingScreen() {
     val uiState by viewModel.uiState.collectAsState()
     TranslateSettingContent(
         uiState = uiState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onSelectLanguageClick = {
             backStack.add(SelectLanguageScreenNavKey())
         },

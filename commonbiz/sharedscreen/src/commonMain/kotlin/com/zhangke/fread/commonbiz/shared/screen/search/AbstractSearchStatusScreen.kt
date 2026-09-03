@@ -38,6 +38,7 @@ import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.ObserveLoadMore
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.utils.transparentIndicatorAndContainerColors
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.localization.LocalizedString
@@ -54,7 +55,7 @@ fun AbstractSearchStatusScreen(viewModel: AbstractSearchStatusViewModel) {
         uiState = uiState,
         snackbarHostState = snackbarHostState,
         composedStatusInteraction = viewModel.composedStatusInteraction,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onQueryChanged = viewModel::onQueryChange,
         onSearchClick = viewModel::onSearchClick,
         onLoadMore = viewModel::onLoadMore,

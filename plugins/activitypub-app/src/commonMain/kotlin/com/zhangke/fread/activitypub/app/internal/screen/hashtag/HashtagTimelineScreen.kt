@@ -39,6 +39,7 @@ import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.composable.plusContentPadding
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.localization.LocalizedString
@@ -70,7 +71,7 @@ fun HashtagTimelineScreen(
         messageFlow = viewModel.errorMessageFlow,
         openScreenFlow = viewModel.openScreenFlow,
         newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onRefresh = viewModel::onRefresh,
         onLoadMore = viewModel::onLoadMore,
         composedStatusInteraction = viewModel.composedStatusInteraction,

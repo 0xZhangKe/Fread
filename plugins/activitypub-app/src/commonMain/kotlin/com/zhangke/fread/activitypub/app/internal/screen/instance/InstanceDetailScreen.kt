@@ -35,6 +35,7 @@ import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.nav.ContentPaddingsHorizontalPagerWithTab
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.screen.instance.about.ServerAboutTab
@@ -66,7 +67,7 @@ fun InstanceDetailScreen(locator: PlatformLocator, viewModel: InstanceDetailView
     InstanceDetailContent(
         uiState = uiState,
         locator = locator,
-        onBackClick = { backStack.removeLastOrNull() },
+        onBackClick = { backStack.popIfNotRoot() },
         onUserClick = { _, webFinger, userId ->
             backStack.add(
                 UserDetailScreenKey(

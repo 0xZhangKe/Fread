@@ -23,6 +23,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
@@ -50,7 +51,7 @@ fun AppearanceSettingsScreen(viewModel: AppearanceSettingsViewModel) {
 
     AppearanceSettingsContent(
         uiState = uiState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onDayNightModeClick = {
             coroutineScope.launch {
                 activityDayNightHelper.setMode(it)

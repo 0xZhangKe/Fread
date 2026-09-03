@@ -34,6 +34,7 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterScreenKey
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.model.PlatformLocator
@@ -51,7 +52,7 @@ fun FiltersListScreen(viewModel: FiltersListViewModel, locator: PlatformLocator)
     FiltersListContent(
         uiState = uiState,
         snackBarHostState = snackBarHostState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onItemClick = {
             backStack.add(EditFilterScreenKey(locator, it.id))
         },

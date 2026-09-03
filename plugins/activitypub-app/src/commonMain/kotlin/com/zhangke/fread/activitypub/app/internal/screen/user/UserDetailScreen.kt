@@ -72,6 +72,7 @@ import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.nav.ContentPaddingsHorizontalPagerWithTab
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.framework.nav.Tab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
@@ -172,7 +173,7 @@ fun UserDetailScreen(
         onBookmarksClick = {
             backstack.add(StatusListScreenKey(locator = locator, type = StatusListType.BOOKMARKS))
         },
-        onBackClick = backstack::removeLastOrNull,
+        onBackClick = backstack::popIfNotRoot,
         onFollowAccountClick = viewModel::onFollowClick,
         onUnfollowAccountClick = viewModel::onUnfollowClick,
         onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
@@ -311,7 +312,7 @@ fun UserDetailScreen(
     )
     if (asProfileTab) {
         ConsumeFlow(viewModel.finishPageFlow) {
-            backstack.removeLastOrNull()
+            backstack.popIfNotRoot()
         }
     }
 }

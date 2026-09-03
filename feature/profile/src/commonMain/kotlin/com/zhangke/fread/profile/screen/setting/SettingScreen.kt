@@ -29,6 +29,7 @@ import androidx.navigation3.runtime.NavKey
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.currentOrThrow
 import com.zhangke.framework.nav.LocalNavBackStack
+import com.zhangke.framework.nav.popIfNotRoot
 import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.language.LanguageSettingItem
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
@@ -60,7 +61,7 @@ fun SettingScreen(viewModel: SettingScreenModel) {
 
     SettingContent(
         uiState = uiState,
-        onBackClick = backStack::removeLastOrNull,
+        onBackClick = backStack::popIfNotRoot,
         onOpenSourceClick = {
             backStack.add(OpenSourceScreenNavKey)
         },

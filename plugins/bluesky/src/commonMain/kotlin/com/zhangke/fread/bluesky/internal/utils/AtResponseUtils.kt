@@ -6,7 +6,9 @@ import com.zhangke.fread.status.account.AuthenticationFailureException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.modules.plus
 import sh.christian.ozone.api.response.AtpResponse
+import sh.christian.ozone.api.xrpc.XrpcSerializersModule
 
 fun <T : Any> AtpResponse<T>.toResult(): Result<T> {
     return when (this) {
@@ -48,7 +50,8 @@ data class AtRequestException(
 internal val bskyJson by lazy {
     Json(globalJson) {
         ignoreUnknownKeys = true
-        classDiscriminator = "${'$'}type"
+        classDiscriminator = $$"$type"
+        serializersModule = globalJson.serializersModule + XrpcSerializersModule
     }
 }
 

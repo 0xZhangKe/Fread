@@ -65,7 +65,7 @@ firebaseKmp = "2.1.0"
 goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
 
-bluesky = "0.3.3"
+bluesky = "0.3.4"
 activity-pub-client = "1.0.0"
 
 haze = "1.7.2"

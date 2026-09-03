@@ -16,7 +16,8 @@ import ai.koog.prompt.message.AttachmentSource
 import com.zhangke.framework.architect.http.createHttpClientEngine
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.ai.model.LLMModelConfig
-import com.zhangke.fread.common.ai.model.koogModels
+import com.zhangke.fread.common.ai.model.LLMProvider
+import com.zhangke.fread.common.ai.model.resolveKoogModel
 import com.zhangke.fread.common.alttext.resizeAndJpegBase64
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import io.ktor.client.HttpClient
@@ -69,10 +70,7 @@ class LLMClient(
     }
 
     private suspend fun createKoogClient(config: LLMModelConfig): KoogLLMClient {
-        val baseUrl = config.provider.baseUrl
-            .trim()
-            .trimEnd('/')
-            .removeSuffix("/v1")
+        val baseUrl = config.provider.normalizedBaseUrl
         val key = ClientKey(
             providerId = config.provider.id,
             baseUrl = baseUrl,
@@ -93,10 +91,11 @@ class LLMClient(
             socketTimeoutMillis = requestTimeout.inWholeMilliseconds,
         )
         return when (config.provider.id) {
-            "openai", "openrouter" -> OpenAILLMClient(
+            in openAICompatibleProviderIds -> OpenAILLMClient(
                 apiKey = config.requireApiKey(),
                 settings = OpenAIClientSettings(
                     baseUrl = baseUrl,
+                    chatCompletionsPath = config.provider.chatCompletionsPath,
                     timeoutConfig = timeoutConfig,
                 ),
                 httpClientFactory = httpClientFactory,
@@ -120,7 +119,15 @@ class LLMClient(
                 timeoutConfig = timeoutConfig,
             )
 
-            else -> error("Unsupported LLM provider: ${config.provider.id}.")
+            else -> OpenAILLMClient(
+                apiKey = config.requireApiKey(),
+                settings = OpenAIClientSettings(
+                    baseUrl = baseUrl,
+                    chatCompletionsPath = "v1/chat/completions",
+                    timeoutConfig = timeoutConfig,
+                ),
+                httpClientFactory = httpClientFactory,
+            )
         }
     }
 
@@ -153,8 +160,7 @@ class LLMClient(
     }
 
     private fun LLMModelConfig.resolveKoogModel(): LLModel {
-        return provider.koogModels.firstOrNull { it.id == versionName }
-            ?: error("Unsupported ${provider.displayName} model: $versionName.")
+        return provider.resolveKoogModel(versionName)
     }
 
     private fun LLMModelConfig.requireApiKey(): String {
@@ -162,8 +168,36 @@ class LLMClient(
             ?: error("LLM API key is not configured.")
     }
 
+    private val LLMProvider.normalizedBaseUrl: String
+        get() {
+            val normalized = baseUrl.trim().trimEnd('/').removeSuffix("/v1")
+            return if (id == "google" && normalized.endsWith("/v1beta")) {
+                "$normalized/openai"
+            } else {
+                normalized
+            }
+        }
+
+    private val LLMProvider.chatCompletionsPath: String
+        get() = when (id) {
+            "google", "zhipuai" -> "chat/completions"
+            else -> "v1/chat/completions"
+        }
+
     private companion object {
         private val requestTimeout = 2.minutes
+        private val openAICompatibleProviderIds = setOf(
+            "openai",
+            "google",
+            "meta",
+            "alibaba",
+            "openrouter",
+            "deepseek",
+            "mistralai",
+            "minimax",
+            "zhipuai",
+            "huggingface",
+        )
     }
 
     private data class ClientKey(

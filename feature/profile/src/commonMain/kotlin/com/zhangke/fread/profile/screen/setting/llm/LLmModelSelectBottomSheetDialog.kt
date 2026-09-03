@@ -46,6 +46,7 @@ import org.jetbrains.compose.resources.stringResource
 fun LLmModelSelectBottomSheetDialog(
     onDismissRequest: () -> Unit,
     onModelAddClick: (LLMModelConfig) -> Unit,
+    onAddCustomModelClick: () -> Unit,
 ) {
     val sheetState = rememberTransientModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
@@ -68,13 +69,22 @@ fun LLmModelSelectBottomSheetDialog(
                 .fillMaxWidth()
                 .fillMaxHeight(0.7F),
         ) {
-            Text(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                text = stringResource(LocalizedString.llm_config_select_model_title),
-                style = MaterialTheme.typography.titleLarge,
-            )
+                    .padding(start = 16.dp, end = 8.dp, bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier.weight(1F),
+                    text = stringResource(LocalizedString.llm_config_select_model_title),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                TextButton(onClick = onAddCustomModelClick) {
+                    Text(text = stringResource(LocalizedString.llm_config_add_custom_model))
+                }
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

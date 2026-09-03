@@ -22,9 +22,9 @@ enum class ScrollDirection {
 class DirectionalLazyListState(
     private val lazyListState: LazyListState
 ) {
+
     private var positionY = lazyListState.firstVisibleItemScrollOffset
     private var visibleItem = lazyListState.firstVisibleItemIndex
-
 
     val scrollDirection by derivedStateOf {
         if (lazyListState.isScrollInProgress.not()) {
@@ -38,9 +38,12 @@ class DirectionalLazyListState(
             if (firstVisibleItemIndex == visibleItem) {
                 val direction = if (firstVisibleItemScrollOffset > positionY) {
                     ScrollDirection.Down
+                } else if (firstVisibleItemScrollOffset == positionY) {
+                    ScrollDirection.None
                 } else {
                     ScrollDirection.Up
                 }
+
                 positionY = firstVisibleItemScrollOffset
 
                 direction

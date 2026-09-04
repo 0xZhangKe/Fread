@@ -54,6 +54,8 @@
     <string name="mastodon_description">Mastodon 是一個去中心化、非商業化的社交媒體，用戶可以掌控自己的時間線，每個伺服器都是獨立實體。</string>
     <string name="mixed_content_name">混合內容</string>
     <string name="mixed_content_description">混合內容是由 Fread 提供的自訂聚合資訊流，你可新增來自長毛象、Bluesky、RSS 等平台的來源，這些來源的內容會按時間倒序聚合成一條資訊流。</string>
+    <string name="signal_archive_content_name">Signal Archive</string>
+    <string name="signal_archive_content_description">Signal Archive 是一種聚合內容閱讀協議，基於 GitHub 分發和拉取，目前仍處於試驗階段</string>
     <string name="status_provider_type_activity_pub">長毛象</string>
     <string name="add_content_title">新增內容</string>
     <string name="add_content_success_with_account">新增成功，目前帳戶：</string>

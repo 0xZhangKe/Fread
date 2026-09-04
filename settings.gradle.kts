@@ -46,6 +46,7 @@ include(":app")
 include(":thirds:halilibo-richtext-ui")
 include(":thirds:halilibo-richtext-material3")
 include(":plugins:bluesky")
+include(":plugins:signal-archive")
 if (enableFirebaseModule) {
     include(":plugins:fread-firebase")
 }

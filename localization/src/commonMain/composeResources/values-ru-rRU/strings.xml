@@ -54,6 +54,8 @@
     <string name="mastodon_description">Mastodon — децентрализированная, некоммерческая социальная сеть, где пользователи управляют своей лентой, а каждый сервер является независимой сущностью.</string>
     <string name="mixed_content_name">Смешанный контент</string>
     <string name="mixed_content_description">Смешанная лента объединяет весь ваш контент. Добавляйте источники из Mastodon, Bluesky, RSS и др. — Fread соберёт их в единую хронологическую ленту.</string>
+    <string name="signal_archive_content_name">Signal Archive</string>
+    <string name="signal_archive_content_description">Signal Archive — это протокол для чтения агрегированного контента, использующий GitHub для распространения и получения данных. В настоящее время он находится на экспериментальной стадии.</string>
     <string name="status_provider_type_activity_pub">Mastodon</string>
     <string name="add_content_title">Добавить контент</string>
     <string name="add_content_success_with_account">Успешно добавлено. Текущий аккаунт:</string>

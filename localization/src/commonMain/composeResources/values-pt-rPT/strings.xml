@@ -54,6 +54,8 @@
     <string name="mastodon_description">Mastodon é uma mídia social descentralizada e não comercial, onde os usuários controlam sua linha do tempo e cada servidor é uma entidade independente.</string>
     <string name="mixed_content_name">Conteúdo misto</string>
     <string name="mixed_content_description">O Feed Misto reúne todo o seu conteúdo. Adicione fontes do Mastodon, Bluesky, RSS e mais — o Fread combina tudo em uma linha do tempo cronológica.</string>
+    <string name="signal_archive_content_name">Signal Archive</string>
+    <string name="signal_archive_content_description">Signal Archive é um protocolo de leitura de conteúdos agregados que utiliza o GitHub para a sua distribuição e obtenção. Atualmente, encontra-se em fase experimental.</string>
     <string name="status_provider_type_activity_pub">Mastodon</string>
     <string name="add_content_title">Adicionar conteúdo</string>
     <string name="add_content_success_with_account">Adicionado com sucesso. Conta atual:</string>

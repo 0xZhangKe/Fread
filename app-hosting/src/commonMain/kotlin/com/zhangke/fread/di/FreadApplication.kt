@@ -10,6 +10,7 @@ import com.zhangke.fread.feature.message.di.notificationsModule
 import com.zhangke.fread.feeds.di.feedsModule
 import com.zhangke.fread.profile.di.profileModule
 import com.zhangke.fread.rss.rssModule
+import com.zhangke.fread.signal.archive.signalArchiveModule
 import com.zhangke.fread.status.statusProviderModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,7 @@ object FreadApplication {
                 statusProviderModel,
                 blueskyModule,
                 rssModule,
+                signalArchiveModule,
                 profileModule,
                 exploreModule,
                 notificationsModule,

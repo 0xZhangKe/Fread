@@ -109,3 +109,13 @@ fun mixedName(): String {
 fun mixedDescription(): String {
     return stringResource(LocalizedString.mixedContentDescription)
 }
+
+@Composable
+fun signalArchiveContentName(): String {
+    return stringResource(LocalizedString.signalArchiveContentName)
+}
+
+@Composable
+fun signalArchiveContentDescription(): String {
+    return stringResource(LocalizedString.signalArchiveContentDescription)
+}

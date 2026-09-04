@@ -43,6 +43,8 @@ import com.zhangke.fread.common.resources.mastodonDescription
 import com.zhangke.fread.common.resources.mastodonName
 import com.zhangke.fread.common.resources.mixedDescription
 import com.zhangke.fread.common.resources.mixedName
+import com.zhangke.fread.common.resources.signalArchiveContentDescription
+import com.zhangke.fread.common.resources.signalArchiveContentName
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.img_add_content_bsky
 import com.zhangke.fread.feeds.img_add_content_mastodon
@@ -63,6 +65,7 @@ fun SelectContentTypeScreen(viewModel: SelectContentTypeViewModel) {
     val mastodonCardColor = Color(0xFFFFA600)
     val blueskyCardColor = Color(0xFF0080FF)
     val mixedCardColor = Color(0xFF3AD06B)
+    val signalArchiveColor = Color(0xFF3AD06B)
     Scaffold(
         topBar = {
             Toolbar(
@@ -116,6 +119,22 @@ fun SelectContentTypeScreen(viewModel: SelectContentTypeViewModel) {
                 cardColor = mixedCardColor,
                 title = mixedName(),
                 description = mixedDescription(),
+                onCardClick = { backStack.add(AddMixedFeedsScreenNavKey) },
+                contentImage = {
+                    Image(
+                        modifier = Modifier.fillMaxHeight()
+                            .align(Alignment.CenterEnd),
+                        painter = painterResource(Res.drawable.img_add_content_mixed),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillHeight,
+                    )
+                },
+            )
+            ContentTypeCard(
+                modifier = Modifier.fillMaxWidth(),
+                cardColor = signalArchiveColor,
+                title = signalArchiveContentName(),
+                description = signalArchiveContentDescription(),
                 onCardClick = { backStack.add(AddMixedFeedsScreenNavKey) },
                 contentImage = {
                     Image(

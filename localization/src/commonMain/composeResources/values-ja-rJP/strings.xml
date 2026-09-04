@@ -54,6 +54,8 @@
     <string name="mastodon_description">Mastodon は分散型・非商業的なソーシャルメディアで、ユーザーが自分のタイムラインを管理でき、各サーバーは独立した存在です。</string>
     <string name="mixed_content_name">ミックスコンテンツ</string>
     <string name="mixed_content_description">ミックスコンテンツは Fread が提供するカスタム統合フィードです。マストドン、Bluesky、RSS などのプラットフォームからソースを追加でき、これらのコンテンツを新しい順の一つのフィードにまとめます。</string>
+    <string name="signal_archive_content_name">Signal Archive</string>
+    <string name="signal_archive_content_description">Signal Archive は、GitHub を通じてコンテンツを配信・取得する、集約コンテンツ閲覧用のプロトコルです。現在は試験段階です。</string>
     <string name="status_provider_type_activity_pub">マストドン</string>
     <string name="add_content_title">コンテンツを追加</string>
     <string name="add_content_success_with_account">追加しました。現在のアカウント：</string>

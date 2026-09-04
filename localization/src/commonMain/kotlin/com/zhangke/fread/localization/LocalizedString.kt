@@ -53,6 +53,8 @@ object LocalizedString {
     val mastodonDescription = localizedString.mastodon_description
     val mixedContentName = localizedString.mixed_content_name
     val mixedContentDescription = localizedString.mixed_content_description
+    val signalArchiveContentName = localizedString.signal_archive_content_name
+    val signalArchiveContentDescription = localizedString.signal_archive_content_description
     val statusProviderTypeActivityPub = localizedString.status_provider_type_activity_pub
     val addContentTitle = localizedString.add_content_title
     val addContentSuccessWithAccount = localizedString.add_content_success_with_account

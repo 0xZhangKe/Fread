@@ -77,7 +77,7 @@ fun Modifier.applyBlurEffect(
     val state = controller.hazeState ?: return this
     return this.hazeEffect(
         state = state,
-        style = HazeMaterials.ultraThick(containerColor)
+        style = HazeMaterials.thick(containerColor)
     )
 }
 

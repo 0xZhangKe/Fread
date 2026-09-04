@@ -2,6 +2,8 @@ package com.zhangke.fread.bluesky.internal.adapter
 
 import app.bsky.embed.AspectRatio
 import app.bsky.embed.ExternalViewExternal
+import app.bsky.embed.GalleryViewImage
+import app.bsky.embed.GalleryViewItemUnion
 import app.bsky.embed.ImagesViewImage
 import app.bsky.embed.RecordViewRecord
 import app.bsky.embed.RecordViewRecordEmbedUnion
@@ -145,7 +147,7 @@ class BlueskyStatusAdapter(
             embedList = convertEmbed(postView.embed, platform),
             platform = platform,
             pinned = pinned,
-            filtered = postView.labels.toBlogFiltered(),
+            filtered = postView.labels?.toBlogFiltered(),
         )
     }
 
@@ -163,28 +165,18 @@ class BlueskyStatusAdapter(
             repostCount = recordView.repostCount,
             likeCount = recordView.likeCount,
             replyCount = recordView.replyCount,
-            mediaList = recordView.embeds.flatMap(::convertToMedia),
+            mediaList = recordView.embeds?.flatMap(::convertToMedia) ?: emptyList(),
             platform = platform,
         )
     }
 
     private fun convertToMedia(embed: RecordViewRecordEmbedUnion): List<BlogMedia> {
         return when (embed) {
-            is RecordViewRecordEmbedUnion.ImagesView ->
-                embed.value.images.map { it.toMedia() }
+            is RecordViewRecordEmbedUnion.ImagesView -> embed.value.images.map { it.toMedia() }
 
-            is RecordViewRecordEmbedUnion.VideoView ->
-                listOf(embed.value.toMedia())
+            is RecordViewRecordEmbedUnion.VideoView -> listOf(embed.value.toMedia())
 
-            is RecordViewRecordEmbedUnion.RecordWithMediaView ->
-                when (val media = embed.value.media) {
-                    is RecordWithMediaViewMediaUnion.ImagesView ->
-                        media.value.images.map { it.toMedia() }
-                    is RecordWithMediaViewMediaUnion.VideoView ->
-                        listOf(media.value.toMedia())
-                    is RecordWithMediaViewMediaUnion.ExternalView -> emptyList()
-                    is RecordWithMediaViewMediaUnion.Unknown -> emptyList()
-                }
+            is RecordViewRecordEmbedUnion.RecordWithMediaView -> embed.value.media.toMedias()
 
             else -> emptyList()
         }
@@ -242,7 +234,7 @@ class BlueskyStatusAdapter(
             sensitive = false,
             spoilerText = "",
             isReply = post.reply != null,
-            language = post.langs.firstOrNull()?.tag,
+            language = post.langs?.firstOrNull()?.tag,
             platform = platform,
             mediaList = mediaList,
             emojis = emptyList(),
@@ -250,7 +242,7 @@ class BlueskyStatusAdapter(
             tags = emptyList(),
             pinned = pinned,
             poll = null,
-            facets = post.facets.map { it.convert() },
+            facets = post.facets?.map { it.convert() } ?: emptyList(),
             visibility = StatusVisibility.PUBLIC,
             embeds = embedList,
             supportTranslate = false,
@@ -317,22 +309,32 @@ class BlueskyStatusAdapter(
             }
 
             is PostViewEmbedUnion.RecordWithMediaView -> {
-                when (val media = embedUnion.value.media) {
-                    // ExternalView will be convert to link embed
-                    is RecordWithMediaViewMediaUnion.ExternalView -> emptyList()
-                    is RecordWithMediaViewMediaUnion.ImagesView -> {
-                        media.value.images.map { it.toMedia() }
-                    }
-
-                    is RecordWithMediaViewMediaUnion.VideoView -> {
-                        listOf(media.value.toMedia())
-                    }
-
-                    is RecordWithMediaViewMediaUnion.Unknown -> emptyList()
-                }
+                embedUnion.value.media.toMedias()
             }
 
             else -> emptyList()
+        }
+    }
+
+    private fun RecordWithMediaViewMediaUnion.toMedias(): List<BlogMedia> {
+        return when (this) {
+            // ExternalView will be converted to link embed
+            is RecordWithMediaViewMediaUnion.ExternalView -> emptyList()
+            is RecordWithMediaViewMediaUnion.ImagesView -> {
+                this.value.images.map { it.toMedia() }
+            }
+
+            is RecordWithMediaViewMediaUnion.VideoView -> {
+                listOf(this.value.toMedia())
+            }
+
+            is RecordWithMediaViewMediaUnion.Unknown -> emptyList()
+
+            is RecordWithMediaViewMediaUnion.GalleryView -> {
+                this.value.items.filterIsInstance<GalleryViewItemUnion.ViewImage>()
+                    .take(6)
+                    .map { it.value.toMedia() }
+            }
         }
     }
 
@@ -346,6 +348,19 @@ class BlueskyStatusAdapter(
             description = this.alt,
             blurhash = null,
             meta = aspectRatio?.let(::buildImageMediaMeta),
+        )
+    }
+
+    private fun GalleryViewImage.toMedia(): BlogMedia {
+        return BlogMedia(
+            id = this.fullsize.uri,
+            url = this.fullsize.uri,
+            type = BlogMediaType.IMAGE,
+            previewUrl = this.thumbnail.uri,
+            remoteUrl = null,
+            description = this.alt,
+            blurhash = null,
+            meta = aspectRatio.let(::buildImageMediaMeta),
         )
     }
 

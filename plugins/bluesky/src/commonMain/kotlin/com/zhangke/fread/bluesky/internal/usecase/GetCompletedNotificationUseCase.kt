@@ -6,8 +6,8 @@ import app.bsky.feed.PostView
 import app.bsky.feed.Repost
 import app.bsky.graph.Follow
 import app.bsky.notification.ListNotificationsNotification
+import app.bsky.notification.ListNotificationsNotificationReason
 import app.bsky.notification.ListNotificationsQueryParams
-import app.bsky.notification.ListNotificationsReason
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.client.BlueskyClient
@@ -61,7 +61,7 @@ class GetCompletedNotificationUseCase(
     ): CompletedBskyNotification? {
         val isOwner = loggedAccount?.did == author.did.did
         val record: CompletedBskyNotification.Record = when (reason.normalized()) {
-            ListNotificationsReason.Like -> {
+            ListNotificationsNotificationReason.Like -> {
                 val like: Like = (serializedCache[this] as? Like) ?: record.bskyJson()
                 CompletedBskyNotification.Record.Like(
                     post = posList!!.firstOrNull { it.uri == like.subject.uri } ?: return null,
@@ -69,7 +69,7 @@ class GetCompletedNotificationUseCase(
                 )
             }
 
-            ListNotificationsReason.Repost -> {
+            ListNotificationsNotificationReason.Repost -> {
                 val repost: Repost = (serializedCache[this] as? Repost) ?: record.bskyJson()
                 CompletedBskyNotification.Record.Repost(
                     post = posList!!.firstOrNull { it.uri == repost.subject.uri } ?: return null,
@@ -77,14 +77,14 @@ class GetCompletedNotificationUseCase(
                 )
             }
 
-            ListNotificationsReason.Follow -> {
+            ListNotificationsNotificationReason.Follow -> {
                 val follow: Follow = this.record.bskyJson()
                 CompletedBskyNotification.Record.Follow(
                     createAt = Instant(follow.createdAt),
                 )
             }
 
-            ListNotificationsReason.Mention -> {
+            ListNotificationsNotificationReason.Mention -> {
                 CompletedBskyNotification.Record.Mention(
                     post = this.record.bskyJson(),
                     cid = this.cid.cid,
@@ -93,7 +93,7 @@ class GetCompletedNotificationUseCase(
                 )
             }
 
-            ListNotificationsReason.Reply -> {
+            ListNotificationsNotificationReason.Reply -> {
                 CompletedBskyNotification.Record.Reply(
                     reply = this.record.bskyJson(),
                     cid = this.cid.cid,
@@ -102,7 +102,7 @@ class GetCompletedNotificationUseCase(
                 )
             }
 
-            ListNotificationsReason.Quote -> {
+            ListNotificationsNotificationReason.Quote -> {
                 CompletedBskyNotification.Record.Quote(
                     quote = this.record.bskyJson(),
                     cid = this.cid.cid,
@@ -112,7 +112,7 @@ class GetCompletedNotificationUseCase(
                 )
             }
 
-            ListNotificationsReason.StarterpackJoined -> {
+            ListNotificationsNotificationReason.StarterpackJoined -> {
                 CompletedBskyNotification.Record.OnlyMessage(
                     message = "StarterackJoined: ${this.record}",
                     createAt = Instant(this.indexedAt),
@@ -134,7 +134,7 @@ class GetCompletedNotificationUseCase(
             author = this.author,
             isRead = this.isRead,
             indexedAt = Instant(this.indexedAt),
-            labels = this.labels,
+            labels = this.labels ?: emptyList(),
         )
     }
 
@@ -161,19 +161,19 @@ class GetCompletedNotificationUseCase(
     ): List<AtUri> {
         return mapNotNull {
             when (it.reason.normalized()) {
-                is ListNotificationsReason.Repost -> {
+                is ListNotificationsNotificationReason.Repost -> {
                     val repost: Repost = it.record.bskyJson()
                     notificationSerializedCache[it] = repost
                     repost.subject.uri
                 }
 
-                is ListNotificationsReason.Like -> {
+                is ListNotificationsNotificationReason.Like -> {
                     val like: Like = it.record.bskyJson()
                     notificationSerializedCache[it] = like
                     like.subject.uri
                 }
 
-                is ListNotificationsReason.Quote -> {
+                is ListNotificationsNotificationReason.Quote -> {
                     it.reasonSubject!!
                 }
 
@@ -185,14 +185,14 @@ class GetCompletedNotificationUseCase(
     /**
      * Bluesky added `like-via-repost` / `repost-via-repost` (likes/reposts of
      * your reposts) after the Ozone 0.3.3 enum was sealed, so they arrive as
-     * [ListNotificationsReason.Unknown]. The payload shape matches the plain
+     * [ListNotificationsNotificationReason.Unknown]. The payload shape matches the plain
      * Like/Repost variants, so we fold them in.
      */
-    private fun ListNotificationsReason.normalized(): ListNotificationsReason {
-        if (this !is ListNotificationsReason.Unknown) return this
+    private fun ListNotificationsNotificationReason.normalized(): ListNotificationsNotificationReason {
+        if (this !is ListNotificationsNotificationReason.Unknown) return this
         return when (rawValue) {
-            "like-via-repost" -> ListNotificationsReason.Like
-            "repost-via-repost" -> ListNotificationsReason.Repost
+            "like-via-repost" -> ListNotificationsNotificationReason.Like
+            "repost-via-repost" -> ListNotificationsNotificationReason.Repost
             else -> this
         }
     }

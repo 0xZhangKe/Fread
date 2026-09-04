@@ -2,7 +2,8 @@ package com.zhangke.fread.bluesky.internal.usecase
 
 import app.bsky.actor.PreferencesUnion.SavedFeedsPrefV2
 import app.bsky.actor.SavedFeed
-import app.bsky.actor.Type
+import app.bsky.actor.SavedFeedType
+
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.PlatformLocator
 import kotlin.uuid.ExperimentalUuidApi
@@ -35,7 +36,7 @@ class PinFeedsUseCase(
     private fun BlueskyFeeds.Feeds.toSaveFeeds(): SavedFeed {
         return SavedFeed(
             id = Uuid.random().toString(),
-            type = Type.Feed,
+            type = SavedFeedType.Feed,
             value = this.uri,
             pinned = true,
         )

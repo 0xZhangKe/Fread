@@ -53,8 +53,8 @@ class GetStatusContextUseCase(
                     loggedAccount = loggedAccount,
                 )
                 val descendants = thread.value.replies
-                    .sortedByDescending { it.authorDidOrNull() == opDid }
-                    .mapNotNull { reply ->
+                    ?.sortedByDescending { it.authorDidOrNull() == opDid }
+                    ?.mapNotNull { reply ->
                         convertReply(
                             reply = reply,
                             locator = locator,
@@ -72,7 +72,7 @@ class GetStatusContextUseCase(
                             platform = platform,
                             loggedAccount = loggedAccount,
                         ),
-                        descendants = descendants,
+                        descendants = descendants ?: emptyList(),
                     )
                 )
             }
@@ -94,8 +94,8 @@ class GetStatusContextUseCase(
             loggedAccount = loggedAccount,
         )
         val nested = reply.value.replies
-            .sortedByDescending { it.authorDidOrNull() == opDid }
-            .firstNotNullOfOrNull { nestedReply ->
+            ?.sortedByDescending { it.authorDidOrNull() == opDid }
+            ?.firstNotNullOfOrNull { nestedReply ->
                 convertReply(
                     reply = nestedReply,
                     locator = locator,

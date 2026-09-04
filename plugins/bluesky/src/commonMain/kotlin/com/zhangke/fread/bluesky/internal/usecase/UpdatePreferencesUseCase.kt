@@ -15,7 +15,7 @@ class UpdatePreferencesUseCase (
         updater: (List<PreferencesUnion>) -> List<PreferencesUnion>,
     ): Result<Unit> {
         val client = clientManager.getClient(locator)
-        val preferenceResult = client.getPreferencesCatching()
+        val preferenceResult = client.getPreferencesForActorCatching()
         if (preferenceResult.isFailure) {
             return Result.failure(preferenceResult.exceptionOrThrow())
         }

@@ -127,8 +127,8 @@ class BlueskyClient(
         return runCatching { getTimeline(request) }.toResult()
     }
 
-    suspend fun getPreferencesCatching(): Result<GetPreferencesResponse> {
-        return runCatching { getPreferences() }.toResult()
+    suspend fun getPreferencesForActorCatching(): Result<GetPreferencesResponse> {
+        return runCatching { getPreferencesForActor() }.toResult()
     }
 
     suspend fun putPreferencesCatching(request: PutPreferencesRequest): Result<Unit> {

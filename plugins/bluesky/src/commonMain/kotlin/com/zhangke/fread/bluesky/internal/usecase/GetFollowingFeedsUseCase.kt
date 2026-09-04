@@ -2,7 +2,7 @@ package com.zhangke.fread.bluesky.internal.usecase
 
 import app.bsky.actor.PreferencesUnion.SavedFeedsPrefV2
 import app.bsky.actor.SavedFeed
-import app.bsky.actor.Type
+import app.bsky.actor.SavedFeedType
 import app.bsky.feed.GeneratorView
 import app.bsky.feed.GetFeedGeneratorsQueryParams
 import app.bsky.graph.GetListQueryParams
@@ -25,7 +25,7 @@ class GetFollowingFeedsUseCase(
 
     suspend operator fun invoke(locator: PlatformLocator): Result<List<BlueskyFeeds>> {
         val client = clientManager.getClient(locator)
-        val preferenceResult = client.getPreferencesCatching()
+        val preferenceResult = client.getPreferencesForActorCatching()
         if (preferenceResult.isFailure) return Result.failure(preferenceResult.exceptionOrThrow())
         val preference = preferenceResult.getOrThrow()
         val followingFeeds = preference.preferences.filterIsInstance<SavedFeedsPrefV2>()
@@ -49,7 +49,7 @@ class GetFollowingFeedsUseCase(
         generatorList: List<GeneratorView>,
         listViewList: List<ListView>,
     ): BlueskyFeeds? = when (feed.type) {
-        Type.Feed -> {
+        SavedFeedType.Feed -> {
             val generator = generatorList.firstOrNull { it.uri.atUri == feed.value }
             if (generator == null) {
                 null
@@ -58,7 +58,7 @@ class GetFollowingFeedsUseCase(
             }
         }
 
-        Type.List -> {
+        SavedFeedType.List -> {
             val listView = listViewList.firstOrNull { it.uri.atUri == feed.value }
             if (listView == null) {
                 null
@@ -67,7 +67,7 @@ class GetFollowingFeedsUseCase(
             }
         }
 
-        Type.Timeline -> {
+        SavedFeedType.Timeline -> {
             BlueskyFeeds.FollowingTimeline(feed.pinned)
         }
 
@@ -78,7 +78,7 @@ class GetFollowingFeedsUseCase(
         client: BlueskyClient,
         feeds: List<SavedFeed>,
     ): Result<List<ListView>> {
-        val lists = feeds.filter { it.type == Type.List }.map { it.value }
+        val lists = feeds.filter { it.type == SavedFeedType.List }.map { it.value }
         if (lists.isEmpty()) return Result.success(emptyList())
         val allResults = supervisorScope {
             lists.map { uri ->
@@ -95,7 +95,7 @@ class GetFollowingFeedsUseCase(
         client: BlueskyClient,
         feeds: List<SavedFeed>,
     ): Result<List<GeneratorView>> {
-        val feedsUris = feeds.filter { it.type == Type.Feed }
+        val feedsUris = feeds.filter { it.type == SavedFeedType.Feed }
             .map { AtUri(it.value) }
         if (feedsUris.isEmpty()) return Result.success(emptyList())
         return client.getFeedGeneratorsCatching(

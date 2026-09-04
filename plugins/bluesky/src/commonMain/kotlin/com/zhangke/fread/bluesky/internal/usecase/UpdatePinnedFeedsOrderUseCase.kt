@@ -2,8 +2,8 @@ package com.zhangke.fread.bluesky.internal.usecase
 
 import app.bsky.actor.PreferencesUnion
 import app.bsky.actor.SavedFeed
+import app.bsky.actor.SavedFeedType
 import app.bsky.actor.SavedFeedsPrefV2
-import app.bsky.actor.Type
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.PlatformLocator
 
@@ -41,7 +41,7 @@ class UpdatePinnedFeedsOrderUseCase(
     private val SavedFeed.idForReorder: String
         get() {
             return when (this.type) {
-                is Type.Timeline -> "following"
+                is SavedFeedType.Timeline -> "following"
                 else -> value
             }
         }

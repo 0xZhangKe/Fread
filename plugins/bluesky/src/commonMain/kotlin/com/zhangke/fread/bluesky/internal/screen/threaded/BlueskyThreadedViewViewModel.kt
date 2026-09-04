@@ -41,7 +41,7 @@ class BlueskyThreadedViewViewModel(
             _uiState.value = BlueskyThreadedViewUiState.Empty
             return
         }
-        val chain = listOf(thread.post) + longestOpChain(thread.replies, opDid)
+        val chain = listOf(thread.post) + longestOpChain(thread.replies ?: emptyList(), opDid)
         if (chain.size < 2) {
             _uiState.value = BlueskyThreadedViewUiState.Empty
             return
@@ -66,7 +66,15 @@ class BlueskyThreadedViewViewModel(
             .filter { it.post.author.did.did == opDid }
         if (opReplies.isEmpty()) return emptyList()
         return opReplies
-            .map { reply -> listOf(reply.post) + longestOpChain(reply.replies, opDid) }
+            .map { reply ->
+                buildList {
+                    add(reply.post)
+                    reply.replies
+                        ?.takeIf { it.isNotEmpty() }
+                        ?.let { longestOpChain(it, opDid) }
+                        ?.let { addAll(it) }
+                }
+            }
             .maxBy { it.size }
     }
 

@@ -24,9 +24,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.Clock
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class FeedsDetailViewModel(

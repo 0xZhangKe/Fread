@@ -22,7 +22,7 @@ class RefreshLabelersSubscriptionUseCase(
     suspend operator fun invoke() {
         val account = accountManager.getAllAccount().firstOrNull() ?: return
         val response = clientManager.getClient(account.locator)
-            .getPreferencesCatching()
+            .getPreferencesForActorCatching()
             .getOrNull() ?: return
         val labelers = response.preferences
             .filterIsInstance<PreferencesUnion.LabelersPref>()

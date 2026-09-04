@@ -199,7 +199,7 @@ class ExplorerFeedsViewModel(
 
     private suspend fun getPinnedFeeds(): Result<List<String>> {
         if (pinnedFeedsUris.isNotEmpty()) return Result.success(pinnedFeedsUris)
-        val preferenceResult = clientManager.getClient(locator).getPreferencesCatching()
+        val preferenceResult = clientManager.getClient(locator).getPreferencesForActorCatching()
         if (preferenceResult.isFailure) return Result.failure(preferenceResult.exceptionOrThrow())
         return preferenceResult.map {
             it.preferences.filterIsInstance<SavedFeedsPrefV2>()

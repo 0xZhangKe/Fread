@@ -34,6 +34,7 @@ kotlin {
                 implementation(project(path = ":plugins:activitypub-app"))
                 implementation(project(path = ":plugins:rss"))
                 implementation(project(path = ":plugins:bluesky"))
+                implementation(project(path = ":plugins:signal-archive"))
                 if (gradle.extra["enableFirebaseModule"] == true) {
                     implementation(project(path = ":plugins:fread-firebase"))
                 }

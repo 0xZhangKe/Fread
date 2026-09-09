@@ -9,7 +9,9 @@ plugins {
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
 val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
 keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
 
 android {
     namespace = "com.zhangke.fread"
@@ -23,18 +25,20 @@ android {
         includeInBundle = false
     }
 
-    signingConfigs {
-        getByName("debug") {
-            storeFile = file(keystoreProperties.getProperty("storeFile"))
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storePassword = keystoreProperties.getProperty("storePassword")
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-        }
-        create("release") {
-            storeFile = file(keystoreProperties.getProperty("storeFile"))
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storePassword = keystoreProperties.getProperty("storePassword")
-            keyAlias = keystoreProperties.getProperty("keyAlias")
+    if (keystorePropertiesFile.exists()) {
+        signingConfigs {
+            getByName("debug") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+            }
+            create("release") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+            }
         }
     }
 
@@ -55,11 +59,13 @@ android {
             isMinifyEnabled = false
             proguardFiles("proguard-rules.pro")
         }
-        getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
-        }
-        getByName("debug") {
-            signingConfig = signingConfigs.getByName("debug")
+        if (keystorePropertiesFile.exists()) {
+            getByName("release") {
+                signingConfig = signingConfigs.getByName("release")
+            }
+            getByName("debug") {
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 

@@ -716,6 +716,7 @@ object LocalizedString {
     val alt_text_cost_format = localizedString.alt_text_cost_format
     val error_alt_text_not_configured = localizedString.error_alt_text_not_configured
     val error_alt_text_load_image = localizedString.error_alt_text_load_image
+    val error_model_image_input_not_supported = localizedString.error_model_image_input_not_supported
     val error_alt_text_server = localizedString.error_alt_text_server
     val error_alt_text_network = localizedString.error_alt_text_network
     val error_alt_text_no_text = localizedString.error_alt_text_no_text

@@ -307,6 +307,7 @@
     <string name="alt_text_cost_format">Cost: %1$s</string>
     <string name="error_alt_text_not_configured">Alt text generation is not configured. Open Settings → LLM configuration to set the API key and model.</string>
     <string name="error_alt_text_load_image">Could not load the image for alt text generation.</string>
+    <string name="error_model_image_input_not_supported">The %1$s model does not currently support image input</string>
     <string name="error_alt_text_server">The alt text provider returned an error.</string>
     <string name="error_alt_text_network">Network error while generating alt text.</string>
     <string name="error_alt_text_no_text">The alt text provider returned an empty response.</string>

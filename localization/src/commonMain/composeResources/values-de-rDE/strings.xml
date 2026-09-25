@@ -304,6 +304,7 @@
     <string name="alt_text_cost_format">Kosten: %1$s</string>
     <string name="error_alt_text_not_configured">Die Alt-Text-Erstellung ist nicht konfiguriert. Öffne Einstellungen → LLM-Konfiguration, um API-Schlüssel und Modell festzulegen.</string>
     <string name="error_alt_text_load_image">Das Bild für die Alt-Text-Erstellung konnte nicht geladen werden.</string>
+    <string name="error_model_image_input_not_supported">Das Modell %1$s unterstützt derzeit keine Bildeingaben</string>
     <string name="error_alt_text_server">Der Alt-Text-Anbieter hat einen Fehler zurückgegeben.</string>
     <string name="error_alt_text_network">Netzwerkfehler beim Erstellen des Alt-Texts.</string>
     <string name="error_alt_text_no_text">Der Alt-Text-Anbieter hat eine leere Antwort zurückgegeben.</string>

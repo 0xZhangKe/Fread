@@ -304,6 +304,7 @@
     <string name="alt_text_cost_format">コスト: %1$s</string>
     <string name="error_alt_text_not_configured">代替テキスト生成が設定されていません。設定 → LLM 設定を開き、API キーとモデルを設定してください。</string>
     <string name="error_alt_text_load_image">代替テキスト生成用の画像を読み込めませんでした。</string>
+    <string name="error_model_image_input_not_supported">%1$s モデルは現在、画像入力に対応していません</string>
     <string name="error_alt_text_server">代替テキストプロバイダーがエラーを返しました。</string>
     <string name="error_alt_text_network">代替テキストの生成中にネットワークエラーが発生しました。</string>
     <string name="error_alt_text_no_text">代替テキストプロバイダーが空の応答を返しました。</string>

@@ -18,9 +18,12 @@ class AltGeneratorState(
 
     val available = mutableStateOf(false)
 
+    val currentModel = mutableStateOf<String?>(null)
+
     init {
         coroutineScope.launch {
             available.value = altTextGenerator.available()
+            currentModel.value = altTextGenerator.getCurrentModelName()
         }
     }
 
@@ -31,12 +34,17 @@ class AltGeneratorState(
         generateState.value = GenerateState.Generating
         generationJob?.cancel()
         generationJob = coroutineScope.launch {
-            altTextGenerator.generate(imageUri.toPlatformUri())
-                .onSuccess {
-                    generateState.value = GenerateState.Success(it.text)
-                }.onFailure {
-                    generateState.value = GenerateState.Failure(it.message ?: "Generation failed")
-                }
+            if (altTextGenerator.currentModelSupportImage()) {
+                altTextGenerator.generate(imageUri.toPlatformUri())
+                    .onSuccess {
+                        generateState.value = GenerateState.Success(it.text)
+                    }.onFailure {
+                        generateState.value = GenerateState.Failure(it)
+                    }
+            } else {
+                generateState.value =
+                    GenerateState.Failure(CurrentModelNotSupportImageException())
+            }
         }
     }
 }
@@ -49,5 +57,7 @@ sealed interface GenerateState {
 
     data class Success(val alt: String) : GenerateState
 
-    data class Failure(val errorMessage: String) : GenerateState
+    data class Failure(val throwable: Throwable) : GenerateState
 }
+
+class CurrentModelNotSupportImageException : Exception("Current model does not support image input")

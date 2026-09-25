@@ -17,9 +17,18 @@ class AltTextGenerator(
     suspend fun available(): Boolean {
         val config = modelConfigRepo.getSelectedModelConfig() ?: return false
         val apiKeyAvailable = config.provider.id == "ollama" || config.apiKey.isNotBlank()
-        val supportsImage = config.provider.resolveKoogModel(config.versionName)
+        return apiKeyAvailable
+    }
+
+    suspend fun currentModelSupportImage(): Boolean {
+        val config = modelConfigRepo.getSelectedModelConfig() ?: return false
+        return config.provider.resolveKoogModel(config.versionName)
             .supports(LLMCapability.Vision.Image)
-        return apiKeyAvailable && supportsImage
+    }
+
+    suspend fun getCurrentModelName(): String? {
+        val config = modelConfigRepo.getSelectedModelConfig() ?: return null
+        return config.versionName
     }
 
     suspend fun generate(imageUri: PlatformUri): Result<AltTextResult> {
@@ -53,9 +62,17 @@ class AltTextGenerator(
         if (this is CancellationException) return this
         val message = message.orEmpty()
         return when {
-            message.contains("not configured", ignoreCase = true) -> AltTextException.NotConfigured()
+            message.contains(
+                "not configured",
+                ignoreCase = true
+            ) -> AltTextException.NotConfigured()
+
             message.contains("load image", ignoreCase = true) -> AltTextException.LoadImage()
-            message.contains("empty response", ignoreCase = true) -> AltTextException.EmptyResponse()
+            message.contains(
+                "empty response",
+                ignoreCase = true
+            ) -> AltTextException.EmptyResponse()
+
             message.isBlank() -> AltTextException.Network()
             else -> AltTextException.Server(message)
         }

@@ -304,6 +304,7 @@
     <string name="alt_text_cost_format">Стоимость: %1$s</string>
     <string name="error_alt_text_not_configured">Создание альтернативного текста не настроено. Откройте Настройки → Настройка LLM, чтобы задать ключ API и модель.</string>
     <string name="error_alt_text_load_image">Не удалось загрузить изображение для создания альтернативного текста.</string>
+    <string name="error_model_image_input_not_supported">Модель %1$s пока не поддерживает ввод изображений</string>
     <string name="error_alt_text_server">Поставщик альтернативного текста вернул ошибку.</string>
     <string name="error_alt_text_network">Сетевая ошибка при создании альтернативного текста.</string>
     <string name="error_alt_text_no_text">Поставщик альтернативного текста вернул пустой ответ.</string>

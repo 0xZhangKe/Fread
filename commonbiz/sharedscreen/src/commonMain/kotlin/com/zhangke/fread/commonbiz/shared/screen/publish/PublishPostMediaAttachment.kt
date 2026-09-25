@@ -53,6 +53,7 @@ import com.zhangke.framework.utils.transparentIndicatorColors
 import com.zhangke.fread.common.alttext.AltTextGenerator
 import com.zhangke.fread.commonbiz.shared.screen.publish.alt.AltGeneratorButton
 import com.zhangke.fread.commonbiz.shared.screen.publish.alt.AltGeneratorState
+import com.zhangke.fread.commonbiz.shared.screen.publish.alt.CurrentModelNotSupportImageException
 import com.zhangke.fread.commonbiz.shared.screen.publish.alt.GenerateState
 import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
@@ -211,6 +212,9 @@ private fun PublishPostImageAltDialog(
     var inputtedValue by remember(alt) { mutableStateOf(alt) }
 
     val aiGeneratedLabel = stringResource(LocalizedString.ai_generated_label)
+    val modelName = generatorButtonState.currentModel.value.orEmpty()
+    val currentModelNotSupportImageMessage =
+        stringResource(LocalizedString.error_model_image_input_not_supported, modelName)
     LaunchedEffect(generateState) {
         when (val state = generateState) {
 
@@ -219,7 +223,11 @@ private fun PublishPostImageAltDialog(
             }
 
             is GenerateState.Failure -> {
-                snackbarHostState.showSnackbar(state.errorMessage)
+                if (state.throwable is CurrentModelNotSupportImageException) {
+                    snackbarHostState.showSnackbar(currentModelNotSupportImageMessage)
+                } else {
+                    snackbarHostState.showSnackbar(state.throwable.message ?: "Generation failed")
+                }
             }
 
             else -> {}

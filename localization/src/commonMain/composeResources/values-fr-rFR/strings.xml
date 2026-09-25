@@ -304,6 +304,7 @@
     <string name="alt_text_cost_format">Coût : %1$s</string>
     <string name="error_alt_text_not_configured">La génération de texte alternatif n’est pas configurée. Ouvrez Paramètres → Configuration du LLM pour définir la clé API et le modèle.</string>
     <string name="error_alt_text_load_image">Impossible de charger l’image pour générer le texte alternatif.</string>
+    <string name="error_model_image_input_not_supported">Le modèle %1$s ne prend pas encore en charge les images en entrée</string>
     <string name="error_alt_text_server">Le fournisseur de texte alternatif a renvoyé une erreur.</string>
     <string name="error_alt_text_network">Erreur réseau lors de la génération du texte alternatif.</string>
     <string name="error_alt_text_no_text">Le fournisseur de texte alternatif a renvoyé une réponse vide.</string>

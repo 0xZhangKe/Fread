@@ -304,6 +304,7 @@
     <string name="alt_text_cost_format">費用：%1$s</string>
     <string name="error_alt_text_not_configured">尚未設定替代文字生成。請開啟「設定 → LLM 設定」來設定 API 密鑰和模型。</string>
     <string name="error_alt_text_load_image">無法載入用於生成替代文字的圖片。</string>
+    <string name="error_model_image_input_not_supported">%1$s 模型暫不支援輸入圖片</string>
     <string name="error_alt_text_server">替代文字服務商返回了錯誤。</string>
     <string name="error_alt_text_network">生成替代文字時發生網絡錯誤。</string>
     <string name="error_alt_text_no_text">替代文字服務商返回了空回應。</string>

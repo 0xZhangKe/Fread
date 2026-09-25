@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
@@ -102,6 +103,7 @@ fun ExplorerSearchBar(
         insetContainerColor = blurEffectContainerColor(!active, containerColor),
         colors = SearchBarDefaults.colors(
             containerColor = blurEffectContainerColor(!active, containerColor),
+            dividerColor = Color.Transparent,
         ),
         inputField = {
             SearchBarDefaults.InputField(

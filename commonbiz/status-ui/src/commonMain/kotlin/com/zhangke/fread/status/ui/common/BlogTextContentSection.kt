@@ -199,7 +199,7 @@ private fun BlogRichTextContent(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onUrlClick: (url: String) -> Unit,
 ) {
-    var expanded by remember(type) { mutableStateOf(type == BlogUIType.DETAIL) }
+    var expanded by rememberSaveable(type) { mutableStateOf(type == BlogUIType.DETAIL) }
     var isOverflow by remember { mutableStateOf(false) }
     Column(modifier = modifier) {
         FreadRichText(
@@ -223,7 +223,6 @@ private fun BlogRichTextContent(
             ShowMoreOrHideLabel(
                 modifier = Modifier.fillMaxWidth(),
                 expanded = expanded,
-                style = style,
                 onShowMoreClick = { expanded = true },
                 onHideClick = { expanded = false },
             )
@@ -234,7 +233,6 @@ private fun BlogRichTextContent(
 @Composable
 private fun ShowMoreOrHideLabel(
     modifier: Modifier,
-    style: ContentStyle,
     expanded: Boolean,
     onShowMoreClick: () -> Unit,
     onHideClick: () -> Unit,

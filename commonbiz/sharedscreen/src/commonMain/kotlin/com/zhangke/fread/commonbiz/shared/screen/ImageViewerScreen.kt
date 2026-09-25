@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,6 +53,7 @@ import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
 import com.zhangke.framework.composable.rememberTransientModalBottomSheetState
+import com.zhangke.framework.composable.stringResource
 import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.nav.LocalNavBackStack
 import com.zhangke.framework.nav.popIfNotRoot
@@ -59,8 +62,10 @@ import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
+import com.zhangke.fread.localization.LocalizedString
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration.Companion.milliseconds
 
 @Serializable
@@ -233,19 +238,27 @@ private fun BoxScope.ImageTopBar(image: ImageViewerImage) {
                 },
             )
         }
-        Toolbar.DownloadButton(
-            onClick = {
-                needSaveImage = true
-            },
-            tint = Color.White.copy(alpha = 0.7F),
+
+        SimpleIconButton(
+            modifier = Modifier,
+            onClick = { needSaveImage = true },
+            tint = Color.White,
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color(0x66000000),
+            ),
+            imageVector = Icons.Default.Download,
+            contentDescription = stringResource(LocalizedString.download),
         )
         if (!image.description.isNullOrEmpty()) {
             Spacer(modifier = Modifier.width(16.dp))
             SimpleIconButton(
                 onClick = { showBottomSheet = true },
-                tint = Color.White.copy(alpha = 0.7F),
+                tint = Color.White,
                 imageVector = Icons.Default.Info,
-                contentDescription = "Image description",
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color(0x66000000),
+                ),
+                contentDescription = stringResource(LocalizedString.imageDescription),
             )
             if (showBottomSheet) {
                 val sheetState = rememberTransientModalBottomSheetState()

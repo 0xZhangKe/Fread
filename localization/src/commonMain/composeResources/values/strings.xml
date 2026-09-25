@@ -35,6 +35,7 @@
     <string name="feeds_load_previous_page_label">Loading Previous Page Content</string>
     <string name="feeds_load_previous_page_failed_label">Load Failed, Click to Retry</string>
     <string name="image">Image</string>
+    <string name="image_description">Image description</string>
     <string name="video">Video</string>
     <string name="login">Login</string>
     <string name="add">Add</string>
@@ -47,6 +48,7 @@
     <string name="donate">Donate</string>
     <string name="feeds">Feeds</string>
     <string name="save">Save</string>
+    <string name="download">Download</string>
     <string name="done">All done!</string>
     <string name="bluesky_name">Bluesky</string>
     <string name="bluesky_description">Bluesky is an open network. With one account, you can access both an easy-to-use social network and a shared identity across the entire social internet.</string>

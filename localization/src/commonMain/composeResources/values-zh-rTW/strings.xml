@@ -35,6 +35,7 @@
     <string name="feeds_load_previous_page_label">正在載入上一頁內容</string>
     <string name="feeds_load_previous_page_failed_label">載入失敗，點擊重試</string>
     <string name="image">圖片</string>
+    <string name="image_description">圖片描述文字</string>
     <string name="video">影片</string>
     <string name="login">登入</string>
     <string name="add">新增</string>
@@ -47,6 +48,7 @@
     <string name="donate">捐贈</string>
     <string name="feeds">Feeds</string>
     <string name="save">儲存</string>
+    <string name="download">下載</string>
     <string name="done">完成</string>
     <string name="bluesky_name">Bluesky</string>
     <string name="bluesky_description">Bluesky 是一個開放網路。透過一個帳號，你既可以使用易上手的社群網路，也可以在整個社交互聯網上擁有共享身分。</string>

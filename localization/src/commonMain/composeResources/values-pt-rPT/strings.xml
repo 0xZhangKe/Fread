@@ -35,6 +35,7 @@
     <string name="feeds_load_previous_page_label">Carregando conteúdo da página anterior</string>
     <string name="feeds_load_previous_page_failed_label">Falha no carregamento, toque para tentar novamente</string>
     <string name="image">Imagem</string>
+    <string name="image_description">Descrição da imagem</string>
     <string name="video">Vídeo</string>
     <string name="login">Entrar</string>
     <string name="add">Adicionar</string>
@@ -47,6 +48,7 @@
     <string name="donate">Doar</string>
     <string name="feeds">Feeds</string>
     <string name="save">Salvar</string>
+    <string name="download">Transferir</string>
     <string name="done">Tudo pronto!</string>
     <string name="bluesky_name">Bluesky</string>
     <string name="bluesky_description">Bluesky é uma rede aberta. Com uma única conta, você acessa uma rede social fácil de usar e uma identidade compartilhada em toda a internet social.</string>

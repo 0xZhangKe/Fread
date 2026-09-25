@@ -35,6 +35,7 @@
     <string name="feeds_load_previous_page_label">Загрузка содержимого предыдущей страницы</string>
     <string name="feeds_load_previous_page_failed_label">Не удалось загрузить, нажмите, чтобы повторить</string>
     <string name="image">Изображение</string>
+    <string name="image_description">Описание изображения</string>
     <string name="video">Видео</string>
     <string name="login">Войти</string>
     <string name="add">Добавить</string>
@@ -47,6 +48,7 @@
     <string name="donate">Пожертвовать</string>
     <string name="feeds">Ленты</string>
     <string name="save">Сохранить</string>
+    <string name="download">Скачать</string>
     <string name="done">Готово!</string>
     <string name="bluesky_name">Bluesky</string>
     <string name="bluesky_description">Bluesky — это открытая сеть. С одной учётной записью вы получаете доступ к удобной социальной сети и единой идентичности во всей социальной сети Интернет.</string>

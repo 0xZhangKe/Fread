@@ -34,6 +34,7 @@ object LocalizedString {
     val feedsLoadPreviousPageLabel = localizedString.feeds_load_previous_page_label
     val feedsLoadPreviousPageFailedLabel = localizedString.feeds_load_previous_page_failed_label
     val image = localizedString.image
+    val imageDescription = localizedString.image_description
     val video = localizedString.video
     val login = localizedString.login
     val add = localizedString.add
@@ -46,6 +47,7 @@ object LocalizedString {
     val donate = localizedString.donate
     val feeds = localizedString.feeds
     val save = localizedString.save
+    val download = localizedString.download
     val done = localizedString.done
     val blueskyName = localizedString.bluesky_name
     val blueskyDescription = localizedString.bluesky_description

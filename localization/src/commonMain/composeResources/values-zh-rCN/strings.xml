@@ -35,6 +35,7 @@
     <string name="feeds_load_previous_page_label">正在加载上一页内容</string>
     <string name="feeds_load_previous_page_failed_label">加载失败，点击重试</string>
     <string name="image">图片</string>
+    <string name="image_description">图片描述文本</string>
     <string name="video">视频</string>
     <string name="login">登录</string>
     <string name="add">添加</string>
@@ -47,6 +48,7 @@
     <string name="donate">捐赠</string>
     <string name="feeds">Feeds</string>
     <string name="save">保存</string>
+    <string name="download">下载</string>
     <string name="done">完成</string>
     <string name="bluesky_name">Bluesky</string>
     <string name="bluesky_description">Bluesky 是一个开放网络。通过一个账户，你既可以访问易用的社交网络，也可以在整个社交互联网上拥有共享身份。</string>

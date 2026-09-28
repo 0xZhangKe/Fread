@@ -1,6 +1,6 @@
 [versions]
-kotlin = "2.3.20"
-ksp = "2.3.6"
+kotlin = "2.4.20"
+ksp = "2.3.12"
 kotlinCoroutine = "1.10.2"
 kotlinCoroutineTest = "1.10.2"
 kotlinx-serialization = "1.10.0"
@@ -8,7 +8,7 @@ kotlinx-datetime = "0.7.1-0.6.x-compat"
 
 arrow = "2.1.2"
 
-compose-multiplatform = "1.10.3"
+compose-multiplatform = "1.13.0-alpha01"
 
 androidxCore = "1.18.0"
 androidxFragment = "1.8.9"
@@ -45,7 +45,7 @@ krouter = "1.3.7"
 
 multiplatformsettings = "1.3.0"
 
-androidGradlePlugin = "8.13.2"
+androidGradlePlugin = "9.1.1"
 
 mockk = "1.13.8"
 junit = "4.13.2"
@@ -60,7 +60,7 @@ ktml = "0.0.6"
 jsoup = "1.15.3"
 
 google-service-version = "4.4.2"
-firebaseKmp = "2.1.0"
+firebaseKmp = "2.7.0"
 
 goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
@@ -172,7 +172,6 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 #firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
 #firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
-ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
 composeCompiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-jb-backhandler = { group = "org.jetbrains.compose.ui", name = "ui-backhandler", version.ref = "compose-multiplatform" }

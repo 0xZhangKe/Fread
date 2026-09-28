@@ -14,6 +14,24 @@ messy `subproject` configurations, without the pitfalls of the `buildSrc` direct
 `build-logic` is an included build, as configured in the root
 [`settings.gradle.kts`](../settings.gradle.kts).
 
+## Android toolchain
+
+The project uses AGP 9.1.1, Gradle 9.4.1, and Android compile SDK 37 for Compose
+Multiplatform 1.13. Run Gradle with JDK 17 or newer. The app's target SDK remains 36.
+
+The root `gradle.properties` temporarily disables built-in Kotlin and the new Android
+DSL so the existing `kotlin-android` and KMP `androidTarget()` convention plugins can
+run on AGP 9. Before upgrading to AGP 10, migrate the app to built-in Kotlin and the
+shared modules to `com.android.kotlin.multiplatform.library`, then remove both flags.
+
+To verify Android compilation and release shrinking without Firebase:
+
+```shell
+./gradlew :app:compileDebugKotlin :app:minifyReleaseWithR8 -PdisableFirebase=true
+```
+
+## Module conventions
+
 Inside `build-logic` is a `convention` module, which defines a set of plugins that all normal
 modules can use to configure themselves.
 

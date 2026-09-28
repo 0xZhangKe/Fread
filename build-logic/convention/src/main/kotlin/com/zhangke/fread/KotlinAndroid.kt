@@ -32,16 +32,16 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
  * Configure base Kotlin with Android options
  */
 internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    commonExtension: CommonExtension,
 ) {
     commonExtension.apply {
-        compileSdk = 36
+        compileSdk = 37
 
-        defaultConfig {
+        defaultConfig.apply {
             minSdk = 24
         }
 
-        compileOptions {
+        compileOptions.apply {
             // Up to Java 11 APIs are available through desugaring
             // https://developer.android.com/studio/write/java11-minimal-support-table
             sourceCompatibility = JavaVersion.VERSION_11
@@ -77,19 +77,17 @@ private fun Project.configureKotlin() {
     kotlinCompile {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
-            languageVersion = KotlinVersion.KOTLIN_2_3
+            languageVersion = KotlinVersion.KOTLIN_2_4
             // Treat all Kotlin warnings as errors (disabled by default)
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
             val warningsAsErrors: String? by project
             allWarningsAsErrors = warningsAsErrors.toBoolean()
-            freeCompilerArgs.add("-Xcontext-parameters")
         }
     }
     kotlin {
         sourceSets.all {
             languageSettings {
-                languageVersion = KotlinVersion.KOTLIN_2_3.version
-                enableLanguageFeature("ExplicitBackingFields")
+                languageVersion = KotlinVersion.KOTLIN_2_4.version
                 optIn("kotlin.RequiresOptIn")
                 optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
                 optIn("kotlinx.coroutines.FlowPreview")

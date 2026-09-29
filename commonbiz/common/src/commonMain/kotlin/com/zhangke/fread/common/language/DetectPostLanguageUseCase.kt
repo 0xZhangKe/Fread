@@ -4,12 +4,12 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 class DetectPostLanguageUseCase(
-    private val languageDetector: LanguageDetector,
+    private val freadLanguageDetector: FreadLanguageDetector,
 ) {
 
     /**
      * Mirrors bsky-social-app's `SuggestedLanguage` heuristic: only attempt
-     * detection once the user has typed enough text. The [LanguageDetector]
+     * detection once the user has typed enough text. The [FreadLanguageDetector]
      * applies the stricter "single confident match" thresholds.
      */
     suspend operator fun invoke(
@@ -20,7 +20,7 @@ class DetectPostLanguageUseCase(
         val trimmed = text.trim()
         if (trimmed.length < MIN_DETECT_LENGTH) return null
         delay(DETECT_DEBOUNCE_MS.milliseconds)
-        val detected = languageDetector.detect(trimmed)?.normalizeLanguageTag() ?: return null
+        val detected = freadLanguageDetector.detect(trimmed)?.normalizeLanguageTag() ?: return null
         val normalizedSelectedLanguages = selectedLanguages.map { it.normalizeLanguageTag() }.toSet()
         val normalizedDismissedLanguages = dismissedLanguages.map { it.normalizeLanguageTag() }.toSet()
         return detected

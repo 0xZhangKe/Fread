@@ -8,7 +8,7 @@ package com.zhangke.fread.common.language
  * Android is backed by ML Kit's Language Identification model; iOS is a
  * no-op stub for now.
  */
-expect class LanguageDetector() {
+expect class FreadLanguageDetector() {
 
     /**
      * Returns a BCP-47 language tag (e.g. `"en"`, `"es"`) if the model is

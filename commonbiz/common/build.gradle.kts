@@ -83,7 +83,7 @@ kotlin {
 
                 implementation(libs.multiplatformsettings.datastore)
 
-                implementation("com.google.mlkit:language-id:17.0.6")
+                implementation(libs.lingua)
             }
         }
         iosMain {

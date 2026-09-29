@@ -20,7 +20,7 @@ import com.zhangke.fread.common.deeplink.SelectAccountForPublishViewModel
 import com.zhangke.fread.common.deeplink.SelectedContentSwitcher
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.language.DetectPostLanguageUseCase
-import com.zhangke.fread.common.language.LanguageDetector
+import com.zhangke.fread.common.language.FreadLanguageDetector
 import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.notification.NotificationUnreadCounter
 import com.zhangke.fread.common.onboarding.OnboardingComponent
@@ -60,7 +60,7 @@ val commonModule = module {
     singleOf(::SelectedContentSwitcher)
     singleOf(::StartupManager)
     singleOf(::StatusUpdater)
-    singleOf(::LanguageDetector)
+    singleOf(::FreadLanguageDetector)
     singleOf(::PostTranslator)
 
     factoryOf(::LinkPreviewCardRepo)

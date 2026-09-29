@@ -73,6 +73,8 @@ compose-media-player = "0.8.7"
 
 koogVersion = "1.2.0"
 
+lingua = "1.2.2"
+
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
 androidx-activity = ["androidx.activity", "androidx.activity.ktx", "androidx.activity.compose"]
@@ -224,6 +226,8 @@ koog-client-anthropic = { group = "ai.koog", name = "prompt-executor-anthropic-c
 koog-client-http-ktor = { group = "ai.koog", name = "http-client-ktor", version.ref = "koogVersion" }
 koog-client-ollama = { group = "ai.koog", name = "prompt-executor-ollama-client", version.ref = "koogVersion" }
 koog-client-openai = { group = "ai.koog", name = "prompt-executor-openai-client", version.ref = "koogVersion" }
+
+lingua = { group = "com.github.pemistahl", name = "lingua", version.ref = "lingua" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

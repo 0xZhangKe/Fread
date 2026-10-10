@@ -43,6 +43,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 
 val commonModule = module {
     createPlatformModule()
@@ -60,7 +61,7 @@ val commonModule = module {
     singleOf(::SelectedContentSwitcher)
     singleOf(::StartupManager)
     singleOf(::StatusUpdater)
-    singleOf(::LanguageDetector)
+    singleOf(::LanguageDetector).onClose { it?.close() }
     singleOf(::PostTranslator)
 
     factoryOf(::LinkPreviewCardRepo)

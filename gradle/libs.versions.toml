@@ -67,6 +67,7 @@ goolgePlayReviewKtx = "2.0.1"
 
 bluesky = "0.3.4"
 activity-pub-client = "1.0.0"
+lingua-core = "0.0.1"
 
 haze = "1.7.2"
 compose-media-player = "0.8.7"
@@ -166,6 +167,7 @@ arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow"
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 activity-pub-client = { group = "io.github.0xzhangke", name = "activity-pub-client", version.ref = "activity-pub-client" }
+lingua-core = { module = "io.github.0xzhangke:lingua-core", version.ref = "lingua-core" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

@@ -30,6 +30,7 @@ kotlin {
                 implementation(compose.components.resources)
 
                 implementation(libs.arrow.core)
+                implementation(libs.lingua.core)
 
                 implementation(libs.androidx.annotation)
                 implementation(libs.bundles.androidx.datastore)
@@ -82,8 +83,6 @@ kotlin {
                 implementation(libs.androidx.browser)
 
                 implementation(libs.multiplatformsettings.datastore)
-
-                implementation("com.google.mlkit:language-id:17.0.6")
             }
         }
         iosMain {

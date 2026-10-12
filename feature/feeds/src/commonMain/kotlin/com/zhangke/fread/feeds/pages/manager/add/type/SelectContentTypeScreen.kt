@@ -135,7 +135,7 @@ fun SelectContentTypeScreen(viewModel: SelectContentTypeViewModel) {
                 cardColor = signalArchiveColor,
                 title = signalArchiveContentName(),
                 description = signalArchiveContentDescription(),
-                onCardClick = { backStack.add(AddMixedFeedsScreenNavKey) },
+                onCardClick = viewModel::onSignalArchiveClick,
                 contentImage = {
                     Image(
                         modifier = Modifier.fillMaxHeight()

@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 const val ACTIVITY_PUB_PROTOCOL_ID = "ActivityPub"
 const val RSS_PROTOCOL_ID = "RSS"
 const val BLUESKY_PROTOCOL_ID = "Bluesky"
+const val SIGNAL_ARCHIVE_ID = "SignalArchive"
 
 @Serializable
 @Parcelize
@@ -34,6 +35,13 @@ fun createRssProtocol(): StatusProviderProtocol {
     return StatusProviderProtocol(
         id = RSS_PROTOCOL_ID,
         name = "RSS",
+    )
+}
+
+fun createSignalArchiveProtocol(): StatusProviderProtocol {
+    return StatusProviderProtocol(
+        id = SIGNAL_ARCHIVE_ID,
+        name = "Signal Archive",
     )
 }
 

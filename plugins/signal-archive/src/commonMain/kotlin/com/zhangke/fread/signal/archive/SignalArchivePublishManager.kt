@@ -1,0 +1,17 @@
+package com.zhangke.fread.signal.archive
+
+import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.PublishBlogRules
+import com.zhangke.fread.status.publish.IPublishBlogManager
+import com.zhangke.fread.status.publish.PublishingPost
+
+class SignalArchivePublishManager() : IPublishBlogManager {
+
+    override suspend fun getPublishBlogRules(account: LoggedAccount): Result<PublishBlogRules>? {
+        return null
+    }
+
+    override suspend fun publish(account: LoggedAccount, post: PublishingPost): Result<Unit>? {
+        return null
+    }
+}

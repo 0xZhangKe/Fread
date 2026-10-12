@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlin.time.Duration.Companion.milliseconds
 
 class BlueskyContentViewModel(
     private val contentId: String,
@@ -50,13 +51,13 @@ class BlueskyContentViewModel(
                         startObserveAccount(locator)
                     } else {
                         _uiState.update { state ->
-                            state.copy(errorMessage = "Cant find validate config by id: $contentId")
+                            state.copy(errorMessage = "Can't find validate config by id: $contentId")
                         }
                     }
                 }
         }
         launchInViewModel {
-            delay(200)
+            delay(200.milliseconds)
             _uiState.update { it.copy(initializing = false) }
         }
         launchInViewModel {

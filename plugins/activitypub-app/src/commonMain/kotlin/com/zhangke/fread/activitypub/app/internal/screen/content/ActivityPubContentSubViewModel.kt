@@ -48,7 +48,7 @@ class ActivityPubContentSubViewModel(
                     } else {
                         _uiState.update {
                             it.copy(
-                                errorMessage = "Cant find validate config by id: $contentId"
+                                errorMessage = "Can't find validate config by id: $contentId"
                             )
                         }
                     }

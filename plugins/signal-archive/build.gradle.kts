@@ -1,6 +1,8 @@
 plugins {
     id("fread.project.feature.kmp")
+    id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    alias(libs.plugins.room)
 }
 
 android {
@@ -19,14 +21,23 @@ kotlin {
                 implementation(project(path = ":commonbiz:analytics"))
 
                 implementation(compose.components.resources)
+                implementation(libs.krouter.runtime)
+                implementation(libs.ktor.client.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlin.coroutine.core)
+                implementation(libs.imageLoader)
+                implementation(libs.jetbrains.lifecycle.viewmodel)
             }
         }
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.ktor.client.mock)
+                implementation(libs.kotlin.coroutine.test)
             }
         }
     }
+    configureCommonMainKsp()
 }
 
 compose {
@@ -35,4 +46,14 @@ compose {
         packageOfResClass = "com.zhangke.fread.signal.archive"
         generateResClass = always
     }
+}
+
+dependencies {
+    kspAll(libs.androidx.room.compiler)
+    kspAll(libs.auto.service.ksp)
+    kspAll(libs.krouter.collecting.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

@@ -9,10 +9,10 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreenNavKey
+import com.zhangke.fread.bluesky.internal.screen.content.BlueskyContentTab
 import com.zhangke.fread.bluesky.internal.screen.explorer.BlueskyExplorerTab
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPageNavKey
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreenNavKey
-import com.zhangke.fread.bluesky.internal.screen.content.BlueskyContentTab
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.threaded.BlueskyThreadedViewScreenNavKey
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
@@ -62,10 +62,8 @@ class BlueskyScreenProvider(
         )
     }
 
-    override fun getContentScreen(
-        content: FreadContent,
-        isLatestTab: Boolean
-    ): Tab {
+    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): Tab? {
+        if (content !is BlueskyContent) return null
         return BlueskyContentTab(content.id, isLatestTab)
     }
 

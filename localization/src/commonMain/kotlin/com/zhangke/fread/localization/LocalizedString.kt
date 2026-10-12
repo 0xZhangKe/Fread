@@ -56,7 +56,15 @@ object LocalizedString {
     val mixedContentName = localizedString.mixed_content_name
     val mixedContentDescription = localizedString.mixed_content_description
     val signalArchiveContentName = localizedString.signal_archive_content_name
+    val signalArchiveDetailTitle = localizedString.signal_archive_detail_title
     val signalArchiveContentDescription = localizedString.signal_archive_content_description
+    val signalArchiveAddress = localizedString.signal_archive_address
+    val signalArchiveAddressHint = localizedString.signal_archive_address_hint
+    val signalArchiveInvalidAddress = localizedString.signal_archive_invalid_address
+    val signalArchiveLoadFailed = localizedString.signal_archive_load_failed
+    val signalArchiveFeedsLoadFailed = localizedString.signal_archive_feeds_load_failed
+    val signalArchiveAddFailed = localizedString.signal_archive_add_failed
+    val signalArchiveReaderPending = localizedString.signal_archive_reader_pending
     val statusProviderTypeActivityPub = localizedString.status_provider_type_activity_pub
     val addContentTitle = localizedString.add_content_title
     val addContentSuccessWithAccount = localizedString.add_content_success_with_account

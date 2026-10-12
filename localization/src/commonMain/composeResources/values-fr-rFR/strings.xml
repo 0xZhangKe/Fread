@@ -314,4 +314,5 @@
     <string name="error_alt_text_no_text">Le fournisseur de texte alternatif a renvoyé une réponse vide.</string>
     <string name="bluesky_user_list_tab_boosts">Partages</string>
     <string name="bluesky_user_list_tab_quotes">Citations</string>
+    <string name="signal_archive_detail_title">Détails</string>
 </resources>

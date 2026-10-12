@@ -314,4 +314,5 @@
     <string name="error_alt_text_no_text">Der Alt-Text-Anbieter hat eine leere Antwort zurückgegeben.</string>
     <string name="bluesky_user_list_tab_boosts">Boosts</string>
     <string name="bluesky_user_list_tab_quotes">Zitate</string>
+    <string name="signal_archive_detail_title">Details</string>
 </resources>

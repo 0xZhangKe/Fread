@@ -314,4 +314,5 @@
     <string name="error_alt_text_no_text">代替テキストプロバイダーが空の応答を返しました。</string>
     <string name="bluesky_user_list_tab_boosts">リポスト</string>
     <string name="bluesky_user_list_tab_quotes">引用</string>
+    <string name="signal_archive_detail_title">詳細</string>
 </resources>

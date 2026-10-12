@@ -314,4 +314,5 @@
     <string name="error_alt_text_no_text">El proveedor de texto alternativo devolvió una respuesta vacía.</string>
     <string name="bluesky_user_list_tab_boosts">Impulsos</string>
     <string name="bluesky_user_list_tab_quotes">Citas</string>
+    <string name="signal_archive_detail_title">Detalles</string>
 </resources>

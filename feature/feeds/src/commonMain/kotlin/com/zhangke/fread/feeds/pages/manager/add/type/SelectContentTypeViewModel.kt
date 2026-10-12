@@ -7,6 +7,7 @@ import com.zhangke.fread.common.onboarding.OnboardingComponent
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.createActivityPubProtocol
 import com.zhangke.fread.status.model.createBlueskyProtocol
+import com.zhangke.fread.status.model.createSignalArchiveProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -47,5 +48,10 @@ class SelectContentTypeViewModel(
         statusProvider.screenProvider
             .getAddContentScreen(createBlueskyProtocol())
             .let { launchInViewModel { _openScreenFlow.emit(it) } }
+    }
+
+    fun onSignalArchiveClick() {
+        val screen = statusProvider.screenProvider.getAddContentScreen(createSignalArchiveProtocol())
+        launchInViewModel { _openScreenFlow.emit(screen) }
     }
 }

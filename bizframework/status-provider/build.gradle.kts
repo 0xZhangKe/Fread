@@ -17,6 +17,7 @@ kotlin {
                 implementation(libs.arrow.core)
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.krouter.runtime)
 
                 implementation(libs.androidx.room)
 

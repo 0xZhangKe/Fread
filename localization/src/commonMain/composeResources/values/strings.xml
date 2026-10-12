@@ -317,4 +317,12 @@
     <string name="error_alt_text_no_text">The alt text provider returned an empty response.</string>
     <string name="bluesky_user_list_tab_boosts">Boosts</string>
     <string name="bluesky_user_list_tab_quotes">Quotes</string>
+    <string name="signal_archive_address">Repository or data URL</string>
+    <string name="signal_archive_address_hint">Enter a GitHub repository, data directory, or rendered.json URL.</string>
+    <string name="signal_archive_invalid_address">Enter a valid HTTP(S) repository or data URL.</string>
+    <string name="signal_archive_load_failed">Unable to read the Signal Archive index. Check the address and try again.</string>
+    <string name="signal_archive_add_failed">Unable to save this content. Please try again.</string>
+    <string name="signal_archive_reader_pending">The reading page is not available yet.</string>
+    <string name="signal_archive_feeds_load_failed">Unable to load articles. Please try again.</string>
+    <string name="signal_archive_detail_title">Details</string>
 </resources>

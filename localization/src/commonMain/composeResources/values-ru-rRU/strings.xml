@@ -314,4 +314,5 @@
     <string name="error_alt_text_no_text">Поставщик альтернативного текста вернул пустой ответ.</string>
     <string name="bluesky_user_list_tab_boosts">Репосты</string>
     <string name="bluesky_user_list_tab_quotes">Цитаты</string>
+    <string name="signal_archive_detail_title">Подробности</string>
 </resources>

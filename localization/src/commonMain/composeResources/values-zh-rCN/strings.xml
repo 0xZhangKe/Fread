@@ -314,4 +314,12 @@
     <string name="error_alt_text_no_text">替代文本服务商返回了空响应。</string>
     <string name="bluesky_user_list_tab_boosts">转发</string>
     <string name="bluesky_user_list_tab_quotes">引用</string>
+    <string name="signal_archive_address">仓库或数据地址</string>
+    <string name="signal_archive_address_hint">输入 GitHub 仓库、数据目录或 rendered.json 地址。</string>
+    <string name="signal_archive_invalid_address">请输入有效的 HTTP(S) 仓库或数据地址。</string>
+    <string name="signal_archive_load_failed">无法读取 Signal Archive 索引，请检查地址后重试。</string>
+    <string name="signal_archive_add_failed">保存内容失败，请重试。</string>
+    <string name="signal_archive_reader_pending">阅读页面尚未完成。</string>
+    <string name="signal_archive_feeds_load_failed">文章加载失败，请重试。</string>
+    <string name="signal_archive_detail_title">详情</string>
 </resources>

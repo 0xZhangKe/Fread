@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
-class PostStatusViewModel (
+class PostStatusViewModel(
     private val getCustomEmoji: GetCustomEmojiUseCase,
     private val getInstancePostStatusRules: GetInstancePostStatusRulesUseCase,
     private val generateInitPostStatusUiState: GenerateInitPostStatusUiStateUseCase,

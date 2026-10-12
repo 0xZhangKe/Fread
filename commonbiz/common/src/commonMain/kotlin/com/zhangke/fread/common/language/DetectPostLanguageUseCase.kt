@@ -21,8 +21,10 @@ class DetectPostLanguageUseCase(
         if (trimmed.length < MIN_DETECT_LENGTH) return null
         delay(DETECT_DEBOUNCE_MS.milliseconds)
         val detected = languageDetector.detect(trimmed)?.normalizeLanguageTag() ?: return null
-        val normalizedSelectedLanguages = selectedLanguages.map { it.normalizeLanguageTag() }.toSet()
-        val normalizedDismissedLanguages = dismissedLanguages.map { it.normalizeLanguageTag() }.toSet()
+        val normalizedSelectedLanguages =
+            selectedLanguages.map { it.normalizeLanguageTag() }.toSet()
+        val normalizedDismissedLanguages =
+            dismissedLanguages.map { it.normalizeLanguageTag() }.toSet()
         return detected
             .takeIf { it !in normalizedSelectedLanguages }
             ?.takeIf { it !in normalizedDismissedLanguages }
@@ -33,7 +35,7 @@ class DetectPostLanguageUseCase(
     }
 
     private companion object {
-        const val MIN_DETECT_LENGTH = 40
+        const val MIN_DETECT_LENGTH = 10
         const val DETECT_DEBOUNCE_MS = 350L
     }
 }

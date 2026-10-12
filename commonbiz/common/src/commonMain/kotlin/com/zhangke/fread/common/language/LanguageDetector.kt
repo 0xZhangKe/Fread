@@ -25,8 +25,8 @@ class LanguageDetector : AutoCloseable {
         return withContext(Dispatchers.Default) {
             try {
                 identifier.computeLanguageConfidenceValues(text)
-                    .singleOrNull { it.value >= MIN_CONFIDENCE }
-                    ?.takeIf { it.value >= ACCEPT_CONFIDENCE }
+                    .maxBy { it.value }
+                    .takeIf { it.value >= ACCEPT_CONFIDENCE }
                     ?.language
                     ?.isoCode6391
                     ?.code
@@ -44,6 +44,6 @@ class LanguageDetector : AutoCloseable {
 
     private companion object {
         const val MIN_CONFIDENCE = 0.01
-        const val ACCEPT_CONFIDENCE = 0.97
+        const val ACCEPT_CONFIDENCE = 0.5
     }
 }

@@ -10,6 +10,7 @@ android {
     sourceSets {
         getByName("main") {
             res.srcDirs("src/androidMain/res")
+            resources.srcDir("src/androidMain/resources")
             manifest.srcFile("src/androidMain/AndroidManifest.xml")
         }
     }
@@ -30,7 +31,6 @@ kotlin {
                 implementation(compose.components.resources)
 
                 implementation(libs.arrow.core)
-                implementation(libs.lingua.core)
 
                 implementation(libs.androidx.annotation)
                 implementation(libs.bundles.androidx.datastore)
@@ -77,6 +77,7 @@ kotlin {
         }
         androidMain {
             dependencies {
+                implementation(libs.opennlp.tools)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.androidx.appcompat)
 

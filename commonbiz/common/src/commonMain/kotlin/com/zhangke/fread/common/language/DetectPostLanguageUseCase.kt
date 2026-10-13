@@ -10,7 +10,7 @@ class DetectPostLanguageUseCase(
     /**
      * Mirrors bsky-social-app's `SuggestedLanguage` heuristic: only attempt
      * detection once the user has typed enough text. The [LanguageDetector]
-     * applies the stricter "single confident match" thresholds.
+     * filters out predictions below its confidence threshold.
      */
     suspend operator fun invoke(
         text: String,

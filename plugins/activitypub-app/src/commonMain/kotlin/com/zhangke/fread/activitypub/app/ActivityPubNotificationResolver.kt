@@ -20,7 +20,7 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 
-class ActivityPubNotificationResolver (
+class ActivityPubNotificationResolver(
     private val clientManager: ActivityPubClientManager,
     private val platformRepo: ActivityPubPlatformRepo,
     private val loggedAccountProvider: LoggedAccountProvider,
@@ -155,12 +155,22 @@ class ActivityPubNotificationResolver (
             }
 
             ActivityPubNotificationsEntity.MENTION -> {
-                StatusNotification.Mention(
-                    id = entity.id,
-                    author = author,
-                    status = status!!,
-                    unread = unread,
-                )
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        locator = locator,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.Mention(
+                        id = entity.id,
+                        author = author,
+                        status = status,
+                        unread = unread,
+                    )
+                }
             }
 
             ActivityPubNotificationsEntity.FOLLOW -> {

@@ -128,9 +128,10 @@ class BskyUrlInterceptor(
             ?.split('/')
             ?: return null
         val client = clientManager.getClient(locator)
+        val handle = runCatching { Handle(groupedPath[1]) }.getOrNull() ?: return null
         val statusUiState = client.getRecordCatching(
             GetRecordQueryParams(
-                repo = Handle(groupedPath[1]),
+                repo = handle,
                 collection = BskyCollections.feedPost,
                 rkey = RKey(groupedPath[3]),
             )

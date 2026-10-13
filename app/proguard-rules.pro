@@ -101,3 +101,7 @@
 -keepnames class <1>$$serializer { # -keepnames suffices; class is kept when serializer() is kept.
     static <1>$$serializer INSTANCE;
 }
+
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn org.osgi.framework.BundleActivator

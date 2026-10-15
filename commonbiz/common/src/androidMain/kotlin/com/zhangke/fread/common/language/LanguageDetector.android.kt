@@ -32,7 +32,7 @@ actual class LanguageDetector actual constructor() : AutoCloseable {
     }
 
     private fun loadDetector(): LanguageDetectorME {
-        val stream = checkNotNull(javaClass.getResourceAsStream("/opennlp/langdetect-183.bin")) {
+        val stream = checkNotNull(javaClass.getResourceAsStream("/langdetect-183.bin")) {
             "OpenNLP language detection model is missing"
         }
         return stream.use { LanguageDetectorME(LanguageDetectorModel(it)) }

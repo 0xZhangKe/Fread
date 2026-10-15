@@ -68,6 +68,7 @@ goolgePlayReviewKtx = "2.0.1"
 bluesky = "0.3.4"
 activity-pub-client = "1.0.0"
 opennlp = "2.1.0"
+opennlp-models = "1.3.0"
 
 haze = "1.7.2"
 compose-media-player = "0.8.7"
@@ -169,6 +170,7 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 activity-pub-client = { group = "io.github.0xzhangke", name = "activity-pub-client", version.ref = "activity-pub-client" }
 opennlp-tools = { module = "org.apache.opennlp:opennlp-tools", version.ref = "opennlp" }
+opennlp-models-langdetect = { module = "org.apache.opennlp:opennlp-models-langdetect", version.ref = "opennlp-models" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

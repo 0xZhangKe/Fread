@@ -50,6 +50,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
@@ -97,7 +98,7 @@ class PostStatusViewModel(
         launchInViewModel {
             _uiState.mapNotNull { it.successDataOrNull()?.account }
                 .distinctUntilChanged()
-                .mapNotNull { it.locator }
+                .map { it.locator }
                 .collect { locator ->
                     getCustomEmoji(locator)
                         .onSuccess {

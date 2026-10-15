@@ -100,7 +100,20 @@ fun PublishPostScaffold(
             )
         },
         snackbarHost = { SnackbarHost(snackBarHostState) },
-        bottomBar = { bottomPanel() },
+        bottomBar = {
+            Column {
+                if (!suggestedLanguage.isNullOrEmpty()) {
+                    SuggestedLanguageBanner(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                        languageTag = suggestedLanguage,
+                        onAccept = onSuggestedLanguageAcceptClick,
+                        onDismiss = onSuggestedLanguageDismiss,
+                    )
+                }
+                bottomPanel()
+            }
+        },
     ) { innerPadding ->
         var contentHeight: Float? by remember { mutableStateOf(null) }
         var replyingHeight: Float? by remember { mutableStateOf(null) }
@@ -226,15 +239,6 @@ fun PublishPostScaffold(
             Spacer(modifier = Modifier.height(8.dp))
 
             attachment(style)
-
-            if (!suggestedLanguage.isNullOrEmpty()) {
-                SuggestedLanguageBanner(
-                    modifier = Modifier.fillMaxWidth(),
-                    languageTag = suggestedLanguage,
-                    onAccept = onSuggestedLanguageAcceptClick,
-                    onDismiss = onSuggestedLanguageDismiss,
-                )
-            }
         }
     }
 }

@@ -25,6 +25,17 @@ android {
         includeInBundle = false
     }
 
+    packaging {
+        resources {
+            // Preserve metadata shared by OpenNLP Tools and its model dependency.
+            merges += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/NOTICE",
+            )
+        }
+    }
+
     if (keystorePropertiesFile.exists()) {
         signingConfigs {
             getByName("debug") {

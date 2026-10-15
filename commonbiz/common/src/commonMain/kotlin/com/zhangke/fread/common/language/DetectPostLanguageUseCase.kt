@@ -35,7 +35,7 @@ class DetectPostLanguageUseCase(
     }
 
     private companion object {
-        const val MIN_DETECT_LENGTH = 10
+        const val MIN_DETECT_LENGTH = 20
         const val DETECT_DEBOUNCE_MS = 350L
     }
 }

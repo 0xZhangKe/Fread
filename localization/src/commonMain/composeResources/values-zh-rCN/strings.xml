@@ -56,8 +56,9 @@
     <string name="mastodon_description">Mastodon 是一个去中心化、非商业化的社交媒体，用户可以控制自己的时间线，每个服务器都是独立的实体。</string>
     <string name="mixed_content_name">混合内容</string>
     <string name="mixed_content_description">混合内容是由 Fread 提供的自定义聚合信息流，你可以添加来自长毛象、Bluesky、RSS 等平台的信息源，来自这些信息源的内容会按照时间倒序形成一个聚合信息流。</string>
-    <string name="signal_archive_content_name">Signal Archive</string>
-    <string name="signal_archive_content_description">Signal Archive 是一种聚合内容阅读协议，基于 GitHub 分发和拉取，目前还是试验阶段</string>
+    <string name="signal_archive_content_name">Seagull</string>
+    <string name="signal_archive_content_description">Seagull 是一种聚合内容阅读协议，基于 GitHub 分发和拉取，目前还是试验阶段</string>
+    <string name="signal_archive_learn_more">了解 %1$s</string>
     <string name="status_provider_type_activity_pub">长毛象</string>
     <string name="add_content_title">添加内容</string>
     <string name="add_content_success_with_account">添加成功，当前账号：</string>
@@ -317,7 +318,7 @@
     <string name="signal_archive_address">仓库或数据地址</string>
     <string name="signal_archive_address_hint">输入 GitHub 仓库、数据目录或 rendered.json 地址。</string>
     <string name="signal_archive_invalid_address">请输入有效的 HTTP(S) 仓库或数据地址。</string>
-    <string name="signal_archive_load_failed">无法读取 Signal Archive 索引，请检查地址后重试。</string>
+    <string name="signal_archive_load_failed">无法读取 Seagull 索引，请检查地址后重试。</string>
     <string name="signal_archive_add_failed">保存内容失败，请重试。</string>
     <string name="signal_archive_reader_pending">阅读页面尚未完成。</string>
     <string name="signal_archive_feeds_load_failed">文章加载失败，请重试。</string>

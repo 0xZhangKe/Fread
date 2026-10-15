@@ -185,10 +185,13 @@ fun SelectContentTypeScreen(viewModel: SelectContentTypeViewModel) {
                         val browserLauncher = LocalActivityBrowserLauncher.current
                         TextButton(
                             modifier = Modifier.padding(start = 8.dp, top = 8.dp),
-                            onClick = { browserLauncher.launchBySystemBrowser("https://github.com/0xZhangKe/signal-archive") },
+                            onClick = { browserLauncher.launchBySystemBrowser("https://github.com/0xZhangKe/Seagull") },
                         ) {
                             Text(
-                                text = "See more: https://github.com/0xZhangKe/signal-archive"
+                                text = stringResource(
+                                    LocalizedString.signalArchiveLearnMore,
+                                    signalArchiveContentName(),
+                                ),
                             )
                         }
                     }

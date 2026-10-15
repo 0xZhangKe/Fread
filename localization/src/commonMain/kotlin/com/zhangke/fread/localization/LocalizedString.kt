@@ -58,6 +58,7 @@ object LocalizedString {
     val signalArchiveContentName = localizedString.signal_archive_content_name
     val signalArchiveDetailTitle = localizedString.signal_archive_detail_title
     val signalArchiveContentDescription = localizedString.signal_archive_content_description
+    val signalArchiveLearnMore = localizedString.signal_archive_learn_more
     val signalArchiveAddress = localizedString.signal_archive_address
     val signalArchiveAddressHint = localizedString.signal_archive_address_hint
     val signalArchiveInvalidAddress = localizedString.signal_archive_invalid_address

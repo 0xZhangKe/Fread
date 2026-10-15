@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import com.zhangke.framework.architect.json.JsonModuleBuilder
+import com.zhangke.fread.localization.LocalizedString
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.uri.FormalUri
@@ -13,6 +14,7 @@ import com.zhangke.krouter.annotation.Service
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.serializer
+import org.jetbrains.compose.resources.stringResource
 
 @Service
 class SignalArchiveContentJsonModuleBuilder : JsonModuleBuilder {
@@ -44,7 +46,7 @@ data class SignalArchiveContent(
     override fun Subtitle(account: LoggedAccount?) {
         Text(
             modifier = Modifier,
-            text = "Signal Archive",
+            text = stringResource(LocalizedString.signalArchiveContentName),
             style = MaterialTheme.typography.labelMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

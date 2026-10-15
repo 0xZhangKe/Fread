@@ -180,6 +180,7 @@ private fun NotificationTopBar(
                             style = MaterialTheme.typography.titleMedium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
                             text = account.prettyHandle,

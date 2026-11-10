@@ -25,8 +25,15 @@ import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration.Companion.milliseconds
+
+private const val ACCOUNT_CACHE_WAIT_TIMEOUT_MS = 5_000L
 
 class ActivityPubAccountManager(
     private val oAuthor: ActivityPubOAuthor,
@@ -41,12 +48,15 @@ class ActivityPubAccountManager(
     private val accountLogout: ActivityPubAccountLogoutUseCase,
 ) : IAccountManager {
 
+    private val accountCacheRevision = MutableStateFlow(0L)
+
     init {
         applicationCoroutineScope.launch {
             accountRepo.getAllAccountFlow()
                 .collect {
                     clientManager.clearCache()
                     loggedAccountProvider.updateAccounts(it)
+                    accountCacheRevision.update { revision -> revision + 1 }
                 }
         }
     }
@@ -134,6 +144,13 @@ class ActivityPubAccountManager(
     }
 
     private suspend fun subscribeNotificationForAccount(account: ActivityPubLoggedAccount) {
+        withTimeoutOrNull(ACCOUNT_CACHE_WAIT_TIMEOUT_MS.milliseconds) {
+            accountCacheRevision.first { revision ->
+                val cachedToken = loggedAccountProvider.getAccount(account.uri)?.token
+                revision > 0 && cachedToken?.accessToken == account.token.accessToken
+            }
+        } ?: return
+
         val role = PlatformLocator(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         activityPubPushManager.subscribe(role, account.userId)
     }

@@ -54,9 +54,8 @@ object GlobalOkHttpClient {
             "Unexpected default trust managers:" + Arrays.toString(trustManagers)
         }
         val trustManager = trustManagers[0] as X509TrustManager
-        val sslContext = SSLContext.getInstance("SSL")
+        val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(null, arrayOf<TrustManager>(trustManager), null)
-        sslContext.defaultSSLParameters.protocols = arrayOf("SSLv3")
         val sslSocketFactory = sslContext.socketFactory
         return Pair(sslSocketFactory, trustManager)
     }
